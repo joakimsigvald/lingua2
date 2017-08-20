@@ -43,19 +43,5 @@ namespace Lingua.Grammar.Test
             var actual = Encoder.Code(tokens);
             Assert.That(actual, Is.EquivalentTo(expected));
         }
-
-        [Test]
-        public void Bug1()
-        {
-            var tokens = new Token[]
-            {
-                new DefiniteArticle {Value = "the"},
-                new Divider(),
-                new Noun {Value = "ball"}
-            };
-            var expected = new ushort[] { (3 >> 8) + 1, 4 >> 8 };
-            var actual = Encoder.Code(tokens);
-            Assert.That(actual, Is.EquivalentTo(expected));
-        }
     }
 }
