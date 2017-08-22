@@ -51,7 +51,22 @@ namespace Lingua.Vocabulary
             {"an", "en"},
         };
 
-        private static readonly ILexicon Lexicon = new Lexicon(Words, Abbreviations, Nouns, DefiniteArticles, IndefiniteArticles);
+        private static readonly IWordMap Quantifiers = new WordMap<Quantifier>
+        {
+            {"one", "en"},
+            {"two", "två"},
+            {"several", "flera"},
+            {"many", "många"}
+        };
+
+        private static readonly ILexicon Lexicon = new Lexicon(
+            Words, 
+            Abbreviations, 
+            Nouns, 
+            DefiniteArticles, 
+            IndefiniteArticles,
+            Quantifiers
+            );
 
         public Translation[] Translate(Token token)
         {

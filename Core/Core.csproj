@@ -55,6 +55,7 @@
     <Compile Include="WordClasses\Article.cs" />
     <Compile Include="WordClasses\IndefiniteArticle.cs" />
     <Compile Include="WordClasses\DefiniteArticle.cs" />
+    <Compile Include="WordClasses\Quantifier.cs" />
     <Compile Include="WordClasses\Unclassified.cs" />
     <Compile Include="WordClasses\Noun.cs" />
     <Compile Include="Translation.cs" />

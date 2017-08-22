@@ -47,6 +47,7 @@ namespace Lingua.Grammar
                 case Separator _: return ",";
                 case Article _: return "T";
                 case Noun _: return "N";
+                case Quantifier _:
                 case Number _: return "Q";
                 case Abbreviation _:
                 case Unclassified _: return "U";
@@ -81,6 +82,7 @@ namespace Lingua.Grammar
                 case Separator _: return 2;
                 case Article _: return 3;
                 case Noun _: return 4;
+                case Quantifier _:
                 case Number _: return 5;
                 case Abbreviation _:
                 case Unclassified _: return 255;

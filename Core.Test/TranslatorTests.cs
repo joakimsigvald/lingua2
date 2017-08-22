@@ -76,6 +76,13 @@ namespace Lingua.Core.Test
         public void PossessiveNoun(string from, string to)
             => Translates(from, to);
 
+        [TestCase("one ball", "en boll")]
+        [TestCase("two balls", "två bollar")]
+        [TestCase("many balls", "många bollar")]
+        [TestCase("several balls", "flera bollar")]
+        public void Quantifiers(string from, string to)
+            => Translates(from, to);
+
         private static void Translates(string from, string to)
             => Assert.That(Translator.Translate(from), Is.EqualTo(to));
     }
