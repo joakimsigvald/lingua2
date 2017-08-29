@@ -33,12 +33,20 @@ namespace Lingua.Vocabulary
 
         private static IEnumerable<Translation> CreateTranslations(KeyValuePair<string, string> mapping)
         {
-            var keys = VariationExpander.Expand(mapping.Key).ToArray();
-            var values = VariationExpander.Expand(mapping.Value).ToArray();
+            var from = VariationExpander.Expand(mapping.Key);
+            var keys = from.Item1.ToArray();
+            var to = VariationExpander.Expand(mapping.Value);
+            var values = to.Item1.ToArray();
             var translations = keys
                 .Select((key, i) => CreateTranslation(key, values[i], i))
-                .ToArray();
-            translations[0].Variations = translations;
+                .ToList();
+            translations[0].Variations = translations.ToArray();
+            if (to.Item2 != null)
+            {
+                var incompleteCompound = CreateTranslation(keys.First(), to.Item2, 0);
+                incompleteCompound.IsIncompleteCompound = true;
+                translations.Add(incompleteCompound);
+            }
             return translations;
         }
 

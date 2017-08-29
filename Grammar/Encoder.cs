@@ -9,7 +9,7 @@ namespace Lingua.Grammar
 
     public static class Encoder
     {
-        public static IEnumerable<ushort> Code(IEnumerable<Token> tokens)
+        public static IEnumerable<int> Code(IEnumerable<Token> tokens)
             => tokens.Where(t => !(t is Divider)).Select(Code);
 
         public static string Serialize(IEnumerable<Token> tokens)
@@ -70,8 +70,8 @@ namespace Lingua.Grammar
                 yield return 'p';
         }
 
-        private static ushort Code(Token token)
-            => (ushort)((ClassCode(token) >> 8) + ModifierCode(token as Element));
+        private static int Code(Token token)
+            => (ClassCode(token) << 8) + ModifierCode(token as Element);
 
         private static byte ClassCode(Token token)
         {

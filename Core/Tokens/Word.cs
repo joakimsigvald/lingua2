@@ -1,7 +1,4 @@
-﻿using System.Reflection;
-using Lingua.Core.WordClasses;
-
-namespace Lingua.Core.Tokens
+﻿namespace Lingua.Core.Tokens
 {
     public abstract class Word : Element
     {
@@ -24,10 +21,10 @@ namespace Lingua.Core.Tokens
         public override Token Capitalize()
             => Clone(Value.Capitalize());
 
-        private Word Clone(string newValue)
+        public Word Clone(string newValue = null)
         {
             var clone = (Word)MemberwiseClone();
-            clone.Value = newValue;
+            clone.Value = newValue ?? clone.Value;
             return clone;
         }
     }

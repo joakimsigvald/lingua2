@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using Lingua.Core.Tokens;
 using Lingua.Core.WordClasses;
@@ -20,6 +19,10 @@ namespace Lingua.Core
                     .Cast<Word>()
                     .ToArray();
 
+        public Translation()
+        {
+        }
+
         private Translation(Token from, string to, Word[] continuation)
         {
             From = from;
@@ -27,9 +30,9 @@ namespace Lingua.Core
             Continuation = continuation;
         }
 
-        public Token From { get; }
-        public string To { get; }
-        private Word[] Continuation { get; }
+        public Token From { get; set; }
+        public string To { get; set; }
+        public Word[] Continuation { get; set; }
         public Translation[] Variations { get; set; } = new Translation[0];
         public int TokenCount => WordCount * 2 - 1;
         public int WordCount => Continuation.Length + 1;
@@ -46,6 +49,7 @@ namespace Lingua.Core
         private bool IsCapitalized { get; set; }
         private bool IsInvisible => string.IsNullOrEmpty(Output);
         public string Output => To ?? From.Value;
+        public bool IsIncompleteCompound { get; set; }
 
         public override string ToString() => Output + (Continuation.Any() ? "..." : "");
 

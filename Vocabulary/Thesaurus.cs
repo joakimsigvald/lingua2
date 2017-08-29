@@ -38,9 +38,9 @@ namespace Lingua.Vocabulary
             {"foot|'s:|'s:___eet|'s|__|'s", "fot|s:en|s:__ötter|s|_na|s"},
             {"bouncing ball|'s:|'s:s|':s|'", "studsboll|s:en|s:ar|s|_na|s"},
             {"colour|'s:|'s:s|':s|'", "färg|s:en|s:er|s|_na|s"},
-            {"search", "sök-"},
+            {"search", "sök/"},
             {"result|'s:|'s:s|':s|'", "resultat|s:et|s:|s:en|s"},
-            {"street", "gata-_u"},
+            {"street", "gata/_u"},
             {"address|':|':es|'|_|'", "adress|:en|s:er|s|_na|s"},
         };
 

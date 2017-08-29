@@ -62,6 +62,15 @@ namespace Lingua.Vocabulary.Test
             Assert.That(candidates, Is.EquivalentTo(expected));
         }
 
+        [TestCase("search", "sök")]
+        [TestCase("street", "gatu")]
+        public void IncompleteCompund(string from, string to)
+        {
+            var translations = Thesaurus.Translate(new Unclassified {Value = from});
+            var incompleteCompound = translations.Single(translation => translation.IsIncompleteCompound);
+            Assert.That(incompleteCompound.To, Is.EqualTo(to));
+        }
+
         private static void Translates(string from, string to)
         {
             var word = new Unclassified {Value = from.Split(' ')[0] };

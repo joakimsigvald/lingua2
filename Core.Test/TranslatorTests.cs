@@ -83,9 +83,9 @@ namespace Lingua.Core.Test
         public void Quantifiers(string from, string to)
             => Translates(from, to);
 
-        [TestCase("search result", "Sökresultat")]
-        [TestCase("search results", "Sökresultat")]
-        [TestCase("the search result", "Sökresultatet")]
+        [TestCase("search result", "sökresultat")]
+        [TestCase("search results", "sökresultat")]
+        [TestCase("the search result", "sökresultatet")]
         [TestCase("The search results", "Sökresultaten")]
         [TestCase("street address", "gatuadress")]
         public void DoubleNouns(string from, string to)

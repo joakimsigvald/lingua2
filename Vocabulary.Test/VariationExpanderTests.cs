@@ -11,10 +11,19 @@ namespace Lingua.Vocabulary.Test
         [TestCase("boll:en:ar|na", "boll", "bollen", "bollar", "bollarna")]
         [TestCase("abc|d|e", "abc", "abcd", "abcde")]
         [TestCase("abc|_d:e|_f", "abc", "abd", "abce", "abcf")]
-        public void Expand(string pattern, params string[] expected)
+        public void ExpandVariants(string pattern, params string[] expected)
         {
             var actual = VariationExpander.Expand(pattern);
-            Assert.That(actual, Is.EquivalentTo(expected));
+            Assert.That(actual.Item1, Is.EquivalentTo(expected));
+        }
+
+        [TestCase("sök/", "sök")]
+        [TestCase("gata/_u", "gatu")]
+        [TestCase("abc", null)]
+        public void ExpandConnector(string pattern, string expected)
+        {
+            var actual = VariationExpander.Expand(pattern);
+            Assert.That(actual.Item2, Is.EqualTo(expected));
         }
     }
 }
