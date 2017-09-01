@@ -21,6 +21,7 @@ namespace Lingua.Grammar.Test
         [TestCase("Ndnp", (4 << 8) + 1 + 2 + 4)]
         [TestCase("TN", new[] { 3 << 8, 4 << 8 })]
         [TestCase("NN", new[] { 4 << 8, 4 << 8 })]
+        [TestCase("NdN", new[] { (4 << 8) + 1, 4 << 8 })]
         [TestCase("Q", 5 << 8)]
         public void SerializeToken(string serial, params int[] expected)
         {

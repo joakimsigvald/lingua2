@@ -19,7 +19,8 @@ namespace Lingua.Grammar
                 previous.Insert(0, child.Value);
                 remaining = child.Children.ToList();
             }
-            return previous.Reverse();
+            var sequence = previous.Reverse();
+            return sequence;
         }
 
         private static TreeNode<Translation> ReduceNext(IList<Translation> previous,

@@ -33,6 +33,8 @@ namespace Lingua.Grammar
             { "NNd", -1},
             { "NNdn", -1},
             { "NNn", -1},
+            { "NdN", -1},
+            { "NdNd", -1},
         };
 
         private static readonly IList<Scorer> Scorers = ScoredPatterns.Select(sp => new Scorer

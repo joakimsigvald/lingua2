@@ -48,6 +48,7 @@ namespace Lingua.Core.Test
 
         [TestCase("balls", "bollar")]
         [TestCase("feet", "fötter")]
+        [TestCase("streets", "gator")]
         [TestCase("bouncing balls", "studsbollar")]
         public void Plural(string from, string to)
             => Translates(from, to);
@@ -61,6 +62,7 @@ namespace Lingua.Core.Test
         [TestCase("the ball", "bollen")]
         [TestCase("Play with the ball", "Leka med bollen")]
         [TestCase("the balls", "bollarna")]
+        [TestCase("the streets", "gatorna")]
         [TestCase("Play with the balls", "Leka med bollarna")]
         public void DefiniteNoun(string from, string to)
             => Translates(from, to);
@@ -80,6 +82,7 @@ namespace Lingua.Core.Test
         [TestCase("two balls", "två bollar")]
         [TestCase("many balls", "många bollar")]
         [TestCase("several balls", "flera bollar")]
+        [TestCase("all streets", "alla gator")]
         public void Quantifiers(string from, string to)
             => Translates(from, to);
 

@@ -40,7 +40,7 @@ namespace Lingua.Vocabulary
             {"colour|'s:|'s:s|':s|'", "färg|s:en|s:er|s|_na|s"},
             {"search", "sök/"},
             {"result|'s:|'s:s|':s|'", "resultat|s:et|s:|s:en|s"},
-            {"street", "gata/_u"},
+            {"street|'s:|'s:s|':s|'", "gata|s:n|s:_or|s|_na|s/_u"},
             {"address|':|':es|'|_|'", "adress|:en|s:er|s|_na|s"},
         };
 
@@ -60,7 +60,8 @@ namespace Lingua.Vocabulary
             {"one", "en"},
             {"two", "två"},
             {"several", "flera"},
-            {"many", "många"}
+            {"many", "många"},
+            {"all", "alla"},
         };
 
         private static readonly ILexicon Lexicon = new Lexicon(

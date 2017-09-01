@@ -30,6 +30,7 @@ namespace Lingua.Grammar
                 {
                     yield return CreateToken(primary, modifiers);
                     primary = c;
+                    modifiers = "";
                 }
             }
             yield return CreateToken(primary, modifiers);
