@@ -24,6 +24,7 @@ namespace Lingua.Grammar
         private static readonly IDictionary<string, int> ScoredPatterns = new Dictionary<string, int>
         {
             { "TdnqAdNdn", 2},
+            { "TdnqQAdnNdn", 2},
             { "TdNd", 1},
             { "TdNdn", 1},
             { "TdNdp", 1},

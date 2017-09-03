@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace Lingua.Grammar
@@ -7,15 +8,14 @@ namespace Lingua.Grammar
 
     public class Engine : IGrammar
     {
-        private const int LookBack = 4;
-        private const int LookForward = 2;
+        private const int Horizon = 6;
 
         public IEnumerable<Translation> Reduce(IList<TreeNode<Translation>> remaining)
         {
             IList<Translation> previous = new List<Translation>();
             while (remaining.Any())
             {
-                var child = ReduceNext(previous.Take(LookBack).Reverse().ToList(), remaining);
+                var child = ReduceNext(previous.Take(Horizon).Reverse().ToList(), remaining);
                 previous.Insert(0, child.Value);
                 remaining = child.Children.ToList();
             }
@@ -26,7 +26,7 @@ namespace Lingua.Grammar
         private static TreeNode<Translation> ReduceNext(ICollection<Translation> previous,
             IEnumerable<TreeNode<Translation>> next)
         {
-            var scoredTranslations = next.SelectMany(node => Expand(node, GetHorizon(previous)))
+            var scoredTranslations = next.SelectMany(node => Expand(node, LookForward(previous)))
                 .Select(seq => new
                 {
                     node = seq.First(),
@@ -39,8 +39,8 @@ namespace Lingua.Grammar
                 .First();
         }
 
-        private static int GetHorizon(ICollection<Translation> previous)
-            => LookForward + LookBack - previous.Count;
+        private static int LookForward(ICollection<Translation> previous)
+            => Math.Max(2, Horizon - previous.Count);
 
         private static int ComputeScore(IEnumerable<Translation> translations)
             => Scorer.Compute(translations.Select(t => t.From));
