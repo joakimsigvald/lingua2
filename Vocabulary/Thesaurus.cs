@@ -46,7 +46,7 @@ namespace Lingua.Vocabulary
 
         private static readonly IWordMap Adjectives = new WordMap<Adjective>
         {
-            {"red:", "röd:a"},
+            {"red:::", "röd:a||"},
         };
 
         private static readonly IWordMap DefiniteArticles = new WordMap<Article>(Modifier.Definite)
