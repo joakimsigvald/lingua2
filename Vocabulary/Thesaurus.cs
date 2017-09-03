@@ -11,7 +11,6 @@ namespace Lingua.Vocabulary
         {
             {"and", "och"},
             {"my", "min"},
-            {"I", "jag"},
             {"good-looking", "snygg"},
             {"English-", "engelsk"},
             {"non-", "icke-"},
@@ -44,6 +43,11 @@ namespace Lingua.Vocabulary
             {"address|':|':es|'|_|'", "adress|:en|s:er|s|_na|s"},
         };
 
+        private static readonly IWordMap Pronouns = new WordMap<Pronoun>
+        {
+            {"I", "jag"},
+        };
+
         private static readonly IWordMap Adjectives = new WordMap<Adjective>
         {
             {"red:::", "röd:a||"},
@@ -51,7 +55,7 @@ namespace Lingua.Vocabulary
 
         private static readonly IWordMap Verbs = new WordMap<Verb>
         {
-            {"paint", "måla"},
+            {"paint:", "måla:r"},
         };
 
         private static readonly IWordMap DefiniteArticles = new WordMap<Article>(Modifier.Definite)
@@ -78,6 +82,7 @@ namespace Lingua.Vocabulary
             Words, 
             Abbreviations, 
             Nouns,
+            Pronouns,
             Adjectives,
             Verbs,
             DefiniteArticles, 

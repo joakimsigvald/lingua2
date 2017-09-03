@@ -12,7 +12,7 @@ namespace Lingua.Grammar.Test
         [TestCase("T", 3 << 8)]
         [TestCase("Td", (3 << 8) + 1)]
         [TestCase("Tq", (3 << 8) + 8)]
-        [TestCase("Tdq", (3 << 8) + 9)]
+        [TestCase("Tdq", (3 << 8) + 1 + 8)]
         [TestCase("N", 4 << 8)]
         [TestCase("Nd", (4 << 8) + 1)]
         [TestCase("Nn", (4 << 8) + 2)]
@@ -24,9 +24,11 @@ namespace Lingua.Grammar.Test
         [TestCase("TN", new[] { 3 << 8, 4 << 8 })]
         [TestCase("NN", new[] { 4 << 8, 4 << 8 })]
         [TestCase("NdN", new[] { (4 << 8) + 1, 4 << 8 })]
-        [TestCase("A", 5 << 8)]
-        [TestCase("V", 6 << 8)]
-        [TestCase("Q", 7 << 8)]
+        [TestCase("R", 5 << 8)]
+        [TestCase("Ro", (5 << 8) + 16)]
+        [TestCase("A", 6 << 8)]
+        [TestCase("V", 7 << 8)]
+        [TestCase("Q", 8 << 8)]
         public void SerializeToken(string serial, params int[] expected)
         {
             var tokens = Encoder.Deserialize(serial);

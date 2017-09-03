@@ -48,6 +48,7 @@ namespace Lingua.Grammar
                 case Separator _: return ",";
                 case Article _: return "T";
                 case Noun _: return "N";
+                case Pronoun _: return "R";
                 case Adjective _: return "A";
                 case Verb _: return "V";
                 case Quantifier _:
@@ -73,6 +74,8 @@ namespace Lingua.Grammar
                 yield return 'p';
             if (modifiers.HasFlag(Modifier.Qualified))
                 yield return 'q';
+            if (modifiers.HasFlag(Modifier.Present))
+                yield return 'o';
         }
 
         private static int Code(Token token)
@@ -87,10 +90,11 @@ namespace Lingua.Grammar
                 case Separator _: return 2;
                 case Article _: return 3;
                 case Noun _: return 4;
-                case Adjective _: return 5;
-                case Verb _: return 6;
+                case Pronoun _: return 5;
+                case Adjective _: return 6;
+                case Verb _: return 7;
                 case Quantifier _:
-                case Number _: return 7;
+                case Number _: return 8;
                 case Abbreviation _:
                 case Unclassified _: return 255;
                 default: throw new NotImplementedException();
@@ -109,6 +113,7 @@ namespace Lingua.Grammar
                 case ',': return new Separator(primary);
                 case 'T': return new Article { Modifiers = modifiers };
                 case 'N': return new Noun { Modifiers = modifiers };
+                case 'R': return new Pronoun { Modifiers = modifiers };
                 case 'A': return new Adjective { Modifiers = modifiers };
                 case 'V': return new Verb { Modifiers = modifiers };
                 case 'Q': return new Number { Modifiers = modifiers };
@@ -127,6 +132,7 @@ namespace Lingua.Grammar
                 case 'n': return Modifier.Plural;
                 case 'p': return Modifier.Possessive;
                 case 'q': return Modifier.Qualified;
+                case 'o': return Modifier.Present;
                 default: throw new NotImplementedException();
             }
         }

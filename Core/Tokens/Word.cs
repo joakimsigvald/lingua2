@@ -1,4 +1,7 @@
-﻿namespace Lingua.Core.Tokens
+﻿using System.Collections.Generic;
+using System.Linq;
+
+namespace Lingua.Core.Tokens
 {
     public abstract class Word : Element
     {
@@ -14,7 +17,14 @@
             }
         }
 
-        protected virtual Modifier GetAdditionalModifiers(int variationIndex) => Modifiers;
+        private Modifier GetAdditionalModifiers(int variationIndex)
+            => GetIndividualModifiers(variationIndex)
+                .Aggregate(Modifier.None, (first, second) => first | second);
+
+        protected virtual IEnumerable<Modifier> GetIndividualModifiers(int variationIndex)
+        {
+            yield break;
+        }
 
         public bool PossibleAbbreviation { get; set; }
 

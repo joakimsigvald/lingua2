@@ -105,6 +105,7 @@ namespace Lingua.Core.Test
             => Translates(from, to);
 
         [TestCase("paint the ball", "måla bollen")]
+        [TestCase("I paint the ball", "jag målar bollen")]
         public void Verbs(string from, string to)
             => Translates(from, to);
 

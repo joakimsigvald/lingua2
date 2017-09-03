@@ -52,6 +52,7 @@
     <Compile Include="Tokens\Abbreviation.cs" />
     <Compile Include="Tokens\Element.cs" />
     <Compile Include="TreeNode.cs" />
+    <Compile Include="WordClasses\Pronoun.cs" />
     <Compile Include="WordClasses\Verb.cs" />
     <Compile Include="WordClasses\Article.cs" />
     <Compile Include="WordClasses\Adjective.cs" />
