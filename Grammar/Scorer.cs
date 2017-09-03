@@ -29,6 +29,7 @@ namespace Lingua.Grammar
             { "TdNdnp", 1},
             { "QnNn", 1},
             { "TdqAdNd", 1},
+            { "TdnqAdNdn", 1},
             { "NN", -1},
             { "NNd", -1},
             { "NNdn", -1},

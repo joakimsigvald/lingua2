@@ -51,7 +51,7 @@ namespace Lingua.Vocabulary
 
         private static readonly IWordMap DefiniteArticles = new WordMap<Article>(Modifier.Definite)
         {
-            {"the:", ":den"}
+            {"the:::", ":den::de"}
         };
 
         private static readonly IWordMap IndefiniteArticles = new WordMap<Article>

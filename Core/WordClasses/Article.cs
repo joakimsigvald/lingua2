@@ -21,6 +21,8 @@ namespace Lingua.Core.WordClasses
         {
             if ((variationIndex & 1) > 0)
                 yield return Modifier.Qualified;
+            if ((variationIndex & 2) > 0)
+                yield return Modifier.Plural;
         }
     }
 }
