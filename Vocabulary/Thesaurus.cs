@@ -49,6 +49,11 @@ namespace Lingua.Vocabulary
             {"red:::", "röd:a||"},
         };
 
+        private static readonly IWordMap Verbs = new WordMap<Verb>
+        {
+            {"paint", "måla"},
+        };
+
         private static readonly IWordMap DefiniteArticles = new WordMap<Article>(Modifier.Definite)
         {
             {"the:::", ":den::de"}
@@ -72,11 +77,12 @@ namespace Lingua.Vocabulary
         private static readonly ILexicon Lexicon = new Lexicon(
             Words, 
             Abbreviations, 
-            Nouns, 
+            Nouns,
+            Adjectives,
+            Verbs,
             DefiniteArticles, 
             IndefiniteArticles,
-            Quantifiers,
-            Adjectives
+            Quantifiers
             );
 
         public Translation[] Translate(Token token)

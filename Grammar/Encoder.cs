@@ -49,6 +49,7 @@ namespace Lingua.Grammar
                 case Article _: return "T";
                 case Noun _: return "N";
                 case Adjective _: return "A";
+                case Verb _: return "V";
                 case Quantifier _:
                 case Number _: return "Q";
                 case Abbreviation _:
@@ -87,8 +88,9 @@ namespace Lingua.Grammar
                 case Article _: return 3;
                 case Noun _: return 4;
                 case Adjective _: return 5;
+                case Verb _: return 6;
                 case Quantifier _:
-                case Number _: return 6;
+                case Number _: return 7;
                 case Abbreviation _:
                 case Unclassified _: return 255;
                 default: throw new NotImplementedException();
@@ -108,6 +110,7 @@ namespace Lingua.Grammar
                 case 'T': return new Article { Modifiers = modifiers };
                 case 'N': return new Noun { Modifiers = modifiers };
                 case 'A': return new Adjective { Modifiers = modifiers };
+                case 'V': return new Verb { Modifiers = modifiers };
                 case 'Q': return new Number { Modifiers = modifiers };
                 default: throw new NotImplementedException();
             }
