@@ -94,6 +94,10 @@ namespace Lingua.Core.Test
         public void DoubleNouns(string from, string to)
             => Translates(from, to);
 
+        [TestCase("a red ball", "en röd boll")]
+        public void Adjectives(string from, string to)
+            => Translates(from, to);
+
         private static void Translates(string from, string to)
             => Assert.That(Translator.Translate(from), Is.EqualTo(to));
     }

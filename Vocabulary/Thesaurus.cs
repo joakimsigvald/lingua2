@@ -44,6 +44,11 @@ namespace Lingua.Vocabulary
             {"address|':|':es|'|_|'", "adress|:en|s:er|s|_na|s"},
         };
 
+        private static readonly IWordMap Adjectives = new WordMap<Adjective>
+        {
+            {"red", "röd"},
+        };
+
         private static readonly IWordMap DefiniteArticles = new WordMap<DefiniteArticle>
         {
             {"the", ""}
@@ -70,7 +75,8 @@ namespace Lingua.Vocabulary
             Nouns, 
             DefiniteArticles, 
             IndefiniteArticles,
-            Quantifiers
+            Quantifiers,
+            Adjectives
             );
 
         public Translation[] Translate(Token token)
