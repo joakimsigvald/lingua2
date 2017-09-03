@@ -5,13 +5,6 @@ namespace Lingua.Core.WordClasses
 {
     public class Article : Word
     {
-        public Article()
-        {
-        }
-
-        public Article(Modifier modifiers)
-            => Modifiers = modifiers;
-
         protected override IEnumerable<Modifier> GetIndividualModifiers(int variationIndex)
         {
             if ((variationIndex & 1) > 0)

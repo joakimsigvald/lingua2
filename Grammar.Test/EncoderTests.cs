@@ -25,9 +25,9 @@ namespace Lingua.Grammar.Test
         [TestCase("NN", new[] { 4 << 8, 4 << 8 })]
         [TestCase("NdN", new[] { (4 << 8) + 1, 4 << 8 })]
         [TestCase("R", 5 << 8)]
-        [TestCase("Ro", (5 << 8) + 16)]
+        [TestCase("R3", (5 << 8) + 16)]
         [TestCase("A", 6 << 8)]
-        [TestCase("V", 7 << 8)]
+        [TestCase("Vo", (7 << 8) + 32)]
         [TestCase("Q", 8 << 8)]
         public void SerializeToken(string serial, params int[] expected)
         {
@@ -41,7 +41,7 @@ namespace Lingua.Grammar.Test
         {
             var tokens = new Token[]
             {
-                new Article(Modifier.Definite), // The
+                new Article {Modifiers = Modifier.Definite}, // The
                 new Divider(),
                 new Noun {Modifiers = Modifier.Definite | Modifier.Possessive}, // child's
                 new Divider(),

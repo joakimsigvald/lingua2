@@ -24,17 +24,20 @@ namespace Lingua.Grammar
             var primary = serial[0];
             foreach (var c in serial.Skip(1))
             {
-                if (char.IsLower(c))
-                    modifiers += c;
-                else
+                if (IsWordClass(c))
                 {
                     yield return CreateToken(primary, modifiers);
                     primary = c;
                     modifiers = "";
                 }
+                else
+                    modifiers += c;
             }
             yield return CreateToken(primary, modifiers);
         }
+
+        private static bool IsWordClass(char c)
+            => char.IsUpper(c);
 
         private static string Serialize(Token token)
             => SerializeClass(token) + SerializeModifiers(token as Element);
@@ -74,6 +77,8 @@ namespace Lingua.Grammar
                 yield return 'p';
             if (modifiers.HasFlag(Modifier.Qualified))
                 yield return 'q';
+            if (modifiers.HasFlag(Modifier.ThirdPerson))
+                yield return '3';
             if (modifiers.HasFlag(Modifier.Present))
                 yield return 'o';
         }
@@ -132,6 +137,7 @@ namespace Lingua.Grammar
                 case 'n': return Modifier.Plural;
                 case 'p': return Modifier.Possessive;
                 case 'q': return Modifier.Qualified;
+                case '3': return Modifier.ThirdPerson;
                 case 'o': return Modifier.Present;
                 default: throw new NotImplementedException();
             }
