@@ -70,6 +70,8 @@ namespace Lingua.Grammar
                 yield return 'n';
             if (modifiers.HasFlag(Modifier.Possessive))
                 yield return 'p';
+            if (modifiers.HasFlag(Modifier.Qualified))
+                yield return 'q';
         }
 
         private static int Code(Token token)
@@ -103,9 +105,7 @@ namespace Lingua.Grammar
             {
                 case '.': return new Terminator(primary);
                 case ',': return new Separator(primary);
-                case 'T': return modifiers == Modifier.Definite 
-                        ? (Article)new DefiniteArticle() 
-                        : new IndefiniteArticle();
+                case 'T': return new Article { Modifiers = modifiers };
                 case 'N': return new Noun { Modifiers = modifiers };
                 case 'A': return new Adjective { Modifiers = modifiers };
                 case 'Q': return new Number { Modifiers = modifiers };
@@ -123,6 +123,7 @@ namespace Lingua.Grammar
                 case 'd': return Modifier.Definite;
                 case 'n': return Modifier.Plural;
                 case 'p': return Modifier.Possessive;
+                case 'q': return Modifier.Qualified;
                 default: throw new NotImplementedException();
             }
         }

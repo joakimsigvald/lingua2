@@ -95,6 +95,7 @@ namespace Lingua.Core.Test
             => Translates(from, to);
 
         [TestCase("a red ball", "en röd boll")]
+        [TestCase("The red ball", "Den röda bollen")]
         public void Adjectives(string from, string to)
             => Translates(from, to);
 

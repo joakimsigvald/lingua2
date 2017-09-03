@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using Lingua.Core;
 using Lingua.Core.Tokens;
 
 namespace Lingua.Grammar
@@ -29,6 +28,7 @@ namespace Lingua.Grammar
             { "TdNdp", 1},
             { "TdNdnp", 1},
             { "QnNn", 1},
+            { "TdqAdNd", 1},
             { "NN", -1},
             { "NNd", -1},
             { "NNdn", -1},

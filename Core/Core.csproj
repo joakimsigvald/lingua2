@@ -53,8 +53,6 @@
     <Compile Include="Tokens\Element.cs" />
     <Compile Include="TreeNode.cs" />
     <Compile Include="WordClasses\Article.cs" />
-    <Compile Include="WordClasses\IndefiniteArticle.cs" />
-    <Compile Include="WordClasses\DefiniteArticle.cs" />
     <Compile Include="WordClasses\Adjective.cs" />
     <Compile Include="WordClasses\Quantifier.cs" />
     <Compile Include="WordClasses\Unclassified.cs" />

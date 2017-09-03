@@ -16,8 +16,15 @@ namespace Lingua.Vocabulary
     public class WordMap<TWord> : Dictionary<string, string>, IWordMap
         where TWord : Word, new()
     {
+        private readonly Modifier _modifiers;
+
         public WordMap()
         {
+        }
+
+        public WordMap(Modifier modifiers)
+        {
+            _modifiers = modifiers;
         }
 
         public WordMap(IDictionary<string, string> mappings)
@@ -31,7 +38,7 @@ namespace Lingua.Vocabulary
 
         public IEnumerable<Translation> Translations => this.SelectMany(CreateTranslations);
 
-        private static IEnumerable<Translation> CreateTranslations(KeyValuePair<string, string> mapping)
+        private IEnumerable<Translation> CreateTranslations(KeyValuePair<string, string> mapping)
         {
             var from = VariationExpander.Expand(mapping.Key);
             var keys = from.Item1.ToArray();
@@ -42,17 +49,25 @@ namespace Lingua.Vocabulary
                 .ToList();
             translations[0].Variations = translations.ToArray();
             if (to.Item2 != null)
-            {
-                var incompleteCompound = CreateTranslation(keys.First(), to.Item2, 0);
-                incompleteCompound.IsIncompleteCompound = true;
-                translations.Add(incompleteCompound);
-            }
+                translations.Add(CreateIncompleteCompoundTranslation(keys.First(), to.Item2));
             return translations;
         }
 
-        private static Translation CreateTranslation(string from, string to, int variationIndex)
+        private Translation CreateIncompleteCompoundTranslation(string from, string to)
         {
-            var token = new TWord {Value = from, VariationIndex = variationIndex };
+            var incompleteCompound = CreateTranslation(from, to, 0);
+            incompleteCompound.IsIncompleteCompound = true;
+            return incompleteCompound;
+        }
+
+        private Translation CreateTranslation(string from, string to, int variationIndex)
+        {
+            var token = new TWord
+            {
+                Value = from,
+                Modifiers = _modifiers,
+                VariationIndex = variationIndex
+            };
             return Translation.Create(token, to);
         }
     }

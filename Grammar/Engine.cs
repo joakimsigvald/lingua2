@@ -7,7 +7,7 @@ namespace Lingua.Grammar
 
     public class Engine : IGrammar
     {
-        private const int LookBack = 2;
+        private const int LookBack = 4;
         private const int LookForward = 2;
 
         public IEnumerable<Translation> Reduce(IList<TreeNode<Translation>> remaining)
@@ -23,17 +23,24 @@ namespace Lingua.Grammar
             return sequence;
         }
 
-        private static TreeNode<Translation> ReduceNext(IList<Translation> previous,
+        private static TreeNode<Translation> ReduceNext(ICollection<Translation> previous,
             IEnumerable<TreeNode<Translation>> next)
-            => next.SelectMany(node => Expand(node, LookForward))
+        {
+            var scoredTranslations = next.SelectMany(node => Expand(node, GetHorizon(previous)))
                 .Select(seq => new
                 {
                     node = seq.First(),
                     score = ComputeScore(previous.Concat(seq.Select(node => node.Value)))
                 })
-                .OrderByDescending(scoredNode => scoredNode.score)
+                .OrderByDescending(scoredNode => scoredNode.score).
+                ToArray();
+            return scoredTranslations
                 .Select(scoredNode => scoredNode.node)
                 .First();
+        }
+
+        private static int GetHorizon(ICollection<Translation> previous)
+            => LookForward + LookBack - previous.Count;
 
         private static int ComputeScore(IEnumerable<Translation> translations)
             => Scorer.Compute(translations.Select(t => t.From));

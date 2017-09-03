@@ -11,6 +11,8 @@ namespace Lingua.Grammar.Test
         [TestCase(",", 2 << 8)]
         [TestCase("T", 3 << 8)]
         [TestCase("Td", (3 << 8) + 1)]
+        [TestCase("Tq", (3 << 8) + 8)]
+        [TestCase("Tdq", (3 << 8) + 9)]
         [TestCase("N", 4 << 8)]
         [TestCase("Nd", (4 << 8) + 1)]
         [TestCase("Nn", (4 << 8) + 2)]
@@ -36,7 +38,7 @@ namespace Lingua.Grammar.Test
         {
             var tokens = new Token[]
             {
-                new DefiniteArticle(), // The
+                new Article(Modifier.Definite), // The
                 new Divider(),
                 new Noun {Modifiers = Modifier.Definite | Modifier.Possessive}, // child's
                 new Divider(),

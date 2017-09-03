@@ -14,6 +14,7 @@ namespace Lingua.Core
         public TreeNode(TValue value, Func<IEnumerable<TreeNode<TValue>>> getChildren)
         {
             _getChildren = getChildren;
+            _children = _getChildren().ToList(); // for debug
             Value = value;
         }
 

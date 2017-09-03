@@ -10,11 +10,11 @@
             set
             {
                 _variationIndex = value;
-                Modifiers = GetModifiers(value);
+                Modifiers |= GetAdditionalModifiers(value);
             }
         }
 
-        protected virtual Modifier GetModifiers(int variationIndex) => Modifiers;
+        protected virtual Modifier GetAdditionalModifiers(int variationIndex) => Modifiers;
 
         public bool PossibleAbbreviation { get; set; }
 
