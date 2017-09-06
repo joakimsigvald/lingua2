@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using Lingua.Core;
 using Lingua.Core.Tokens;
 
 namespace Lingua.Grammar

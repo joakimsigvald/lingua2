@@ -6,17 +6,31 @@ namespace Lingua.Vocabulary
 {
     public static class VariationExpander
     {
-        public static Tuple<IEnumerable<string>, string> Expand(string pattern)
+
+
+        public static Specification Expand(string pattern)
         {
-            var parts = pattern.Split('/');
-            var wordPart = parts[0];
-            var connector = parts.Length == 1 ? null : parts[1];
-            parts = wordPart.Split(':');
-            var stem = parts[0].Split('|')[0];
-            return new Tuple<IEnumerable<string>, string>(Expand("", parts[0])
-                .Concat(parts.Skip(1).SelectMany(modifier => Expand(stem, modifier)))
-                , Modify(stem, connector));
+            var parts = pattern.Split('<');
+            var modifiers = parts.Skip(1).FirstOrDefault();
+            parts = pattern.Split('/');
+            var connector = parts.Skip(1).FirstOrDefault();
+            var variations = GetVariations(parts[0]).ToArray();
+            var incompleteCompound = GetIncompleteCompound(variations[0], connector);
+            return new Specification(variations
+                , incompleteCompound, modifiers);
         }
+
+        private static IEnumerable<string> GetVariations(string wordPattern)
+        {
+            var parts = wordPattern.Split(':');
+            var stem = parts[0].Split('|')[0];
+            return Expand("", parts[0])
+                .Concat(parts.Skip(1).SelectMany(modifier => Expand(stem, modifier)))
+                .ToArray();
+        }
+
+        private static string GetIncompleteCompound(string stem, string connector)
+            => Modify(stem, connector);
 
         private static IEnumerable<string> Expand(string stem, string modifier)
         {

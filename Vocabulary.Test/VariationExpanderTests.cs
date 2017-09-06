@@ -14,7 +14,7 @@ namespace Lingua.Vocabulary.Test
         public void ExpandVariants(string pattern, params string[] expected)
         {
             var actual = VariationExpander.Expand(pattern);
-            Assert.That(actual.Item1, Is.EquivalentTo(expected));
+            Assert.That(actual.Variations, Is.EquivalentTo(expected));
         }
 
         [TestCase("sök/", "sök")]
@@ -23,7 +23,14 @@ namespace Lingua.Vocabulary.Test
         public void ExpandConnector(string pattern, string expected)
         {
             var actual = VariationExpander.Expand(pattern);
-            Assert.That(actual.Item2, Is.EqualTo(expected));
+            Assert.That(actual.IncompleteCompound, Is.EqualTo(expected));
+        }
+
+        [TestCase("abc<def", "def")]
+        public void ExpandModifiers(string pattern, string expected)
+        {
+            var actual = VariationExpander.Expand(pattern);
+            Assert.That(actual.Modifiers, Is.EqualTo(expected));
         }
     }
 }

@@ -1,8 +1,9 @@
 ﻿using Lingua.Core.Tokens;
 using Lingua.Core.WordClasses;
+using Lingua.Grammar;
 using NUnit.Framework;
 
-namespace Lingua.Grammar.Test
+namespace Lingua.Core.Test
 {
     [TestFixture]
     public class EncoderTests
@@ -26,6 +27,7 @@ namespace Lingua.Grammar.Test
         [TestCase("NdN", new[] { (4 << 8) + 1, 4 << 8 })]
         [TestCase("R", 5 << 8)]
         [TestCase("R3", (5 << 8) + 16)]
+        [TestCase("R3n", (5 << 8) + 2 + 16)]
         [TestCase("A", 6 << 8)]
         [TestCase("Vo", (7 << 8) + 32)]
         [TestCase("Q", 8 << 8)]

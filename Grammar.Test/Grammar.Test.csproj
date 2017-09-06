@@ -52,7 +52,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="EncoderTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ScorerTests.cs" />
   </ItemGroup>

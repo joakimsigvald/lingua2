@@ -16,15 +16,8 @@ namespace Lingua.Vocabulary
     public class WordMap<TWord> : Dictionary<string, string>, IWordMap
         where TWord : Word, new()
     {
-        private readonly Modifier _modifiers;
-
         public WordMap()
         {
-        }
-
-        public WordMap(Modifier modifiers)
-        {
-            _modifiers = modifiers;
         }
 
         public WordMap(IDictionary<string, string> mappings)
@@ -41,31 +34,31 @@ namespace Lingua.Vocabulary
         private IEnumerable<Translation> CreateTranslations(KeyValuePair<string, string> mapping)
         {
             var from = VariationExpander.Expand(mapping.Key);
-            var keys = from.Item1.ToArray();
+            var keys = from.Variations;
             var to = VariationExpander.Expand(mapping.Value);
-            var values = to.Item1.ToArray();
+            var values = to.Variations;
             var translations = keys
-                .Select((key, i) => CreateTranslation(key, values[i], i))
+                .Select((key, i) => CreateTranslation(key, values[i], i, from.Modifiers))
                 .ToList();
             translations[0].Variations = translations.ToArray();
-            if (to.Item2 != null)
-                translations.Add(CreateIncompleteCompoundTranslation(keys.First(), to.Item2));
+            if (to.IncompleteCompound != null)
+                translations.Add(CreateIncompleteCompoundTranslation(keys.First(), to.IncompleteCompound, from.Modifiers));
             return translations;
         }
 
-        private Translation CreateIncompleteCompoundTranslation(string from, string to)
+        private Translation CreateIncompleteCompoundTranslation(string from, string to, string modifiers)
         {
-            var incompleteCompound = CreateTranslation(from, to, 0);
+            var incompleteCompound = CreateTranslation(from, to, 0, modifiers);
             incompleteCompound.IsIncompleteCompound = true;
             return incompleteCompound;
         }
 
-        private Translation CreateTranslation(string from, string to, int variationIndex)
+        private static Translation CreateTranslation(string from, string to, int variationIndex, string modifiers)
         {
             var token = new TWord
             {
                 Value = from,
-                Modifiers = _modifiers,
+                Modifiers = Encoder.ParseModifiers(modifiers),
                 VariationIndex = variationIndex
             };
             return Translation.Create(token, to);

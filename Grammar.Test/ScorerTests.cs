@@ -1,4 +1,5 @@
-﻿using NUnit.Framework;
+﻿using Lingua.Core;
+using NUnit.Framework;
 
 namespace Lingua.Grammar.Test
 {

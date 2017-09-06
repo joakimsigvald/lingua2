@@ -1,12 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Lingua.Core.Tokens;
+using Lingua.Core.WordClasses;
 
-namespace Lingua.Grammar
+namespace Lingua.Core
 {
-    using Core.Tokens;
-    using Core.WordClasses;
-
     public static class Encoder
     {
         public static IEnumerable<int> Code(IEnumerable<Token> tokens)
@@ -35,6 +34,9 @@ namespace Lingua.Grammar
             }
             yield return CreateToken(primary, modifiers);
         }
+
+        public static Modifier ParseModifiers(string modifiers)
+            => (modifiers ?? "").Select(ToModifier).Aggregate(Modifier.None, (o, n) => o | n);
 
         private static bool IsWordClass(char c)
             => char.IsUpper(c);
@@ -125,9 +127,6 @@ namespace Lingua.Grammar
                 default: throw new NotImplementedException();
             }
         }
-
-        private static Modifier ParseModifiers(string modifiers)
-            => modifiers.Select(ToModifier).Aggregate(Modifier.None, (o, n) => o | n);
 
         private static Modifier ToModifier(char c)
         {

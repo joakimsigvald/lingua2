@@ -43,14 +43,11 @@ namespace Lingua.Vocabulary
             {"address|':|':es|'|_|'", "adress|:en|s:er|s|_na|s"},
         };
 
-        private static readonly IWordMap PronounsFirstSecond = new WordMap<Pronoun>
+        private static readonly IWordMap Pronouns = new WordMap<Pronoun>
         {
             {"I", "jag"},
-        };
-
-        private static readonly IWordMap PronounsThird = new WordMap<Pronoun>(Modifier.ThirdPerson)
-        {
-            {"he", "han"},
+            {"he<3", "han"},
+            {"they<3n", "de"},
         };
 
         private static readonly IWordMap Adjectives = new WordMap<Adjective>
@@ -63,13 +60,9 @@ namespace Lingua.Vocabulary
             {"paint::s", "måla:r|"},
         };
 
-        private static readonly IWordMap DefiniteArticles = new WordMap<Article>(Modifier.Definite)
+        private static readonly IWordMap Articles = new WordMap<Article>
         {
-            {"the:::", ":den::de"}
-        };
-
-        private static readonly IWordMap IndefiniteArticles = new WordMap<Article>
-        {
+            {"the:::<d", ":den::de"},
             {"a", "en"},
             {"an", "en"},
         };
@@ -87,12 +80,10 @@ namespace Lingua.Vocabulary
             Words, 
             Abbreviations, 
             Nouns,
-            PronounsFirstSecond,
-            PronounsThird,
+            Pronouns,
             Adjectives,
             Verbs,
-            DefiniteArticles, 
-            IndefiniteArticles,
+            Articles, 
             Quantifiers
             );
 
