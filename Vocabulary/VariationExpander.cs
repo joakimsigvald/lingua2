@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 
 namespace Lingua.Vocabulary
@@ -11,8 +10,9 @@ namespace Lingua.Vocabulary
         public static Specification Expand(string pattern)
         {
             var parts = pattern.Split('<');
+            var wordPattern = parts[0];
             var modifiers = parts.Skip(1).FirstOrDefault();
-            parts = pattern.Split('/');
+            parts = wordPattern.Split('/');
             var connector = parts.Skip(1).FirstOrDefault();
             var variations = GetVariations(parts[0]).ToArray();
             var incompleteCompound = GetIncompleteCompound(variations[0], connector);
