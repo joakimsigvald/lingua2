@@ -11,18 +11,8 @@ namespace Lingua.Vocabulary
         {
             {"and", "och"},
             {"my", "min"},
-            {"good-looking", "snygg"},
-            {"English-", "engelsk"},
-            {"non-", "icke-"},
-            {"French-", "fransk"},
-            {"speaking", "talande"},
             {"to", "att"},
-            {"play", "leka"},
             {"with", "med"},
-            {"easy", "lätt"},
-            {"easy as pie", "lätt som en pannkaka"},
-            {"easy peasy", "lätt som en pannkaka"},
-            {"achievement-oriented", "prestationsorienterad"}
         };
 
         private static readonly IWordMap Abbreviations = new WordMap<Abbreviation>
@@ -53,11 +43,21 @@ namespace Lingua.Vocabulary
         private static readonly IWordMap Adjectives = new WordMap<Adjective>
         {
             {"red:::", "röd:a||"},
+            {"good-looking", "snygg"},
+            {"English-", "engelsk"},
+            {"non-", "icke-"},
+            {"French-", "fransk"},
+            {"speaking", "talande"},
+            {"easy", "lätt"},
+            {"easy as pie", "lätt som en pannkaka"},
+            {"easy peasy", "lätt som en pannkaka"},
+            {"achievement-oriented", "prestationsorienterad"}
         };
 
         private static readonly IWordMap Verbs = new WordMap<Verb>
         {
             {"paint::s", "måla:r|"},
+            {"play", "leka"},
         };
 
         private static readonly IWordMap Articles = new WordMap<Article>
