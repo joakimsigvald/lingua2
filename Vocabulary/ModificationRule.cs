@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using Lingua.Core;
 using Lingua.Core.Tokens;
 
@@ -13,23 +14,55 @@ namespace Lingua.Vocabulary
         where TWord : Word
     {
         private readonly Modifier _modifier;
-        private string[] _translateFrom;
-        private string[] _translateTo;
+        private readonly Transformation[] _fromTransforms;
+        private readonly Transformation[] _toTransforms;
 
-        public ModificationRule(Modifier modifier, string[] translateFrom, string[] translateTo)
+        public ModificationRule(Modifier modifier, string[] fromTransforms, string[] toTransforms)
         {
+            if (modifier == Modifier.None)
+                throw new ArgumentException("Rule must have modifier, was None");
             _modifier = modifier;
-            _translateFrom = translateFrom;
-            _translateTo = translateTo;
+            _fromTransforms = fromTransforms.Select(Parse).ToArray();
+            if (_fromTransforms.Any(transform => transform.To == "*"))
+                throw new ArgumentException("Identity transform on from not allowed");
+            _toTransforms = toTransforms.Select(Parse).ToArray();
         }
 
         public Translation Apply(Translation translation)
         {
-            var modifiedFrom = (translation.From as TWord)?.Clone(translation.From.Value + "'s");
-            if (modifiedFrom == null) return null;
+            var fromWord = translation.From as TWord;
+            if (fromWord == null)
+                return null;
+            var fromModification = _fromTransforms.FirstOrDefault(transform => Matches(transform.From, fromWord.Value));
+            if (fromModification == null)
+                return null;
+            var modifiedFrom = fromWord.Clone(Modify(fromWord.Value, fromModification.To));
             modifiedFrom.Modifiers |= _modifier;
-            var modifiedTo = translation.To + "s";
+            var toModification = _toTransforms.FirstOrDefault(transform => Matches(transform.From, translation.To));
+            var modifiedTo = Modify(translation.To, toModification?.To ?? "*"); 
             return Translation.Create(modifiedFrom, modifiedTo);
         }
+
+        private static Transformation Parse(string transform)
+        {
+            var parts = transform.Split('>');
+            return new Transformation
+            {
+                From = parts[0],
+                To = parts[1]
+            };
+        }
+
+        private static string Modify(string word, string pattern)
+            => word + pattern.TrimStart('*');
+
+        private static bool Matches(string pattern, string fromWordValue)
+            => true;
+    }
+
+    public class Transformation
+    {
+        public string From { get; set; }
+        public string To { get; set; }
     }
 }

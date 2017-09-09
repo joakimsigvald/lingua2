@@ -53,6 +53,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="LexiconTests.cs" />
+    <Compile Include="ModificationRuleTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ThesaurusTests.cs" />
     <Compile Include="VariationExpanderTests.cs" />
