@@ -20,7 +20,9 @@ namespace Lingua.Grammar
         /// <Modifiers>
         /// d: definite
         /// n: plural
-        /// p: possessive
+        /// g: genitive
+        /// 3: 3rd person
+        /// p: present
         /// </Modifiers>
         private static readonly IDictionary<string, int> ScoredPatterns = new Dictionary<string, int>
         {
@@ -28,13 +30,13 @@ namespace Lingua.Grammar
             { "TdnqQAdnNdn", 2},
             { "TdNd", 1},
             { "TdNdn", 1},
-            { "TdNdp", 1},
-            { "TdNdnp", 1},
+            { "TdNdg", 1},
+            { "TdNdng", 1},
             { "QnNn", 1},
             { "TdqAdNd", 1},
             { "AnNn", 1},
-            { "RVo", 1},
-            { "Rn3Vo", 1},
+            { "RVp", 1},
+            { "Rn3Vp", 1},
             { "NN", -1},
             { "NNd", -1},
             { "NNdn", -1},

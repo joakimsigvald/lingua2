@@ -75,14 +75,14 @@ namespace Lingua.Core
                 yield return 'd';
             if (modifiers.HasFlag(Modifier.Plural))
                 yield return 'n';
-            if (modifiers.HasFlag(Modifier.Possessive))
-                yield return 'p';
+            if (modifiers.HasFlag(Modifier.Genitive))
+                yield return 'g';
             if (modifiers.HasFlag(Modifier.Qualified))
                 yield return 'q';
             if (modifiers.HasFlag(Modifier.ThirdPerson))
                 yield return '3';
             if (modifiers.HasFlag(Modifier.Present))
-                yield return 'o';
+                yield return 'p';
         }
 
         private static int Code(Token token)
@@ -134,10 +134,10 @@ namespace Lingua.Core
             {
                 case 'd': return Modifier.Definite;
                 case 'n': return Modifier.Plural;
-                case 'p': return Modifier.Possessive;
+                case 'g': return Modifier.Genitive;
                 case 'q': return Modifier.Qualified;
                 case '3': return Modifier.ThirdPerson;
-                case 'o': return Modifier.Present;
+                case 'p': return Modifier.Present;
                 default: throw new NotImplementedException();
             }
         }

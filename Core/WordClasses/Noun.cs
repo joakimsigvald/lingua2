@@ -8,10 +8,8 @@ namespace Lingua.Core.WordClasses
         protected override IEnumerable<Modifier> GetIndividualModifiers(int variationIndex)
         {
             if ((variationIndex & 1) > 0)
-                yield return Modifier.Possessive;
-            if ((variationIndex & 2) > 0)
                 yield return Modifier.Definite;
-            if ((variationIndex & 4) > 0)
+            if ((variationIndex & 2) > 0)
                 yield return Modifier.Plural;
         }
     }

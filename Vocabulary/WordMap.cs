@@ -20,6 +20,9 @@ namespace Lingua.Vocabulary
         {
         }
 
+        public WordMap(IList<IModificationRule> rules)
+            => _rules = rules;
+
         public WordMap(IDictionary<string, string> mappings)
             : base(mappings)
         {
@@ -29,31 +32,38 @@ namespace Lingua.Vocabulary
         {
         }
 
+        private readonly IList<IModificationRule> _rules = new List<IModificationRule>();
+
         public IEnumerable<Translation> Translations => this.SelectMany(CreateTranslations);
 
         private IEnumerable<Translation> CreateTranslations(KeyValuePair<string, string> mapping)
         {
             var from = VariationExpander.Expand(mapping.Key);
-            var keys = from.Variations;
             var to = VariationExpander.Expand(mapping.Value);
-            var values = to.Variations;
-            var translations = keys
-                .Select((key, i) => CreateTranslation(key, values[i], i, from.Modifiers))
+            var baseTranslations = from.Variations
+                .Select((key, i) => CreateTranslation(key, to.Variations[i], from.Modifiers, i))
                 .ToList();
-            translations[0].Variations = translations.ToArray();
+            var allTranslations = baseTranslations.Concat(ApplyRules(baseTranslations)).ToList();
+            allTranslations[0].Variations = allTranslations.ToArray();
             if (to.IncompleteCompound != null)
-                translations.Add(CreateIncompleteCompoundTranslation(keys.First(), to.IncompleteCompound, from.Modifiers));
-            return translations;
+                allTranslations.Add(CreateIncompleteCompoundTranslation(from, to));
+            return allTranslations;
         }
 
-        private Translation CreateIncompleteCompoundTranslation(string from, string to, string modifiers)
+        private IEnumerable<Translation> ApplyRules(IEnumerable<Translation> translations)
+            => translations.SelectMany(ApplyRules).NotNull();
+
+        private IEnumerable<Translation> ApplyRules(Translation translation)
+            => _rules.Select(rule => rule.Apply(translation));
+
+        private Translation CreateIncompleteCompoundTranslation(Specification from, Specification to)
         {
-            var incompleteCompound = CreateTranslation(from, to, 0, modifiers);
+            var incompleteCompound = CreateTranslation(from.Base, to.IncompleteCompound, from.Modifiers);
             incompleteCompound.IsIncompleteCompound = true;
             return incompleteCompound;
         }
 
-        private static Translation CreateTranslation(string from, string to, int variationIndex, string modifiers)
+        private static Translation CreateTranslation(string from, string to, string modifiers, int variationIndex = 0)
         {
             var token = new TWord
             {

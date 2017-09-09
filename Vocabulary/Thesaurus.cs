@@ -21,16 +21,21 @@ namespace Lingua.Vocabulary
             {"e.g.", "t.ex."}
         };
 
-        private static readonly IWordMap Nouns = new WordMap<Noun>
+        private static readonly IModificationRule[] GenitiveRules = 
         {
-            {"ball|'s:|'s:s|':s|'", "boll|s:en|s:ar|s|_na|s"},
-            {"foot|'s:|'s:___eet|'s|__|'s", "fot|s:en|s:__ötter|s|_na|s"},
-            {"bouncing ball|'s:|'s:s|':s|'", "studsboll|s:en|s:ar|s|_na|s"},
-            {"colour|'s:|'s:s|':s|'", "färg|s:en|s:er|s|_na|s"},
+            new ModificationRule<Noun>(Modifier.Genitive, new [] {"*>*'s"}, new [] {"*>*s"})
+        };
+
+        private static readonly IWordMap Nouns = new WordMap<Noun>(GenitiveRules)
+        {
+            {"ball::s|", "boll:en:ar|na"},
+            {"foot::___eet|", "fot:en:__ötter|_na"},
+            {"bouncing ball::s|", "studsboll:en:ar|na"},
+            {"colour::s|", "färg:en:er|na"},
             {"search", "sök/"},
-            {"result|'s:|'s:s|':s|'", "resultat|s:et|s:|s:en|s"},
-            {"street|'s:|'s:s|':s|'", "gata|s:n|s:_or|s|_na|s/_u"},
-            {"address|':|':es|'|_|'", "adress|:en|s:er|s|_na|s"},
+            {"result::s|", "resultat:et::en"},
+            {"street::s|", "gata:n:_or|na/_u"},
+            {"address::es|", "adress:en:er|_na"},
         };
 
         private static readonly IWordMap Pronouns = new WordMap<Pronoun>

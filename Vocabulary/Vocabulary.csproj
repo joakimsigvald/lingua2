@@ -42,6 +42,7 @@
   <ItemGroup>
     <Compile Include="ILexicon.cs" />
     <Compile Include="Lexicon.cs" />
+    <Compile Include="ModificationRule.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Specification.cs" />
     <Compile Include="Thesaurus.cs" />

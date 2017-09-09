@@ -18,10 +18,10 @@ namespace Lingua.Core.Test
         [TestCase("Nd", (4 << 8) + 1)]
         [TestCase("Nn", (4 << 8) + 2)]
         [TestCase("Ndn", (4 << 8) + 1 + 2)]
-        [TestCase("Np", (4 << 8) + 4)]
-        [TestCase("Ndp", (4 << 8) + 1 + 4)]
-        [TestCase("Nnp", (4 << 8) + 2 + 4)]
-        [TestCase("Ndnp", (4 << 8) + 1 + 2 + 4)]
+        [TestCase("Ng", (4 << 8) + 4)]
+        [TestCase("Ndg", (4 << 8) + 1 + 4)]
+        [TestCase("Nng", (4 << 8) + 2 + 4)]
+        [TestCase("Ndng", (4 << 8) + 1 + 2 + 4)]
         [TestCase("TN", new[] { 3 << 8, 4 << 8 })]
         [TestCase("NN", new[] { 4 << 8, 4 << 8 })]
         [TestCase("NdN", new[] { (4 << 8) + 1, 4 << 8 })]
@@ -29,7 +29,7 @@ namespace Lingua.Core.Test
         [TestCase("R3", (5 << 8) + 16)]
         [TestCase("R3n", (5 << 8) + 2 + 16)]
         [TestCase("A", 6 << 8)]
-        [TestCase("Vo", (7 << 8) + 32)]
+        [TestCase("Vp", (7 << 8) + 32)]
         [TestCase("Q", 8 << 8)]
         public void SerializeToken(string serial, params int[] expected)
         {
@@ -45,7 +45,7 @@ namespace Lingua.Core.Test
             {
                 new Article {Modifiers = Modifier.Definite}, // The
                 new Divider(),
-                new Noun {Modifiers = Modifier.Definite | Modifier.Possessive}, // child's
+                new Noun {Modifiers = Modifier.Definite | Modifier.Genitive}, // child's
                 new Divider(),
                 new Noun {Modifiers = Modifier.Plural} // toys
             };

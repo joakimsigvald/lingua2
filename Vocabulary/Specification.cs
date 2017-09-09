@@ -1,4 +1,6 @@
-﻿namespace Lingua.Vocabulary
+﻿using System.Linq;
+
+namespace Lingua.Vocabulary
 {
     public class Specification
     {
@@ -12,5 +14,6 @@
         public string[] Variations { get; }
         public string IncompleteCompound { get; }
         public string Modifiers { get; }
+        public string Base => Variations.First();
     }
 }
