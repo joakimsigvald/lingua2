@@ -60,5 +60,48 @@ namespace Lingua.Vocabulary.Test
             Assert.That(modification.From.Value, Is.EqualTo(from + addToFrom));
             Assert.That(modification.To, Is.EqualTo(to + addToTo));
         }
+
+        [TestCase("abc", "c", true)]
+        [TestCase("abc", "bc", true)]
+        [TestCase("abc", "b", false)]
+        public void CanMatchOnSuffix(string from, string suffix, bool matches)
+        {
+            var noun = new Noun
+            {
+                Value = from
+            };
+            var translation = Translation.Create(noun, "any");
+            var rule = new ModificationRule<Noun>(Modifier.Genitive, new[] { $"*{suffix}>*s" }, new[] { "*>*s" });
+            var modification = rule.Apply(translation);
+            Assert.That(modification != null, Is.EqualTo(matches));
+        }
+
+        [TestCase("ball", "ball's")]
+        [TestCase("balls", "balls'")]
+        public void UsesMostSpecificMatchingFromTransform(string origin, string transformed)
+        {
+            var noun = new Noun
+            {
+                Value = origin
+            };
+            var translation = Translation.Create(noun, "any");
+            var rule = new ModificationRule<Noun>(Modifier.Genitive, new[] { "*>*'s", "*s>*'" }, new[] { "*>*s" });
+            var modification = rule.Apply(translation);
+            Assert.That(modification.From.Value, Is.EqualTo(transformed));
+        }
+
+        [TestCase("boll", "bolls")]
+        [TestCase("adress", "adress'")]
+        public void UsesMostSpecificMatchingToTransform(string origin, string transformed)
+        {
+            var noun = new Noun
+            {
+                Value = "any"
+            };
+            var translation = Translation.Create(noun, origin);
+            var rule = new ModificationRule<Noun>(Modifier.Genitive, new[] { "*>*s" }, new[] { "*s>*'", "*>*s" });
+            var modification = rule.Apply(translation);
+            Assert.That(modification.To, Is.EqualTo(transformed));
+        }
     }
 }

@@ -23,7 +23,7 @@ namespace Lingua.Vocabulary
 
         private static readonly IModificationRule[] GenitiveRules = 
         {
-            new ModificationRule<Noun>(Modifier.Genitive, new [] {"*>*'s"}, new [] {"*>*s"})
+            new ModificationRule<Noun>(Modifier.Genitive, new [] {"*>*'s", "*s>*'"}, new [] {"*>*s", "*s>*'"})
         };
 
         private static readonly IWordMap Nouns = new WordMap<Noun>(GenitiveRules)
