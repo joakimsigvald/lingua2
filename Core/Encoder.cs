@@ -64,6 +64,23 @@ namespace Lingua.Core
             }
         }
 
+        private static Token CreateToken(char primary, string modifierStr)
+        {
+            var modifiers = ParseModifiers(modifierStr);
+            switch (primary)
+            {
+                case '.': return new Terminator(primary);
+                case ',': return new Separator(primary);
+                case 'T': return new Article { Modifiers = modifiers };
+                case 'N': return new Noun { Modifiers = modifiers };
+                case 'R': return new Pronoun { Modifiers = modifiers };
+                case 'A': return new Adjective { Modifiers = modifiers };
+                case 'V': return new Verb { Modifiers = modifiers };
+                case 'Q': return new Number { Modifiers = modifiers };
+                default: throw new NotImplementedException();
+            }
+        }
+
         private static string SerializeModifiers(Element element)
             => element == null 
                 ? "" 
@@ -83,6 +100,26 @@ namespace Lingua.Core
                 yield return '3';
             if (modifiers.HasFlag(Modifier.Present))
                 yield return 'p';
+            if (modifiers.HasFlag(Modifier.Comparative))
+                yield return 'c';
+            if (modifiers.HasFlag(Modifier.Superlative))
+                yield return 's';
+        }
+
+        private static Modifier ToModifier(char c)
+        {
+            switch (c)
+            {
+                case 'd': return Modifier.Definite;
+                case 'n': return Modifier.Plural;
+                case 'g': return Modifier.Genitive;
+                case 'q': return Modifier.Qualified;
+                case '3': return Modifier.ThirdPerson;
+                case 'p': return Modifier.Present;
+                case 'c': return Modifier.Comparative;
+                case 's': return Modifier.Superlative;
+                default: throw new NotImplementedException();
+            }
         }
 
         private static int Code(Token token)
@@ -110,36 +147,5 @@ namespace Lingua.Core
 
         private static byte ModifierCode(Element element)
             => element == null ? (byte)0 : (byte)element.Modifiers;
-
-        private static Token CreateToken(char primary, string modifierStr)
-        {
-            var modifiers = ParseModifiers(modifierStr);
-            switch (primary)
-            {
-                case '.': return new Terminator(primary);
-                case ',': return new Separator(primary);
-                case 'T': return new Article { Modifiers = modifiers };
-                case 'N': return new Noun { Modifiers = modifiers };
-                case 'R': return new Pronoun { Modifiers = modifiers };
-                case 'A': return new Adjective { Modifiers = modifiers };
-                case 'V': return new Verb { Modifiers = modifiers };
-                case 'Q': return new Number { Modifiers = modifiers };
-                default: throw new NotImplementedException();
-            }
-        }
-
-        private static Modifier ToModifier(char c)
-        {
-            switch (c)
-            {
-                case 'd': return Modifier.Definite;
-                case 'n': return Modifier.Plural;
-                case 'g': return Modifier.Genitive;
-                case 'q': return Modifier.Qualified;
-                case '3': return Modifier.ThirdPerson;
-                case 'p': return Modifier.Present;
-                default: throw new NotImplementedException();
-            }
-        }
     }
 }

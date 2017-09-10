@@ -21,14 +21,17 @@ namespace Lingua.Vocabulary
             {"e.g.", "t.ex."}
         };
 
-        private static readonly IModificationRule[] GenitiveRules = 
+        private static readonly IModificationRule[] GenitiveRules =
         {
-            new ModificationRule<Noun>(Modifier.Genitive, new [] {"*>*'s", "*s>*'"}, new [] {"*>*s", "*s>*'"})
+            new ModificationRule<Noun>(Modifier.Genitive
+                , new [] {"*>*'s", "*s>*'"}
+                , new [] {"*>*s", "*s>*'"})
         };
 
         private static readonly IWordMap Nouns = new WordMap<Noun>(GenitiveRules)
         {
             {"ball::s|", "boll:en:ar|na"},
+            {"car::s|", "bil:en:ar|na"},
             {"foot::___eet|", "fot:en:__ötter|_na"},
             {"bouncing ball::s|", "studsboll:en:ar|na"},
             {"colour::s|", "färg:en:er|na"},
@@ -47,7 +50,8 @@ namespace Lingua.Vocabulary
 
         private static readonly IWordMap Adjectives = new WordMap<Adjective>
         {
-            {"red:::", "röd:a||"},
+            {"red::er:est|", "röd:a|re:ast|e"},
+            {"fast::er:est|", "snabb:a|re:ast|e"},
             {"good-looking", "snygg"},
             {"English-", "engelsk"},
             {"non-", "icke-"},

@@ -26,15 +26,18 @@ namespace Lingua.Grammar
         /// </Modifiers>
         private static readonly IDictionary<string, int> ScoredPatterns = new Dictionary<string, int>
         {
-            { "TdnqAdNdn", 2},
+            { "TdnqAdnNdn", 2},
             { "TdnqQAdnNdn", 2},
             { "TdNd", 1},
             { "TdNdn", 1},
             { "TdNdg", 1},
             { "TdNdng", 1},
             { "QnNn", 1},
-            { "TdqAdNd", 1},
-            { "AnNn", 1},
+            { "TdqAdnNd", 1},
+            { "TdqAcdNd", 1},
+            { "TdqAdsNd", 1},
+            { "TdnqAdsNdn", 1},
+            { "AdnNn", 1},
             { "RVp", 1},
             { "Rn3Vp", 1},
             { "NN", -1},

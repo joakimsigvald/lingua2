@@ -101,6 +101,10 @@ namespace Lingua.Core.Test
         [TestCase("Two red balls", "Två röda bollar")]
         [TestCase("a red ball", "en röd boll")]
         [TestCase("The two red balls", "De två röda bollarna")]
+        [TestCase("a faster car", "en snabbare bil")]
+        [TestCase("faster cars", "snabbare bilar")]
+        [TestCase("The fastest car", "Den snabbaste bilen")]
+        [TestCase("The fastest cars", "De snabbaste bilarna")]
         public void Adjectives(string from, string to)
             => Translates(from, to);
 
