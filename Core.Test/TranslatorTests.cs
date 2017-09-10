@@ -38,6 +38,15 @@ namespace Lingua.Core.Test
         [TestCase("A ball. My foot!", "En boll. Min fot!")]
         [TestCase("A ball? My foot!", "En boll? Min fot!")]
         [TestCase("A ball  ? My foot!", "En boll? Min fot!")]
+        [TestCase("I run", "jag springer")]
+        [TestCase("I run.", "Jag springer.")]
+        [TestCase("I run!", "Jag springer!")]
+        [TestCase("He runs. I run.", "Han springer. Jag springer.")]
+        [TestCase("He runs! I run.", "Han springer! Jag springer.")]
+        [TestCase("He runs... I run.", "Han springer... Jag springer.")]
+        [TestCase("He runs. I run...", "Han springer. Jag springer...")]
+        [TestCase("He runs, I run.", "Han springer, jag springer.")]
+        [TestCase("He runs i.e. I run.", "Han springer dvs. jag springer.")]
         public void Sentences(string from, string to)
             => Translates(from, to);
 
@@ -112,6 +121,7 @@ namespace Lingua.Core.Test
         [TestCase("I paint the ball", "jag målar bollen")]
         [TestCase("He paints the ball", "Han målar bollen")]
         [TestCase("they paint the ball", "de målar bollen")]
+        //[TestCase("I am painting the ball", "jag målar bollen")]
         public void Verbs(string from, string to)
             => Translates(from, to);
 

@@ -36,12 +36,12 @@ namespace Lingua.Tokenization
                 return null;
             switch (current)
             {
-                case Letter l:
+                case Letter _:
                     return prev is Dot || prev is Dash ? null : new Unclassified();
-                case Digit d:
+                case Digit _:
                     return prev is Dot || prev is Dash ? null : new Number();
-                case Space s:
-                    return prev is Symbols.Punctuation ? null : new Divider();
+                case Space _:
+                    return new Divider();
                 case Dot dot:
                     return prev is Digit && next is Digit
                         ? null
@@ -52,14 +52,14 @@ namespace Lingua.Tokenization
                                 : new Terminator(dot.Character);
                 case Mark mark: return new Terminator(mark.Character);
                 case Comma comma: return new Separator(comma.Character);
-                case Dash dash:
+                case Dash _:
                     if (next is Digit) return new Number();
                     if (prev is Letter) return null;
                     break;
-                case LeftBracket lb:
+                case LeftBracket _:
                     if (next is LeftBracket) return new StartGeneric();
                     break;
-                case RightBracket rb:
+                case RightBracket _:
                     if (next is RightBracket) return new EndGeneric();
                     break;
             }

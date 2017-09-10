@@ -67,6 +67,7 @@ namespace Lingua.Vocabulary
         {
             {"paint::s", "måla:r|"},
             {"play", "leka"},
+            {"run::s", "springa:_er|"},
         };
 
         private static readonly IWordMap Articles = new WordMap<Article>

@@ -46,7 +46,7 @@ namespace Lingua.Core
 
         public bool IsInvisibleCapitalized => IsCapitalized && IsInvisible;
 
-        private bool IsCapitalized { get; set; }
+        public bool IsCapitalized { get; private set; }
         private bool IsInvisible => string.IsNullOrEmpty(Output);
         public string Output => To ?? From.Value;
         public bool IsIncompleteCompound { get; set; }

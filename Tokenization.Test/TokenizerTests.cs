@@ -25,12 +25,12 @@ namespace Lingua.Tokenization.Test
         [TestCase("! ")]
         [TestCase("  : ")]
         public void Terminator(string terminator)
-            => terminator.Tokenize().Yields<Terminator>($"{terminator.Trim()} ");
+            => terminator.Tokenize().Yields<Terminator>($"{terminator.Trim()}");
 
         [TestCase(",")]
         [TestCase("  ;     ")]
         public void Separator(string separator)
-            => separator.Tokenize().Yields<Separator>($"{separator.Trim()} ");
+            => separator.Tokenize().Yields<Separator>($"{separator.Trim()}");
 
         [TestCase("z")]
         [TestCase("e")]
@@ -80,9 +80,10 @@ namespace Lingua.Tokenization.Test
 
         [TestCase("Where are you?", "Where", "_", "are", "_", "you", "?")]
         [TestCase("I am here  .", "I", "_", "am", "_", "here", ".")]
-        [TestCase("Honey, I'm home.", "Honey", ",", "I'm", "_", "home", ".")]
+        [TestCase("Honey, I'm home.", "Honey", ",", "_", "I'm", "_", "home", ".")]
+        [TestCase("Hey... you", "Hey", "...", "_", "you")]
         [TestCase("  A    text; with spaces, dots and     a colon:  That's it! ", 
-            "A", "_", "text", ";", "with", "_", "spaces", ",", "dots", "_" , "and", "_", "a", "_", "colon", ":", "That's", "_", "it", "!")]
+            "A", "_", "text", ";", "_", "with", "_", "spaces", ",", "_", "dots", "_" , "and", "_", "a", "_", "colon", ":", "_", "That's", "_", "it", "!")]
         public void Sentenses(string text, params string[] parts)
             => text.Tokenize().Yields(parts);
 
@@ -160,7 +161,7 @@ namespace Lingua.Tokenization.Test
                 case "!":
                 case "?":
                     Assert.That(token is Terminator);
-                    Assert.That(token.Value, Is.EqualTo($"{representation} "));
+                    Assert.That(token.Value, Is.EqualTo(representation));
                     break;
                 case "_":
                     Assert.That(token is Divider);
@@ -168,7 +169,10 @@ namespace Lingua.Tokenization.Test
                 case ";":
                 case ",":
                     Assert.That(token is Separator);
-                    Assert.That(token.Value, Is.EqualTo($"{representation} "));
+                    Assert.That(token.Value, Is.EqualTo(representation));
+                    break;
+                case "...":
+                    Assert.That(token is Ellipsis);
                     break;
                 default:
                     Assert.That(token is Word);
