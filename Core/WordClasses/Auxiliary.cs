@@ -3,16 +3,14 @@ using Lingua.Core.Tokens;
 
 namespace Lingua.Core.WordClasses
 {
-    public class Verb : Word
+    public class Auxiliary : Word
     {
         protected override IEnumerable<Modifier> GetIndividualModifiers(int variationIndex)
         {
-            if (variationIndex > 0)
+            if ((variationIndex & 1) > 0)
                 yield return Modifier.FirstPerson;
-            if (variationIndex == 3)
+            if ((variationIndex & 2) > 0)
                 yield return Modifier.SecondPerson;
-            if (variationIndex > 3)
-                yield return Modifier.Plural;
         }
     }
 }

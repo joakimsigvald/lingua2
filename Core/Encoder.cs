@@ -56,6 +56,7 @@ namespace Lingua.Core
                 case Pronoun _: return "R";
                 case Adjective _: return "A";
                 case Verb _: return "V";
+                case Auxiliary _: return "X";
                 case Quantifier _:
                 case Number _: return "Q";
                 case Abbreviation _:
@@ -76,6 +77,7 @@ namespace Lingua.Core
                 case 'R': return new Pronoun { Modifiers = modifiers };
                 case 'A': return new Adjective { Modifiers = modifiers };
                 case 'V': return new Verb { Modifiers = modifiers };
+                case 'X': return new Auxiliary { Modifiers = modifiers };
                 case 'Q': return new Number { Modifiers = modifiers };
                 default: throw new NotImplementedException();
             }
@@ -96,10 +98,12 @@ namespace Lingua.Core
                 yield return 'g';
             if (modifiers.HasFlag(Modifier.Qualified))
                 yield return 'q';
+            if (modifiers.HasFlag(Modifier.FirstPerson))
+                yield return modifiers.HasFlag(Modifier.SecondPerson) ? '3' : '1';
+            else if (modifiers.HasFlag(Modifier.SecondPerson))
+                yield return '2';
             if (modifiers.HasFlag(Modifier.ThirdPerson))
                 yield return '3';
-            if (modifiers.HasFlag(Modifier.Present))
-                yield return 'p';
             if (modifiers.HasFlag(Modifier.Comparative))
                 yield return 'c';
             if (modifiers.HasFlag(Modifier.Superlative))
@@ -114,8 +118,9 @@ namespace Lingua.Core
                 case 'n': return Modifier.Plural;
                 case 'g': return Modifier.Genitive;
                 case 'q': return Modifier.Qualified;
+                case '1': return Modifier.FirstPerson;
+                case '2': return Modifier.SecondPerson;
                 case '3': return Modifier.ThirdPerson;
-                case 'p': return Modifier.Present;
                 case 'c': return Modifier.Comparative;
                 case 's': return Modifier.Superlative;
                 default: throw new NotImplementedException();
@@ -137,8 +142,9 @@ namespace Lingua.Core
                 case Pronoun _: return 5;
                 case Adjective _: return 6;
                 case Verb _: return 7;
+                case Auxiliary _: return 8;
                 case Quantifier _:
-                case Number _: return 8;
+                case Number _: return 9;
                 case Abbreviation _:
                 case Unclassified _: return 255;
                 default: throw new NotImplementedException();

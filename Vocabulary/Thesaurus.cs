@@ -43,8 +43,13 @@ namespace Lingua.Vocabulary
 
         private static readonly IWordMap Pronouns = new WordMap<Pronoun>
         {
-            {"I", "jag"},
+            {"I<1", "jag"},
+            {"we<1n", "vi"},
+            {"you<2", "du"},
+            {"you<2n", "ni"},
             {"he<3", "han"},
+            {"she<3", "hon"},
+            {"it<3", "det"},
             {"they<3n", "de"},
         };
 
@@ -65,9 +70,14 @@ namespace Lingua.Vocabulary
 
         private static readonly IWordMap Verbs = new WordMap<Verb>
         {
-            {"paint::s", "måla:r|"},
-            {"play", "leka"},
-            {"run::s", "springa:_er|"},
+            {"paint::s::ing", "måla:r|||"},
+            {"play::s::ing", "leka:_er|||"},
+            {"run::s::ning", "springa:_er|||"},
+        };
+
+        private static readonly IWordMap Auxiliaries = new WordMap<Auxiliary>
+        {
+            {"be!am!are!is", "vara!är||"}
         };
 
         private static readonly IWordMap Articles = new WordMap<Article>
@@ -94,7 +104,8 @@ namespace Lingua.Vocabulary
             Adjectives,
             Verbs,
             Articles, 
-            Quantifiers
+            Quantifiers,
+            Auxiliaries
             );
 
         public Translation[] Translate(Token token)

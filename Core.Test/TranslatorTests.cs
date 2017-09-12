@@ -118,10 +118,17 @@ namespace Lingua.Core.Test
             => Translates(from, to);
 
         [TestCase("paint the ball", "måla bollen")]
+        [TestCase("I paint", "jag målar")]
+        [TestCase("we paint", "vi målar")]
+        [TestCase("you paint", "du målar")]
+        [TestCase("he paints", "han målar")]
+        [TestCase("she paints", "hon målar")]
+        [TestCase("it paints", "det målar")]
+        [TestCase("they paint", "de målar")]
         [TestCase("I paint the ball", "jag målar bollen")]
         [TestCase("He paints the ball", "Han målar bollen")]
         [TestCase("they paint the ball", "de målar bollen")]
-        //[TestCase("I am painting the ball", "jag målar bollen")]
+        [TestCase("I am painting the ball", "Jag målar bollen.")]
         public void Verbs(string from, string to)
             => Translates(from, to);
 

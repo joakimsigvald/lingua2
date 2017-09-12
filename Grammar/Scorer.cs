@@ -8,10 +8,12 @@ namespace Lingua.Grammar
     public class Scorer
     {
         /// <Types>
+        /// T: ArTicle
+        /// R: Pronoun
+        /// N: Noun
         /// A: Adjective
         /// V: Verb
-        /// N: Noun
-        /// T: ArTicle
+        /// X: Auxilery
         /// Q: quantifier (number)
         /// .: Terminator
         /// ,: Separator
@@ -21,8 +23,9 @@ namespace Lingua.Grammar
         /// d: definite
         /// n: plural
         /// g: genitive
+        /// 1: 1st person
+        /// 2: 2nd person
         /// 3: 3rd person
-        /// p: present
         /// </Modifiers>
         private static readonly IDictionary<string, int> ScoredPatterns = new Dictionary<string, int>
         {
@@ -38,8 +41,12 @@ namespace Lingua.Grammar
             { "TdqAdsNd", 1},
             { "TdnqAdsNdn", 1},
             { "AdnNn", 1},
-            { "RVp", 1},
-            { "Rn3Vp", 1},
+            { "R1V1", 1},
+            { "R1nV1", 1},
+            { "R2V1", 1},
+            { "R2nV1", 1},
+            { "R3V3", 1},
+            { "R3nV3", 1},
             { "NN", -1},
             { "NNd", -1},
             { "NNdn", -1},
