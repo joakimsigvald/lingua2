@@ -61,7 +61,7 @@ namespace Lingua.Grammar
             Score = sp.Value
         }).ToList();
 
-        public static int Compute(IEnumerable<Token> tokens)
+        public static int Compute(IList<Token> tokens)
         {
             var str = Encoder.Serialize(tokens); // for debugging
             var code = Encoder.Code(tokens).ToArray();

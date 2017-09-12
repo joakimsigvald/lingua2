@@ -128,7 +128,7 @@ namespace Lingua.Core.Test
         [TestCase("I paint the ball", "jag målar bollen")]
         [TestCase("He paints the ball", "Han målar bollen")]
         [TestCase("they paint the ball", "de målar bollen")]
-        [TestCase("I am painting the ball", "Jag målar bollen.")]
+        [TestCase("I am painting the ball", "jag målar bollen")]
         public void Verbs(string from, string to)
             => Translates(from, to);
 

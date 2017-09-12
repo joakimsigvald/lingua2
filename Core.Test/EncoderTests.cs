@@ -1,6 +1,5 @@
 ﻿using Lingua.Core.Tokens;
 using Lingua.Core.WordClasses;
-using Lingua.Grammar;
 using NUnit.Framework;
 
 namespace Lingua.Core.Test

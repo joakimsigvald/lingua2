@@ -64,7 +64,7 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Grammar\Grammar.csproj">
-      <Project>{13FC0B05-5926-4626-89C0-296CCF7444A7}</Project>
+      <Project>{13fc0b05-5926-4626-89c0-296ccf7444a7}</Project>
       <Name>Grammar</Name>
     </ProjectReference>
     <ProjectReference Include="..\Tokenization\Tokenization.csproj">

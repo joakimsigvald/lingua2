@@ -1,4 +1,5 @@
-﻿using Lingua.Core;
+﻿using System.Linq;
+using Lingua.Core;
 using NUnit.Framework;
 
 namespace Lingua.Grammar.Test
@@ -10,7 +11,7 @@ namespace Lingua.Grammar.Test
         [TestCase("TdqAdnNd", 1)]
         public void Score(string serial, int expectedScore)
         {
-            var tokens = Encoder.Deserialize(serial);
+            var tokens = Encoder.Deserialize(serial).ToArray();
             var actualScore = Scorer.Compute(tokens);
             Assert.That(actualScore, Is.EqualTo(expectedScore));
         }

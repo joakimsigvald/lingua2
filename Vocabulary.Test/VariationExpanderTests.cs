@@ -12,6 +12,9 @@ namespace Lingua.Vocabulary.Test
         [TestCase("abc|d|e", "abc", "abcd", "abcde")]
         [TestCase("abc|_d:e|_f", "abc", "abd", "abce", "abcf")]
         [TestCase("the:::<d", "the", "the", "the", "the")]
+        [TestCase("a!b!c", "a", "b", "c")]
+        [TestCase("a:b!c:d", "a", "ab", "c", "cd")]
+        [TestCase("a!b!c<d", "a", "b", "c")]
         public void ExpandVariants(string pattern, params string[] expected)
         {
             var actual = VariationExpander.Expand(pattern);
@@ -22,6 +25,7 @@ namespace Lingua.Vocabulary.Test
         [TestCase("gata/_u", "gatu")]
         [TestCase("abc", null)]
         [TestCase("the:::<d", null)]
+        [TestCase("a!b!c<d", null)]
         public void ExpandConnector(string pattern, string expected)
         {
             var actual = VariationExpander.Expand(pattern);
@@ -30,6 +34,7 @@ namespace Lingua.Vocabulary.Test
 
         [TestCase("abc<def", "def")]
         [TestCase("the:::<d", "d")]
+        [TestCase("a!b!c<d", "d")]
         public void ExpandModifiers(string pattern, string expected)
         {
             var actual = VariationExpander.Expand(pattern);

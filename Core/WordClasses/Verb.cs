@@ -7,11 +7,13 @@ namespace Lingua.Core.WordClasses
     {
         protected override IEnumerable<Modifier> GetIndividualModifiers(int variationIndex)
         {
-            if (variationIndex > 0)
+            if (variationIndex == 1)
+                yield return Modifier.Definite; // Participle
+            if (variationIndex > 1)
                 yield return Modifier.FirstPerson;
-            if (variationIndex == 3)
-                yield return Modifier.SecondPerson;
             if (variationIndex > 3)
+                yield return Modifier.SecondPerson;
+            if (variationIndex == 5)
                 yield return Modifier.Plural;
         }
     }

@@ -5,8 +5,6 @@ namespace Lingua.Vocabulary
 {
     public static class VariationExpander
     {
-
-
         public static Specification Expand(string pattern)
         {
             var parts = pattern.Split('<');
@@ -20,9 +18,12 @@ namespace Lingua.Vocabulary
                 , incompleteCompound, modifiers);
         }
 
-        private static IEnumerable<string> GetVariations(string wordPattern)
+        private static IEnumerable<string> GetVariations(string wordPattern) 
+            => wordPattern.Split('!').SelectMany(GetVariationGroup);
+
+        private static IEnumerable<string> GetVariationGroup(string groupPattern)
         {
-            var parts = wordPattern.Split(':');
+            var parts = groupPattern.Split(':');
             var stem = parts[0].Split('|')[0];
             return Expand("", parts[0])
                 .Concat(parts.Skip(1).SelectMany(modifier => Expand(stem, modifier)))

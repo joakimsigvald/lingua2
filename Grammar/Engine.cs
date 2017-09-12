@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Lingua.Core.Tokens;
 
 namespace Lingua.Grammar
 {
@@ -10,7 +11,17 @@ namespace Lingua.Grammar
     {
         private const int Horizon = 6;
 
-        public IEnumerable<Translation> Reduce(IList<TreeNode<Translation>> remaining)
+        private static readonly Dictionary<string, string> Rearrangements = new Dictionary<string, string>
+        {
+            { "X1Vd", "2"}
+        };
+
+        private static readonly IList<Arranger> Arrangers = Rearrangements.Select(sp => new Arranger(sp.Key, sp.Value)).ToList();
+
+        public IEnumerable<Translation> Reduce(IList<TreeNode<Translation>> possibilities)
+            => Arrange(Choose(possibilities));
+
+        private static IEnumerable<Translation> Choose(IList<TreeNode<Translation>> remaining)
         {
             IList<Translation> previous = new List<Translation>();
             while (remaining.Any())
@@ -22,6 +33,12 @@ namespace Lingua.Grammar
             var sequence = previous.Reverse();
             return sequence;
         }
+
+        private static IEnumerable<Translation> Arrange(IEnumerable<Translation> translations)
+            => Arrangers
+            .Aggregate(translations
+                , (input, arranger) => arranger
+                .Arrange(input.ToList()));
 
         private static TreeNode<Translation> ReduceNext(ICollection<Translation> previous,
             IEnumerable<TreeNode<Translation>> next)
@@ -43,7 +60,7 @@ namespace Lingua.Grammar
             => Math.Max(2, Horizon - previous.Count);
 
         private static int ComputeScore(IEnumerable<Translation> translations)
-            => Scorer.Compute(translations.Select(t => t.From));
+            => Scorer.Compute(translations.Select(t => t.From).ToArray());
 
         private static IEnumerable<IList<TreeNode<Translation>>> Expand(TreeNode<Translation> node, int depth)
             => (depth > 0 && node.Children.Any()

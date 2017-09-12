@@ -70,9 +70,9 @@ namespace Lingua.Vocabulary
 
         private static readonly IWordMap Verbs = new WordMap<Verb>
         {
-            {"paint::s::ing", "måla:r|||"},
-            {"play::s::ing", "leka:_er|||"},
-            {"run::s::ning", "springa:_er|||"},
+            {"paint:ing::s:", "måla:r|||"},
+            {"play:ing::s:", "leka:_er|||"},
+            {"run:ning::s:", "springa:_er|||"},
         };
 
         private static readonly IWordMap Auxiliaries = new WordMap<Auxiliary>
