@@ -138,12 +138,14 @@ namespace Lingua.Core
                 yield return 'c';
             if (modifiers.HasFlag(Modifier.Superlative))
                 yield return 's';
-            if (modifiers.HasFlag(Modifier.Past))
-                yield return 'p';
             if (modifiers.HasFlag(Modifier.Neuter))
                 yield return 't';
             if (modifiers.HasFlag(Modifier.Adverb))
                 yield return 'a';
+            if (modifiers.HasFlag(Modifier.Past))
+                yield return 'p';
+            if (modifiers.HasFlag(Modifier.Perfect))
+                yield return 'r';
         }
 
         private static bool TrySerializePersonModifiers(Modifier modifiers, out char c)
@@ -177,9 +179,10 @@ namespace Lingua.Core
                 case '3': return Modifier.ThirdPerson;
                 case 'c': return Modifier.Comparative;
                 case 's': return Modifier.Superlative;
-                case 'p': return Modifier.Past;
                 case 't': return Modifier.Neuter;
                 case 'a': return Modifier.Adverb;
+                case 'p': return Modifier.Past;
+                case 'r': return Modifier.Perfect;
                 default: throw new NotImplementedException();
             }
         }

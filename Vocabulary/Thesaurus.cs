@@ -71,14 +71,15 @@ namespace Lingua.Vocabulary
 
         private static readonly IWordMap Verbs = new WordMap<Verb>
         {
-            {"paint:ing:::s::ed", "måla:r||||:de"},
-            {"play:ing:::s::ed", "leka:_er||||:_te"},
-            {"run:ning:::s:!ran", "springa:_er||||:_4ang"},
+            {"paint:ing:::s::ed|", "måla:r||||:de:t"},
+            {"play:ing:::s::ed|", "leka:_er||||:_te|_"},
+            {"run:ning:::s:!ran|", "springa:_er||||:_4ang:_4ungit"},
         };
 
         private static readonly IWordMap Auxiliaries = new WordMap<Auxiliary>
         {
-            {"be:ing!am!are!is!are!were", "vara!är||||!var"}
+            {"be:ing!am!are!is!are!been!were", "vara!är||||!var:it"},
+            {"have:_ing:::__s::_2d:", "ha:r||||:de:ft"}
         };
 
         private static readonly IWordMap Articles = new WordMap<Article>

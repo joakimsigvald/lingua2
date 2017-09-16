@@ -139,6 +139,8 @@ namespace Lingua.Core.Test
         [TestCase("I ran", "jag sprang")]
         [TestCase("He painted the wall", "Han målade väggen")]
         [TestCase("They ran fast", "De sprang snabbt")]
+        [TestCase("I have ran", "jag har sprungit")]
+        [TestCase("She has ran", "Hon har sprungit")]
         public void VerbsPastTense(string from, string to)
             => Translates(from, to);
 

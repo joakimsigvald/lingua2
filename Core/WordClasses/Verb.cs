@@ -21,6 +21,8 @@ namespace Lingua.Core.WordClasses
                     return Modifier.Plural | Modifier.ThirdPerson;
                 case 6:
                     return Modifier.Past;
+                case 7:
+                    return Modifier.Perfect;
                 default: return Modifier.None;
             }
         }

@@ -15,9 +15,10 @@ namespace Lingua.Core.Tokens
         ThirdPerson = 3 << 4,
         Comparative = 1 << 6,
         Superlative = 1 << 7,
-        Past = 1 << 8,
-        Neuter = 1 << 9,
-        Adverb = 1 << 10,
+        Neuter = 1 << 8,
+        Adverb = 1 << 9,
+        Past = 1 << 10,
+        Perfect = 1 << 11,
     }
 
     public abstract class Element : Token
