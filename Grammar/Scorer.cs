@@ -48,6 +48,8 @@ namespace Lingua.Grammar
             { "R1X1Vr", 1},
             { "R2X2Vr", 1},
             { "R3X3Vr", 1},
+            { "R3nXn3Vr", 1},
+            { "R*XpVr", 1},
             { "NN", -1},
             { "NNd", -1},
             { "NNdn", -1},
