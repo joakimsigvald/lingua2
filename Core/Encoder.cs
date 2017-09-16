@@ -118,9 +118,12 @@ namespace Lingua.Core
         }
 
         private static string SerializeModifiers(Element element)
-            => element == null
-                ? ""
-                : new string(SerializeModifiers(element.Modifiers).ToArray());
+            => Serialize(element?.Modifiers ?? Modifier.None);
+
+        private static string Serialize(Modifier modifier)
+            => modifier == Modifier.Any
+                ? "*"
+                : new string(SerializeModifiers(modifier).ToArray());
 
         private static IEnumerable<char> SerializeModifiers(Modifier modifiers)
         {
@@ -183,6 +186,7 @@ namespace Lingua.Core
                 case 'a': return Modifier.Adverb;
                 case 'p': return Modifier.Past;
                 case 'r': return Modifier.Perfect;
+                case '*': return Modifier.Any;
                 default: throw new NotImplementedException();
             }
         }

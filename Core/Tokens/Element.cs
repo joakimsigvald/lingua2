@@ -19,6 +19,7 @@ namespace Lingua.Core.Tokens
         Adverb = 1 << 9,
         Past = 1 << 10,
         Perfect = 1 << 11,
+        Any = 0xffff
     }
 
     public abstract class Element : Token

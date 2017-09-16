@@ -9,9 +9,13 @@ namespace Lingua.Grammar.Test
     {
         [TestCase("TN", 0)]
         [TestCase("TdqAdnNd", 1)]
-        public void Score(string serial, int expectedScore)
+        [TestCase("R1V1", 1)]
+        [TestCase("R1nV1", 1)]
+        [TestCase("R2V1", 1)]
+        [TestCase("R2nV1", 1)]
+        public void Score(string symbols, int expectedScore)
         {
-            var tokens = Encoder.Deserialize(serial).ToArray();
+            var tokens = Encoder.Deserialize(symbols).ToArray();
             var actualScore = Scorer.Evaluate(tokens).Score;
             Assert.That(actualScore, Is.EqualTo(expectedScore));
         }

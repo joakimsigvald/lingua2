@@ -41,16 +41,13 @@ namespace Lingua.Grammar
             { "TdqAdsNd", 1},
             { "TdnqAdsNdn", 1},
             { "AdnNn", 1},
-            { "R1V1", 1},
-            { "R1nV1", 1},
-            { "R2V1", 1},
-            { "R2nV1", 1},
+            { "R*V1", 1},
             { "R3V3", 1},
             { "R3nV3n", 1},
             { "VpAa", 1},
-            { "X1Vr", 1},
-            { "X2Vr", 1},
-            { "X3Vr", 1},
+            { "R1X1Vr", 1},
+            { "R2X2Vr", 1},
+            { "R3X3Vr", 1},
             { "NN", -1},
             { "NNd", -1},
             { "NNdn", -1},
@@ -86,6 +83,9 @@ namespace Lingua.Grammar
                     .Count(n => Matches(sequence.Skip(n).Take(Pattern.Length).ToArray(), Pattern));
 
         private static bool Matches(int[] segment, int[] pattern)
-            => segment.Select((d, i) => d == pattern[i]).All(b => b);
+            => segment.Select((d, i) => Matches(d, pattern[i])).All(b => b);
+
+        private static bool Matches(int code, int pattern)
+            => code == pattern || (code | (int)Modifier.Any) == pattern;
     }
 }

@@ -74,6 +74,7 @@ namespace Lingua.Core.Test
         }
 
         [TestCase("VpAa")]
+        [TestCase("V*")]
         public void EncodeDecode(string fromSymbols)
         {
             var fromTokens = Encoder.Deserialize(fromSymbols).ToArray();
