@@ -35,19 +35,20 @@ namespace Lingua.Core
         public static IEnumerable<TItem> Prepend<TItem>(this IEnumerable<TItem> items, TItem item)
             => new []{item}.Concat(items);
 
-        public static IEnumerable<TItem> Interleave<TItem>(this IEnumerable<TItem> primary, IList<TItem> secondary, bool modulate = false) 
-            => !secondary.Any() ? primary : DoInterleave(primary, secondary, modulate);
+        public static IEnumerable<TItem> Interleave<TItem>(this IList<TItem> primary, IList<TItem> secondary, bool modulate = false) 
+            => primary.Count > 1 && secondary.Any() 
+            ? DoInterleave(primary, secondary, modulate)
+            : primary;
 
-        private static IEnumerable<TItem> DoInterleave<TItem>(this IEnumerable<TItem> primary, IList<TItem> secondary, bool modulate = false)
+        private static IEnumerable<TItem> DoInterleave<TItem>(this IList<TItem> primary, IList<TItem> secondary, bool modulate = false)
         {
             var index = 0;
-            foreach (var item in primary)
+            yield return primary.First();
+            foreach (var item in primary.Skip(1))
             {
-                yield return item;
-                if (index < secondary.Count)
-                    yield return secondary[index];
-                else if (modulate)
+                if (index < secondary.Count || modulate)
                     yield return secondary[index % secondary.Count];
+                yield return item;
                 index++;
             }
         }

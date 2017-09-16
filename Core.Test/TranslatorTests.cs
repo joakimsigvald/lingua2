@@ -131,10 +131,14 @@ namespace Lingua.Core.Test
         [TestCase("He paints the ball", "Han målar bollen")]
         [TestCase("they paint the wall", "de målar väggen")]
         [TestCase("I am painting the wall", "jag målar väggen")]
+        [TestCase("Are you painting?", "Målar du?")]
+        [TestCase("Are you painting the wall?", "Målar du väggen?")]
         public void VerbsPresentTense(string from, string to)
             => Translates(from, to);
 
         [TestCase("I ran", "jag sprang")]
+        [TestCase("He painted the wall", "Han målade väggen")]
+        [TestCase("They ran fast", "De sprang snabbt")]
         public void VerbsPastTense(string from, string to)
             => Translates(from, to);
 

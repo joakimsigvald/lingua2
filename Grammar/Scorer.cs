@@ -47,6 +47,7 @@ namespace Lingua.Grammar
             { "R2nV1", 1},
             { "R3V3", 1},
             { "R3nV3n", 1},
+            { "VpAa", 1},
             { "NN", -1},
             { "NNd", -1},
             { "NNdn", -1},
@@ -64,8 +65,12 @@ namespace Lingua.Grammar
         public static Evaluation Evaluate(IList<Token> tokens)
         {
             var code = Encoder.Encode(tokens).ToArray();
-            var score = Scorers.Sum(s => s.CountMatches(code) * s.Score);
-            return new Evaluation(tokens, score);
+            var scorings = Scorers.Select(s 
+                => new Scoring(s.Pattern, s.CountMatches(code), s.Score))
+                .Where(m => m.Count > 0)
+                .ToArray();
+            var score = scorings.Sum(s => s.TotalScore);
+            return new Evaluation(tokens, score, scorings);
         }
 
         private int[] Pattern { get; set; }

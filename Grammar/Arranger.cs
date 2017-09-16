@@ -23,7 +23,6 @@ namespace Lingua.Grammar
             {
                 var segment = input
                     .Skip(i).Take(segLen)
-                    .Where(t => !(t.From is Divider))
                     .ToArray();
                 var tokens = segment.Select(t => t.From).ToArray();
                 var codedSegment = Encoder.Encode(tokens).ToArray();
@@ -33,9 +32,10 @@ namespace Lingua.Grammar
                         .Where(t => t.From is Divider)
                         .ToArray();
                     var words = segment
-                        .Except(dividers);
-                    var rearrangedSegment = Rearrange(words.ToList())
-                        .Interleave(dividers, true);
+                        .Except(dividers)
+                        .ToArray();
+                    var rearrangedSegment = Rearrange(words).ToList()
+                        .Interleave(dividers.Take(1).ToArray(), true);
                     foreach (var tran in rearrangedSegment)
                         yield return tran;
                     i += segLen - 1;

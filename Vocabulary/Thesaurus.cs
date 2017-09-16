@@ -56,14 +56,14 @@ namespace Lingua.Vocabulary
 
         private static readonly IWordMap Adjectives = new WordMap<Adjective>
         {
-            {"red::er:est|", "röd:a|re:ast|e"},
-            {"fast::er:est|", "snabb:a|re:ast|e"},
+            {"red:::er:est|", "röd:_tt:a|re:ast|e"},
+            {"fast:::er:est|:", "snabb:t:a|re:ast|e:t"},
+            {"easy:::_ier|_st:_ily", "lätt::a|re:ast|e:"},
             {"good-looking", "snygg"},
             {"English-", "engelsk"},
             {"non-", "icke-"},
             {"French-", "fransk"},
             {"speaking", "talande"},
-            {"easy", "lätt"},
             {"easy as pie", "lätt som en pannkaka"},
             {"easy peasy", "lätt som en pannkaka"},
             {"achievement-oriented", "prestationsorienterad"}

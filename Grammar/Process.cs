@@ -15,7 +15,8 @@ namespace Lingua.Grammar
 
         private static readonly Dictionary<string, string> Rearrangements = new Dictionary<string, string>
         {
-            { "X1Vd", "2"}
+            { "X1Vd", "2"},
+            { "X2R2Vd", "32"}
         };
 
         private static readonly IList<Arranger> Arrangers = Rearrangements.Select(sp => new Arranger(sp.Key, sp.Value)).ToList();

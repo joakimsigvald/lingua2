@@ -38,6 +38,40 @@ namespace Lingua.Core
         public static Modifier ParseModifiers(string modifiers)
             => (modifiers ?? "").Select(ToModifier).Aggregate(Modifier.None, (o, n) => o | n);
 
+        public static IEnumerable<Token> Decode(int[] code)
+            => code.Select(Decode);
+
+        private static Token Decode(int code)
+        {
+            var token = DecodeToken(code);
+            if (token is Element element)
+                element.Modifiers = DecodeModifiers(code);
+            return token;
+        }
+
+        private static Token DecodeToken(int code)
+        {
+            switch (code >> 16)
+            {
+                case 1: return new Terminator('.');
+                case 2: return new Separator(',');
+                case 3: return new Article();
+                case 4: return new Noun();
+                case 5: return new Pronoun();
+                case 6: return new Adjective();
+                case 7: return new Auxiliary();
+                case 8: return new Verb();
+                case 9: return new Number();
+                case 255:
+                    return new Unclassified();
+                default: throw new NotImplementedException();
+            }
+        }
+
+        private static Modifier DecodeModifiers(int code) => Enumerable.Range(0, 16)
+            .Select(shift => (Modifier) (code & (1 << shift)))
+            .Aggregate(Modifier.None, (a, b) => a | b);
+
         private static bool IsWordClass(char c)
             => char.IsUpper(c);
 
@@ -72,20 +106,20 @@ namespace Lingua.Core
             {
                 case '.': return new Terminator(primary);
                 case ',': return new Separator(primary);
-                case 'T': return new Article { Modifiers = modifiers };
-                case 'N': return new Noun { Modifiers = modifiers };
-                case 'R': return new Pronoun { Modifiers = modifiers };
-                case 'A': return new Adjective { Modifiers = modifiers };
-                case 'V': return new Verb { Modifiers = modifiers };
-                case 'X': return new Auxiliary { Modifiers = modifiers };
-                case 'Q': return new Number { Modifiers = modifiers };
+                case 'T': return new Article {Modifiers = modifiers};
+                case 'N': return new Noun {Modifiers = modifiers};
+                case 'R': return new Pronoun {Modifiers = modifiers};
+                case 'A': return new Adjective {Modifiers = modifiers};
+                case 'V': return new Verb {Modifiers = modifiers};
+                case 'X': return new Auxiliary {Modifiers = modifiers};
+                case 'Q': return new Number {Modifiers = modifiers};
                 default: throw new NotImplementedException();
             }
         }
 
         private static string SerializeModifiers(Element element)
-            => element == null 
-                ? "" 
+            => element == null
+                ? ""
                 : new string(SerializeModifiers(element.Modifiers).ToArray());
 
         private static IEnumerable<char> SerializeModifiers(Modifier modifiers)
@@ -104,12 +138,18 @@ namespace Lingua.Core
                 yield return 'c';
             if (modifiers.HasFlag(Modifier.Superlative))
                 yield return 's';
+            if (modifiers.HasFlag(Modifier.Past))
+                yield return 'p';
+            if (modifiers.HasFlag(Modifier.Neuter))
+                yield return 't';
+            if (modifiers.HasFlag(Modifier.Adverb))
+                yield return 'a';
         }
 
         private static bool TrySerializePersonModifiers(Modifier modifiers, out char c)
         {
             var res = SerializePersonModifiers(modifiers);
-            c = res ?? (char)0;
+            c = res ?? (char) 0;
             return res.HasValue;
         }
 
@@ -137,12 +177,15 @@ namespace Lingua.Core
                 case '3': return Modifier.ThirdPerson;
                 case 'c': return Modifier.Comparative;
                 case 's': return Modifier.Superlative;
+                case 'p': return Modifier.Past;
+                case 't': return Modifier.Neuter;
+                case 'a': return Modifier.Adverb;
                 default: throw new NotImplementedException();
             }
         }
 
         private static int Encode(Token token)
-            => (ClassCode(token) << 8) + ModifierCode(token as Element);
+            => (ClassCode(token) << 16) + ModifierCode(token as Element);
 
         private static byte ClassCode(Token token)
         {
@@ -165,7 +208,7 @@ namespace Lingua.Core
             }
         }
 
-        private static byte ModifierCode(Element element)
-            => element == null ? (byte)0 : (byte)element.Modifiers;
+        private static int ModifierCode(Element element)
+            => (int) (element?.Modifiers ?? Modifier.None);
     }
 }
