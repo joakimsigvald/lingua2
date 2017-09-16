@@ -8,8 +8,8 @@ namespace Lingua.Core
 {
     public static class Encoder
     {
-        public static IEnumerable<int> Code(IEnumerable<Token> tokens)
-            => tokens.Where(t => !(t is Divider)).Select(Code);
+        public static IEnumerable<int> Encode(IEnumerable<Token> tokens)
+            => tokens.Where(t => !(t is Divider)).Select(Encode);
 
         public static string Serialize(IEnumerable<Token> tokens)
             => string.Join("", tokens.Where(t => !(t is Divider)).Select(Serialize));
@@ -55,8 +55,8 @@ namespace Lingua.Core
                 case Noun _: return "N";
                 case Pronoun _: return "R";
                 case Adjective _: return "A";
-                case Verb _: return "V";
                 case Auxiliary _: return "X";
+                case Verb _: return "V";
                 case Quantifier _:
                 case Number _: return "Q";
                 case Abbreviation _:
@@ -98,16 +98,30 @@ namespace Lingua.Core
                 yield return 'g';
             if (modifiers.HasFlag(Modifier.Qualified))
                 yield return 'q';
-            if (modifiers.HasFlag(Modifier.FirstPerson))
-                yield return modifiers.HasFlag(Modifier.SecondPerson) ? '3' : '1';
-            else if (modifiers.HasFlag(Modifier.SecondPerson))
-                yield return '2';
-            if (modifiers.HasFlag(Modifier.ThirdPerson))
-                yield return '3';
+            if (TrySerializePersonModifiers(modifiers, out char c))
+                yield return c;
             if (modifiers.HasFlag(Modifier.Comparative))
                 yield return 'c';
             if (modifiers.HasFlag(Modifier.Superlative))
                 yield return 's';
+        }
+
+        private static bool TrySerializePersonModifiers(Modifier modifiers, out char c)
+        {
+            var res = SerializePersonModifiers(modifiers);
+            c = res ?? (char)0;
+            return res.HasValue;
+        }
+
+        private static char? SerializePersonModifiers(Modifier modifiers)
+        {
+            if (modifiers.HasFlag(Modifier.ThirdPerson))
+                return '3';
+            if (modifiers.HasFlag(Modifier.SecondPerson))
+                return '2';
+            if (modifiers.HasFlag(Modifier.FirstPerson))
+                return '1';
+            return null;
         }
 
         private static Modifier ToModifier(char c)
@@ -127,7 +141,7 @@ namespace Lingua.Core
             }
         }
 
-        private static int Code(Token token)
+        private static int Encode(Token token)
             => (ClassCode(token) << 8) + ModifierCode(token as Element);
 
         private static byte ClassCode(Token token)
@@ -141,8 +155,8 @@ namespace Lingua.Core
                 case Noun _: return 4;
                 case Pronoun _: return 5;
                 case Adjective _: return 6;
-                case Verb _: return 7;
-                case Auxiliary _: return 8;
+                case Auxiliary _: return 7;
+                case Verb _: return 8;
                 case Quantifier _:
                 case Number _: return 9;
                 case Abbreviation _:

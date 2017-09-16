@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 
 namespace Lingua.Vocabulary
 {
@@ -18,7 +19,7 @@ namespace Lingua.Vocabulary
                 , incompleteCompound, modifiers);
         }
 
-        private static IEnumerable<string> GetVariations(string wordPattern) 
+        private static IEnumerable<string> GetVariations(string wordPattern)
             => wordPattern.Split('!').SelectMany(GetVariationGroup);
 
         private static IEnumerable<string> GetVariationGroup(string groupPattern)
@@ -46,8 +47,20 @@ namespace Lingua.Vocabulary
         {
             if (modifier == null)
                 return null;
-            var suffix = modifier.TrimStart('_');
-            return stem.Substring(0, stem.Length + suffix.Length - modifier.Length) + suffix;
+            var reduction = GetReduction(modifier);
+            var reductionCount = GetReductionCount(reduction);
+            var suffix = modifier.Substring(reduction.Length);
+            return stem.Substring(0, stem.Length - reductionCount) + suffix;
         }
+
+        private static string GetReduction(string modifier)
+            => Regex.Match(modifier, @"(_\d|_+)").Value;
+
+        private static int GetReductionCount(string reduction)
+            => string.IsNullOrEmpty(reduction)
+                ? 0
+                : int.TryParse($"{reduction.Last()}", out int count)
+                    ? count
+                    : reduction.Length;
     }
 }

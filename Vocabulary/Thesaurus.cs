@@ -31,6 +31,7 @@ namespace Lingua.Vocabulary
         private static readonly IWordMap Nouns = new WordMap<Noun>(GenitiveRules)
         {
             {"ball::s|", "boll:en:ar|na"},
+            {"wall::s|", "vägg:en:ar|na"},
             {"car::s|", "bil:en:ar|na"},
             {"foot::___eet|", "fot:en:__ötter|_na"},
             {"bouncing ball::s|", "studsboll:en:ar|na"},
@@ -70,14 +71,14 @@ namespace Lingua.Vocabulary
 
         private static readonly IWordMap Verbs = new WordMap<Verb>
         {
-            {"paint:ing::s:", "måla:r|||"},
-            {"play:ing::s:", "leka:_er|||"},
-            {"run:ning::s:", "springa:_er|||"},
+            {"paint:ing:::s::ed", "måla:r||||:de"},
+            {"play:ing:::s::ed", "leka:_er||||:_te"},
+            {"run:ning:::s:!ran", "springa:_er||||:_4ang"},
         };
 
         private static readonly IWordMap Auxiliaries = new WordMap<Auxiliary>
         {
-            {"be!am!are!is", "vara!är||"}
+            {"be:ing!am!are!is!are!were", "vara!är||||!var"}
         };
 
         private static readonly IWordMap Articles = new WordMap<Article>

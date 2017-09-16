@@ -8,7 +8,8 @@ namespace Lingua.Main
 {
     class Program
     {
-        private static readonly ITranslator Translator = new Translator(new Tokenizer(), new Thesaurus(), new Engine());
+        private static readonly ITranslator Translator 
+            = new Translator(new Tokenizer(), new Thesaurus(), new Engine());
 
         static void Main(string[] args)
         {

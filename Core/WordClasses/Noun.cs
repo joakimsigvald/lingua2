@@ -1,16 +1,21 @@
-﻿using System.Collections.Generic;
-using Lingua.Core.Tokens;
+﻿using Lingua.Core.Tokens;
 
 namespace Lingua.Core.WordClasses
 {
     public class Noun : Word
     {
-        protected override IEnumerable<Modifier> GetIndividualModifiers(int variationIndex)
+        protected override Modifier GetVariationModifier(int variationIndex)
         {
-            if ((variationIndex & 1) > 0)
-                yield return Modifier.Definite;
-            if ((variationIndex & 2) > 0)
-                yield return Modifier.Plural;
+            switch (variationIndex)
+            {
+                case 1:
+                    return Modifier.Definite;
+                case 2:
+                    return Modifier.Plural;
+                case 3:
+                    return Modifier.Definite | Modifier.Plural;
+                default: return Modifier.None;
+            }
         }
     }
 }

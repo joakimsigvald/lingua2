@@ -1,20 +1,28 @@
-﻿using System.Collections.Generic;
+﻿using System;
 using Lingua.Core.Tokens;
 
 namespace Lingua.Core.WordClasses
 {
     public class Verb : Word
     {
-        protected override IEnumerable<Modifier> GetIndividualModifiers(int variationIndex)
+        protected override Modifier GetVariationModifier(int variationIndex)
         {
-            if (variationIndex == 1)
-                yield return Modifier.Definite; // Participle
-            if (variationIndex > 1)
-                yield return Modifier.FirstPerson;
-            if (variationIndex > 3)
-                yield return Modifier.SecondPerson;
-            if (variationIndex == 5)
-                yield return Modifier.Plural;
+            switch (variationIndex)
+            {
+                case 1:
+                    return Modifier.Definite; // Participle
+                case 2:
+                    return Modifier.FirstPerson;
+                case 3:
+                    return Modifier.SecondPerson;
+                case 4:
+                    return Modifier.ThirdPerson;
+                case 5:
+                    return Modifier.Plural | Modifier.ThirdPerson;
+                case 6:
+                    return Modifier.Past;
+                default: return Modifier.None;
+            }
         }
     }
 }

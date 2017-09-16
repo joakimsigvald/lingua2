@@ -10,23 +10,25 @@ namespace Lingua.Core
         private readonly ITokenizer _tokenizer;
         private readonly IThesaurus _thesaurus;
         private readonly IGrammar _grammar;
+        private readonly ILogger _logger;
 
-        public Translator(ITokenizer tokenizer, IThesaurus thesaurus, IGrammar grammar)
+        public Translator(ITokenizer tokenizer, IThesaurus thesaurus, IGrammar grammar, ILogger logger = null)
         {
             _tokenizer = tokenizer;
             _thesaurus = thesaurus;
             _grammar = grammar;
+            _logger = logger;
         }
 
         public string Translate(string original)
-            => Output(
-                Adjust(
-                    _grammar.Reduce(
-                        Combine(
-                            Translate(
-                                    _tokenizer.Tokenize(original)
-                                        .ToArray())
-                                .ToArray()))));
+        {
+            var tokens = _tokenizer.Tokenize(original).ToArray();
+            var candidates = Translate(tokens).ToArray();
+            var possibilities = Combine(candidates);
+            var result = _grammar.Reduce(possibilities);
+            _logger?.Log(result.Reason);
+            return Output(Adjust(result.Translations));
+        }
 
         private IEnumerable<Translation[]> Translate(IReadOnlyList<Token> tokens)
             => Reduce(tokens.Select(_thesaurus.Translate), tokens);

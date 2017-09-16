@@ -46,7 +46,7 @@ namespace Lingua.Grammar
             { "R2V1", 1},
             { "R2nV1", 1},
             { "R3V3", 1},
-            { "R3nV3", 1},
+            { "R3nV3n", 1},
             { "NN", -1},
             { "NNd", -1},
             { "NNdn", -1},
@@ -57,16 +57,15 @@ namespace Lingua.Grammar
 
         private static readonly IList<Scorer> Scorers = ScoredPatterns.Select(sp => new Scorer
         {
-            Pattern = Encoder.Code(Encoder.Deserialize(sp.Key)).ToArray(),
+            Pattern = Encoder.Encode(Encoder.Deserialize(sp.Key)).ToArray(),
             Score = sp.Value
         }).ToList();
 
-        public static int Compute(IList<Token> tokens)
+        public static Evaluation Evaluate(IList<Token> tokens)
         {
-            var str = Encoder.Serialize(tokens); // for debugging
-            var code = Encoder.Code(tokens).ToArray();
+            var code = Encoder.Encode(tokens).ToArray();
             var score = Scorers.Sum(s => s.CountMatches(code) * s.Score);
-            return score;
+            return new Evaluation(tokens, score);
         }
 
         private int[] Pattern { get; set; }

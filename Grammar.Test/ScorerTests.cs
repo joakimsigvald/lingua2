@@ -12,7 +12,7 @@ namespace Lingua.Grammar.Test
         public void Score(string serial, int expectedScore)
         {
             var tokens = Encoder.Deserialize(serial).ToArray();
-            var actualScore = Scorer.Compute(tokens);
+            var actualScore = Scorer.Evaluate(tokens).Score;
             Assert.That(actualScore, Is.EqualTo(expectedScore));
         }
     }

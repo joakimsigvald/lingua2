@@ -9,7 +9,7 @@ namespace Lingua.Grammar
     {
         public Arranger(string from, string to)
         {
-            From = Encoder.Code(Encoder.Deserialize(from)).ToArray();
+            From = Encoder.Encode(Encoder.Deserialize(from)).ToArray();
             To = to.Select(c => c - 49).ToArray();
         }
 
@@ -26,8 +26,7 @@ namespace Lingua.Grammar
                     .Where(t => !(t.From is Divider))
                     .ToArray();
                 var tokens = segment.Select(t => t.From).ToArray();
-                var str = Encoder.Serialize(tokens); // for debugging
-                var codedSegment = Encoder.Code(tokens).ToArray();
+                var codedSegment = Encoder.Encode(tokens).ToArray();
                 if (Matches(codedSegment, From))
                 {
                     var dividers = segment

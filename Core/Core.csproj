@@ -32,6 +32,9 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.ValueTuple, Version=4.0.2.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.ValueTuple.4.4.0\lib\net461\System.ValueTuple.dll</HintPath>
+    </Reference>
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -41,7 +44,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Encoder.cs" />
+    <Compile Include="IEvaluation.cs" />
     <Compile Include="IGrammar.cs" />
+    <Compile Include="ILogger.cs" />
+    <Compile Include="IReason.cs" />
     <Compile Include="IThesaurus.cs" />
     <Compile Include="ITokenizer.cs" />
     <Compile Include="Tokens\Ellipsis.cs" />
@@ -69,6 +75,9 @@
     <Compile Include="Tokens\Word.cs" />
     <Compile Include="Tokens\Divider.cs" />
     <Compile Include="Tokens\Token.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

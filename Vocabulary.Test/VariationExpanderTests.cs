@@ -7,6 +7,7 @@ namespace Lingua.Vocabulary.Test
     {
         [TestCase("ball:s", "ball", "balls")]
         [TestCase("foot:___eet", "foot", "feet")]
+        [TestCase("foot:_3eet", "foot", "feet")]
         [TestCase("ball::s", "ball", "ball", "balls")]
         [TestCase("boll:en:ar|na", "boll", "bollen", "bollar", "bollarna")]
         [TestCase("abc|d|e", "abc", "abcd", "abcde")]

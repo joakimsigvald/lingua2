@@ -1,4 +1,5 @@
-﻿using Lingua.Grammar;
+﻿using System;
+using Lingua.Grammar;
 using Lingua.Tokenization;
 using Lingua.Vocabulary;
 using NUnit.Framework;
@@ -8,7 +9,8 @@ namespace Lingua.Core.Test
     [TestFixture]
     public class TranslatorTests
     {
-        private static readonly ITranslator Translator = new Translator(new Tokenizer(), new Thesaurus(), new Engine());
+        private static readonly ITranslator Translator 
+            = new Translator(new Tokenizer(), new Thesaurus(), new Engine(), new TestLogger());
 
         [TestCase(null, "")]
         [TestCase("", "")]
@@ -127,12 +129,21 @@ namespace Lingua.Core.Test
         [TestCase("they paint", "de målar")]
         [TestCase("I paint the ball", "jag målar bollen")]
         [TestCase("He paints the ball", "Han målar bollen")]
-        [TestCase("they paint the ball", "de målar bollen")]
-        [TestCase("I am painting the ball", "jag målar bollen")]
-        public void Verbs(string from, string to)
+        [TestCase("they paint the wall", "de målar väggen")]
+        [TestCase("I am painting the wall", "jag målar väggen")]
+        public void VerbsPresentTense(string from, string to)
+            => Translates(from, to);
+
+        [TestCase("I ran", "jag sprang")]
+        public void VerbsPastTense(string from, string to)
             => Translates(from, to);
 
         private static void Translates(string from, string to)
             => Assert.That(Translator.Translate(from), Is.EqualTo(to));
+
+        private class TestLogger : ILogger
+        {
+            public void Log(IReason reason) => reason.Evaluations.ForEach(Console.WriteLine);
+        }
     }
 }

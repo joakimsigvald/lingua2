@@ -31,19 +31,29 @@ namespace Lingua.Core.Test
         [TestCase("R3", (5 << 8) + 48)]
         [TestCase("R3n", (5 << 8) + 2 + 48)]
         [TestCase("A", 6 << 8)]
-        [TestCase("V", 7 << 8)]
-        [TestCase("V1", (7 << 8) + 16)]
-        [TestCase("V3", (7 << 8) + 48)]
-        [TestCase("X", 8 << 8)]
-        [TestCase("X1", (8 << 8) + 16)]
-        [TestCase("X2", (8 << 8) + 32)]
-        [TestCase("X3", (8 << 8) + 48)]
+        [TestCase("X", 7 << 8)]
+        [TestCase("X1", (7 << 8) + 16)]
+        [TestCase("X2", (7 << 8) + 32)]
+        [TestCase("X3", (7 << 8) + 48)]
+        [TestCase("V", 8 << 8)]
+        [TestCase("V1", (8 << 8) + 16)]
+        [TestCase("V3", (8 << 8) + 48)]
         [TestCase("Q", 9 << 8)]
-        public void SerializeToken(string serial, params int[] expected)
+        public void EncodeToken(string serial, params int[] expected)
         {
             var tokens = Encoder.Deserialize(serial);
-            var actual = Encoder.Code(tokens);
+            var actual = Encoder.Encode(tokens);
             Assert.That(actual, Is.EquivalentTo(expected));
+        }
+
+        [TestCase(Modifier.Plural | Modifier.ThirdPerson, "n3")]
+        [TestCase(Modifier.Plural | Modifier.SecondPerson, "n2")]
+        [TestCase(Modifier.Plural | Modifier.FirstPerson, "n1")]
+        public void SerializeModifiers(Modifier modifiers, string expected)
+        {
+            var token = new Noun {Modifiers = modifiers};
+            var actual = Encoder.Serialize(new []{token});
+            Assert.That(actual, Is.EquivalentTo($"N{expected}"));
         }
 
         [Test]
@@ -58,7 +68,7 @@ namespace Lingua.Core.Test
                 new Noun {Modifiers = Modifier.Plural} // toys
             };
             var expected = new [] { (3 << 8) + 1, (4 << 8) + 1 + 4, (4 << 8) + 2 };
-            var actual = Encoder.Code(tokens);
+            var actual = Encoder.Encode(tokens);
             Assert.That(actual, Is.EquivalentTo(expected));
         }
     }

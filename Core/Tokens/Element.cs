@@ -14,7 +14,8 @@ namespace Lingua.Core.Tokens
         SecondPerson = 32,
         ThirdPerson = 48,
         Comparative = 64,
-        Superlative = 128
+        Superlative = 128,
+        Past = 256
     }
 
     public abstract class Element : Token
