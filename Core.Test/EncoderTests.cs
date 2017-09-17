@@ -43,6 +43,7 @@ namespace Lingua.Core.Test
         [TestCase("V1", (10 << 16) + (1 << 4))]
         [TestCase("V3", (10 << 16) + (3 << 4))]
         [TestCase("I", 11 << 16)]
+        [TestCase("C", 12 << 16)]
         public void EncodeToken(string serial, params int[] expected)
         {
             var tokens = Encoder.Deserialize(serial);

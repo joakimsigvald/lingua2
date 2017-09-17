@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Text.RegularExpressions;
 using Lingua.Core.Tokens;
+using Lingua.Core.WordClasses;
 
 namespace Lingua.Core
 {
@@ -36,9 +37,9 @@ namespace Lingua.Core
             => tokens.SelectMany(Expand);
 
         private IEnumerable<Token> Expand(Token token)
-            => Tokenize(Expand(token as Word)) ?? new[] { token };
+            => Tokenize(Expand(token as Unclassified)) ?? new[] { token };
 
-        private string Expand(Word word)
+        private string Expand(Unclassified word)
             => word == null ? null 
             : _thesaurus.TryExpand(word.Value, out string exactExpanded)
                 ? exactExpanded

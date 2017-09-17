@@ -33,8 +33,18 @@ namespace Lingua.Vocabulary
             { "who's", "who is"},
         };
 
+        private static readonly IWordMap Quantifiers = new WordMap<Quantifier>
+        {
+            {"one", "en"},
+            {"two", "två"},
+            {"several", "flera"},
+            {"many", "många"},
+            {"all", "alla"},
+        };
+
         private static readonly IWordMap Nouns = new WordMap<Noun>(GenitiveRules)
         {
+            {"chair::s|", "stol:en:ar|na"},
             {"pen::s|", "penna:n:_or|na"},
             {"ball::s|", "boll:en:ar|na"},
             {"wall::s|", "vägg:en:ar|na"},
@@ -55,13 +65,12 @@ namespace Lingua.Vocabulary
             {"an", "en"},
         };
 
-        private static readonly IWordMap Quantifiers = new WordMap<Quantifier>
+        private static readonly IWordMap Prepositions = new WordMap<Preposition>
         {
-            {"one", "en"},
-            {"two", "två"},
-            {"several", "flera"},
-            {"many", "många"},
-            {"all", "alla"},
+            {"to", "till"},
+            {"on", "på"},
+            {"with", "med"},
+            {"here", "här"},
         };
 
         private static readonly IWordMap Pronouns = new WordMap<Pronoun>
@@ -119,35 +128,28 @@ namespace Lingua.Vocabulary
             {":need to be<f", ":måste"},
         };
 
-        private static readonly IWordMap Prepositions = new WordMap<Preposition>
-        {
-            {"to", "till"},
-            {"with", "med"},
-            {"here", "här"},
-        };
-
         private static readonly IWordMap InfinitiveMarkers = new WordMap<InfinitiveMarker>
         {
             {"to", "att"},
         };
 
-        private static readonly IWordMap Unclassifieds = new WordMap<Unclassified>
+        private static readonly IWordMap Conjunctions = new WordMap<Conjunction>
         {
             {"and", "och"},
         };
 
         private static readonly ILexicon Lexicon = new Lexicon(
-            Abbreviations, 
+            Abbreviations,
+            Quantifiers,
             Nouns,
+            Articles,
+            Prepositions,
             Pronouns,
             Adjectives,
-            Verbs,
-            Articles, 
-            Quantifiers,
             Auxiliaries,
-            Prepositions,
+            Verbs,
             InfinitiveMarkers,
-            Unclassifieds
+            Conjunctions
             );
 
         public Translation[] Translate(Token token)

@@ -75,6 +75,7 @@ namespace Lingua.Core
                 case 9: return new Auxiliary();
                 case 10: return new Verb();
                 case 11: return new InfinitiveMarker();
+                case 12: return new Conjunction();
                 case 255:
                     return new Unclassified();
                 default: throw new NotImplementedException();
@@ -109,6 +110,7 @@ namespace Lingua.Core
                 case Auxiliary _: return "X";
                 case Verb _: return "V";
                 case InfinitiveMarker _: return "I";
+                case Conjunction _: return "C";
                 case Abbreviation _:
                 case Unclassified _: return "U";
                 default: throw new NotImplementedException();
@@ -132,6 +134,7 @@ namespace Lingua.Core
                 case 'X': return new Auxiliary { Modifiers = modifiers };
                 case 'V': return new Verb { Modifiers = modifiers };
                 case 'I': return new InfinitiveMarker { Modifiers = modifiers };
+                case 'C': return new Conjunction { Modifiers = modifiers };
                 default: throw new NotImplementedException();
             }
         }
@@ -154,6 +157,7 @@ namespace Lingua.Core
                 case Auxiliary _: return 9;
                 case Verb _: return 10;
                 case InfinitiveMarker _: return 11;
+                case Conjunction _: return 12;
                 case Abbreviation _:
                 case Unclassified _: return 255;
                 default: throw new NotImplementedException();

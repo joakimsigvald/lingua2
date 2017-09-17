@@ -181,6 +181,7 @@ namespace Lingua.Core.Test
             => Translates(from, to);
 
         [TestCase("come to me", "kom till mig")]
+        [TestCase("the ball is on the chair", "bollen är på stolen")]
         public void Prepositions(string from, string to)
             => Translates(from, to);
 
