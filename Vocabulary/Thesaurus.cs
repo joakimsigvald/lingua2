@@ -10,7 +10,6 @@ namespace Lingua.Vocabulary
         private static readonly IWordMap Words = new WordMap<Unclassified>
         {
             {"and", "och"},
-            {"my", "min"},
             {"to", "att"},
             {"with", "med"},
         };
@@ -44,14 +43,15 @@ namespace Lingua.Vocabulary
 
         private static readonly IWordMap Pronouns = new WordMap<Pronoun>
         {
-            {"I<1", "jag"},
-            {"we<1n", "vi"},
-            {"you<2", "du"},
-            {"you<2n", "ni"},
-            {"he<3", "han"},
-            {"she<3", "hon"},
-            {"it<3", "det"},
-            {"they<3n", "de"},
+            {"I!me:_y:_ine<1", "jag!mig:_n|"},
+            {"we!us!our:s<1n", "vi!oss!vår|"},
+            {"you::re|_s<2", "du:_ig:_in|"},
+            {"you::re|_s<2n", "ni!er::"},
+            {"he:_im:_is|<3", "han:_2onom:s|"},
+            {"she!her:s|<3", "hon!henne:s|"},
+            {"it::s|<3", "den::_ss|"},
+            {"it::s|<3t", "det::_ss|"},
+            {"they:_m:_ir|s<3n", "de:m:ras|"},
         };
 
         private static readonly IWordMap Adjectives = new WordMap<Adjective>
@@ -69,25 +69,29 @@ namespace Lingua.Vocabulary
             {"achievement-oriented", "prestationsorienterad"}
         };
 
-        private static readonly IWordMap Verbs = new WordMap<Verb>
+        /// <summary>
+        /// Imperative|Infinitive|Participle|First|Second|Third|ThirdPlural|Past|Perfect|PastContinuous|FutureContinuous
+        /// </summary>
+        private static readonly IWordMap Verbs = new WordMap<Verb>(baseForm: 1)
         {
-            {"paint:ing:::s::ed|:ing|", "måla:r||||:de:t|:"},
-            {"play:ing:::s::ed|:ing|", "leka:_er||||:_te|_|:"},
-            {"run:ning:::s::_2an|:ning|", "springa:_er||||:_4ang:_4ungit|:"},
+            {"help::ing:::s::ed|:ing|", "hjälp:a:er||||:te:::a"},
+            {"paint::ing:::s::ed|:ing|", "måla::r||||:de:t|:"},
+            {"play::ing:::s::ed|:ing|", "lek:a:er||||:te:t|:a"},
+            {"run::ning:::s::_2an|:ning|", "spring:a:er||||:_3ang:_3ungit|:a"},
         };
 
-        private static readonly IWordMap Auxiliaries = new WordMap<Auxiliary>
+        private static readonly IWordMap Auxiliaries = new WordMap<Auxiliary>(baseForm: 1)
         {
-            {"be:ing!am!are!is!are!been!were", "vara:_4är||||:_|it:"},
-            {"have:_ing:::_2s::_2d:", "ha:r||||:de:ft:"},
-            {"will:_ing:::::_3ould:_ing", "ska::::::_ulle:_olat:_"},
-            {"shall::::::_3ould:", "ska::::::_ulle:_olat:_"},
-            {"will be<f", "kommer att"},
-            {"will have been<fr", "kommer att ha"},
-            {"could have been<fr", "kunde ha"},
-            {"going to<f", "kommer att"},
-            {"shall be<f", "kommer att"},
-            {"need to be<f", "måste"},
+            {"be::ing!am!are!is!are!been!were", "var:a:_3är||||::it:"},
+            {"have::_ing:::_2s::_2d:", "ha::r||||:de:ft:"},
+            {"will::_ing:::::_3ould:_ing", "ska:::::::_ulle:_olat:_"},
+            {"shall:::::::_3ould:", "ska:::::::_ulle:_olat:_"},
+            {":will be<f", ":kommer att"},
+            {":will have been<fr", ":kommer att ha"},
+            {":could have been<fr", ":kunde ha"},
+            {":going to<f", ":kommer att"},
+            {":shall be<f", ":kommer att"},
+            {":need to be<f", ":måste"},
         };
 
         private static readonly IWordMap Articles = new WordMap<Article>
@@ -105,7 +109,12 @@ namespace Lingua.Vocabulary
             {"many", "många"},
             {"all", "alla"},
         };
-
+        /*
+        private static readonly IWordMap Prepositions = new WordMap<Preposition>
+        {
+            {"to", "till"},
+        };
+        */
         private static readonly ILexicon Lexicon = new Lexicon(
             Words, 
             Abbreviations, 
@@ -116,6 +125,7 @@ namespace Lingua.Vocabulary
             Articles, 
             Quantifiers,
             Auxiliaries
+            //Prepositions
             );
 
         public Translation[] Translate(Token token)

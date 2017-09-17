@@ -9,23 +9,25 @@ namespace Lingua.Core.WordClasses
         {
             switch (variationIndex)
             {
-                case 1:
-                    return Modifier.Definite; // Participle
+                case 0:
+                    return Modifier.Imperitive;
                 case 2:
-                    return Modifier.FirstPerson;
+                    return Modifier.Definite; // Participle
                 case 3:
-                    return Modifier.SecondPerson;
+                    return Modifier.FirstPerson;
                 case 4:
-                    return Modifier.ThirdPerson;
+                    return Modifier.SecondPerson;
                 case 5:
-                    return Modifier.Plural | Modifier.ThirdPerson;
+                    return Modifier.ThirdPerson;
                 case 6:
-                    return Modifier.Past;
+                    return Modifier.Plural | Modifier.ThirdPerson;
                 case 7:
-                    return Modifier.Perfect;
+                    return Modifier.Past;
                 case 8:
-                    return Modifier.Definite | Modifier.Perfect;
+                    return Modifier.Perfect;
                 case 9:
+                    return Modifier.Definite | Modifier.Perfect;
+                case 10:
                     return Modifier.Future;
                 default: return Modifier.None;
             }

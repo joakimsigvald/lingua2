@@ -50,6 +50,7 @@
     <Compile Include="IReason.cs" />
     <Compile Include="IThesaurus.cs" />
     <Compile Include="ITokenizer.cs" />
+    <Compile Include="Tokens\Start.cs" />
     <Compile Include="Tokens\Ellipsis.cs" />
     <Compile Include="Tokens\Generic.cs" />
     <Compile Include="Tokens\Punctuation.cs" />
@@ -59,6 +60,7 @@
     <Compile Include="Tokens\Abbreviation.cs" />
     <Compile Include="Tokens\Element.cs" />
     <Compile Include="TreeNode.cs" />
+    <Compile Include="WordClasses\Preposition.cs" />
     <Compile Include="WordClasses\Pronoun.cs" />
     <Compile Include="WordClasses\Auxiliary.cs" />
     <Compile Include="WordClasses\Verb.cs" />

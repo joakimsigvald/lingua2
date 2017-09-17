@@ -6,7 +6,7 @@ namespace Lingua.Core.Tokens
     public enum Modifier
     {
         None = 0,
-        Definite = 1, // double for Participle (-ing form)
+        Definite = 1, // double for Verb Participle (-ing form)
         Plural = 1 << 1,
         Genitive = 1 << 2,
         Qualified = 1 << 3,
@@ -17,9 +17,12 @@ namespace Lingua.Core.Tokens
         Superlative = 1 << 7,
         Neuter = 1 << 8,
         Adverb = 1 << 9,
-        Past = 1 << 10,
-        Perfect = 1 << 11,
-        Future = 1 << 12,
+        Imperitive = 1 << 10,
+        Past = 1 << 11,
+        Perfect = 1 << 12,
+        Future = 1 << 13,
+        Object = 1 << 14,
+        Possessive = 1 << 15,
         Any = 0xffff
     }
 

@@ -48,6 +48,9 @@ namespace Lingua.Core
         private static bool Matches(int code, int pattern)
             => code == pattern || (code | (int)Modifier.Any) == pattern;
 
+        private static int Encode(Token token)
+            => (ClassCode(token) << 16) + ModifierCode(token as Element);
+
         private static Token Decode(int code)
         {
             var token = DecodeToken(code);
@@ -60,6 +63,7 @@ namespace Lingua.Core
         {
             switch (code >> 16)
             {
+                case 0: return new Start();
                 case 1: return new Terminator('.');
                 case 2: return new Separator(',');
                 case 3: return new Article();
@@ -89,6 +93,7 @@ namespace Lingua.Core
         {
             switch (token)
             {
+                case Start _: return "^";
                 case Ellipsis _:
                 case Terminator _: return ".";
                 case Separator _: return ",";
@@ -111,6 +116,7 @@ namespace Lingua.Core
             var modifiers = ParseModifiers(modifierStr);
             switch (primary)
             {
+                case '^': return new Start();
                 case '.': return new Terminator(primary);
                 case ',': return new Separator(primary);
                 case 'T': return new Article {Modifiers = modifiers};
@@ -120,6 +126,28 @@ namespace Lingua.Core
                 case 'V': return new Verb {Modifiers = modifiers};
                 case 'X': return new Auxiliary {Modifiers = modifiers};
                 case 'Q': return new Number {Modifiers = modifiers};
+                default: throw new NotImplementedException();
+            }
+        }
+
+        private static byte ClassCode(Token token)
+        {
+            switch (token)
+            {
+                case Start _: return 0;
+                case Ellipsis _:
+                case Terminator _: return 1;
+                case Separator _: return 2;
+                case Article _: return 3;
+                case Noun _: return 4;
+                case Pronoun _: return 5;
+                case Adjective _: return 6;
+                case Auxiliary _: return 7;
+                case Verb _: return 8;
+                case Quantifier _:
+                case Number _: return 9;
+                case Abbreviation _:
+                case Unclassified _: return 255;
                 default: throw new NotImplementedException();
             }
         }
@@ -152,6 +180,8 @@ namespace Lingua.Core
                 yield return 't';
             if (modifiers.HasFlag(Modifier.Adverb))
                 yield return 'a';
+            if (modifiers.HasFlag(Modifier.Imperitive))
+                yield return 'i';
             if (modifiers.HasFlag(Modifier.Past))
                 yield return 'p';
             if (modifiers.HasFlag(Modifier.Perfect))
@@ -193,34 +223,11 @@ namespace Lingua.Core
                 case 's': return Modifier.Superlative;
                 case 't': return Modifier.Neuter;
                 case 'a': return Modifier.Adverb;
+                case 'i': return Modifier.Imperitive;
                 case 'p': return Modifier.Past;
                 case 'r': return Modifier.Perfect;
                 case 'f': return Modifier.Future;
                 case '*': return Modifier.Any;
-                default: throw new NotImplementedException();
-            }
-        }
-
-        private static int Encode(Token token)
-            => (ClassCode(token) << 16) + ModifierCode(token as Element);
-
-        private static byte ClassCode(Token token)
-        {
-            switch (token)
-            {
-                case Ellipsis _:
-                case Terminator _: return 1;
-                case Separator _: return 2;
-                case Article _: return 3;
-                case Noun _: return 4;
-                case Pronoun _: return 5;
-                case Adjective _: return 6;
-                case Auxiliary _: return 7;
-                case Verb _: return 8;
-                case Quantifier _:
-                case Number _: return 9;
-                case Abbreviation _:
-                case Unclassified _: return 255;
                 default: throw new NotImplementedException();
             }
         }

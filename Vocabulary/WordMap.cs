@@ -16,12 +16,14 @@ namespace Lingua.Vocabulary
     public class WordMap<TWord> : Dictionary<string, string>, IWordMap
         where TWord : Word, new()
     {
-        public WordMap()
-        {
-        }
+        private readonly IList<IModificationRule> _rules = new List<IModificationRule>();
+        private readonly int _baseForm;
 
-        public WordMap(IList<IModificationRule> rules)
-            => _rules = rules;
+        public WordMap(IList<IModificationRule> rules = null, int baseForm = 0)
+        {
+            _rules = rules ?? _rules;
+            _baseForm = baseForm;
+        }
 
         public WordMap(IDictionary<string, string> mappings)
             : base(mappings)
@@ -31,8 +33,6 @@ namespace Lingua.Vocabulary
         protected WordMap(SerializationInfo info, StreamingContext context) : base(info, context)
         {
         }
-
-        private readonly IList<IModificationRule> _rules = new List<IModificationRule>();
 
         public IEnumerable<Translation> Translations => this.SelectMany(CreateTranslations);
 
@@ -47,7 +47,11 @@ namespace Lingua.Vocabulary
             allTranslations[0].Variations = allTranslations.ToArray();
             if (to.IncompleteCompound != null)
                 allTranslations.Add(CreateIncompleteCompoundTranslation(from, to));
-            return allTranslations;
+            return allTranslations
+                .Take(_baseForm)
+                .Concat(allTranslations.Skip(_baseForm + 1))
+                .Prepend(allTranslations[_baseForm])
+                .Where(t => !string.IsNullOrEmpty(t.From.Value));
         }
 
         private IEnumerable<Translation> ApplyRules(IEnumerable<Translation> translations)

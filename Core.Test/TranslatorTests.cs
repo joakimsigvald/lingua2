@@ -71,10 +71,10 @@ namespace Lingua.Core.Test
             => Translates(from, to);
 
         [TestCase("the ball", "bollen")]
-        [TestCase("Play with the ball", "Leka med bollen")]
+        [TestCase("Play with the ball", "Lek med bollen")]
         [TestCase("the balls", "bollarna")]
         [TestCase("the streets", "gatorna")]
-        [TestCase("Play with the balls", "Leka med bollarna")]
+        [TestCase("Play with the balls", "Lek med bollarna")]
         public void DefiniteNoun(string from, string to)
             => Translates(from, to);
 
@@ -125,7 +125,7 @@ namespace Lingua.Core.Test
         [TestCase("you paint", "du målar")]
         [TestCase("he paints", "han målar")]
         [TestCase("she paints", "hon målar")]
-        [TestCase("it paints", "det målar")]
+        [TestCase("it paints", "den målar")]
         [TestCase("they paint", "de målar")]
         [TestCase("I paint the ball", "jag målar bollen")]
         [TestCase("He paints the ball", "Han målar bollen")]
@@ -167,6 +167,16 @@ namespace Lingua.Core.Test
         [TestCase("You could have been running", "Du kunde ha sprungit")]
         [TestCase("they could have been running", "de kunde ha sprungit")]
         public void VerbsMiscellaneous(string from, string to)
+            => Translates(from, to);
+
+        [TestCase("It is mine", "Den är min")]
+        [TestCase("It is my pen", "Det är min penna")]
+        [TestCase("Help me", "Hjälp mig")]
+        public void Pronouns(string from, string to)
+            => Translates(from, to);
+
+        [TestCase("come to me", "kom till mig")]
+        public void Prepositions(string from, string to)
             => Translates(from, to);
 
         private static void Translates(string from, string to)
