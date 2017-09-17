@@ -41,6 +41,13 @@ namespace Lingua.Core
         public static IEnumerable<Token> Decode(int[] code)
             => code.Select(Decode);
 
+        public static bool Matches(int[] codes, int[] pattern)
+            => codes.Length == pattern.Length
+               && codes.Select((d, i) => Matches(d, pattern[i])).All(b => b);
+
+        private static bool Matches(int code, int pattern)
+            => code == pattern || (code | (int)Modifier.Any) == pattern;
+
         private static Token Decode(int code)
         {
             var token = DecodeToken(code);
@@ -149,6 +156,8 @@ namespace Lingua.Core
                 yield return 'p';
             if (modifiers.HasFlag(Modifier.Perfect))
                 yield return 'r';
+            if (modifiers.HasFlag(Modifier.Future))
+                yield return 'f';
         }
 
         private static bool TrySerializePersonModifiers(Modifier modifiers, out char c)
@@ -186,6 +195,7 @@ namespace Lingua.Core
                 case 'a': return Modifier.Adverb;
                 case 'p': return Modifier.Past;
                 case 'r': return Modifier.Perfect;
+                case 'f': return Modifier.Future;
                 case '*': return Modifier.Any;
                 default: throw new NotImplementedException();
             }

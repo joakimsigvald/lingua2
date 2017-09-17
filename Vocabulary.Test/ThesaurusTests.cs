@@ -44,7 +44,8 @@ namespace Lingua.Vocabulary.Test
 
         [TestCase("bouncing ball", "studsboll")]
         [TestCase("easy as pie", "lätt som en pannkaka")]
-        [TestCase("easy peasy", "lätt som en pannkaka")]
+        [TestCase("easy peasy", "lätt som en plätt")]
+        [TestCase("will have been", "kommer att ha")]
         public void CompoundWordOrPhrase(string from, string to)
             => Translates(from, to);
 

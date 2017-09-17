@@ -26,7 +26,7 @@ namespace Lingua.Grammar
                     .ToArray();
                 var tokens = segment.Select(t => t.From).ToArray();
                 var codedSegment = Encoder.Encode(tokens).ToArray();
-                if (Matches(codedSegment, From))
+                if (Encoder.Matches(codedSegment, From))
                 {
                     var dividers = segment
                         .Where(t => t.From is Divider)
@@ -46,8 +46,5 @@ namespace Lingua.Grammar
 
         private IEnumerable<Translation> Rearrange(IList<Translation> segment)
             => To.Select(i => segment[i]);
-
-        private static bool Matches(int[] segment, int[] pattern)
-            => segment.Length == pattern.Length && segment.Select((d, i) => d == pattern[i]).All(b => b);
     }
 }

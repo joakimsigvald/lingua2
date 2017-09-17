@@ -31,6 +31,8 @@ namespace Lingua.Grammar
         {
             { "TdnqAdnNdn", 2},
             { "TdnqQAdnNdn", 2},
+            { "XfVf", 2},
+            { "XfrVdr", 2},
             { "TdNd", 1},
             { "TdNdn", 1},
             { "TdNdg", 1},
@@ -46,6 +48,12 @@ namespace Lingua.Grammar
             { "R3nV3n", 1},
             { "VpAa", 1},
             { "R1X1Vr", 1},
+            { "R1X1XpVdr", 1},
+            { "R2X2XpVdr", 1},
+            { "R3X3XpVdr", 1},
+            { "R3nX3nXpVdr", 1},
+            { "R*XpXpVdr", 1},
+            { "R*X*Vd", 1},
             { "R2X2Vr", 1},
             { "R3X3Vr", 1},
             { "R3nXn3Vr", 1},
@@ -82,12 +90,6 @@ namespace Lingua.Grammar
             => sequence.Length < Pattern.Length
                 ? 0
                 : Enumerable.Range(0, 1 + sequence.Length - Pattern.Length)
-                    .Count(n => Matches(sequence.Skip(n).Take(Pattern.Length).ToArray(), Pattern));
-
-        private static bool Matches(int[] segment, int[] pattern)
-            => segment.Select((d, i) => Matches(d, pattern[i])).All(b => b);
-
-        private static bool Matches(int code, int pattern)
-            => code == pattern || (code | (int)Modifier.Any) == pattern;
+                    .Count(n => Encoder.Matches(sequence.Skip(n).Take(Pattern.Length).ToArray(), Pattern));
     }
 }

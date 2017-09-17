@@ -23,6 +23,10 @@ namespace Lingua.Core.WordClasses
                     return Modifier.Past;
                 case 7:
                     return Modifier.Perfect;
+                case 8:
+                    return Modifier.Definite | Modifier.Perfect;
+                case 9:
+                    return Modifier.Future;
                 default: return Modifier.None;
             }
         }

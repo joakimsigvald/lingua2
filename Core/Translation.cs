@@ -13,7 +13,7 @@ namespace Lingua.Core
         private static Word[] CreateContinuation(Word from)
             => string.IsNullOrWhiteSpace(from?.Value)
                 ? new Word[0]
-                : from.Value.Split(new[] {' '}, 2)
+                : from.Value.Split(' ')
                     .Skip(1)
                     .Select(part => new Unclassified {Value = part})
                     .Cast<Word>()
@@ -58,7 +58,7 @@ namespace Lingua.Core
 
         private bool MatchesContinuation(IReadOnlyList<Token> tokens, int nextIndex)
             => tokens.Count >= nextIndex + Continuation.Length * 2
-               && Continuation.All(word => Matches(word, tokens, ref nextIndex));
+                   && Continuation.All(word => Matches(word, tokens, ref nextIndex));
 
         private static bool Matches(Word word, IReadOnlyList<Token> tokens, ref int nextIndex)
             => tokens[nextIndex++] is Divider && (tokens[nextIndex++] as Word)?.Value == word.Value;

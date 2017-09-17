@@ -9,7 +9,7 @@ namespace Lingua.Core.Test
     [TestFixture]
     public class TranslatorTests
     {
-        private static readonly ITranslator Translator 
+        private static readonly ITranslator Translator
             = new Translator(new Tokenizer(), new Thesaurus(), new Engine(), new TestLogger());
 
         [TestCase(null, "")]
@@ -152,6 +152,21 @@ namespace Lingua.Core.Test
         [TestCase("She had ran", "Hon hade sprungit")]
         [TestCase("They had ran", "De hade sprungit")]
         public void VerbsPastPerfectTense(string from, string to)
+            => Translates(from, to);
+
+        [TestCase("I will run", "jag ska springa")]
+        [TestCase("I shall run", "jag ska springa")]
+        [TestCase("I have been running", "jag har sprungit")]
+        [TestCase("she has been running", "hon har sprungit")]
+        [TestCase("I had been running", "jag hade sprungit")]
+        [TestCase("I will be running", "jag kommer att springa")]
+        [TestCase("I am going to run", "jag kommer att springa")]
+        [TestCase("I will have been running", "jag kommer att ha sprungit")]
+        [TestCase("I could have been running", "jag kunde ha sprungit")]
+        [TestCase("he could have been running", "han kunde ha sprungit")]
+        [TestCase("You could have been running", "Du kunde ha sprungit")]
+        [TestCase("they could have been running", "de kunde ha sprungit")]
+        public void VerbsMiscellaneous(string from, string to)
             => Translates(from, to);
 
         private static void Translates(string from, string to)
