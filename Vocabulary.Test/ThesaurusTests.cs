@@ -25,6 +25,7 @@ namespace Lingua.Vocabulary.Test
         [TestCase("my", "min")]
         [TestCase("I", "jag")]
         [TestCase("to", "att")]
+        [TestCase("to", "till")]
         [TestCase("play", "leka")]
         [TestCase("with", "med")]
         [TestCase("easy", "lätt")]
@@ -75,8 +76,10 @@ namespace Lingua.Vocabulary.Test
         private static void Translates(string from, string to)
         {
             var word = new Unclassified {Value = from.Split(' ')[0] };
-            var translation = Thesaurus.Translate(word).First(t => t.From.Value == from);
-            Assert.That(translation.To, Is.EqualTo(to));
+            var translations = Thesaurus.Translate(word)
+                .Where(t => t.From.Value == from)
+                .Select(t => t.To);
+            Assert.That(translations, Does.Contain(to));
         }
     }
 }

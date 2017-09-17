@@ -60,6 +60,7 @@
     <Compile Include="Tokens\Abbreviation.cs" />
     <Compile Include="Tokens\Element.cs" />
     <Compile Include="TreeNode.cs" />
+    <Compile Include="WordClasses\InfinitiveMarker.cs" />
     <Compile Include="WordClasses\Preposition.cs" />
     <Compile Include="WordClasses\Pronoun.cs" />
     <Compile Include="WordClasses\Auxiliary.cs" />

@@ -66,13 +66,15 @@ namespace Lingua.Core
                 case 0: return new Start();
                 case 1: return new Terminator('.');
                 case 2: return new Separator(',');
-                case 3: return new Article();
+                case 3: return new Number();
                 case 4: return new Noun();
-                case 5: return new Pronoun();
-                case 6: return new Adjective();
-                case 7: return new Auxiliary();
-                case 8: return new Verb();
-                case 9: return new Number();
+                case 5: return new Article();
+                case 6: return new Preposition();
+                case 7: return new Pronoun();
+                case 8: return new Adjective();
+                case 9: return new Auxiliary();
+                case 10: return new Verb();
+                case 11: return new InfinitiveMarker();
                 case 255:
                     return new Unclassified();
                 default: throw new NotImplementedException();
@@ -97,14 +99,16 @@ namespace Lingua.Core
                 case Ellipsis _:
                 case Terminator _: return ".";
                 case Separator _: return ",";
-                case Article _: return "T";
+                case Quantifier _:
+                case Number _: return "Q";
                 case Noun _: return "N";
+                case Article _: return "T";
+                case Preposition _: return "P";
                 case Pronoun _: return "R";
                 case Adjective _: return "A";
                 case Auxiliary _: return "X";
                 case Verb _: return "V";
-                case Quantifier _:
-                case Number _: return "Q";
+                case InfinitiveMarker _: return "I";
                 case Abbreviation _:
                 case Unclassified _: return "U";
                 default: throw new NotImplementedException();
@@ -119,13 +123,15 @@ namespace Lingua.Core
                 case '^': return new Start();
                 case '.': return new Terminator(primary);
                 case ',': return new Separator(primary);
-                case 'T': return new Article {Modifiers = modifiers};
+                case 'Q': return new Number { Modifiers = modifiers };
                 case 'N': return new Noun {Modifiers = modifiers};
-                case 'R': return new Pronoun {Modifiers = modifiers};
+                case 'T': return new Article { Modifiers = modifiers };
+                case 'P': return new Preposition { Modifiers = modifiers };
+                case 'R': return new Pronoun { Modifiers = modifiers };
                 case 'A': return new Adjective {Modifiers = modifiers};
-                case 'V': return new Verb {Modifiers = modifiers};
-                case 'X': return new Auxiliary {Modifiers = modifiers};
-                case 'Q': return new Number {Modifiers = modifiers};
+                case 'X': return new Auxiliary { Modifiers = modifiers };
+                case 'V': return new Verb { Modifiers = modifiers };
+                case 'I': return new InfinitiveMarker { Modifiers = modifiers };
                 default: throw new NotImplementedException();
             }
         }
@@ -138,14 +144,16 @@ namespace Lingua.Core
                 case Ellipsis _:
                 case Terminator _: return 1;
                 case Separator _: return 2;
-                case Article _: return 3;
-                case Noun _: return 4;
-                case Pronoun _: return 5;
-                case Adjective _: return 6;
-                case Auxiliary _: return 7;
-                case Verb _: return 8;
                 case Quantifier _:
-                case Number _: return 9;
+                case Number _: return 3;
+                case Noun _: return 4;
+                case Article _: return 5;
+                case Preposition _: return 6;
+                case Pronoun _: return 7;
+                case Adjective _: return 8;
+                case Auxiliary _: return 9;
+                case Verb _: return 10;
+                case InfinitiveMarker _: return 11;
                 case Abbreviation _:
                 case Unclassified _: return 255;
                 default: throw new NotImplementedException();
@@ -162,32 +170,36 @@ namespace Lingua.Core
 
         private static IEnumerable<char> SerializeModifiers(Modifier modifiers)
         {
-            if (modifiers.HasFlag(Modifier.Definite))
-                yield return 'd';
-            if (modifiers.HasFlag(Modifier.Plural))
-                yield return 'n';
-            if (modifiers.HasFlag(Modifier.Genitive))
-                yield return 'g';
-            if (modifiers.HasFlag(Modifier.Qualified))
-                yield return 'q';
             if (TrySerializePersonModifiers(modifiers, out char c))
                 yield return c;
+            if (modifiers.HasFlag(Modifier.Adverb))
+                yield return 'a';
             if (modifiers.HasFlag(Modifier.Comparative))
                 yield return 'c';
+            if (modifiers.HasFlag(Modifier.Definite))
+                yield return 'd';
+            if (modifiers.HasFlag(Modifier.Future))
+                yield return 'f';
+            if (modifiers.HasFlag(Modifier.Genitive))
+                yield return 'g';
+            if (modifiers.HasFlag(Modifier.Imperitive))
+                yield return 'i';
+            if (modifiers.HasFlag(Modifier.Possessive))
+                yield return 'm';
+            if (modifiers.HasFlag(Modifier.Plural))
+                yield return 'n';
+            if (modifiers.HasFlag(Modifier.Object))
+                yield return 'o';
+            if (modifiers.HasFlag(Modifier.Past))
+                yield return 'p';
+            if (modifiers.HasFlag(Modifier.Qualified))
+                yield return 'q';
+            if (modifiers.HasFlag(Modifier.Perfect))
+                yield return 'r';
             if (modifiers.HasFlag(Modifier.Superlative))
                 yield return 's';
             if (modifiers.HasFlag(Modifier.Neuter))
                 yield return 't';
-            if (modifiers.HasFlag(Modifier.Adverb))
-                yield return 'a';
-            if (modifiers.HasFlag(Modifier.Imperitive))
-                yield return 'i';
-            if (modifiers.HasFlag(Modifier.Past))
-                yield return 'p';
-            if (modifiers.HasFlag(Modifier.Perfect))
-                yield return 'r';
-            if (modifiers.HasFlag(Modifier.Future))
-                yield return 'f';
         }
 
         private static bool TrySerializePersonModifiers(Modifier modifiers, out char c)
@@ -212,21 +224,23 @@ namespace Lingua.Core
         {
             switch (c)
             {
-                case 'd': return Modifier.Definite;
-                case 'n': return Modifier.Plural;
-                case 'g': return Modifier.Genitive;
-                case 'q': return Modifier.Qualified;
                 case '1': return Modifier.FirstPerson;
                 case '2': return Modifier.SecondPerson;
                 case '3': return Modifier.ThirdPerson;
+                case 'a': return Modifier.Adverb;
                 case 'c': return Modifier.Comparative;
+                case 'd': return Modifier.Definite;
+                case 'f': return Modifier.Future;
+                case 'g': return Modifier.Genitive;
+                case 'i': return Modifier.Imperitive;
+                case 'm': return Modifier.Possessive;
+                case 'n': return Modifier.Plural;
+                case 'o': return Modifier.Object;
+                case 'p': return Modifier.Past;
+                case 'q': return Modifier.Qualified;
+                case 'r': return Modifier.Perfect;
                 case 's': return Modifier.Superlative;
                 case 't': return Modifier.Neuter;
-                case 'a': return Modifier.Adverb;
-                case 'i': return Modifier.Imperitive;
-                case 'p': return Modifier.Past;
-                case 'r': return Modifier.Perfect;
-                case 'f': return Modifier.Future;
                 case '*': return Modifier.Any;
                 default: throw new NotImplementedException();
             }

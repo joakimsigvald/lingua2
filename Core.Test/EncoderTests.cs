@@ -10,10 +10,7 @@ namespace Lingua.Core.Test
     {
         [TestCase(".", 1 << 16)]
         [TestCase(",", 2 << 16)]
-        [TestCase("T", 3 << 16)]
-        [TestCase("Td", (3 << 16) + 1)]
-        [TestCase("Tq", (3 << 16) + (1 << 3))]
-        [TestCase("Tdq", (3 << 16) + 1 + (1 << 3))]
+        [TestCase("Q", 3 << 16)]
         [TestCase("N", 4 << 16)]
         [TestCase("Nd", (4 << 16) + 1)]
         [TestCase("Nn", (4 << 16) + 2)]
@@ -22,24 +19,30 @@ namespace Lingua.Core.Test
         [TestCase("Ndg", (4 << 16) + 1 + (1 << 2))]
         [TestCase("Nng", (4 << 16) + 2 + (1 << 2))]
         [TestCase("Ndng", (4 << 16) + 1 + 2 + (1 << 2))]
-        [TestCase("TN", new[] { 3 << 16, 4 << 16 })]
         [TestCase("NN", new[] { 4 << 16, 4 << 16 })]
         [TestCase("NdN", new[] { (4 << 16) + 1, 4 << 16 })]
-        [TestCase("R1", (5 << 16) + 16)]
-        [TestCase("R1n", (5 << 16) + 2 + (1 << 4))]
-        [TestCase("R2", (5 << 16) + (1 << 5))]
-        [TestCase("R2n", (5 << 16) + 2 + (1 << 5))]
-        [TestCase("R3", (5 << 16) + (3 << 4))]
-        [TestCase("R3n", (5 << 16) + 2 + (3 << 4))]
-        [TestCase("A", 6 << 16)]
-        [TestCase("X", 7 << 16)]
-        [TestCase("X1", (7 << 16) + (1 << 4))]
-        [TestCase("X2", (7 << 16) + (1 << 5))]
-        [TestCase("X3", (7 << 16) + (3 << 4))]
-        [TestCase("V", 8 << 16)]
-        [TestCase("V1", (8 << 16) + (1 << 4))]
-        [TestCase("V3", (8 << 16) + (3 << 4))]
-        [TestCase("Q", 9 << 16)]
+        [TestCase("T", 5 << 16)]
+        [TestCase("Td", (5 << 16) + 1)]
+        [TestCase("Tq", (5 << 16) + (1 << 3))]
+        [TestCase("Tdq", (5 << 16) + 1 + (1 << 3))]
+        [TestCase("TN", new[] { 5 << 16, 4 << 16 })]
+        [TestCase("P", 6 << 16)]
+        [TestCase("R", 7 << 16)]
+        [TestCase("R1", (7 << 16) + 16)]
+        [TestCase("R1n", (7 << 16) + 2 + (1 << 4))]
+        [TestCase("R2", (7 << 16) + (1 << 5))]
+        [TestCase("R2n", (7 << 16) + 2 + (1 << 5))]
+        [TestCase("R3", (7 << 16) + (3 << 4))]
+        [TestCase("R3n", (7 << 16) + 2 + (3 << 4))]
+        [TestCase("A", 8 << 16)]
+        [TestCase("X", 9 << 16)]
+        [TestCase("X1", (9 << 16) + (1 << 4))]
+        [TestCase("X2", (9 << 16) + (1 << 5))]
+        [TestCase("X3", (9 << 16) + (3 << 4))]
+        [TestCase("V", 10 << 16)]
+        [TestCase("V1", (10 << 16) + (1 << 4))]
+        [TestCase("V3", (10 << 16) + (3 << 4))]
+        [TestCase("I", 11 << 16)]
         public void EncodeToken(string serial, params int[] expected)
         {
             var tokens = Encoder.Deserialize(serial);
@@ -68,7 +71,7 @@ namespace Lingua.Core.Test
                 new Divider(),
                 new Noun {Modifiers = Modifier.Plural} // toys
             };
-            var expected = new [] { (3 << 16) + 1, (4 << 16) + 1 + 4, (4 << 16) + 2 };
+            var expected = new [] { (5 << 16) + 1, (4 << 16) + 1 + 4, (4 << 16) + 2 };
             var actual = Encoder.Encode(tokens);
             Assert.That(actual, Is.EquivalentTo(expected));
         }

@@ -7,13 +7,6 @@ namespace Lingua.Vocabulary
 {
     public class Thesaurus : IThesaurus
     {
-        private static readonly IWordMap Words = new WordMap<Unclassified>
-        {
-            {"and", "och"},
-            {"to", "att"},
-            {"with", "med"},
-        };
-
         private static readonly IWordMap Abbreviations = new WordMap<Abbreviation>
         {
             {"i.e.", "dvs."},
@@ -29,6 +22,7 @@ namespace Lingua.Vocabulary
 
         private static readonly IWordMap Nouns = new WordMap<Noun>(GenitiveRules)
         {
+            {"pen::s|", "penna:n:_or|na"},
             {"ball::s|", "boll:en:ar|na"},
             {"wall::s|", "vägg:en:ar|na"},
             {"car::s|", "bil:en:ar|na"},
@@ -39,6 +33,22 @@ namespace Lingua.Vocabulary
             {"result::s|", "resultat:et::en"},
             {"street::s|", "gata:n:_or|na/_u"},
             {"address::es|", "adress:en:er|_na"},
+        };
+
+        private static readonly IWordMap Articles = new WordMap<Article>
+        {
+            {"the:::<d", ":den::de"},
+            {"a", "en"},
+            {"an", "en"},
+        };
+
+        private static readonly IWordMap Quantifiers = new WordMap<Quantifier>
+        {
+            {"one", "en"},
+            {"two", "två"},
+            {"several", "flera"},
+            {"many", "många"},
+            {"all", "alla"},
         };
 
         private static readonly IWordMap Pronouns = new WordMap<Pronoun>
@@ -74,6 +84,7 @@ namespace Lingua.Vocabulary
         /// </summary>
         private static readonly IWordMap Verbs = new WordMap<Verb>(baseForm: 1)
         {
+            {"come::ing:::s::_3ame|:ing|", "kom:ma:mer||||::::ma"},
             {"help::ing:::s::ed|:ing|", "hjälp:a:er||||:te:::a"},
             {"paint::ing:::s::ed|:ing|", "måla::r||||:de:t|:"},
             {"play::ing:::s::ed|:ing|", "lek:a:er||||:te:t|:a"},
@@ -94,29 +105,23 @@ namespace Lingua.Vocabulary
             {":need to be<f", ":måste"},
         };
 
-        private static readonly IWordMap Articles = new WordMap<Article>
-        {
-            {"the:::<d", ":den::de"},
-            {"a", "en"},
-            {"an", "en"},
-        };
-
-        private static readonly IWordMap Quantifiers = new WordMap<Quantifier>
-        {
-            {"one", "en"},
-            {"two", "två"},
-            {"several", "flera"},
-            {"many", "många"},
-            {"all", "alla"},
-        };
-        /*
         private static readonly IWordMap Prepositions = new WordMap<Preposition>
         {
             {"to", "till"},
+            {"with", "med"},
         };
-        */
+
+        private static readonly IWordMap InfinitiveMarkers = new WordMap<InfinitiveMarker>
+        {
+            {"to", "att"},
+        };
+
+        private static readonly IWordMap Unclassifieds = new WordMap<Unclassified>
+        {
+            {"and", "och"},
+        };
+
         private static readonly ILexicon Lexicon = new Lexicon(
-            Words, 
             Abbreviations, 
             Nouns,
             Pronouns,
@@ -124,8 +129,10 @@ namespace Lingua.Vocabulary
             Verbs,
             Articles, 
             Quantifiers,
-            Auxiliaries
-            //Prepositions
+            Auxiliaries,
+            Prepositions,
+            InfinitiveMarkers,
+            Unclassifieds
             );
 
         public Translation[] Translate(Token token)
