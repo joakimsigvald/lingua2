@@ -172,6 +172,11 @@ namespace Lingua.Core.Test
         [TestCase("It is mine", "Den är min")]
         [TestCase("It is my pen", "Det är min penna")]
         [TestCase("Help me", "Hjälp mig")]
+        [TestCase("I am here", "jag är här")]
+        [TestCase("I am with her", "jag är med henne")]
+        [TestCase("I'm with her", "jag är med henne")]
+        [TestCase("She's with him", "Hon är med honom")]
+        [TestCase("It's alright", "Det är okej")]
         public void Pronouns(string from, string to)
             => Translates(from, to);
 

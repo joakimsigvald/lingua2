@@ -22,13 +22,32 @@ namespace Lingua.Core
 
         public string Translate(string original)
         {
-            var tokens = _tokenizer.Tokenize(original).ToArray();
+            if (string.IsNullOrWhiteSpace(original))
+                return string.Empty;
+            var tokens = Expand(Tokenize(original)).ToArray();
             var candidates = Translate(tokens).ToArray();
             var possibilities = Combine(candidates);
             var result = _grammar.Reduce(possibilities);
             _logger?.Log(result.Reason);
             return Output(Adjust(result.Translations));
         }
+
+        private IEnumerable<Token> Expand(IEnumerable<Token> tokens)
+            => tokens.SelectMany(Expand);
+
+        private IEnumerable<Token> Expand(Token token)
+            => Tokenize(Expand(token as Word)) ?? new[] { token };
+
+        private string Expand(Word word)
+            => word == null ? null 
+            : _thesaurus.TryExpand(word.Value, out string exactExpanded)
+                ? exactExpanded
+                : _thesaurus.TryExpand(word.Value.ToLower(), out string lowerExpanded)
+                    ? lowerExpanded.Capitalize()
+                    : null;
+
+        private IEnumerable<Token> Tokenize(string text)
+            => text == null ? null : _tokenizer.Tokenize(text);
 
         private IEnumerable<Translation[]> Translate(IReadOnlyList<Token> tokens)
             => Reduce(tokens.Select(_thesaurus.Translate), tokens);

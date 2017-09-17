@@ -60,6 +60,7 @@ namespace Lingua.Grammar
             { "R*XpVr", 1},
             { "^Vi", 1},
             { "R3tX3R*N", 1},
+            { "R3tX3A", 1},
             { "IV", 1},
             { "NN", -1},
             { "NNd", -1},

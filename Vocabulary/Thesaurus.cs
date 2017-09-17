@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using Lingua.Core;
 using Lingua.Core.Tokens;
 using Lingua.Core.WordClasses;
@@ -18,6 +19,18 @@ namespace Lingua.Vocabulary
             new ModificationRule<Noun>(Modifier.Genitive
                 , new [] {"*>*'s", "*s>*'"}
                 , new [] {"*>*s", "*s>*'"})
+        };
+
+        private static readonly IDictionary<string, string> Expanders = new Dictionary<string, string>
+        {
+            { "I'm", "I am"},
+            { "he's", "he is"},
+            { "she's", "she is"},
+            { "it's", "it is"},
+            { "they're", "they are"},
+            { "you're", "you are"},
+            { "we're", "we are"},
+            { "who's", "who is"},
         };
 
         private static readonly IWordMap Nouns = new WordMap<Noun>(GenitiveRules)
@@ -66,6 +79,7 @@ namespace Lingua.Vocabulary
 
         private static readonly IWordMap Adjectives = new WordMap<Adjective>
         {
+            {"alright", "okej"},
             {"red:::er:est|", "röd:_tt:a|re:ast|e"},
             {"fast:::er:est|:", "snabb:t:a|re:ast|e:t"},
             {"easy:::_ier|_st:_ily", "lätt::a|re:ast|e:"},
@@ -109,6 +123,7 @@ namespace Lingua.Vocabulary
         {
             {"to", "till"},
             {"with", "med"},
+            {"here", "här"},
         };
 
         private static readonly IWordMap InfinitiveMarkers = new WordMap<InfinitiveMarker>
@@ -146,6 +161,9 @@ namespace Lingua.Vocabulary
                 ? translations.ToArray()
                 : new[] { Translation.Create(token)};
         }
+
+        public bool TryExpand(string word, out string expanded)
+            => Expanders.TryGetValue(word, out expanded);
 
         private static Translation[] Translate(Generic generic)
             => Translate(generic.Stem).SelectMany(t => t.Variations).ToArray();
