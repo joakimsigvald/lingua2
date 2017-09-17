@@ -44,6 +44,8 @@ namespace Lingua.Vocabulary
 
         private static readonly IWordMap Nouns = new WordMap<Noun>(GenitiveRules)
         {
+            {"sea::s|", "hav:et::en"},
+            {"lake::s|", "sjö:n:ar|na"},
             {"chair::s|", "stol:en:ar|na"},
             {"pen::s|", "penna:n:_or|na"},
             {"ball::s|", "boll:en:ar|na"},
@@ -71,6 +73,8 @@ namespace Lingua.Vocabulary
             {"on", "på"},
             {"with", "med"},
             {"here", "här"},
+            {"by", "vid"},
+            {"at", "vid"},
         };
 
         private static readonly IWordMap Pronouns = new WordMap<Pronoun>
