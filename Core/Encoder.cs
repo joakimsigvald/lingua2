@@ -9,10 +9,10 @@ namespace Lingua.Core
     public static class Encoder
     {
         public static IEnumerable<int> Encode(IEnumerable<Token> tokens)
-            => tokens.Where(t => !(t is Divider)).Select(Encode);
+            => TrimDividers(tokens).Select(Encode);
 
         public static string Serialize(IEnumerable<Token> tokens)
-            => string.Join("", tokens.Where(t => !(t is Divider)).Select(Serialize));
+            => string.Join("", TrimDividers(tokens).Select(Serialize));
 
         public static IEnumerable<Token> Deserialize(string serial)
         {
@@ -44,6 +44,9 @@ namespace Lingua.Core
         public static bool Matches(int[] codes, int[] pattern)
             => codes.Length == pattern.Length
                && codes.Select((d, i) => Matches(d, pattern[i])).All(b => b);
+
+        private static IEnumerable<Token> TrimDividers(IEnumerable<Token> tokens)
+            => tokens.Where(t => !(t is Divider));
 
         private static bool Matches(int code, int pattern)
             => code == pattern || (code | (int)Modifier.Any) == pattern;

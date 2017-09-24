@@ -41,7 +41,7 @@ namespace Lingua.Grammar
             IList<Translation> previous = new List<Translation>();
             while (remaining.Any())
             {
-                var child = ReduceNext(previous.Take(Horizon).Reverse().ToList(), remaining);
+                var child = GetNext(previous, remaining);
                 previous.Insert(0, child.Value);
                 remaining = child.Children.ToList();
             }
@@ -54,14 +54,19 @@ namespace Lingua.Grammar
                 , (input, arranger) => arranger
                 .Arrange(input.ToList()));
 
-        private TreeNode<Translation> ReduceNext(ICollection<Translation> previous,
+        private TreeNode<Translation> GetNext(IEnumerable<Translation> previous,
+            ICollection<TreeNode<Translation>> next)
+            => next.Count > 1 ? FindNext(previous, next) : next.Single();
+
+        private TreeNode<Translation> FindNext(IEnumerable<Translation> previous,
             IEnumerable<TreeNode<Translation>> next)
         {
+            var previousReversed = previous.Take(Horizon).Reverse().ToList();
             var evaluatedTranslations = next.SelectMany(node => Expand(node, Horizon))
                 .Select(seq => new
                 {
                     node = seq.First(),
-                    evaluation = Evaluate(previous.Concat(seq.Select(node => node.Value)))
+                    evaluation = Evaluate(previousReversed.Concat(seq.Select(node => node.Value)))
                 })
                 .OrderByDescending(scoredNode => scoredNode.evaluation.Score).
                 ToArray();
@@ -70,9 +75,6 @@ namespace Lingua.Grammar
                 .Select(scoredNode => scoredNode.node)
                 .First();
         }
-
-        private static int LookForward(ICollection<Translation> previous)
-            => Math.Max(2, Horizon - previous.Count);
 
         private static Evaluation Evaluate(IEnumerable<Translation> translations)
             => Scorer.Evaluate(translations.Select(t => t.From).ToArray());
