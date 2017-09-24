@@ -1,0 +1,6 @@
+﻿to = till
+on = på
+with = med
+here = här
+by = vid
+at = vid

@@ -1,0 +1,10 @@
+﻿be::ing!am!are!is!are!been!were = var:a:_3är||||::it:
+have::_ing:::_2s::_2d: = ha::r||||:de:ft:
+will::_ing:::::_3ould:_ing = ska:::::::_ulle:_olat:_
+shall:::::::_3ould: = ska:::::::_ulle:_olat:_
+:will be<f = :kommer att
+:will have been<fr = :kommer att ha
+:could have been<fr = :kunde ha
+:going to<f = :kommer att
+:shall be<f = :kommer att
+:need to be<f = :måste

@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.26401.1
+VisualStudioVersion = 15.0.26730.10
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Main", "Main\Main.csproj", "{E8150ABC-723E-4D4F-BDB8-66A5E5C84530}"
 EndProject
@@ -20,6 +20,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Grammar", "Grammar\Grammar.csproj", "{13FC0B05-5926-4626-89C0-296CCF7444A7}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Grammar.Test", "Grammar.Test\Grammar.Test.csproj", "{A0B1C924-AE74-416D-B567-1933BA409474}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Language", "Language\Language.csproj", "{05012B74-178D-4377-8A03-6C05EFDDA352}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -63,8 +65,15 @@ Global
 		{A0B1C924-AE74-416D-B567-1933BA409474}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A0B1C924-AE74-416D-B567-1933BA409474}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A0B1C924-AE74-416D-B567-1933BA409474}.Release|Any CPU.Build.0 = Release|Any CPU
+		{05012B74-178D-4377-8A03-6C05EFDDA352}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{05012B74-178D-4377-8A03-6C05EFDDA352}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{05012B74-178D-4377-8A03-6C05EFDDA352}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{05012B74-178D-4377-8A03-6C05EFDDA352}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {564904E0-7427-4A56-AB34-DB79D081C52C}
 	EndGlobalSection
 EndGlobal

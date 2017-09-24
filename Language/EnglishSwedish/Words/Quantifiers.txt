@@ -1,0 +1,5 @@
+﻿one = en
+two = två
+several = flera
+many = många
+all = alla
