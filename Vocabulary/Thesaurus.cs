@@ -44,6 +44,8 @@ namespace Lingua.Vocabulary
 
         private static readonly IWordMap Nouns = new WordMap<Noun>(GenitiveRules)
         {
+            {"apple::s|", "äpple:t:n:na"},
+            {"banana::s|", "banan:en:er|na"},
             {"sea::s|", "hav:et::en"},
             {"lake::s|", "sjö:n:ar|na"},
             {"chair::s|", "stol:en:ar|na"},
@@ -94,6 +96,7 @@ namespace Lingua.Vocabulary
         {
             {"alright", "okej"},
             {"red:::er:est|", "röd:_tt:a|re:ast|e"},
+            {"green:::er:est|", "grön:t:a|re:ast|e"},
             {"fast:::er:est|:", "snabb:t:a|re:ast|e:t"},
             {"easy:::_ier|_st:_ily", "lätt::a|re:ast|e:"},
             {"good-looking", "snygg"},
@@ -116,6 +119,7 @@ namespace Lingua.Vocabulary
             {"paint::ing:::s::ed|:ing|", "måla::r||||:de:t|:"},
             {"play::ing:::s::ed|:ing|", "lek:a:er||||:te:t|:a"},
             {"run::ning:::s::_2an|:ning|", "spring:a:er||||:_3ang:_3ungit|:a"},
+            {"give::_ing:::s::d|:_ing|", "ge::r||||:_2v:tt|:"},
         };
 
         private static readonly IWordMap Auxiliaries = new WordMap<Auxiliary>(baseForm: 1)
@@ -140,6 +144,13 @@ namespace Lingua.Vocabulary
         private static readonly IWordMap Conjunctions = new WordMap<Conjunction>
         {
             {"and", "och"},
+            {"or", "eller"},
+        };
+
+        private static readonly IWordMap Greetings = new WordMap<Greeting>
+        {
+            {"hello", "hej"},
+            {"hi", "hej"},
         };
 
         private static readonly ILexicon Lexicon = new Lexicon(
@@ -153,7 +164,8 @@ namespace Lingua.Vocabulary
             Auxiliaries,
             Verbs,
             InfinitiveMarkers,
-            Conjunctions
+            Conjunctions,
+            Greetings
             );
 
         public Translation[] Translate(Token token)

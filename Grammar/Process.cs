@@ -57,7 +57,7 @@ namespace Lingua.Grammar
         private TreeNode<Translation> ReduceNext(ICollection<Translation> previous,
             IEnumerable<TreeNode<Translation>> next)
         {
-            var evaluatedTranslations = next.SelectMany(node => Expand(node, LookForward(previous)))
+            var evaluatedTranslations = next.SelectMany(node => Expand(node, Horizon))
                 .Select(seq => new
                 {
                     node = seq.First(),

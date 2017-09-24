@@ -56,5 +56,29 @@ namespace Lingua.Core
         public static IEnumerable<TItem> NotNull<TItem>(this IEnumerable<TItem> items)
             where TItem : class
             => items.Where(item => item != null);
+
+        public static void Deconstruct<TValue>(this IEnumerable<TValue> sequence, out TValue item1, out TValue item2, out TValue item3)
+        {
+            using (var enumerator = sequence.GetEnumerator())
+            {
+                enumerator.MoveNext();
+                item1 = enumerator.Current;
+                enumerator.MoveNext();
+                item2 = enumerator.Current;
+                enumerator.MoveNext();
+                item3 = enumerator.Current;
+            }
+        }
+
+        public static void Deconstruct<TValue>(this IEnumerable<TValue> sequence, out TValue item1, out TValue item2)
+        {
+            using (var enumerator = sequence.GetEnumerator())
+            {
+                enumerator.MoveNext();
+                item1 = enumerator.Current;
+                enumerator.MoveNext();
+                item2 = enumerator.Current;
+            }
+        }
     }
 }

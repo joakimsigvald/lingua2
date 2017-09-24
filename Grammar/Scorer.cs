@@ -2,6 +2,7 @@
 using System.Linq;
 using Lingua.Core;
 using Lingua.Core.Tokens;
+using Lingua.Core.WordClasses;
 
 namespace Lingua.Grammar
 {
@@ -33,6 +34,7 @@ namespace Lingua.Grammar
             { "TdnqQAdnNdn", 2},
             { "XfVf", 2},
             { "XfrVdr", 2},
+            { "AdnNn", 1},
             { "TdNd", 1},
             { "TdNdn", 1},
             { "TdNdg", 1},
@@ -42,7 +44,6 @@ namespace Lingua.Grammar
             { "TdqAcdNd", 1},
             { "TdqAdsNd", 1},
             { "TdnqAdsNdn", 1},
-            { "AdnNn", 1},
             { "R*V1", 1},
             { "R3V3", 1},
             { "R3nV3n", 1},
@@ -68,6 +69,7 @@ namespace Lingua.Grammar
             { "NNn", -1},
             { "NdN", -1},
             { "NdNd", -1},
+            { "C", -1},
         };
 
         private static readonly IList<Scorer> Scorers = ScoredPatterns.Select(sp => new Scorer
@@ -78,7 +80,8 @@ namespace Lingua.Grammar
 
         public static Evaluation Evaluate(IList<Token> tokens)
         {
-            var code = Encoder.Encode(tokens.Prepend(Start.Singleton)).ToArray();
+            var deconjunctedTokens = Trim(tokens);
+            var code = Encoder.Encode(deconjunctedTokens.Prepend(Start.Singleton)).ToArray();
             var scorings = Scorers.Select(s 
                 => new Scoring(s.Pattern, s.CountMatches(code), s.Score))
                 .Where(m => m.Count > 0)
@@ -86,6 +89,26 @@ namespace Lingua.Grammar
             var score = scorings.Sum(s => s.TotalScore);
             return new Evaluation(tokens, score, scorings);
         }
+
+        private static IEnumerable<Token> Trim(IEnumerable<Token> tokens)
+            => MergeConjunctions(tokens.Where(token => !(token is Divider)).ToArray());
+
+        private static IEnumerable<Token> MergeConjunctions(ICollection<Token> tokens)
+        {
+            if (tokens.Count < 3)
+                return tokens;
+            (var a, var b, var c) = tokens.Take(3);
+            var isHomogeneous = IsHomogeneousConjunction(a, b, c);
+            return isHomogeneous
+                ? MergeConjunctions(tokens.Skip(3).ToArray()).Prepend(a)
+                : MergeConjunctions(tokens.Skip(1).ToArray()).Prepend(a);
+        }
+
+        private static bool IsHomogeneousConjunction(Token a, Token c, Token b)
+            => c is Conjunction && IsSameWordForm(a as Word, b as Word);
+
+        private static bool IsSameWordForm(Word a, Word b)
+            => a != null && b != null && a.GetType() == b.GetType() && a.Modifiers == b.Modifiers;
 
         private int[] Pattern { get; set; }
         private int Score { get; set; }

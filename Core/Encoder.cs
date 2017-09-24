@@ -76,6 +76,7 @@ namespace Lingua.Core
                 case 10: return new Verb();
                 case 11: return new InfinitiveMarker();
                 case 12: return new Conjunction();
+                case 15: return new Greeting();
                 case 255:
                     return new Unclassified();
                 default: throw new NotImplementedException();
@@ -111,6 +112,7 @@ namespace Lingua.Core
                 case Verb _: return "V";
                 case InfinitiveMarker _: return "I";
                 case Conjunction _: return "C";
+                case Greeting _: return "G";
                 case Abbreviation _:
                 case Unclassified _: return "U";
                 default: throw new NotImplementedException();
@@ -125,16 +127,17 @@ namespace Lingua.Core
                 case '^': return new Start();
                 case '.': return new Terminator(primary);
                 case ',': return new Separator(primary);
-                case 'Q': return new Number { Modifiers = modifiers };
-                case 'N': return new Noun {Modifiers = modifiers};
-                case 'T': return new Article { Modifiers = modifiers };
-                case 'P': return new Preposition { Modifiers = modifiers };
-                case 'R': return new Pronoun { Modifiers = modifiers };
-                case 'A': return new Adjective {Modifiers = modifiers};
-                case 'X': return new Auxiliary { Modifiers = modifiers };
-                case 'V': return new Verb { Modifiers = modifiers };
-                case 'I': return new InfinitiveMarker { Modifiers = modifiers };
+                case 'A': return new Adjective { Modifiers = modifiers };
                 case 'C': return new Conjunction { Modifiers = modifiers };
+                case 'G': return new Greeting { Modifiers = modifiers };
+                case 'I': return new InfinitiveMarker { Modifiers = modifiers };
+                case 'N': return new Noun { Modifiers = modifiers };
+                case 'P': return new Preposition { Modifiers = modifiers };
+                case 'Q': return new Number { Modifiers = modifiers };
+                case 'R': return new Pronoun { Modifiers = modifiers };
+                case 'T': return new Article { Modifiers = modifiers };
+                case 'V': return new Verb { Modifiers = modifiers };
+                case 'X': return new Auxiliary { Modifiers = modifiers };
                 default: throw new NotImplementedException();
             }
         }
@@ -158,6 +161,7 @@ namespace Lingua.Core
                 case Verb _: return 10;
                 case InfinitiveMarker _: return 11;
                 case Conjunction _: return 12;
+                case Greeting _: return 15;
                 case Abbreviation _:
                 case Unclassified _: return 255;
                 default: throw new NotImplementedException();

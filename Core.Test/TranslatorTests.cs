@@ -187,6 +187,18 @@ namespace Lingua.Core.Test
         public void Prepositions(string from, string to)
             => Translates(from, to);
 
+        [TestCase("Give me apples and bananas", "Ge mig äpplen och bananer")]
+        [TestCase("Give me apples or bananas", "Ge mig äpplen eller bananer")]
+        [TestCase("red and green apples", "röda och gröna äpplen")]
+        [TestCase("Give me red and green apples", "Ge mig röda och gröna äpplen")]
+        public void Conjunctions(string from, string to)
+            => Translates(from, to);
+
+        [TestCase("hello", "hej")]
+        [TestCase("hi", "hej")]
+        public void Greetings(string from, string to)
+            => Translates(from, to);
+
         private static void Translates(string from, string to)
             => Assert.That(Translator.Translate(from), Is.EqualTo(to));
 

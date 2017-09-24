@@ -65,6 +65,7 @@
     <Compile Include="WordClasses\Preposition.cs" />
     <Compile Include="WordClasses\Pronoun.cs" />
     <Compile Include="WordClasses\Auxiliary.cs" />
+    <Compile Include="WordClasses\Greeting.cs" />
     <Compile Include="WordClasses\Verb.cs" />
     <Compile Include="WordClasses\Article.cs" />
     <Compile Include="WordClasses\Adjective.cs" />
