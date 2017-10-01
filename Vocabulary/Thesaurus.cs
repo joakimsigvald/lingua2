@@ -8,19 +8,9 @@ namespace Lingua.Vocabulary
 {
     public class Thesaurus : IThesaurus
     {
-        private static readonly IDictionary<string, string> Expanders = new Dictionary<string, string>
-        {
-            { "I'm", "I am"},
-            { "he's", "he is"},
-            { "she's", "she is"},
-            { "it's", "it is"},
-            { "they're", "they are"},
-            { "you're", "you are"},
-            { "we're", "we are"},
-            { "who's", "who is"},
-        };
+        private static readonly IDictionary<string, string> Expanders = Loader.LoadExpanders();
 
-        private static readonly ILexicon Lexicon = Utility.LoadLexicon();
+        private static readonly ILexicon Lexicon = Loader.LoadLexicon();
 
         public Translation[] Translate(Token token)
         {

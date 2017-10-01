@@ -49,7 +49,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Specification.cs" />
     <Compile Include="Thesaurus.cs" />
-    <Compile Include="Utility.cs" />
+    <Compile Include="Loader.cs" />
     <Compile Include="VariationExpander.cs" />
     <Compile Include="WordMap.cs" />
   </ItemGroup>

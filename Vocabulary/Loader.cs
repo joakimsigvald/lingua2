@@ -8,9 +8,10 @@ using Lingua.Core.WordClasses;
 
 namespace Lingua.Vocabulary
 {
-    public static class Utility
+    public static class Loader
     {
-        private static readonly string BaseDir = Path.Combine("EnglishSwedish", "Words");
+        private const string LanguageDir = "EnglishSwedish";
+        private const string WordsDir = "Words";
 
         public static ILexicon LoadLexicon() => new Lexicon(
             Load<Abbreviation>(),
@@ -57,11 +58,7 @@ namespace Lingua.Vocabulary
         }
 
         private static string[] ReadLines<TWord>()
-        {
-            var fileName = $"{typeof(TWord).Name}s";
-            var filePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, BaseDir, $"{fileName}.txt");
-            return File.ReadAllLines(filePath);
-        }
+            => ReadFile(Path.Combine(WordsDir, $"{typeof(TWord).Name}s.txt"));
 
         private static IDictionary<string, string> ParseWords(IEnumerable<string> wordLines)
         {
@@ -91,5 +88,27 @@ namespace Lingua.Vocabulary
 
         private static string PickLine(IEnumerable<string> lines, string label)
             => lines.SingleOrDefault(line => line.StartsWith(label));
+
+        public static IDictionary<string, string> LoadExpanders()
+        {
+            var lines = ReadExpanerLines();
+            return lines.Select(ParseExpander)
+                .ToDictionary(expander => expander.from, expander => expander.to);
+        }
+
+        private static (string from, string to) ParseExpander(string line)
+        {
+            var parts = Regex.Split(line, " => ");
+            return (parts[0].Trim(), parts[1].Trim());
+        }
+
+        private static string[] ReadExpanerLines()
+            => ReadFile("Expanders.txt");
+
+        private static string[] ReadFile(string relativePath)
+        {
+            var filePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, LanguageDir, relativePath);
+            return File.ReadAllLines(filePath);
+        }
     }
 }
