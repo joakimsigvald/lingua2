@@ -21,6 +21,31 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Grammar", "Grammar\Grammar.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Grammar.Test", "Grammar.Test\Grammar.Test.csproj", "{A0B1C924-AE74-416D-B567-1933BA409474}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Languages", "Languages", "{BDD0CC39-5FA5-4BB2-A9D3-B38240D857DE}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "EnglishSwedish", "EnglishSwedish", "{14D87B41-8AB2-4596-90AD-42093F1C9674}"
+	ProjectSection(SolutionItems) = preProject
+		Languages\EnglishSwedish\Expanders.txt = Languages\EnglishSwedish\Expanders.txt
+		Languages\EnglishSwedish\Patterns.txt = Languages\EnglishSwedish\Patterns.txt
+		Languages\EnglishSwedish\Rearrangements.txt = Languages\EnglishSwedish\Rearrangements.txt
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Words", "Words", "{BDD18A92-72EC-4F70-B32E-84844C60AAD7}"
+	ProjectSection(SolutionItems) = preProject
+		Languages\EnglishSwedish\Words\Abbreviations.txt = Languages\EnglishSwedish\Words\Abbreviations.txt
+		Languages\EnglishSwedish\Words\Adjectives.txt = Languages\EnglishSwedish\Words\Adjectives.txt
+		Languages\EnglishSwedish\Words\Articles.txt = Languages\EnglishSwedish\Words\Articles.txt
+		Languages\EnglishSwedish\Words\Auxiliarys.txt = Languages\EnglishSwedish\Words\Auxiliarys.txt
+		Languages\EnglishSwedish\Words\Conjunctions.txt = Languages\EnglishSwedish\Words\Conjunctions.txt
+		Languages\EnglishSwedish\Words\Greetings.txt = Languages\EnglishSwedish\Words\Greetings.txt
+		Languages\EnglishSwedish\Words\InfinitiveMarkers.txt = Languages\EnglishSwedish\Words\InfinitiveMarkers.txt
+		Languages\EnglishSwedish\Words\Nouns.txt = Languages\EnglishSwedish\Words\Nouns.txt
+		Languages\EnglishSwedish\Words\Prepositions.txt = Languages\EnglishSwedish\Words\Prepositions.txt
+		Languages\EnglishSwedish\Words\Pronouns.txt = Languages\EnglishSwedish\Words\Pronouns.txt
+		Languages\EnglishSwedish\Words\Quantifiers.txt = Languages\EnglishSwedish\Words\Quantifiers.txt
+		Languages\EnglishSwedish\Words\Verbs.txt = Languages\EnglishSwedish\Words\Verbs.txt
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -66,6 +91,10 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{14D87B41-8AB2-4596-90AD-42093F1C9674} = {BDD0CC39-5FA5-4BB2-A9D3-B38240D857DE}
+		{BDD18A92-72EC-4F70-B32E-84844C60AAD7} = {14D87B41-8AB2-4596-90AD-42093F1C9674}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {564904E0-7427-4A56-AB34-DB79D081C52C}

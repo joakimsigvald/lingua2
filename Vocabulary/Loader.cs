@@ -10,6 +10,7 @@ namespace Lingua.Vocabulary
 {
     public static class Loader
     {
+        private const string BaseDir = "Languages";
         private const string LanguageDir = "EnglishSwedish";
         private const string WordsDir = "Words";
 
@@ -106,8 +107,10 @@ namespace Lingua.Vocabulary
             => ReadFile("Expanders.txt");
 
         private static string[] ReadFile(string relativePath)
-        {
-            var filePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, LanguageDir, relativePath);
+        { 
+            var projectDir = new DirectoryInfo(AppDomain.CurrentDomain.BaseDirectory);
+            var solutionDir = projectDir.Parent.Parent.Parent;
+            var filePath = Path.Combine(solutionDir.FullName, BaseDir, LanguageDir, relativePath);
             return File.ReadAllLines(filePath);
         }
     }
