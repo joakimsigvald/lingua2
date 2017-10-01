@@ -21,8 +21,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Grammar", "Grammar\Grammar.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Grammar.Test", "Grammar.Test\Grammar.Test.csproj", "{A0B1C924-AE74-416D-B567-1933BA409474}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Language", "Language\Language.csproj", "{05012B74-178D-4377-8A03-6C05EFDDA352}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -65,10 +63,6 @@ Global
 		{A0B1C924-AE74-416D-B567-1933BA409474}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A0B1C924-AE74-416D-B567-1933BA409474}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A0B1C924-AE74-416D-B567-1933BA409474}.Release|Any CPU.Build.0 = Release|Any CPU
-		{05012B74-178D-4377-8A03-6C05EFDDA352}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{05012B74-178D-4377-8A03-6C05EFDDA352}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{05012B74-178D-4377-8A03-6C05EFDDA352}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{05012B74-178D-4377-8A03-6C05EFDDA352}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

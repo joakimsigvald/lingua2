@@ -5,7 +5,7 @@ using System.Runtime.Serialization;
 using Lingua.Core;
 using Lingua.Core.Tokens;
 
-namespace Lingua.Vocabulary
+namespace Lingua.Language
 {
     public interface IWordMap
     {

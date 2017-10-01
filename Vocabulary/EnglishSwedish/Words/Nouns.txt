@@ -14,3 +14,8 @@ search = sök/
 result::s| = resultat:et::en
 street::s| = gata:n:_or|na/_u
 address::es| = adress:en:er|_na
+
+//Rules
+For:Genitive
+From:*>*'s,*s>*'
+To:*>*s,*s>*'
