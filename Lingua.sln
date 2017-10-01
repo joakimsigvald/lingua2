@@ -28,6 +28,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "EnglishSwedish", "EnglishSw
 		Languages\EnglishSwedish\Expanders.txt = Languages\EnglishSwedish\Expanders.txt
 		Languages\EnglishSwedish\Patterns.txt = Languages\EnglishSwedish\Patterns.txt
 		Languages\EnglishSwedish\Rearrangements.txt = Languages\EnglishSwedish\Rearrangements.txt
+		Languages\EnglishSwedish\TestCases.txt = Languages\EnglishSwedish\TestCases.txt
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Words", "Words", "{BDD18A92-72EC-4F70-B32E-84844C60AAD7}"

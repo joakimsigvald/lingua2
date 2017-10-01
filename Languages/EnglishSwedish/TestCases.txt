@@ -1,0 +1,164 @@
+//Untranslatable
+null, ""
+"", ""
+"  ", ""
+"Joakim", "Joakim"
+" Joakim    Sigvald   ", "Joakim Sigvald"
+
+//SimplePhrase
+"a ball", "en boll"
+"my  foot", "min fot"
+
+//WordWithSpace
+"bouncing ball", "studsboll"
+"Bouncing ball to play with", "Studsboll att leka med"
+
+//Sentence
+"A ball.", "En boll."
+"A ball. ", "En boll."
+"A ball .", "En boll."
+
+//Sentences
+"A ball. My foot.", "En boll. Min fot."
+"A ball. My foot!", "En boll. Min fot!"
+"A ball? My foot!", "En boll? Min fot!"
+"A ball  ? My foot!", "En boll? Min fot!"
+"I run", "jag springer"
+"I run.", "Jag springer."
+"I run!", "Jag springer!"
+"He runs. I run.", "Han springer. Jag springer."
+"He runs! I run.", "Han springer! Jag springer."
+"He runs... I run.", "Han springer... Jag springer."
+"He runs. I run...", "Han springer. Jag springer..."
+"He runs, I run.", "Han springer, jag springer."
+"He runs i.e. I run.", "Han springer dvs. jag springer."
+
+//AbbreviationWithEllipsis
+"A ball i.e..", "En boll dvs..."
+"A ball e.g....", "En boll t.ex..."
+
+//Plural
+"balls", "bollar"
+"feet", "fötter"
+"streets", "gator"
+"bouncing balls", "studsbollar"
+
+//NumberToPlural
+"1 [[ball]]", "1 boll"
+"2 [[ball]]", "2 bollar"
+"0.5 [[ball]]", "0.5 bollar"
+
+//DefiniteNoun
+"the ball", "bollen")]
+"Play with the ball", "Lek med bollen"
+"the balls", "bollarna"
+"the streets", "gatorna"
+"Play with the balls", "Lek med bollarna"
+
+//PossessiveNoun
+"the ball's colour", "bollens färg"
+"a ball's colour", "en bolls färg"
+"The balls' colour", "Bollarnas färg"
+"2 balls' colour", "2 bollars färg"
+"the ball's colours", "bollens färger"
+"a ball's colours", "en bolls färger"
+"The balls' colours", "Bollarnas färger"
+"2 balls' colours", "2 bollars färger"
+
+//Quantifiers
+"one ball", "en boll"
+"two balls", "två bollar"
+"many balls", "många bollar"
+"several balls", "flera bollar"
+"all streets", "alla gator"
+
+//DoubleNouns
+"search result", "sökresultat"
+"search results", "sökresultat"
+"the search result", "sökresultatet"
+"The search results", "Sökresultaten"
+"street address", "gatuadress"
+
+//Adjectives
+"a red ball", "en röd boll"
+"The red ball", "Den röda bollen"
+"The red balls", "De röda bollarna"
+"red balls", "röda bollar"
+"Two red balls", "Två röda bollar"
+"a red ball", "en röd boll"
+"The two red balls", "De två röda bollarna"
+"a faster car", "en snabbare bil"
+"faster cars", "snabbare bilar"
+"The fastest car", "Den snabbaste bilen"
+"The fastest cars", "De snabbaste bilarna"
+
+//VerbsPresentTense
+"paint the ball", "måla bollen"
+"I paint", "jag målar"
+"we paint", "vi målar"
+"you paint", "du målar"
+"he paints", "han målar"
+"she paints", "hon målar"
+"it paints", "den målar"
+"they paint", "de målar"
+"I paint the ball", "jag målar bollen"
+"He paints the ball", "Han målar bollen"
+"they paint the wall", "de målar väggen"
+"I am painting the wall", "jag målar väggen"
+"Are you painting?", "Målar du?"
+"Are you painting the wall?", "Målar du väggen?"
+
+//VerbsPastTense
+"I ran", "jag sprang"
+"He painted the wall", "Han målade väggen"
+"They ran fast", "De sprang snabbt"
+
+//VerbsPerfectTense
+"I have ran", "jag har sprungit"
+"She has ran", "Hon har sprungit"
+"They have ran", "De har sprungit"
+
+//VerbsPastPerfectTense
+"I had ran", "jag hade sprungit"
+"She had ran", "Hon hade sprungit"
+"They had ran", "De hade sprungit"
+
+//VerbsMiscellaneous
+"I will run", "jag ska springa"
+"I shall run", "jag ska springa"
+"I have been running", "jag har sprungit"
+"she has been running", "hon har sprungit"
+"I had been running", "jag hade sprungit"
+"I will be running", "jag kommer att springa"
+"I am going to run", "jag kommer att springa"
+"I will have been running", "jag kommer att ha sprungit"
+"I could have been running", "jag kunde ha sprungit"
+"he could have been running", "han kunde ha sprungit"
+"You could have been running", "Du kunde ha sprungit"
+"they could have been running", "de kunde ha sprungit"
+
+//Pronouns
+"It is mine", "Den är min"
+"It is my pen", "Det är min penna"
+"Help me", "Hjälp mig"
+"I am here", "jag är här"
+"I am with her", "jag är med henne"
+"I'm with her", "jag är med henne"
+"She's with him", "Hon är med honom"
+"It's alright", "Det är okej"
+
+//Prepositions
+"come to me", "kom till mig"
+"the ball is on the chair", "bollen är på stolen"
+"He is by the sea", "Han är vid havet"
+"He is at the lake", "Han är vid sjön"
+
+//Conjunctions
+"Give me apples and bananas", "Ge mig äpplen och bananer"
+"Give me apples or bananas", "Ge mig äpplen eller bananer"
+"red and green apples", "röda och gröna äpplen"
+"Give me red and green apples", "Ge mig röda och gröna äpplen"
+
+//Greetings
+"hello", "hej"
+"hi", "hej"
