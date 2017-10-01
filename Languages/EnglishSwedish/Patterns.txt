@@ -1,4 +1,25 @@
-﻿TdnqAdnNdn:2
+﻿// <Types>
+// T: ArTicle
+// R: Pronoun
+// N: Noun
+// A: Adjective
+// V: Verb
+// X: Auxilery
+// Q: quantifier (number)
+// .: Terminator
+// ,: Separator
+// </Types>
+
+// <Modifiers>
+// d: definite
+// n: plural
+// g: genitive
+// 1: 1st person
+// 2: 2nd person
+// 3: 3rd person
+// </Modifiers>
+
+TdnqAdnNdn:2
 TdnqQAdnNdn:2
 XfVf:2
 XfrVdr:2

@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 
 namespace Lingua.Grammar
@@ -13,13 +12,7 @@ namespace Lingua.Grammar
         private readonly IReason _reason = new Reason();
         private IEnumerable<Translation> _selection;
 
-        private static readonly Dictionary<string, string> Rearrangements = new Dictionary<string, string>
-        {
-            { "X1Vd", "2"},
-            { "X2R2Vd", "32"},
-            { "R*X*XpVdr", "124"},
-            { "X*XfV", "23"},
-        };
+        private static readonly Dictionary<string, string> Rearrangements = Loader.LoadRearrangements();
 
         private static readonly IList<Arranger> Arrangers = Rearrangements.Select(sp => new Arranger(sp.Key, sp.Value)).ToList();
 

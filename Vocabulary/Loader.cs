@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
+using Lingua.Core;
 using Lingua.Core.Tokens;
 using Lingua.Core.WordClasses;
 
@@ -10,8 +11,6 @@ namespace Lingua.Vocabulary
 {
     public static class Loader
     {
-        private const string BaseDir = "Languages";
-        private const string LanguageDir = "EnglishSwedish";
         private const string WordsDir = "Words";
 
         public static ILexicon LoadLexicon() => new Lexicon(
@@ -59,7 +58,7 @@ namespace Lingua.Vocabulary
         }
 
         private static string[] ReadLines<TWord>()
-            => ReadFile(Path.Combine(WordsDir, $"{typeof(TWord).Name}s.txt"));
+            => LoaderBase.ReadFile(Path.Combine(WordsDir, $"{typeof(TWord).Name}s.txt"));
 
         private static IDictionary<string, string> ParseWords(IEnumerable<string> wordLines)
         {
@@ -104,14 +103,6 @@ namespace Lingua.Vocabulary
         }
 
         private static string[] ReadExpanerLines()
-            => ReadFile("Expanders.txt");
-
-        private static string[] ReadFile(string relativePath)
-        { 
-            var projectDir = new DirectoryInfo(AppDomain.CurrentDomain.BaseDirectory);
-            var solutionDir = projectDir.Parent.Parent.Parent;
-            var filePath = Path.Combine(solutionDir.FullName, BaseDir, LanguageDir, relativePath);
-            return File.ReadAllLines(filePath);
-        }
+            => LoaderBase.ReadFile("Expanders.txt");
     }
 }
