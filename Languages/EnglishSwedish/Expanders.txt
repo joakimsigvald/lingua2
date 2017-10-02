@@ -1,4 +1,4 @@
-﻿I'm => I am
+I'm => I am
 he's => he is
 she's => she is
 it's => it is

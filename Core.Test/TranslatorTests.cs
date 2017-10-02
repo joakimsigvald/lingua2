@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using Lingua.Grammar;
 using Lingua.Tokenization;
 using Lingua.Vocabulary;
@@ -10,201 +12,105 @@ namespace Lingua.Core.Test
     public class TranslatorTests
     {
         private static readonly ITranslator Translator
-            = new Translator(new Tokenizer(), new Thesaurus(), new Engine(), new TestLogger());
+            = new Translator(new Tokenizer(), new Thesaurus(), new Engine());
 
-        [TestCase(null, "")]
-        [TestCase("", "")]
-        [TestCase("  ", "")]
-        [TestCase("Joakim", "Joakim")]
-        [TestCase(" Joakim    Sigvald   ", "Joakim Sigvald")]
-        public void Untranslatable(string from, string to)
-            => Translates(from, to);
+        [Test]
+        public void TranslateNull()
+            => RunTestCase(null, "");
 
-        [TestCase("a ball", "en boll")]
-        [TestCase("my  foot", "min fot")]
-        public void SimplePhrase(string from, string to)
-            => Translates(from, to);
-
-        [TestCase("bouncing ball", "studsboll")]
-        [TestCase("Bouncing ball to play with", "Studsboll att leka med")]
-        public void WordWithSpace(string from, string to)
-            => Translates(from, to);
-
-        [TestCase("A ball.", "En boll.")]
-        [TestCase("A ball. ", "En boll.")]
-        [TestCase("A ball .", "En boll.")]
-        public void Sentence(string from, string to)
-            => Translates(from, to);
-
-        [TestCase("A ball. My foot.", "En boll. Min fot.")]
-        [TestCase("A ball. My foot!", "En boll. Min fot!")]
-        [TestCase("A ball? My foot!", "En boll? Min fot!")]
-        [TestCase("A ball  ? My foot!", "En boll? Min fot!")]
-        [TestCase("I run", "jag springer")]
-        [TestCase("I run.", "Jag springer.")]
-        [TestCase("I run!", "Jag springer!")]
-        [TestCase("He runs. I run.", "Han springer. Jag springer.")]
-        [TestCase("He runs! I run.", "Han springer! Jag springer.")]
-        [TestCase("He runs... I run.", "Han springer... Jag springer.")]
-        [TestCase("He runs. I run...", "Han springer. Jag springer...")]
-        [TestCase("He runs, I run.", "Han springer, jag springer.")]
-        [TestCase("He runs i.e. I run.", "Han springer dvs. jag springer.")]
-        public void Sentences(string from, string to)
-            => Translates(from, to);
-
-        [TestCase("A ball i.e..", "En boll dvs...")]
-        [TestCase("A ball e.g....", "En boll t.ex...")]
-        public void AbbreviationWithEllipsis(string from, string to)
-            => Translates(from, to);
-
-        [TestCase("balls", "bollar")]
-        [TestCase("feet", "fötter")]
-        [TestCase("streets", "gator")]
-        [TestCase("bouncing balls", "studsbollar")]
-        public void Plural(string from, string to)
-            => Translates(from, to);
-
-        [TestCase("1 [[ball]]", "1 boll")]
-        [TestCase("2 [[ball]]", "2 bollar")]
-        [TestCase("0.5 [[ball]]", "0.5 bollar")]
-        public void NumberToPlural(string from, string to)
-            => Translates(from, to);
-
-        [TestCase("the ball", "bollen")]
-        [TestCase("Play with the ball", "Lek med bollen")]
-        [TestCase("the balls", "bollarna")]
-        [TestCase("the streets", "gatorna")]
-        [TestCase("Play with the balls", "Lek med bollarna")]
-        public void DefiniteNoun(string from, string to)
-            => Translates(from, to);
-
-        [TestCase("the ball's colour", "bollens färg")]
-        [TestCase("a ball's colour", "en bolls färg")]
-        [TestCase("The balls' colour", "Bollarnas färg")]
-        [TestCase("2 balls' colour", "2 bollars färg")]
-        [TestCase("the ball's colours", "bollens färger")]
-        [TestCase("a ball's colours", "en bolls färger")]
-        [TestCase("The balls' colours", "Bollarnas färger")]
-        [TestCase("2 balls' colours", "2 bollars färger")]
-        public void PossessiveNoun(string from, string to)
-            => Translates(from, to);
-
-        [TestCase("one ball", "en boll")]
-        [TestCase("two balls", "två bollar")]
-        [TestCase("many balls", "många bollar")]
-        [TestCase("several balls", "flera bollar")]
-        [TestCase("all streets", "alla gator")]
-        public void Quantifiers(string from, string to)
-            => Translates(from, to);
-
-        [TestCase("search result", "sökresultat")]
-        [TestCase("search results", "sökresultat")]
-        [TestCase("the search result", "sökresultatet")]
-        [TestCase("The search results", "Sökresultaten")]
-        [TestCase("street address", "gatuadress")]
-        public void DoubleNouns(string from, string to)
-            => Translates(from, to);
-
-        [TestCase("a red ball", "en röd boll")]
-        [TestCase("The red ball", "Den röda bollen")]
-        [TestCase("The red balls", "De röda bollarna")]
-        [TestCase("red balls", "röda bollar")]
-        [TestCase("Two red balls", "Två röda bollar")]
-        [TestCase("a red ball", "en röd boll")]
-        [TestCase("The two red balls", "De två röda bollarna")]
-        [TestCase("a faster car", "en snabbare bil")]
-        [TestCase("faster cars", "snabbare bilar")]
-        [TestCase("The fastest car", "Den snabbaste bilen")]
-        [TestCase("The fastest cars", "De snabbaste bilarna")]
-        public void Adjectives(string from, string to)
-            => Translates(from, to);
-
-        [TestCase("paint the ball", "måla bollen")]
-        [TestCase("I paint", "jag målar")]
-        [TestCase("we paint", "vi målar")]
-        [TestCase("you paint", "du målar")]
-        [TestCase("he paints", "han målar")]
-        [TestCase("she paints", "hon målar")]
-        [TestCase("it paints", "den målar")]
-        [TestCase("they paint", "de målar")]
-        [TestCase("I paint the ball", "jag målar bollen")]
-        [TestCase("He paints the ball", "Han målar bollen")]
-        [TestCase("they paint the wall", "de målar väggen")]
-        [TestCase("I am painting the wall", "jag målar väggen")]
-        [TestCase("Are you painting?", "Målar du?")]
-        [TestCase("Are you painting the wall?", "Målar du väggen?")]
-        public void VerbsPresentTense(string from, string to)
-            => Translates(from, to);
-
-        [TestCase("I ran", "jag sprang")]
-        [TestCase("He painted the wall", "Han målade väggen")]
-        [TestCase("They ran fast", "De sprang snabbt")]
-        public void VerbsPastTense(string from, string to)
-            => Translates(from, to);
-
-        [TestCase("I have ran", "jag har sprungit")]
-        [TestCase("She has ran", "Hon har sprungit")]
-        [TestCase("They have ran", "De har sprungit")]
-        public void VerbsPerfectTense(string from, string to)
-            => Translates(from, to);
-
-        [TestCase("I had ran", "jag hade sprungit")]
-        [TestCase("She had ran", "Hon hade sprungit")]
-        [TestCase("They had ran", "De hade sprungit")]
-        public void VerbsPastPerfectTense(string from, string to)
-            => Translates(from, to);
-
-        [TestCase("I will run", "jag ska springa")]
-        [TestCase("I shall run", "jag ska springa")]
-        [TestCase("I have been running", "jag har sprungit")]
-        [TestCase("she has been running", "hon har sprungit")]
-        [TestCase("I had been running", "jag hade sprungit")]
-        [TestCase("I will be running", "jag kommer att springa")]
-        [TestCase("I am going to run", "jag kommer att springa")]
-        [TestCase("I will have been running", "jag kommer att ha sprungit")]
-        [TestCase("I could have been running", "jag kunde ha sprungit")]
-        [TestCase("he could have been running", "han kunde ha sprungit")]
-        [TestCase("You could have been running", "Du kunde ha sprungit")]
-        [TestCase("they could have been running", "de kunde ha sprungit")]
-        public void VerbsMiscellaneous(string from, string to)
-            => Translates(from, to);
-
-        [TestCase("It is mine", "Den är min")]
-        [TestCase("It is my pen", "Det är min penna")]
-        [TestCase("Help me", "Hjälp mig")]
-        [TestCase("I am here", "jag är här")]
-        [TestCase("I am with her", "jag är med henne")]
-        [TestCase("I'm with her", "jag är med henne")]
-        [TestCase("She's with him", "Hon är med honom")]
-        [TestCase("It's alright", "Det är okej")]
-        public void Pronouns(string from, string to)
-            => Translates(from, to);
-
-        [TestCase("come to me", "kom till mig")]
-        [TestCase("the ball is on the chair", "bollen är på stolen")]
-        [TestCase("He is by the sea", "Han är vid havet")]
-        [TestCase("He is at the lake", "Han är vid sjön")]
-        public void Prepositions(string from, string to)
-            => Translates(from, to);
-
-        [TestCase("Give me apples and bananas", "Ge mig äpplen och bananer")]
-        [TestCase("Give me apples or bananas", "Ge mig äpplen eller bananer")]
-        [TestCase("red and green apples", "röda och gröna äpplen")]
-        [TestCase("Give me red and green apples", "Ge mig röda och gröna äpplen")]
-        public void Conjunctions(string from, string to)
-            => Translates(from, to);
-
-        [TestCase("hello", "hej")]
-        [TestCase("hi", "hej")]
-        public void Greetings(string from, string to)
-            => Translates(from, to);
-
-        private static void Translates(string from, string to)
-            => Assert.That(Translator.Translate(from), Is.EqualTo(to));
-
-        private class TestLogger : ILogger
+        [Test]
+        public void RunTestSuites()
         {
-            public void Log(IReason reason) => reason.Evaluations.ForEach(Console.WriteLine);
+            var testSuites = Learning.Loader.LoadTestSuites();
+            var testSuiteResults = new List<TestSuiteResult>();
+            foreach (var testSuite in testSuites)
+            {
+                var testSuiteResult = new TestSuiteResult { Caption = testSuite.Key};
+                var results = RunTestSuite(testSuite.Value).ToList();
+                testSuiteResult.Succeeded = results.Where(result => result.Success).ToList();
+                testSuiteResult.Failed = results.Where(result => !result.Success).ToList();
+                testSuiteResults.Add(testSuiteResult);
+            }
+            var success = testSuiteResults.All(res => res.Success);
+            Report(testSuiteResults, success);
+            Assert.That(success);
         }
+
+        private static void Report(List<TestSuiteResult> testSuiteResults, bool success)
+        {
+            Console.WriteLine(success ? "Test succeeded!" : "Test failed!");
+            Console.WriteLine();
+            var failedSuites = testSuiteResults
+                .Where(res => !res.Success)
+                .ToList();
+            if (failedSuites.Any())
+                ReportFailed(failedSuites);
+            ReportPassed(testSuiteResults.ToList());
+        }
+
+        private static void ReportFailed(List<TestSuiteResult> failedSuites)
+        {
+            Console.WriteLine("Failed");
+            Console.WriteLine("======");
+            failedSuites.ForEach(ReportFailed);
+        }
+
+        private static void ReportPassed(List<TestSuiteResult> testSuiteResults)
+        {
+            Console.WriteLine("Passed");
+            Console.WriteLine("======");
+            testSuiteResults.ForEach(ReportSucceeded);
+        }
+
+        private static void ReportSucceeded(TestSuiteResult res)
+        {
+            Console.WriteLine(res.Caption);
+            Console.WriteLine(new string('-', res.Caption.Length));
+            foreach (var tcr in res.Succeeded)
+                Console.WriteLine($"|{tcr.From}| => |{tcr.Actual}|");
+            Console.WriteLine();
+        }
+
+        private static void ReportFailed(TestSuiteResult res)
+        {
+            Console.WriteLine(res.Caption);
+            Console.WriteLine(new string('-', res.Caption.Length));
+            foreach (var tcr in res.Failed)
+                Console.WriteLine($"|{tcr.From}| /=> |{tcr.Expected}| \\\\ |{tcr.Actual}|");
+            Console.WriteLine();
+        }
+
+        private static IEnumerable<TestCaseResult> RunTestSuite(Dictionary<string, string> testCases)
+            => testCases.Select(testCase => RunTestCase(testCase.Key, testCase.Value));
+
+        private static TestCaseResult RunTestCase(string from, string to)
+        {
+            var translationResult = Translator.Translate(from);
+            return new TestCaseResult
+            {
+                From = from,
+                Expected = to,
+                Actual = translationResult.translation,
+                Reason = translationResult.reason,
+                Success = translationResult.translation == to
+            };
+        }
+    }
+
+    public class TestSuiteResult
+    {
+        public string Caption { get; set; }
+        public IList<TestCaseResult> Succeeded { get; set; }
+        public IList<TestCaseResult> Failed { get; set; }
+        public bool Success => !Failed.Any();
+    }
+
+    public class TestCaseResult
+    {
+        public string From { get; set; }
+        public string Expected { get; set; }
+        public string Actual { get; set; }
+        public bool Success { get; set; }
+        public IReason Reason { get; set; }
     }
 }

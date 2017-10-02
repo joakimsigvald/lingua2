@@ -1,2 +1,2 @@
-﻿and = och
+and = och
 or = eller

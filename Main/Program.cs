@@ -26,7 +26,7 @@ namespace Lingua.Main
         }
 
         private static string Translate(string text)
-            => Translator.Translate(text);
+            => Translator.Translate(text).translation;
 
         private static string Input()
         {

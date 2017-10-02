@@ -70,6 +70,10 @@
       <Project>{13fc0b05-5926-4626-89c0-296ccf7444a7}</Project>
       <Name>Grammar</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Learning\Learning.csproj">
+      <Project>{7d630f36-7c78-4593-96a8-db6445e0d5b1}</Project>
+      <Name>Learning</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Tokenization\Tokenization.csproj">
       <Project>{BF62CD42-7CDC-4616-9B25-49E985FFF1F7}</Project>
       <Name>Tokenization</Name>

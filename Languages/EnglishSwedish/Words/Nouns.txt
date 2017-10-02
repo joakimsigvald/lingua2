@@ -1,4 +1,4 @@
-﻿apple::s| = äpple:t:n:na
+apple::s| = äpple:t:n:na
 banana::s| = banan:en:er|na
 sea::s| = hav:et::en
 lake::s| = sjö:n:ar|na

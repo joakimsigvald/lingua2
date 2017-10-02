@@ -1,4 +1,4 @@
-﻿X1Vd:2
+X1Vd:2
 X2R2Vd:32
 R*X*XpVdr:124
 X*XfV:23

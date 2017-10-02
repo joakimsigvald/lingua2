@@ -1,2 +1,2 @@
-﻿hello = hej
+hello = hej
 hi = hej

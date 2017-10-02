@@ -1,5 +1,7 @@
 ﻿using System;
 using System.IO;
+using System.Linq;
+using System.Text;
 
 namespace Lingua.Core
 {
@@ -13,7 +15,9 @@ namespace Lingua.Core
             var projectDir = new DirectoryInfo(AppDomain.CurrentDomain.BaseDirectory);
             var solutionDir = projectDir.Parent?.Parent?.Parent;
             var filePath = Path.Combine(solutionDir?.FullName ?? "", BaseDir, LanguageDir, relativePath);
-            return File.ReadAllLines(filePath);
+            return File.ReadAllLines(filePath, Encoding.UTF8)
+                .Select(line => line.Trim())
+                .ToArray();
         }
     }
 }

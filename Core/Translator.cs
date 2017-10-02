@@ -11,26 +11,23 @@ namespace Lingua.Core
         private readonly ITokenizer _tokenizer;
         private readonly IThesaurus _thesaurus;
         private readonly IGrammar _grammar;
-        private readonly ILogger _logger;
 
-        public Translator(ITokenizer tokenizer, IThesaurus thesaurus, IGrammar grammar, ILogger logger = null)
+        public Translator(ITokenizer tokenizer, IThesaurus thesaurus, IGrammar grammar)
         {
             _tokenizer = tokenizer;
             _thesaurus = thesaurus;
             _grammar = grammar;
-            _logger = logger;
         }
 
-        public string Translate(string original)
+        public (string translation, IReason reason) Translate(string original)
         {
             if (string.IsNullOrWhiteSpace(original))
-                return string.Empty;
+                return (string.Empty, null);
             var tokens = Expand(Tokenize(original)).ToArray();
             var candidates = Translate(tokens).ToArray();
             var possibilities = Combine(candidates);
             var result = _grammar.Reduce(possibilities);
-            _logger?.Log(result.Reason);
-            return Output(Adjust(result.Translations));
+            return (Output(Adjust(result.Translations)), result.Reason);
         }
 
         private IEnumerable<Token> Expand(IEnumerable<Token> tokens)

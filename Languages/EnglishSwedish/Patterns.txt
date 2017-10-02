@@ -1,4 +1,4 @@
-﻿// <Types>
+// <Types>
 // T: ArTicle
 // R: Pronoun
 // N: Noun

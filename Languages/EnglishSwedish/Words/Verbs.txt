@@ -1,4 +1,4 @@
-﻿/// Imperative|Infinitive|Participle|First|Second|Third|ThirdPlural|Past|Perfect|PastContinuous|FutureContinuous
+/// Imperative|Infinitive|Participle|First|Second|Third|ThirdPlural|Past|Perfect|PastContinuous|FutureContinuous
 
 come::ing:::s::_3ame|:ing| = kom:ma:mer||||::::ma
 help::ing:::s::ed|:ing| = hjälp:a:er||||:te:::a

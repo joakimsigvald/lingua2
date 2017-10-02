@@ -1,4 +1,4 @@
-﻿one = en
+one = en
 two = två
 several = flera
 many = många
