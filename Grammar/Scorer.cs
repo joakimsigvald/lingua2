@@ -49,10 +49,10 @@ namespace Lingua.Grammar
         private static bool IsSameWordForm(Word a, Word b)
             => a != null && b != null && a.GetType() == b.GetType() && a.Modifiers == b.Modifiers;
 
-        private int[] Pattern { get; set; }
+        private ushort[] Pattern { get; set; }
         private int Score { get; set; }
 
-        private int CountMatches(int[] sequence)
+        private int CountMatches(ushort[] sequence)
             => sequence.Length < Pattern.Length
                 ? 0
                 : Enumerable.Range(0, 1 + sequence.Length - Pattern.Length)

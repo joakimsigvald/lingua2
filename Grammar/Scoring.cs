@@ -9,7 +9,7 @@ namespace Lingua.Grammar
         private int Score { get; }
         public int TotalScore => Count * Score;
 
-        public Scoring(int[] pattern, int count, int score)
+        public Scoring(ushort[] pattern, int count, int score)
         {
             Pattern = Encoder.Serialize(Encoder.Decode(pattern));
             Count = count;

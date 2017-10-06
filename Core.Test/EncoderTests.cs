@@ -8,42 +8,42 @@ namespace Lingua.Core.Test
     [TestFixture]
     public class EncoderTests
     {
-        [TestCase(".", 1 << 16)]
-        [TestCase(",", 2 << 16)]
-        [TestCase("Q", 3 << 16)]
-        [TestCase("N", 4 << 16)]
-        [TestCase("Nd", (4 << 16) + 1)]
-        [TestCase("Nn", (4 << 16) + 2)]
-        [TestCase("Ndn", (4 << 16) + 1 + 2)]
-        [TestCase("Ng", (4 << 16) + (1 << 2))]
-        [TestCase("Ndg", (4 << 16) + 1 + (1 << 2))]
-        [TestCase("Nng", (4 << 16) + 2 + (1 << 2))]
-        [TestCase("Ndng", (4 << 16) + 1 + 2 + (1 << 2))]
-        [TestCase("NN", new[] { 4 << 16, 4 << 16 })]
-        [TestCase("NdN", new[] { (4 << 16) + 1, 4 << 16 })]
-        [TestCase("T", 5 << 16)]
-        [TestCase("Td", (5 << 16) + 1)]
-        [TestCase("Tq", (5 << 16) + (1 << 3))]
-        [TestCase("Tdq", (5 << 16) + 1 + (1 << 3))]
-        [TestCase("TN", new[] { 5 << 16, 4 << 16 })]
-        [TestCase("P", 6 << 16)]
-        [TestCase("R", 7 << 16)]
-        [TestCase("R1", (7 << 16) + 16)]
-        [TestCase("R1n", (7 << 16) + 2 + (1 << 4))]
-        [TestCase("R2", (7 << 16) + (1 << 5))]
-        [TestCase("R2n", (7 << 16) + 2 + (1 << 5))]
-        [TestCase("R3", (7 << 16) + (3 << 4))]
-        [TestCase("R3n", (7 << 16) + 2 + (3 << 4))]
-        [TestCase("A", 8 << 16)]
-        [TestCase("X", 9 << 16)]
-        [TestCase("X1", (9 << 16) + (1 << 4))]
-        [TestCase("X2", (9 << 16) + (1 << 5))]
-        [TestCase("X3", (9 << 16) + (3 << 4))]
-        [TestCase("V", 10 << 16)]
-        [TestCase("V1", (10 << 16) + (1 << 4))]
-        [TestCase("V3", (10 << 16) + (3 << 4))]
-        [TestCase("I", 11 << 16)]
-        [TestCase("C", 12 << 16)]
+        [TestCase(".", 1 << Encoder.ModifierBits)]
+        [TestCase(",", 2 << Encoder.ModifierBits)]
+        [TestCase("Q", 3 << Encoder.ModifierBits)]
+        [TestCase("N", 4 << Encoder.ModifierBits)]
+        [TestCase("Nn", (4 << Encoder.ModifierBits) + 1)]
+        [TestCase("Nd", (4 << Encoder.ModifierBits) + 2)]
+        [TestCase("Ndn", (4 << Encoder.ModifierBits) + 2 + 1)]
+        [TestCase("Ng", (4 << Encoder.ModifierBits) + (1 << 2))]
+        [TestCase("Ndg", (4 << Encoder.ModifierBits) + 2 + (1 << 2))]
+        [TestCase("Nng", (4 << Encoder.ModifierBits) + 1 + (1 << 2))]
+        [TestCase("Ndng", (4 << Encoder.ModifierBits) + 2 + 1 + (1 << 2))]
+        [TestCase("NN", new[] { 4 << Encoder.ModifierBits, 4 << Encoder.ModifierBits })]
+        [TestCase("NdN", new[] { (4 << Encoder.ModifierBits) + 2, 4 << Encoder.ModifierBits })]
+        [TestCase("T", 5 << Encoder.ModifierBits)]
+        [TestCase("Td", (5 << Encoder.ModifierBits) + 2)]
+        [TestCase("Tq", (5 << Encoder.ModifierBits) + (1 << 8))]
+        [TestCase("Tdq", (5 << Encoder.ModifierBits) + 2 + (1 << 8))]
+        [TestCase("TN", new[] { 5 << Encoder.ModifierBits, 4 << Encoder.ModifierBits })]
+        [TestCase("P", 6 << Encoder.ModifierBits)]
+        [TestCase("R", 7 << Encoder.ModifierBits)]
+        [TestCase("R1", (7 << Encoder.ModifierBits) + (1 << 5))]
+        [TestCase("R1n", (7 << Encoder.ModifierBits) + 1 + (1 << 5))]
+        [TestCase("R2", (7 << Encoder.ModifierBits) + (1 << 6))]
+        [TestCase("R2n", (7 << Encoder.ModifierBits) + 1 + (1 << 6))]
+        [TestCase("R3", (7 << Encoder.ModifierBits) + (1 << 7))]
+        [TestCase("R3n", (7 << Encoder.ModifierBits) + 1 + (1 << 7))]
+        [TestCase("A", 8 << Encoder.ModifierBits)]
+        [TestCase("X", 9 << Encoder.ModifierBits)]
+        [TestCase("X1", (9 << Encoder.ModifierBits) + (1 << 5))]
+        [TestCase("X2", (9 << Encoder.ModifierBits) + (1 << 6))]
+        [TestCase("X3", (9 << Encoder.ModifierBits) + (1 << 7))]
+        [TestCase("V", 10 << Encoder.ModifierBits)]
+        [TestCase("V1", (10 << Encoder.ModifierBits) + (1 << 5))]
+        [TestCase("V3", (10 << Encoder.ModifierBits) + (1 << 7))]
+        [TestCase("I", 11 << Encoder.ModifierBits)]
+        [TestCase("C", 12 << Encoder.ModifierBits)]
         public void EncodeToken(string serial, params int[] expected)
         {
             var tokens = Encoder.Deserialize(serial);
@@ -56,9 +56,9 @@ namespace Lingua.Core.Test
         [TestCase(Modifier.Plural | Modifier.FirstPerson, "n1")]
         public void SerializeModifiers(Modifier modifiers, string expected)
         {
-            var token = new Noun {Modifiers = modifiers};
+            var token = new Verb {Modifiers = modifiers};
             var actual = Encoder.Serialize(new []{token});
-            Assert.That(actual, Is.EquivalentTo($"N{expected}"));
+            Assert.That(actual, Is.EquivalentTo($"V{expected}"));
         }
 
         [Test]
@@ -72,13 +72,14 @@ namespace Lingua.Core.Test
                 new Divider(),
                 new Noun {Modifiers = Modifier.Plural} // toys
             };
-            var expected = new [] { (5 << 16) + 1, (4 << 16) + 1 + 4, (4 << 16) + 2 };
+            var expected = new [] { (5 << Encoder.ModifierBits) + 2, (4 << Encoder.ModifierBits) + 2 + 4, (4 << Encoder.ModifierBits) + 1 };
             var actual = Encoder.Encode(tokens);
             Assert.That(actual, Is.EquivalentTo(expected));
         }
 
         [TestCase("VpAa")]
         [TestCase("V*")]
+        [TestCase("R*")]
         public void EncodeDecode(string fromSymbols)
         {
             var fromTokens = Encoder.Deserialize(fromSymbols).ToArray();

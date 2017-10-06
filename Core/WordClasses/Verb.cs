@@ -12,7 +12,7 @@ namespace Lingua.Core.WordClasses
                 case 0:
                     return Modifier.Imperitive;
                 case 2:
-                    return Modifier.Definite; // Participle
+                    return Modifier.Participle;
                 case 3:
                     return Modifier.FirstPerson;
                 case 4:
@@ -26,7 +26,7 @@ namespace Lingua.Core.WordClasses
                 case 8:
                     return Modifier.Perfect;
                 case 9:
-                    return Modifier.Definite | Modifier.Perfect;
+                    return Modifier.Participle | Modifier.Perfect;
                 case 10:
                     return Modifier.Future;
                 default: return Modifier.None;

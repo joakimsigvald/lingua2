@@ -10,11 +10,11 @@ namespace Lingua.Grammar
         public Arranger(string from, string to)
         {
             From = Encoder.Encode(Encoder.Deserialize(from)).ToArray();
-            To = to.Select(c => c - 49).ToArray();
+            To = to.Select(c => (byte)(c - 49)).ToArray();
         }
 
-        private int[] From { get; }
-        private int[] To { get; }
+        private ushort[] From { get; }
+        private byte[] To { get; }
 
         public IEnumerable<Translation> Arrange(IList<Translation> input)
         {

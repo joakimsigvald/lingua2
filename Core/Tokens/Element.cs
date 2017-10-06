@@ -1,4 +1,5 @@
 ﻿using System;
+using Lingua.Core.WordClasses;
 
 namespace Lingua.Core.Tokens
 {
@@ -6,28 +7,102 @@ namespace Lingua.Core.Tokens
     public enum Modifier
     {
         None = 0,
-        Definite = 1, // double for Verb Participle (-ing form)
-        Plural = 1 << 1,
+        //Common
+        Plural = 1,
+        //Noun+Adjective
+        Definite = 1 << 1,
+        //Noun
         Genitive = 1 << 2,
-        Qualified = 1 << 3,
-        FirstPerson = 1 << 4,
-        SecondPerson = 1 << 5,
-        ThirdPerson = 3 << 4,
-        Comparative = 1 << 6,
-        Superlative = 1 << 7,
-        Neuter = 1 << 8,
-        Adverb = 1 << 9,
-        Imperitive = 1 << 10,
-        Past = 1 << 11,
-        Perfect = 1 << 12,
-        Future = 1 << 13,
-        Object = 1 << 14,
-        Possessive = 1 << 15,
-        Any = 0xffff
+        //Adjective
+        Neuter = 1 << 3,
+        Comparative = 1 << 4,
+        Superlative = 1 << 5,
+        Adverb = 1 << 6,
+        //Verb
+        Imperitive = 1 << 3,
+        Participle = 1 << 4,
+        FirstPerson = 1 << 5,
+        SecondPerson = 1 << 6,
+        ThirdPerson = 1 << 7,
+        Past = 1 << 8,
+        Perfect = 1 << 9,
+        Future = 1 << 10,
+        //Article
+        Qualified = 1 << 8,
+        //Pronoun
+        Object = 1 << 9,
+        Possessive = 1 << 10,
+        Any = Encoder.AnyMask
     }
 
     public abstract class Element : Token
     {
         public Modifier Modifiers { get; set; }
+
+        public Modifier DecodeModifier(ushort code)
+        {
+            switch (code)
+            {
+                case 0: return Modifier.None;
+                case 1: return Modifier.Plural;
+                case 1 << 1: return Modifier.Definite;
+                case 1 << 2: return Modifier.Genitive;
+                case 1 << 3:
+                    switch (this)
+                    {
+                        case Pronoun _:
+                        case Adjective _: return Modifier.Neuter;
+                        case Verb _: return Modifier.Imperitive;
+                        default: throw new NotImplementedException();
+                    }
+                case 1 << 4:
+                    switch (this)
+                    {
+                        case Adjective _: return Modifier.Comparative;
+                        case Verb _: return Modifier.Participle;
+                        default: throw new NotImplementedException();
+                    }
+                case 1 << 5:
+                    switch (this)
+                    {
+                        case Adjective _: return Modifier.Superlative;
+                        case Pronoun _:
+                        case Verb _: return Modifier.FirstPerson;
+                        default: throw new NotImplementedException();
+                    }
+                case 1 << 6:
+                    switch (this)
+                    {
+                        case Adjective _: return Modifier.Adverb;
+                        case Pronoun _:
+                        case Verb _: return Modifier.SecondPerson;
+                        default: throw new NotImplementedException();
+                    }
+                case 1 << 7: return Modifier.ThirdPerson;
+                case 1 << 8:
+                    switch (this)
+                    {
+                        case Verb _: return Modifier.Past;
+                        case Article _: return Modifier.Qualified;
+                        default: throw new NotImplementedException();
+                    }
+                case 1 << 9:
+                    switch (this)
+                    {
+                        case Verb _: return Modifier.Perfect;
+                        case Pronoun _: return Modifier.Object;
+                        default: throw new NotImplementedException();
+                    }
+                case 1 << 10:
+                    switch (this)
+                    {
+                        case Verb _: return Modifier.Future;
+                        case Pronoun _: return Modifier.Possessive;
+                        default: throw new NotImplementedException();
+                    }
+                case 0x03ff: return Modifier.Any;
+                default: throw new NotImplementedException();
+            }
+        }
     }
 }

@@ -8,7 +8,10 @@ namespace Lingua.Core
 {
     public static class Encoder
     {
-        public static IEnumerable<int> Encode(IEnumerable<Token> tokens)
+        public const byte ModifierBits = 11;
+        public const ushort AnyMask = 0x03ff;
+
+        public static IEnumerable<ushort> Encode(IEnumerable<Token> tokens)
             => TrimDividers(tokens).Select(Encode);
 
         public static string Serialize(IEnumerable<Token> tokens)
@@ -38,33 +41,33 @@ namespace Lingua.Core
         public static Modifier ParseModifiers(string modifiers)
             => (modifiers ?? "").Select(ToModifier).Aggregate(Modifier.None, (o, n) => o | n);
 
-        public static IEnumerable<Token> Decode(int[] code)
+        public static IEnumerable<Token> Decode(ushort[] code)
             => code.Select(Decode);
 
-        public static bool Matches(int[] codes, int[] pattern)
+        public static bool Matches(ushort[] codes, ushort[] pattern)
             => codes.Length == pattern.Length
                && codes.Select((d, i) => Matches(d, pattern[i])).All(b => b);
 
         private static IEnumerable<Token> TrimDividers(IEnumerable<Token> tokens)
             => tokens.Where(t => !(t is Divider));
 
-        private static bool Matches(int code, int pattern)
-            => code == pattern || (code | (int)Modifier.Any) == pattern;
+        private static bool Matches(ushort code, ushort pattern)
+            => code == pattern || (code | (ushort)Modifier.Any) == pattern;
 
-        private static int Encode(Token token)
-            => (ClassCode(token) << 16) + ModifierCode(token as Element);
+        private static ushort Encode(Token token)
+            => (ushort)((ClassCode(token) << ModifierBits) + ModifierCode(token as Element));
 
-        private static Token Decode(int code)
+        private static Token Decode(ushort code)
         {
             var token = DecodeToken(code);
             if (token is Element element)
-                element.Modifiers = DecodeModifiers(code);
+                element.Modifiers = DecodeModifiers(element, (ushort)(code & AnyMask));
             return token;
         }
 
         private static Token DecodeToken(int code)
         {
-            switch (code >> 16)
+            switch (code >> ModifierBits)
             {
                 case 0: return new Start();
                 case 1: return new Terminator('.');
@@ -80,15 +83,21 @@ namespace Lingua.Core
                 case 11: return new InfinitiveMarker();
                 case 12: return new Conjunction();
                 case 15: return new Greeting();
-                case 255:
+                case 31:
                     return new Unclassified();
                 default: throw new NotImplementedException();
             }
         }
 
-        private static Modifier DecodeModifiers(int code) => Enumerable.Range(0, 16)
-            .Select(shift => (Modifier) (code & (1 << shift)))
-            .Aggregate(Modifier.None, (a, b) => a | b);
+        private static Modifier DecodeModifiers(Element element, ushort code)
+            => code == AnyMask
+                ? Modifier.Any
+                : DecodeAggregatedModifiers(element, code);
+
+        private static Modifier DecodeAggregatedModifiers(Element element, ushort code)
+            => Enumerable.Range(0, ModifierBits)
+                    .Select(shift => element.DecodeModifier((ushort)(code & (1 << shift))))
+                    .Aggregate(Modifier.None, (a, b) => a | b);
 
         private static bool IsWordClass(char c)
             => char.IsUpper(c);
@@ -166,69 +175,57 @@ namespace Lingua.Core
                 case Conjunction _: return 12;
                 case Greeting _: return 15;
                 case Abbreviation _:
-                case Unclassified _: return 255;
+                case Unclassified _: return 31;
                 default: throw new NotImplementedException();
             }
         }
 
         private static string SerializeModifiers(Element element)
-            => Serialize(element?.Modifiers ?? Modifier.None);
+            => Serialize(element, element?.Modifiers ?? Modifier.None);
 
-        private static string Serialize(Modifier modifier)
+        private static string Serialize(Element element, Modifier modifier)
             => modifier == Modifier.Any
                 ? "*"
-                : new string(SerializeModifiers(modifier).ToArray());
+                : new string(SerializeModifiers(element, modifier).ToArray());
 
-        private static IEnumerable<char> SerializeModifiers(Modifier modifiers)
+        private static IEnumerable<char> SerializeModifiers(Element element, Modifier modifiers)
         {
-            if (TrySerializePersonModifiers(modifiers, out char c))
-                yield return c;
-            if (modifiers.HasFlag(Modifier.Adverb))
-                yield return 'a';
-            if (modifiers.HasFlag(Modifier.Comparative))
-                yield return 'c';
-            if (modifiers.HasFlag(Modifier.Definite))
-                yield return 'd';
-            if (modifiers.HasFlag(Modifier.Future))
-                yield return 'f';
-            if (modifiers.HasFlag(Modifier.Genitive))
-                yield return 'g';
-            if (modifiers.HasFlag(Modifier.Imperitive))
-                yield return 'i';
-            if (modifiers.HasFlag(Modifier.Possessive))
-                yield return 'm';
             if (modifiers.HasFlag(Modifier.Plural))
                 yield return 'n';
-            if (modifiers.HasFlag(Modifier.Object))
-                yield return 'o';
-            if (modifiers.HasFlag(Modifier.Past))
-                yield return 'p';
-            if (modifiers.HasFlag(Modifier.Qualified))
-                yield return 'q';
-            if (modifiers.HasFlag(Modifier.Perfect))
-                yield return 'r';
-            if (modifiers.HasFlag(Modifier.Superlative))
-                yield return 's';
-            if (modifiers.HasFlag(Modifier.Neuter))
+            if (modifiers.HasFlag(Modifier.Definite))
+                yield return 'd';
+            if (modifiers.HasFlag(Modifier.Genitive))
+                yield return 'g';
+            if (modifiers.HasFlag(Modifier.Neuter) && element is Adjective)
                 yield return 't';
-        }
-
-        private static bool TrySerializePersonModifiers(Modifier modifiers, out char c)
-        {
-            var res = SerializePersonModifiers(modifiers);
-            c = res ?? (char) 0;
-            return res.HasValue;
-        }
-
-        private static char? SerializePersonModifiers(Modifier modifiers)
-        {
+            if (modifiers.HasFlag(Modifier.Imperitive) && element is Verb)
+                yield return 'i';
+            if (modifiers.HasFlag(Modifier.Comparative) && element is Adjective)
+                yield return 'c';
+            if (modifiers.HasFlag(Modifier.Participle) && element is Verb)
+                yield return 'l';
+            if (modifiers.HasFlag(Modifier.Superlative) && element is Adjective)
+                yield return 's';
+            if (modifiers.HasFlag(Modifier.FirstPerson) && element is Verb)
+                yield return '1';
+            if (modifiers.HasFlag(Modifier.Adverb) && element is Adjective)
+                yield return 'a';
+            if (modifiers.HasFlag(Modifier.SecondPerson) && element is Verb)
+                yield return '2';
             if (modifiers.HasFlag(Modifier.ThirdPerson))
-                return '3';
-            if (modifiers.HasFlag(Modifier.SecondPerson))
-                return '2';
-            if (modifiers.HasFlag(Modifier.FirstPerson))
-                return '1';
-            return null;
+                yield return '3';
+            if (modifiers.HasFlag(Modifier.Past) && element is Verb)
+                yield return 'p';
+            if (modifiers.HasFlag(Modifier.Qualified) && element is Article)
+                yield return 'q';
+            if (modifiers.HasFlag(Modifier.Perfect) && element is Verb)
+                yield return 'r';
+            if (modifiers.HasFlag(Modifier.Object) && element is Pronoun)
+                yield return 'o';
+            if (modifiers.HasFlag(Modifier.Future) && element is Verb)
+                yield return 'f';
+            if (modifiers.HasFlag(Modifier.Possessive) && element is Pronoun)
+                yield return 'm';
         }
 
         private static Modifier ToModifier(char c)
@@ -244,6 +241,7 @@ namespace Lingua.Core
                 case 'f': return Modifier.Future;
                 case 'g': return Modifier.Genitive;
                 case 'i': return Modifier.Imperitive;
+                case 'l': return Modifier.Participle;
                 case 'm': return Modifier.Possessive;
                 case 'n': return Modifier.Plural;
                 case 'o': return Modifier.Object;
@@ -257,7 +255,7 @@ namespace Lingua.Core
             }
         }
 
-        private static int ModifierCode(Element element)
-            => (int) (element?.Modifiers ?? Modifier.None);
+        private static ushort ModifierCode(Element element)
+            => (ushort) (element?.Modifiers ?? Modifier.None);
     }
 }
