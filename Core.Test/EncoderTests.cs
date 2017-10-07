@@ -80,6 +80,7 @@ namespace Lingua.Core.Test
         [TestCase("VpAa")]
         [TestCase("V*")]
         [TestCase("R*")]
+        [TestCase("Rt")]
         public void EncodeDecode(string fromSymbols)
         {
             var fromTokens = Encoder.Deserialize(fromSymbols).ToArray();
@@ -93,6 +94,17 @@ namespace Lingua.Core.Test
             Assert.That(toTypes, Is.EqualTo(fromTypes));
             Assert.That(toModifiers, Is.EqualTo(fromModifiers));
             Assert.That(toSymbols, Is.EqualTo(fromSymbols));
+        }
+
+        [TestCase("Rm", "R*")]
+        [TestCase("R1m", "R*")]
+        [TestCase("R3tX3R1mN", "R3tX3R*N")]
+        public void MatchPatterns(string example, string pattern)
+        {
+            var exampleCode = Encoder.Encode(example);
+            var patternCode = Encoder.Encode(pattern);
+            var matches = Encoder.Matches(exampleCode, patternCode);
+            Assert.That(matches);
         }
     }
 }

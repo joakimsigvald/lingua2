@@ -22,7 +22,7 @@
 TdnqAdnNdn:2
 TdnqQAdnNdn:2
 XfVf:2
-XfrVdr:2
+XfrVlr:2
 AdnNn:1
 TdNd:1
 TdNdn:1
@@ -38,12 +38,12 @@ R3V3:1
 R3nV3n:1
 VpAa:1
 R1X1Vr:1
-R1X1XpVdr:1
-R2X2XpVdr:1
-R3X3XpVdr:1
-R3nX3nXpVdr:1
-R*XpXpVdr:1
-R*X*Vd:1
+R1X1XpVlr:1
+R2X2XpVlr:1
+R3X3XpVlr:1
+R3nX3nXpVlr:1
+R*XpXpVlr:1
+R*X*Vl:1
 R2X2Vr:1
 R3X3Vr:1
 R3nXn3Vr:1

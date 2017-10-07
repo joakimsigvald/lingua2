@@ -13,20 +13,22 @@ namespace Lingua.Core.Tokens
         Definite = 1 << 1,
         //Noun
         Genitive = 1 << 2,
-        //Adjective
+        //Adjective+Pronoun
         Neuter = 1 << 3,
+        //Adjective
         Comparative = 1 << 4,
         Superlative = 1 << 5,
         Adverb = 1 << 6,
         //Verb
         Imperitive = 1 << 3,
         Participle = 1 << 4,
-        FirstPerson = 1 << 5,
-        SecondPerson = 1 << 6,
-        ThirdPerson = 1 << 7,
         Past = 1 << 8,
         Perfect = 1 << 9,
         Future = 1 << 10,
+        //Verb+Pronoun
+        FirstPerson = 1 << 5,
+        SecondPerson = 1 << 6,
+        ThirdPerson = 1 << 7,
         //Article
         Qualified = 1 << 8,
         //Pronoun

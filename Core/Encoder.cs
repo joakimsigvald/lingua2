@@ -9,7 +9,10 @@ namespace Lingua.Core
     public static class Encoder
     {
         public const byte ModifierBits = 11;
-        public const ushort AnyMask = 0x03ff;
+        public const ushort AnyMask = 0x07ff;
+
+        public static ushort[] Encode(string serial)
+            => Encode(Deserialize(serial)).ToArray();
 
         public static IEnumerable<ushort> Encode(IEnumerable<Token> tokens)
             => TrimDividers(tokens).Select(Encode);
@@ -133,23 +136,30 @@ namespace Lingua.Core
 
         private static Token CreateToken(char primary, string modifierStr)
         {
-            var modifiers = ParseModifiers(modifierStr);
+            var token = CreateUnmodifiedToken(primary);
+            if (token is Element element)
+                element.Modifiers = ParseModifiers(modifierStr);
+            return token;
+        }
+
+        private static Token CreateUnmodifiedToken(char primary)
+        {
             switch (primary)
             {
                 case '^': return new Start();
                 case '.': return new Terminator(primary);
                 case ',': return new Separator(primary);
-                case 'A': return new Adjective { Modifiers = modifiers };
-                case 'C': return new Conjunction { Modifiers = modifiers };
-                case 'G': return new Greeting { Modifiers = modifiers };
-                case 'I': return new InfinitiveMarker { Modifiers = modifiers };
-                case 'N': return new Noun { Modifiers = modifiers };
-                case 'P': return new Preposition { Modifiers = modifiers };
-                case 'Q': return new Number { Modifiers = modifiers };
-                case 'R': return new Pronoun { Modifiers = modifiers };
-                case 'T': return new Article { Modifiers = modifiers };
-                case 'V': return new Verb { Modifiers = modifiers };
-                case 'X': return new Auxiliary { Modifiers = modifiers };
+                case 'A': return new Adjective();
+                case 'C': return new Conjunction();
+                case 'G': return new Greeting();
+                case 'I': return new InfinitiveMarker();
+                case 'N': return new Noun();
+                case 'P': return new Preposition();
+                case 'Q': return new Number();
+                case 'R': return new Pronoun();
+                case 'T': return new Article();
+                case 'V': return new Verb();
+                case 'X': return new Auxiliary();
                 default: throw new NotImplementedException();
             }
         }
@@ -186,7 +196,7 @@ namespace Lingua.Core
         private static string Serialize(Element element, Modifier modifier)
             => modifier == Modifier.Any
                 ? "*"
-                : new string(SerializeModifiers(element, modifier).ToArray());
+                : new string(SerializeModifiers(element, modifier).OrderBy(c => c).ToArray());
 
         private static IEnumerable<char> SerializeModifiers(Element element, Modifier modifiers)
         {
@@ -196,7 +206,7 @@ namespace Lingua.Core
                 yield return 'd';
             if (modifiers.HasFlag(Modifier.Genitive))
                 yield return 'g';
-            if (modifiers.HasFlag(Modifier.Neuter) && element is Adjective)
+            if (modifiers.HasFlag(Modifier.Neuter) && (element is Adjective || element is Pronoun))
                 yield return 't';
             if (modifiers.HasFlag(Modifier.Imperitive) && element is Verb)
                 yield return 'i';
@@ -206,11 +216,11 @@ namespace Lingua.Core
                 yield return 'l';
             if (modifiers.HasFlag(Modifier.Superlative) && element is Adjective)
                 yield return 's';
-            if (modifiers.HasFlag(Modifier.FirstPerson) && element is Verb)
+            if (modifiers.HasFlag(Modifier.FirstPerson) && (element is Verb || element is Pronoun))
                 yield return '1';
             if (modifiers.HasFlag(Modifier.Adverb) && element is Adjective)
                 yield return 'a';
-            if (modifiers.HasFlag(Modifier.SecondPerson) && element is Verb)
+            if (modifiers.HasFlag(Modifier.SecondPerson) && (element is Verb || element is Pronoun))
                 yield return '2';
             if (modifiers.HasFlag(Modifier.ThirdPerson))
                 yield return '3';

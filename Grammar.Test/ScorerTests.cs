@@ -14,6 +14,8 @@ namespace Lingua.Grammar.Test
         [TestCase("R2V1", 1)]
         [TestCase("R2nV1", 1)]
         [TestCase("Vi", 1)]
+        [TestCase("Vi", 1)]
+        [TestCase("R3tX3R1mN", 1)]
         public void Score(string symbols, int expectedScore)
         {
             var tokens = Encoder.Deserialize(symbols).ToArray();

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 using Lingua.Grammar;
 using Lingua.Tokenization;
 using Lingua.Vocabulary;
@@ -16,7 +17,17 @@ namespace Lingua.Core.Test
 
         [Test]
         public void TranslateNull()
-            => RunTestCase(null, "");
+            => TestCase(null, "");
+             
+        [TestCase("|It is my pen| /=> |Det är min penna|")]
+        [TestCase("|I am painting the wall| /=> |jag målar väggen|")]
+        public void RunTestCase(string testCase)
+        {
+            var parts = Regex.Split(testCase, @"\s+/=>\s+");
+            var from = parts[0].Trim('|');
+            var to = parts[1].Trim('|');
+            TestCase(from, to);
+        }
 
         [Test]
         public void RunTestSuites()
@@ -83,6 +94,20 @@ namespace Lingua.Core.Test
         private static IEnumerable<TestCaseResult> RunTestSuite(Dictionary<string, string> testCases)
             => testCases.Select(testCase => RunTestCase(testCase.Key, testCase.Value));
 
+        private static void TestCase(string from, string to)
+        {
+            var result = RunTestCase(from, to);
+            if (!result.Success)
+                Output(result.Reason);
+            Assert.That(result.Success);
+        }
+
+        private static void Output(IReason reason)
+            => reason.Evaluations.ForEach(Output);
+
+        private static void Output(IEvaluation evaluation)
+            => Console.WriteLine($"{evaluation.Fragment}:{evaluation.Symbols}:{evaluation.Score}");
+
         private static TestCaseResult RunTestCase(string from, string to)
         {
             var translationResult = Translator.Translate(from);
@@ -95,22 +120,5 @@ namespace Lingua.Core.Test
                 Success = translationResult.translation == to
             };
         }
-    }
-
-    public class TestSuiteResult
-    {
-        public string Caption { get; set; }
-        public IList<TestCaseResult> Succeeded { get; set; }
-        public IList<TestCaseResult> Failed { get; set; }
-        public bool Success => !Failed.Any();
-    }
-
-    public class TestCaseResult
-    {
-        public string From { get; set; }
-        public string Expected { get; set; }
-        public string Actual { get; set; }
-        public bool Success { get; set; }
-        public IReason Reason { get; set; }
     }
 }
