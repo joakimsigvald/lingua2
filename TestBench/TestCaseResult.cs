@@ -1,4 +1,6 @@
-namespace Lingua.Core.Test
+using Lingua.Core;
+
+namespace Lingua.Testing
 {
     public class TestCaseResult
     {

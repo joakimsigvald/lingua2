@@ -4,16 +4,15 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{E8150ABC-723E-4D4F-BDB8-66A5E5C84530}</ProjectGuid>
-    <OutputType>Exe</OutputType>
-    <RootNamespace>Lingua.Main</RootNamespace>
-    <AssemblyName>Lingua.Main</AssemblyName>
+    <ProjectGuid>{6F12FC3A-0E11-4E2B-BE31-3114F671D869}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Lingua.Testing</RootNamespace>
+    <AssemblyName>Lingua.Testing</AssemblyName>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
-    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
@@ -23,7 +22,6 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
@@ -45,12 +43,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Program.cs" />
+    <Compile Include="Loader.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="App.config" />
-    <None Include="packages.config" />
+    <Compile Include="TestBench.cs" />
+    <Compile Include="TestCaseResult.cs" />
+    <Compile Include="TestSuiteResult.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Core\Core.csproj">
@@ -58,21 +55,20 @@
       <Name>Core</Name>
     </ProjectReference>
     <ProjectReference Include="..\Grammar\Grammar.csproj">
-      <Project>{13fc0b05-5926-4626-89c0-296ccf7444a7}</Project>
+      <Project>{13FC0B05-5926-4626-89C0-296CCF7444A7}</Project>
       <Name>Grammar</Name>
     </ProjectReference>
-    <ProjectReference Include="..\TestBench\Testing.csproj">
-      <Project>{6f12fc3a-0e11-4e2b-be31-3114f671d869}</Project>
-      <Name>Testing</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Tokenization\Tokenization.csproj">
-      <Project>{bf62cd42-7cdc-4616-9b25-49e985fff1f7}</Project>
+      <Project>{BF62CD42-7CDC-4616-9B25-49E985FFF1F7}</Project>
       <Name>Tokenization</Name>
     </ProjectReference>
     <ProjectReference Include="..\Vocabulary\Vocabulary.csproj">
-      <Project>{9c9efb87-fdd6-42d2-a32e-8f3e3a95ed5b}</Project>
+      <Project>{9C9EFB87-FDD6-42D2-A32E-8F3E3A95ED5B}</Project>
       <Name>Vocabulary</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

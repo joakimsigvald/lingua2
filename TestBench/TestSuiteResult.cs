@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 
-namespace Lingua.Core.Test
+namespace Lingua.Testing
 {
     public class TestSuiteResult
     {

@@ -47,7 +47,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Words", "Words", "{BDD18A92
 		Languages\EnglishSwedish\Words\Verbs.txt = Languages\EnglishSwedish\Words\Verbs.txt
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Learning", "Learning\Learning.csproj", "{7D630F36-7C78-4593-96A8-DB6445E0D5B1}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Testing", "TestBench\Testing.csproj", "{6F12FC3A-0E11-4E2B-BE31-3114F671D869}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -91,10 +91,10 @@ Global
 		{A0B1C924-AE74-416D-B567-1933BA409474}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A0B1C924-AE74-416D-B567-1933BA409474}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A0B1C924-AE74-416D-B567-1933BA409474}.Release|Any CPU.Build.0 = Release|Any CPU
-		{7D630F36-7C78-4593-96A8-DB6445E0D5B1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{7D630F36-7C78-4593-96A8-DB6445E0D5B1}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{7D630F36-7C78-4593-96A8-DB6445E0D5B1}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{7D630F36-7C78-4593-96A8-DB6445E0D5B1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6F12FC3A-0E11-4E2B-BE31-3114F671D869}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6F12FC3A-0E11-4E2B-BE31-3114F671D869}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6F12FC3A-0E11-4E2B-BE31-3114F671D869}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6F12FC3A-0E11-4E2B-BE31-3114F671D869}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

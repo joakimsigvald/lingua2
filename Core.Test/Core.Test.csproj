@@ -56,8 +56,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="EncoderTests.cs" />
-    <Compile Include="TestCaseResult.cs" />
-    <Compile Include="TestSuiteResult.cs" />
     <Compile Include="TranslatorTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -72,9 +70,9 @@
       <Project>{13fc0b05-5926-4626-89c0-296ccf7444a7}</Project>
       <Name>Grammar</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Learning\Learning.csproj">
-      <Project>{7d630f36-7c78-4593-96a8-db6445e0d5b1}</Project>
-      <Name>Learning</Name>
+    <ProjectReference Include="..\TestBench\Testing.csproj">
+      <Project>{6f12fc3a-0e11-4e2b-be31-3114f671d869}</Project>
+      <Name>Testing</Name>
     </ProjectReference>
     <ProjectReference Include="..\Tokenization\Tokenization.csproj">
       <Project>{BF62CD42-7CDC-4616-9B25-49E985FFF1F7}</Project>

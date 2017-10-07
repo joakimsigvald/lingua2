@@ -19,10 +19,20 @@ namespace Lingua.Grammar
 
         public static Evaluation Evaluate(IList<Token> tokens)
         {
+            var code = Encode(tokens);
+            return Evaluate(tokens, code);
+        }
+
+        private static ushort[] Encode(IEnumerable<Token> tokens)
+        {
             var deconjunctedTokens = Trim(tokens);
-            var code = Encoder.Encode(deconjunctedTokens.Prepend(Start.Singleton)).ToArray();
-            var scorings = Scorers.Select(s 
-                => new Scoring(s.Pattern, s.CountMatches(code), s.Score))
+            return Encoder.Encode(deconjunctedTokens.Prepend(Start.Singleton)).ToArray();
+        }
+
+        private static Evaluation Evaluate(IList<Token> tokens, ushort[] code)
+        {
+            var scorings = Scorers.Select(s
+                    => new Scoring(s.Pattern, s.CountMatches(code), s.Score))
                 .Where(m => m.Count > 0)
                 .ToArray();
             var score = scorings.Sum(s => s.TotalScore);
