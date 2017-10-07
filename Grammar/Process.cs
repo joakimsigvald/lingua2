@@ -75,7 +75,7 @@ namespace Lingua.Grammar
         private static IEnumerable<IList<TreeNode<Translation>>> Expand(TreeNode<Translation> node, int depth)
             => (depth > 0 && node.Children.Any()
                     ? node.Children
-                        .SelectMany(child => Expand(child, depth - child.Value.TokenCount))
+                        .SelectMany(child => Expand(child, depth - child.Value.WordCount))
                     : new[] {new TreeNode<Translation>[0]})
                 .Select(seq => seq.Prepend(node).ToList());
     }

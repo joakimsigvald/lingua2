@@ -1,7 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using Lingua.Core;
-using Lingua.Core.Tokens;
 
 namespace Lingua.Grammar
 {
@@ -17,31 +16,33 @@ namespace Lingua.Grammar
         private byte[] To { get; }
 
         public IEnumerable<Translation> Arrange(IList<Translation> input)
+            => ArrangeSegments(input).SelectMany(x => x.Select(y => y));
+
+        private IEnumerable<IEnumerable<Translation>> ArrangeSegments(ICollection<Translation> input)
         {
-            var segLen = From.Length * 2 - 1;
             for (var i = 0; i < input.Count; i++)
             {
                 var segment = input
-                    .Skip(i).Take(segLen)
+                    .Skip(i).Take(From.Length)
                     .ToArray();
-                var tokens = segment.Select(t => t.From).ToArray();
-                var codedSegment = Encoder.Encode(tokens).ToArray();
-                if (Encoder.Matches(codedSegment, From))
+                var arrangedSegment = Arrange(segment);
+                if (arrangedSegment != null)
                 {
-                    var dividers = segment
-                        .Where(t => t.From is Divider)
-                        .ToArray();
-                    var words = segment
-                        .Except(dividers)
-                        .ToArray();
-                    var rearrangedSegment = Rearrange(words).ToList()
-                        .Interleave(dividers.Take(1).ToArray(), true);
-                    foreach (var tran in rearrangedSegment)
-                        yield return tran;
-                    i += segLen - 1;
+                    i += From.Length - 1;
+                    yield return arrangedSegment;
                 }
-                else yield return input[i];
+                else yield return segment.Take(1);
             }
+        }
+
+        private IEnumerable<Translation> Arrange(Translation[] segment)
+        {
+            var tokens = segment.Select(t => t.From).ToArray();
+            var codedSegment = Encoder.Encode(tokens).ToArray();
+            if (!Encoder.Matches(codedSegment, From))
+                return null;
+            var rearrangedSegment = Rearrange(segment).ToList();
+            return rearrangedSegment;
         }
 
         private IEnumerable<Translation> Rearrange(IList<Translation> segment)

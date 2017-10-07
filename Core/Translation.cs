@@ -34,7 +34,6 @@ namespace Lingua.Core
         public string To { get; set; }
         public Word[] Continuation { get; set; }
         public Translation[] Variations { get; set; } = new Translation[0];
-        public int TokenCount => WordCount * 2 - 1;
         public int WordCount => Continuation.Length + 1;
         public bool IsTranslatedWord => To != null && !Continuation.Any();
 
@@ -57,10 +56,10 @@ namespace Lingua.Core
             => IsTranslatedWord || MatchesContinuation(tokens, nextIndex);
 
         private bool MatchesContinuation(IReadOnlyList<Token> tokens, int nextIndex)
-            => tokens.Count >= nextIndex + Continuation.Length * 2
+            => tokens.Count >= nextIndex + Continuation.Length
                    && Continuation.All(word => Matches(word, tokens, ref nextIndex));
 
         private static bool Matches(Word word, IReadOnlyList<Token> tokens, ref int nextIndex)
-            => tokens[nextIndex++] is Divider && (tokens[nextIndex++] as Word)?.Value == word.Value;
+            => tokens[nextIndex++] is Word next && next.Value == word.Value;
     }
 }

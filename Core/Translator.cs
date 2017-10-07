@@ -27,7 +27,21 @@ namespace Lingua.Core
             var candidates = Translate(tokens).ToArray();
             var possibilities = Combine(candidates);
             var result = _grammar.Reduce(possibilities);
-            return (Output(Adjust(result.Translations)), result.Reason);
+            var adjustedResult = Adjust(result.Translations);
+            var respacedResult = Respace(adjustedResult);
+            return (Output(respacedResult), result.Reason);
+        }
+
+        private static IEnumerable<Translation> Respace(IEnumerable<Translation> translations)
+        {
+            var space = Translation.Create(new Divider());
+            Translation previous = null;
+            foreach (var translation in translations)
+            {
+                if (previous != null && !(translation.From is Punctuation || translation.From is Ellipsis))
+                    yield return space;
+                yield return previous = translation;
+            }
         }
 
         private IEnumerable<Token> Expand(IEnumerable<Token> tokens)
@@ -69,22 +83,18 @@ namespace Lingua.Core
             var incompleteCompounds = first.Where(t => t.IsIncompleteCompound).ToArray();
             var words = first.Except(incompleteCompounds);
             var compounds =
-                incompleteCompounds.SelectMany(ic => CompleteCompound(ic, alternatives.Skip(ic.TokenCount).ToArray()));
+                incompleteCompounds.SelectMany(ic => CompleteCompound(ic, alternatives.Skip(ic.WordCount).ToArray()));
             return words.Concat(compounds)
-                .Select(t => CreateTreeNode(t, alternatives.Skip(t.TokenCount).ToList()))
+                .Select(t => CreateTreeNode(t, alternatives.Skip(t.WordCount).ToList()))
                 .ToList();
         }
 
         private static IEnumerable<Translation> CompleteCompound(Translation incompleteCompound,
             IReadOnlyList<Translation[]> future)
         {
-            if (!future.Any())
+            if (!future.Any() || !(future.First()[0].From is Word))
                 return new Translation[0];
-            var expectedSpace = future.First();
-            if (!expectedSpace.Any() || !(expectedSpace[0].From is Divider))
-                return new Translation[0];
-            var remaining = future.Skip(1).ToArray();
-            var nextWords = remaining.First().Where(t => t.From.GetType() == incompleteCompound.From.GetType());
+            var nextWords = future.First().Where(t => t.From.GetType() == incompleteCompound.From.GetType());
             return nextWords.Select(completion => CompleteCompound(incompleteCompound, completion));
         }
 

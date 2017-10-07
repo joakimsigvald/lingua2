@@ -15,10 +15,10 @@ namespace Lingua.Core
             => Encode(Deserialize(serial)).ToArray();
 
         public static IEnumerable<ushort> Encode(IEnumerable<Token> tokens)
-            => TrimDividers(tokens).Select(Encode);
+            => tokens.Select(Encode);
 
         public static string Serialize(IEnumerable<Token> tokens)
-            => string.Join("", TrimDividers(tokens).Select(Serialize));
+            => string.Join("", tokens.Select(Serialize));
 
         public static IEnumerable<Token> Deserialize(string serial)
         {
@@ -50,9 +50,6 @@ namespace Lingua.Core
         public static bool Matches(ushort[] codes, ushort[] pattern)
             => codes.Length == pattern.Length
                && codes.Select((d, i) => Matches(d, pattern[i])).All(b => b);
-
-        private static IEnumerable<Token> TrimDividers(IEnumerable<Token> tokens)
-            => tokens.Where(t => !(t is Divider));
 
         private static bool Matches(ushort code, ushort pattern)
             => code == pattern || (code | (ushort)Modifier.Any) == pattern;

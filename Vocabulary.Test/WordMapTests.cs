@@ -73,8 +73,7 @@ namespace Lingua.Vocabulary.Test
         private static IEnumerable<Token> GetTokens(string str)
         {
             var parts = str.Split(' ');
-            return parts.Select(part => new Unclassified {Value = part}).Cast<Token>().ToArray()
-                .Interleave(parts.Skip(1).Select(_ => new Divider()).Cast<Token>().ToArray());
+            return parts.Select(part => new Unclassified {Value = part});
         }
     }
 }

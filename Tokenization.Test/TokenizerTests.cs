@@ -73,17 +73,17 @@ namespace Lingua.Tokenization.Test
         public void Ellipsis(string ellipsis)
             => ellipsis.Tokenize().Yields<Ellipsis>("...");
 
-        [TestCase("hey you", "hey", "_", "you")]
-        [TestCase("Where are you", "Where", "_", "are", "_", "you")]
+        [TestCase("hey you", "hey", "you")]
+        [TestCase("Where are you", "Where", "are", "you")]
         public void Words(string text, params string[] parts)
             => text.Tokenize().Yields(parts);
 
-        [TestCase("Where are you?", "Where", "_", "are", "_", "you", "?")]
-        [TestCase("I am here  .", "I", "_", "am", "_", "here", ".")]
-        [TestCase("Honey, I'm home.", "Honey", ",", "_", "I'm", "_", "home", ".")]
-        [TestCase("Hey... you", "Hey", "...", "_", "you")]
+        [TestCase("Where are you?", "Where", "are", "you", "?")]
+        [TestCase("I am here  .", "I", "am", "here", ".")]
+        [TestCase("Honey, I'm home.", "Honey", ",", "I'm", "home", ".")]
+        [TestCase("Hey... you", "Hey", "...", "you")]
         [TestCase("  A    text; with spaces, dots and     a colon:  That's it! ", 
-            "A", "_", "text", ";", "_", "with", "_", "spaces", ",", "_", "dots", "_" , "and", "_", "a", "_", "colon", ":", "_", "That's", "_", "it", "!")]
+            "A", "text", ";", "with", "spaces", ",", "dots", "and", "a", "colon", ":", "That's", "it", "!")]
         public void Sentenses(string text, params string[] parts)
             => text.Tokenize().Yields(parts);
 
@@ -162,9 +162,6 @@ namespace Lingua.Tokenization.Test
                 case "?":
                     Assert.That(token is Terminator);
                     Assert.That(token.Value, Is.EqualTo(representation));
-                    break;
-                case "_":
-                    Assert.That(token is Divider);
                     break;
                 case ";":
                 case ",":

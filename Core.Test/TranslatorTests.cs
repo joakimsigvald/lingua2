@@ -17,7 +17,8 @@ namespace Lingua.Core.Test
         [Test]
         public void TranslateNull()
             => TestCase(null, "");
-             
+                         
+        [TestCase("|Bouncing ball to play with| /=> |Studsboll att leka med|")]
         [TestCase("|It is my pen| /=> |Det är min penna|")]
         [TestCase("|I am painting the wall| /=> |jag målar väggen|")]
         public void RunTestCase(string testCase)
@@ -40,7 +41,7 @@ namespace Lingua.Core.Test
             var result = TestBench.RunTestCase(from, to);
             if (!result.Success)
                 Output(result.Reason);
-            Assert.That(result.Success);
+            Assert.That(result.Success, $"Expected \"{result.Expected}\" but was \"{result.Actual}\"");
         }
 
         private static void Output(IReason reason)

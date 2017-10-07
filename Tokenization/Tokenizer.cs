@@ -15,7 +15,7 @@ namespace Lingua.Tokenization
         public IEnumerable<Token> Tokenize(string text)
             => string.IsNullOrWhiteSpace(text)
                 ? new Token[0]
-                : Trim(Tokenize(Symbolizer.Symbolize(text).ToArray()));
+                : CombineGenerics(Trim(Tokenize(Symbolizer.Symbolize(text).ToArray())));
 
         private static IEnumerable<Token> Tokenize(IReadOnlyList<Symbol> symbols)
         {
@@ -38,8 +38,8 @@ namespace Lingua.Tokenization
             yield return GetEnriched(token, original, current);
         }
 
-        private IEnumerable<Token> Trim(IEnumerable<Token> elements)
-            => RemoveSpaceBeforeMark(CombineGenerics(elements).ToList());
+        private static IEnumerable<Token> Trim(IEnumerable<Token> tokens)
+            => tokens.Where(token => !(token is Divider));
 
         private static IEnumerable<Token> CombineGenerics(IEnumerable<Token> tokens)
         {
@@ -72,17 +72,10 @@ namespace Lingua.Tokenization
             }
         }
 
-        private static IEnumerable<Token> RemoveSpaceBeforeMark(IReadOnlyList<Token> tokens)
-            => tokens.Where((token, index) => index == tokens.Count - 1 ||
-                                              !IsSpaceBeforeMark(token, tokens[index + 1]));
-
-        private static bool IsSpaceBeforeMark(Token current, Token next)
-            => current is Divider && next is Punctuation;
-
         private static Token GetEnriched(Token token, string original, Symbol next)
         {
             token.Value = original;
-            if (token is Word word && !(token is Number))
+            if (token is Word word)
                 word.PossibleAbbreviation = next is Dot;
             if ((token is StartGeneric || token is EndGeneric) && token.Value.Length != 2)
                 throw new NotImplementedException("Unknown token: " + token.Value);

@@ -61,22 +61,6 @@ namespace Lingua.Core.Test
             Assert.That(actual, Is.EquivalentTo($"V{expected}"));
         }
 
-        [Test]
-        public void SkipDividersWhenSerializeTokens()
-        {
-            var tokens = new Token[]
-            {
-                new Article {Modifiers = Modifier.Definite}, // The
-                new Divider(),
-                new Noun {Modifiers = Modifier.Definite | Modifier.Genitive}, // child's
-                new Divider(),
-                new Noun {Modifiers = Modifier.Plural} // toys
-            };
-            var expected = new [] { (5 << Encoder.ModifierBits) + 2, (4 << Encoder.ModifierBits) + 2 + 4, (4 << Encoder.ModifierBits) + 1 };
-            var actual = Encoder.Encode(tokens);
-            Assert.That(actual, Is.EquivalentTo(expected));
-        }
-
         [TestCase("VpAa")]
         [TestCase("V*")]
         [TestCase("R*")]

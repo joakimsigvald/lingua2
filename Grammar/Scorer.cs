@@ -40,7 +40,7 @@ namespace Lingua.Grammar
         }
 
         private static IEnumerable<Token> Trim(IEnumerable<Token> tokens)
-            => MergeConjunctions(tokens.Where(token => !(token is Divider)).ToArray());
+            => MergeConjunctions(tokens.ToArray());
 
         private static IEnumerable<Token> MergeConjunctions(ICollection<Token> tokens)
         {
