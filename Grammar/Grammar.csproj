@@ -50,6 +50,7 @@
     <Compile Include="Evaluation.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Reason.cs" />
+    <Compile Include="Evaluator.cs" />
     <Compile Include="Scorer.cs" />
     <Compile Include="Scoring.cs" />
   </ItemGroup>

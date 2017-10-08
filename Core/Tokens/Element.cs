@@ -34,7 +34,7 @@ namespace Lingua.Core.Tokens
         //Pronoun
         Object = 1 << 9,
         Possessive = 1 << 10,
-        Any = Encoder.AnyMask
+        Any = Encoder.ModifiersMask
     }
 
     public abstract class Element : Token

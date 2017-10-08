@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Text.RegularExpressions;
 using Lingua.Grammar;
 using Lingua.Testing;
@@ -48,6 +49,11 @@ namespace Lingua.Core.Test
             => reason.Evaluations.ForEach(Output);
 
         private static void Output(IEvaluation evaluation)
-            => Console.WriteLine($"{evaluation.Fragment}:{evaluation.Symbols}:{evaluation.Score}");
+        {
+            var symbols = evaluation.Patterns
+                .Select(Encoder.Decode)
+                .Select(Encoder.Serialize);
+            Console.WriteLine($"{string.Join(", ", symbols)}:{evaluation.Score}");
+        }
     }
 }

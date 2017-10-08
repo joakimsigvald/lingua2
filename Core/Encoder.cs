@@ -9,7 +9,8 @@ namespace Lingua.Core
     public static class Encoder
     {
         public const byte ModifierBits = 11;
-        public const ushort AnyMask = 0x07ff;
+        public const ushort ClassMask = 0xf800;
+        public const ushort ModifiersMask = 0x07ff;
 
         public static ushort[] Encode(string serial)
             => Encode(Deserialize(serial)).ToArray();
@@ -55,42 +56,67 @@ namespace Lingua.Core
             => code == pattern || (code | (ushort)Modifier.Any) == pattern;
 
         private static ushort Encode(Token token)
-            => (ushort)((ClassCode(token) << ModifierBits) + ModifierCode(token as Element));
+            => (ushort)(ClassCode(token) + ModifierCode(token as Element));
 
         private static Token Decode(ushort code)
         {
             var token = DecodeToken(code);
             if (token is Element element)
-                element.Modifiers = DecodeModifiers(element, (ushort)(code & AnyMask));
+                element.Modifiers = DecodeModifiers(element, (ushort)(code & ModifiersMask));
             return token;
         }
 
-        private static Token DecodeToken(int code)
+        private static Token DecodeToken(ushort code)
         {
-            switch (code >> ModifierBits)
+            switch (code & ClassMask)
             {
-                case 0: return new Start();
-                case 1: return new Terminator('.');
-                case 2: return new Separator(',');
-                case 3: return new Number();
-                case 4: return new Noun();
-                case 5: return new Article();
-                case 6: return new Preposition();
-                case 7: return new Pronoun();
-                case 8: return new Adjective();
-                case 9: return new Auxiliary();
-                case 10: return new Verb();
-                case 11: return new InfinitiveMarker();
-                case 12: return new Conjunction();
-                case 15: return new Greeting();
-                case 31:
-                    return new Unclassified();
+                case Start.Code: return new Start();
+                case Terminator.Code: return new Terminator('.');
+                case Separator.Code: return new Separator(',');
+                case Number.Code: return new Number();
+                case Noun.Code: return new Noun();
+                case Article.Code: return new Article();
+                case Preposition.Code: return new Preposition();
+                case Pronoun.Code: return new Pronoun();
+                case Adjective.Code: return new Adjective();
+                case Auxiliary.Code: return new Auxiliary();
+                case Verb.Code: return new Verb();
+                case InfinitiveMarker.Code: return new InfinitiveMarker();
+                case Conjunction.Code: return new Conjunction();
+                case Greeting.Code: return new Greeting();
+                case Unclassified.Code: return new Unclassified();
+                default: throw new NotImplementedException();
+            }
+        }
+
+        private static ushort ClassCode(Token token)
+        {
+            switch (token)
+            {
+                case Start _: return Start.Code;
+                case Ellipsis _:
+                case Terminator _: return Terminator.Code;
+                case Separator _: return Separator.Code;
+                case Quantifier _:
+                case Number _: return Number.Code;
+                case Noun _: return Noun.Code;
+                case Article _: return Article.Code;
+                case Preposition _: return Preposition.Code;
+                case Pronoun _: return Pronoun.Code;
+                case Adjective _: return Adjective.Code;
+                case Auxiliary _: return Auxiliary.Code;
+                case Verb _: return Verb.Code;
+                case InfinitiveMarker _: return InfinitiveMarker.Code;
+                case Conjunction _: return Conjunction.Code;
+                case Greeting _: return Greeting.Code;
+                case Abbreviation _:
+                case Unclassified _: return Unclassified.Code;
                 default: throw new NotImplementedException();
             }
         }
 
         private static Modifier DecodeModifiers(Element element, ushort code)
-            => code == AnyMask
+            => code == ModifiersMask
                 ? Modifier.Any
                 : DecodeAggregatedModifiers(element, code);
 
@@ -157,32 +183,6 @@ namespace Lingua.Core
                 case 'T': return new Article();
                 case 'V': return new Verb();
                 case 'X': return new Auxiliary();
-                default: throw new NotImplementedException();
-            }
-        }
-
-        private static byte ClassCode(Token token)
-        {
-            switch (token)
-            {
-                case Start _: return 0;
-                case Ellipsis _:
-                case Terminator _: return 1;
-                case Separator _: return 2;
-                case Quantifier _:
-                case Number _: return 3;
-                case Noun _: return 4;
-                case Article _: return 5;
-                case Preposition _: return 6;
-                case Pronoun _: return 7;
-                case Adjective _: return 8;
-                case Auxiliary _: return 9;
-                case Verb _: return 10;
-                case InfinitiveMarker _: return 11;
-                case Conjunction _: return 12;
-                case Greeting _: return 15;
-                case Abbreviation _:
-                case Unclassified _: return 31;
                 default: throw new NotImplementedException();
             }
         }

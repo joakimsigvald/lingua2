@@ -2,6 +2,6 @@
 {
     public class Start : Token
     {
-        public static readonly Token Singleton = new Start();
+        public const ushort Code = 0;
     }
 }

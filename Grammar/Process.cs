@@ -11,6 +11,7 @@ namespace Lingua.Grammar
         private const int Horizon = 6;
         private readonly IReason _reason = new Reason();
         private IEnumerable<Translation> _selection;
+        private static readonly Evaluator Evaluator = new Evaluator();
 
         private static readonly Dictionary<string, string> Rearrangements = Loader.LoadRearrangements();
 
@@ -70,7 +71,7 @@ namespace Lingua.Grammar
         }
 
         private static Evaluation Evaluate(IEnumerable<Translation> translations)
-            => Scorer.Evaluate(translations.Select(t => t.From).ToArray());
+            => Evaluator.Evaluate(Encoder.Encode(translations.Select(t => t.From)).ToArray());
 
         private static IEnumerable<IList<TreeNode<Translation>>> Expand(TreeNode<Translation> node, int depth)
             => (depth > 0 && node.Children.Any()

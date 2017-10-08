@@ -4,14 +4,14 @@ namespace Lingua.Grammar
 {
     public class Scoring
     {
-        public string Pattern { get; }
+        public ushort[] Pattern { get; }
         public int Count { get; }
         private int Score { get; }
         public int TotalScore => Count * Score;
 
         public Scoring(ushort[] pattern, int count, int score)
         {
-            Pattern = Encoder.Serialize(Encoder.Decode(pattern));
+            Pattern = pattern;
             Count = count;
             Score = score;
         }

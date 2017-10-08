@@ -4,6 +4,8 @@ namespace Lingua.Core.WordClasses
 {
     public class Article : Word
     {
+        public const ushort Code = 5 << Encoder.ModifierBits;
+
         protected override Modifier GetVariationModifier(int variationIndex)
         {
             switch (variationIndex)

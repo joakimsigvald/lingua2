@@ -2,5 +2,6 @@
 {
     public class Auxiliary : Verb
     {
+        public new const ushort Code = 9 << Encoder.ModifierBits;
     }
 }

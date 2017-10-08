@@ -4,6 +4,8 @@ namespace Lingua.Core.WordClasses
 {
     public class Pronoun : Word
     {
+        public const ushort Code = 7 << Encoder.ModifierBits;
+
         protected override Modifier GetVariationModifier(int variationIndex)
         {
             switch (variationIndex)

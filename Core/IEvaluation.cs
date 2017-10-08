@@ -1,9 +1,10 @@
-﻿namespace Lingua.Core
+﻿using System.Collections.Generic;
+
+namespace Lingua.Core
 {
     public interface IEvaluation
     {
-        string Fragment { get; }
-        string Symbols { get; }
+        IList<ushort[]> Patterns { get; }
         int Score { get; }
     }
 }

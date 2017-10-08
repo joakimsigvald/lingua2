@@ -1,10 +1,11 @@
-﻿using System;
-using Lingua.Core.Tokens;
+﻿using Lingua.Core.Tokens;
 
 namespace Lingua.Core.WordClasses
 {
     public class Verb : Word
     {
+        public const ushort Code = 10 << Encoder.ModifierBits;
+
         protected override Modifier GetVariationModifier(int variationIndex)
         {
             switch (variationIndex)
