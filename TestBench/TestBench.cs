@@ -14,25 +14,31 @@ namespace Lingua.Testing
         public bool RunTestSuites()
         {
             var testSuites = Loader.LoadTestSuites();
-            var testSuiteResults = new List<TestSuiteResult>();
-            foreach (var testSuite in testSuites)
-            {
-                var testSuiteResult = new TestSuiteResult { Caption = testSuite.Key };
-                var results = RunTestSuite(testSuite.Value).ToList();
-                testSuiteResult.Succeeded = results.Where(result => result.Success).ToList();
-                testSuiteResult.Failed = results.Where(result => !result.Success).ToList();
-                testSuiteResults.Add(testSuiteResult);
-            }
+            var testCases = testSuites
+                .SelectMany(kvp => kvp.Value.Select(v => new Tuple<string, string, string>(kvp.Key, v.Key, v.Value)));
+            var testSuiteResults = testCases
+                .AsParallel()
+                .Select(testCase => RunTestCase(testCase.Item1, testCase.Item2, testCase.Item3))
+                .ToArray()
+                .GroupBy(r => r.Group)
+                .Select(g => new TestSuiteResult
+                {
+                    Caption = g.Key,
+                    Succeeded = g.Where(result => result.Success).ToList(),
+                    Failed = g.Where(result => !result.Success).ToList()
+                })
+                .ToList();
             var success = testSuiteResults.All(res => res.Success);
             Report(testSuiteResults, success);
             return success;
         }
 
-        public TestCaseResult RunTestCase(string from, string to)
+        public TestCaseResult RunTestCase(string group, string from, string to)
         {
             var translationResult = _translator.Translate(from);
             return new TestCaseResult
             {
+                Group = group,
                 From = from,
                 Expected = to,
                 Actual = translationResult.translation,
@@ -84,8 +90,5 @@ namespace Lingua.Testing
                 Console.WriteLine($"|{tcr.From}| /=> |{tcr.Expected}| \\\\ |{tcr.Actual}|");
             Console.WriteLine();
         }
-
-        private IEnumerable<TestCaseResult> RunTestSuite(Dictionary<string, string> testCases)
-            => testCases.Select(testCase => RunTestCase(testCase.Key, testCase.Value));
     }
 }

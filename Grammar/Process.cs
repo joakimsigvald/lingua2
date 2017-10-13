@@ -52,18 +52,13 @@ namespace Lingua.Grammar
                 .Select(seq => new
                 {
                     node = seq.First(),
-                    evaluation = Evaluate(previousReversed.Concat(seq.Select(node => node.Value.Item2)))
+                    evaluation = Evaluator.Evaluate(previousReversed.Concat(seq.Select(node => node.Value.Item2)).ToArray())
                 })
                 .OrderByDescending(scoredNode => scoredNode.evaluation.Score).
                 ToArray();
             _reason.Add(evaluatedTranslations.Select(et => et.evaluation));
-            return evaluatedTranslations
-                .Select(scoredNode => scoredNode.node)
-                .First();
+            return evaluatedTranslations.First().node;
         }
-
-        private static Evaluation Evaluate(IEnumerable<ushort> sequence)
-            => Evaluator.Evaluate(sequence.ToArray());
 
         private static IEnumerable<IList<TreeNode<Tuple<Translation, ushort>>>> Expand(TreeNode<Tuple<Translation, ushort>> node, int depth)
             => (depth > 0 && node.Children.Any()
