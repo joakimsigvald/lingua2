@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace Lingua.Grammar
@@ -7,60 +8,51 @@ namespace Lingua.Grammar
 
     internal class Process
     {
-        private readonly IList<TreeNode<Translation>> _possibilities;
+        private readonly TreeNode<Tuple<Translation, ushort>> _possibilities;
         private const int Horizon = 6;
         private readonly IReason _reason = new Reason();
         private IEnumerable<Translation> _selection;
         private static readonly Evaluator Evaluator = new Evaluator();
 
-        private static readonly Dictionary<string, string> Rearrangements = Loader.LoadRearrangements();
-
-        private static readonly IList<Arranger> Arrangers = Rearrangements.Select(sp => new Arranger(sp.Key, sp.Value)).ToList();
-
-        internal static (IReason Reason, IEnumerable<Translation> Translations) Execute(IList<TreeNode<Translation>> possibilities)
+        internal static (IEnumerable<Translation> Translations, IReason Reason) Execute(TreeNode<Tuple<Translation, ushort>> possibilities)
         {
             var process = new Process(possibilities);
             process.Reduce();
-            return (process._reason, process._selection);
+            return (process._selection, process._reason);
         }
 
-        private Process(IList<TreeNode<Translation>> possibilities)
+        private Process(TreeNode<Tuple<Translation, ushort>> possibilities)
             => _possibilities = possibilities;
 
         private void Reduce()
-            => _selection = Arrange(Choose(_possibilities));
+            => _selection = Choose(_possibilities).Skip(1);
 
-        private IEnumerable<Translation> Choose(IList<TreeNode<Translation>> remaining)
+        private IEnumerable<Translation> Choose(TreeNode<Tuple<Translation, ushort>> possibilities)
         {
-            IList<Translation> previous = new List<Translation>();
+            var remaining = new List<TreeNode<Tuple<Translation, ushort>>> {possibilities};
+            IList<ushort> previous = new List<ushort>();
             while (remaining.Any())
             {
                 var child = GetNext(previous, remaining);
-                previous.Insert(0, child.Value);
+                yield return child.Value.Item1;
+                previous.Insert(0, child.Value.Item2);
                 remaining = child.Children.ToList();
             }
-            return previous.Reverse();
         }
 
-        private static IEnumerable<Translation> Arrange(IEnumerable<Translation> translations)
-            => Arrangers
-            .Aggregate(translations
-                , (input, arranger) => arranger
-                .Arrange(input.ToList()));
-
-        private TreeNode<Translation> GetNext(IEnumerable<Translation> previous,
-            ICollection<TreeNode<Translation>> next)
+        private TreeNode<Tuple<Translation, ushort>> GetNext(IEnumerable<ushort> previous,
+            ICollection<TreeNode<Tuple<Translation, ushort>>> next)
             => next.Count > 1 ? FindNext(previous, next) : next.Single();
 
-        private TreeNode<Translation> FindNext(IEnumerable<Translation> previous,
-            IEnumerable<TreeNode<Translation>> next)
+        private TreeNode<Tuple<Translation, ushort>> FindNext(IEnumerable<ushort> previous,
+            IEnumerable<TreeNode<Tuple<Translation, ushort>>> next)
         {
             var previousReversed = previous.Take(Horizon).Reverse().ToList();
             var evaluatedTranslations = next.SelectMany(node => Expand(node, Horizon))
                 .Select(seq => new
                 {
                     node = seq.First(),
-                    evaluation = Evaluate(previousReversed.Concat(seq.Select(node => node.Value)))
+                    evaluation = Evaluate(previousReversed.Concat(seq.Select(node => node.Value.Item2)))
                 })
                 .OrderByDescending(scoredNode => scoredNode.evaluation.Score).
                 ToArray();
@@ -70,14 +62,14 @@ namespace Lingua.Grammar
                 .First();
         }
 
-        private static Evaluation Evaluate(IEnumerable<Translation> translations)
-            => Evaluator.Evaluate(Encoder.Encode(translations.Select(t => t.From)).ToArray());
+        private static Evaluation Evaluate(IEnumerable<ushort> sequence)
+            => Evaluator.Evaluate(sequence.ToArray());
 
-        private static IEnumerable<IList<TreeNode<Translation>>> Expand(TreeNode<Translation> node, int depth)
+        private static IEnumerable<IList<TreeNode<Tuple<Translation, ushort>>>> Expand(TreeNode<Tuple<Translation, ushort>> node, int depth)
             => (depth > 0 && node.Children.Any()
                     ? node.Children
-                        .SelectMany(child => Expand(child, depth - child.Value.WordCount))
-                    : new[] {new TreeNode<Translation>[0]})
+                        .SelectMany(child => Expand(child, depth - child.Value.Item1.WordCount))
+                    : new[] {new TreeNode<Tuple<Translation, ushort>>[0]})
                 .Select(seq => seq.Prepend(node).ToList());
     }
 }

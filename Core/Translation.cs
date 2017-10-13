@@ -34,7 +34,7 @@ namespace Lingua.Core
         public string To { get; set; }
         public Word[] Continuation { get; set; }
         public Translation[] Variations { get; set; } = new Translation[0];
-        public int WordCount => Continuation.Length + 1;
+        public byte WordCount => (byte)(Continuation.Length + 1);
         public bool IsTranslatedWord => To != null && !Continuation.Any();
 
         public Translation Capitalize() 

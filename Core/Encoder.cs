@@ -18,6 +18,9 @@ namespace Lingua.Core
         public static IEnumerable<ushort> Encode(IEnumerable<Token> tokens)
             => tokens.Select(Encode);
 
+        public static ushort Encode(Token token)
+            => (ushort)(ClassCode(token) + ModifierCode(token as Element));
+
         public static string Serialize(IEnumerable<Token> tokens)
             => string.Join("", tokens.Select(Serialize));
 
@@ -54,9 +57,6 @@ namespace Lingua.Core
 
         private static bool Matches(ushort code, ushort pattern)
             => code == pattern || (code | (ushort)Modifier.Any) == pattern;
-
-        private static ushort Encode(Token token)
-            => (ushort)(ClassCode(token) + ModifierCode(token as Element));
 
         private static Token Decode(ushort code)
         {

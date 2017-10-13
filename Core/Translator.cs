@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 using Lingua.Core.Tokens;
@@ -25,11 +26,14 @@ namespace Lingua.Core
                 return (string.Empty, null);
             var tokens = Expand(Tokenize(original)).ToArray();
             var candidates = Translate(tokens).ToArray();
-            var possibilities = Combine(candidates);
-            var result = _grammar.Reduce(possibilities);
-            var adjustedResult = Adjust(result.Translations);
+            var possibilities = new TreeNode<Tuple<Translation, ushort>>(
+                new Tuple<Translation, ushort>(null, Start.Code), 
+                () => Combine(candidates));
+            (var translations, var reason) = _grammar.Reduce(possibilities);
+            var arrangedTranslations = _grammar.Arrange(translations);
+            var adjustedResult = Adjust(arrangedTranslations);
             var respacedResult = Respace(adjustedResult);
-            return (Output(respacedResult), result.Reason);
+            return (Output(respacedResult), reason);
         }
 
         private static IEnumerable<Translation> Respace(IEnumerable<Translation> translations)
@@ -72,12 +76,12 @@ namespace Lingua.Core
             int nextIndex)
             => candidates.Where(t => t.Matches(tokens, nextIndex));
 
-        private static IList<TreeNode<Translation>> Combine(IReadOnlyList<Translation[]> alternatives)
+        private static IList<TreeNode<Tuple<Translation, ushort>>> Combine(IReadOnlyList<Translation[]> alternatives)
             => alternatives.Any()
                 ? CombineRemaining(alternatives)
-                : new List<TreeNode<Translation>>();
+                : new List<TreeNode<Tuple<Translation, ushort>>>();
 
-        private static IList<TreeNode<Translation>> CombineRemaining(IReadOnlyList<Translation[]> alternatives)
+        private static IList<TreeNode<Tuple<Translation, ushort>>> CombineRemaining(IReadOnlyList<Translation[]> alternatives)
         {
             var first = alternatives.First();
             var incompleteCompounds = first.Where(t => t.IsIncompleteCompound).ToArray();
@@ -112,9 +116,11 @@ namespace Lingua.Core
             };
         }
 
-        private static TreeNode<Translation> CreateTreeNode(Translation translation,
+        private static TreeNode<Tuple<Translation, ushort>> CreateTreeNode(Translation translation,
             IReadOnlyList<Translation[]> future)
-            => new TreeNode<Translation>(translation, () => Combine(future));
+            => new TreeNode<Tuple<Translation, ushort>>(
+                new Tuple<Translation, ushort>(translation,  Encoder.Encode(translation.From))
+                , () => Combine(future));
 
         private static IEnumerable<Translation> Adjust(IEnumerable<Translation> translations)
             => PromoteInvisibleCapitalization(

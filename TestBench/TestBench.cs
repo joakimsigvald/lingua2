@@ -30,10 +30,10 @@ namespace Lingua.Testing
 
         public TestCaseResult RunTestCase(string from, string to)
         {
-            var translationResult = _translator.Translate(@from);
+            var translationResult = _translator.Translate(from);
             return new TestCaseResult
             {
-                From = @from,
+                From = from,
                 Expected = to,
                 Actual = translationResult.translation,
                 Reason = translationResult.reason,
