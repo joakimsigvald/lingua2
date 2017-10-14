@@ -17,7 +17,6 @@ namespace Lingua.Testing
             var testCases = testSuites
                 .SelectMany(kvp => kvp.Value.Select(v => new Tuple<string, string, string>(kvp.Key, v.Key, v.Value)));
             var testSuiteResults = testCases
-                .AsParallel()
                 .Select(testCase => RunTestCase(testCase.Item1, testCase.Item2, testCase.Item3))
                 .ToArray()
                 .GroupBy(r => r.Group)

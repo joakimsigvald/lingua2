@@ -8,28 +8,28 @@ namespace Lingua.Grammar
 
     internal class Process
     {
-        private readonly TreeNode<Tuple<Translation, ushort>> _possibilities;
+        private readonly LazyTreeNode<Tuple<Translation, ushort>> _possibilities;
         private const int Horizon = 6;
         private readonly IReason _reason = new Reason();
         private IEnumerable<Translation> _selection;
         private static readonly Evaluator Evaluator = new Evaluator();
 
-        internal static (IEnumerable<Translation> Translations, IReason Reason) Execute(TreeNode<Tuple<Translation, ushort>> possibilities)
+        internal static (IEnumerable<Translation> Translations, IReason Reason) Execute(LazyTreeNode<Tuple<Translation, ushort>> possibilities)
         {
             var process = new Process(possibilities);
             process.Reduce();
             return (process._selection, process._reason);
         }
 
-        private Process(TreeNode<Tuple<Translation, ushort>> possibilities)
+        private Process(LazyTreeNode<Tuple<Translation, ushort>> possibilities)
             => _possibilities = possibilities;
 
         private void Reduce()
             => _selection = Choose(_possibilities).Skip(1);
 
-        private IEnumerable<Translation> Choose(TreeNode<Tuple<Translation, ushort>> possibilities)
+        private IEnumerable<Translation> Choose(LazyTreeNode<Tuple<Translation, ushort>> possibilities)
         {
-            var remaining = new List<TreeNode<Tuple<Translation, ushort>>> {possibilities};
+            var remaining = new List<LazyTreeNode<Tuple<Translation, ushort>>> {possibilities};
             IList<ushort> previous = new List<ushort>();
             while (remaining.Any())
             {
@@ -40,12 +40,12 @@ namespace Lingua.Grammar
             }
         }
 
-        private TreeNode<Tuple<Translation, ushort>> GetNext(IEnumerable<ushort> previous,
-            ICollection<TreeNode<Tuple<Translation, ushort>>> next)
+        private LazyTreeNode<Tuple<Translation, ushort>> GetNext(IEnumerable<ushort> previous,
+            ICollection<LazyTreeNode<Tuple<Translation, ushort>>> next)
             => next.Count > 1 ? FindNext(previous, next) : next.Single();
 
-        private TreeNode<Tuple<Translation, ushort>> FindNext(IEnumerable<ushort> previous,
-            IEnumerable<TreeNode<Tuple<Translation, ushort>>> next)
+        private LazyTreeNode<Tuple<Translation, ushort>> FindNext(IEnumerable<ushort> previous,
+            IEnumerable<LazyTreeNode<Tuple<Translation, ushort>>> next)
         {
             var previousReversed = previous.Take(Horizon).Reverse().ToList();
             var evaluatedTranslations = next.SelectMany(node => Expand(node, Horizon))
@@ -60,11 +60,11 @@ namespace Lingua.Grammar
             return evaluatedTranslations.First().node;
         }
 
-        private static IEnumerable<IList<TreeNode<Tuple<Translation, ushort>>>> Expand(TreeNode<Tuple<Translation, ushort>> node, int depth)
+        private static IEnumerable<IList<LazyTreeNode<Tuple<Translation, ushort>>>> Expand(LazyTreeNode<Tuple<Translation, ushort>> node, int depth)
             => (depth > 0 && node.Children.Any()
                     ? node.Children
                         .SelectMany(child => Expand(child, depth - child.Value.Item1.WordCount))
-                    : new[] {new TreeNode<Tuple<Translation, ushort>>[0]})
+                    : new[] {new LazyTreeNode<Tuple<Translation, ushort>>[0]})
                 .Select(seq => seq.Prepend(node).ToList());
     }
 }

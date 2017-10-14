@@ -15,6 +15,6 @@ namespace Lingua.Grammar
         public IList<ushort[]> Patterns { get; }
         public int Score{ get; }
 
-        public override string ToString() => $"{string.Join(",", Patterns)}:{Score}";
+        public override string ToString() => $"{string.Join(",", Patterns.Select(Encoder.Serialize))}:{Score}";
     }
 }

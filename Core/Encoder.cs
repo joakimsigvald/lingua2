@@ -9,7 +9,7 @@ namespace Lingua.Core
     public static class Encoder
     {
         public const byte ModifierBits = 11;
-        public const ushort ClassMask = 0xf800;
+        private const ushort ClassMask = 0xf800;
         public const ushort ModifiersMask = 0x07ff;
 
         public static ushort[] Encode(string serial)
@@ -20,6 +20,9 @@ namespace Lingua.Core
 
         public static ushort Encode(Token token)
             => (ushort)(ClassCode(token) + ModifierCode(token as Element));
+
+        public static string Serialize(IEnumerable<ushort> code)
+            => string.Join("", Decode(code).Select(Serialize));
 
         public static string Serialize(IEnumerable<Token> tokens)
             => string.Join("", tokens.Select(Serialize));
@@ -48,7 +51,7 @@ namespace Lingua.Core
         public static Modifier ParseModifiers(string modifiers)
             => (modifiers ?? "").Select(ToModifier).Aggregate(Modifier.None, (o, n) => o | n);
 
-        public static IEnumerable<Token> Decode(ushort[] code)
+        public static IEnumerable<Token> Decode(IEnumerable<ushort> code)
             => code.Select(Decode);
 
         public static bool Matches(ushort[] codes, ushort[] pattern)

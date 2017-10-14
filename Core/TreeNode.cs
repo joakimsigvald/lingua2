@@ -1,23 +1,25 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Collections.Generic;
 
 namespace Lingua.Core
 {
-    public class TreeNode<TValue>
+    public interface ITreeNode<out TChild>
+    {
+        IEnumerable<TChild> Children { get; }
+    }
+
+    public class TreeNode<TValue, TChild> : ITreeNode<TChild>
     {
         public readonly TValue Value;
 
-        private IList<TreeNode<TValue>> _children;
-        private readonly Func<IEnumerable<TreeNode<TValue>>> _getChildren;
+        protected IList<TChild> _children;
 
-        public TreeNode(TValue value, Func<IEnumerable<TreeNode<TValue>>> getChildren)
+        protected TreeNode(TValue value, IList<TChild> children)
         {
             Value = value;
-            _getChildren = getChildren;
+            _children = children;
         }
 
-        public IList<TreeNode<TValue>> Children
-            => _children ?? (_children = _getChildren().ToList());
+        public virtual IEnumerable<TChild> Children
+            => _children;
     }
 }

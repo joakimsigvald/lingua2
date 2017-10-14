@@ -12,7 +12,7 @@ namespace Lingua.Grammar
         private static readonly IList<Arranger> Arrangers = Rearrangements.Select(sp => new Arranger(sp.Key, sp.Value)).ToList();
 
         public (IEnumerable<Translation> Translations, IReason Reason) Reduce(
-            TreeNode<Tuple<Translation, ushort>> possibilities)
+            LazyTreeNode<Tuple<Translation, ushort>> possibilities)
             => Process.Execute(possibilities);
 
         public IEnumerable<Translation> Arrange(IEnumerable<Translation> translations)
