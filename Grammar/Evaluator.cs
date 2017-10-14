@@ -1,12 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Lingua.Core.Tokens;
-using Lingua.Core.WordClasses;
 
 namespace Lingua.Grammar
 {
     using Core;
+    using Core.Tokens;
+    using Core.WordClasses;
 
     public class Evaluator
     {
@@ -35,32 +35,27 @@ namespace Lingua.Grammar
             => new Tuple<string, ushort[], sbyte>(kvp.Key, Encoder.Encode(Encoder.Deserialize(kvp.Key)).ToArray(), (sbyte)kvp.Value);
 
         private static IEnumerable<ScoreTreeNode> BuildScoringNodes(IEnumerable<Tuple<string, ushort[], sbyte>> codedPatterns, ushort[] path, int index = 0)
-        {
-            return codedPatterns
+            => codedPatterns
                 .Where(t => t.Item2.Length > index)
                 .GroupBy(item => item.Item2[index])
-                .Select(g => BuildScoringNode(g, path, index + 1));
-        }
+                .Select(g => BuildScoringNode(g, path.Append(g.Key).ToArray(), index + 1));
 
         private static ScoreTreeNode BuildScoringNode(IGrouping<ushort, Tuple<string, ushort[], sbyte>> g, 
-            IEnumerable<ushort> parentPath, 
+            ushort[] path, 
             int index)
-        {
-            var path = parentPath.Append(g.Key).ToArray();
-            return new ScoreTreeNode(
+            => new ScoreTreeNode(
                     g.Key,
                     path,
                     GetNodeScore(g, index),
                     BuildScoringNodes(g, path, index).ToArray());
-        }
 
         private static sbyte? GetNodeScore(IEnumerable<Tuple<string, ushort[], sbyte>> codeScores, int index)
             => codeScores.SingleOrDefault(v => v.Item2.Length == index)?.Item3;
 
         public Evaluation Evaluate(ushort[] code)
         {
-            var mergedCodes = MergeConjunctions(code);
-            var scorings = GetMatchingScoreNodes(mergedCodes)
+            var mergedCode = MergeConjunctions(code);
+            var scorings = GetMatchingScoreNodes(mergedCode)
                 .GroupBy(n => n)
                 .Select(n => new Scoring(n.Key.Path, (byte)n.Count(), n.Key.Score ?? 0))
                 .ToArray();

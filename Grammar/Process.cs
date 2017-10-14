@@ -46,18 +46,21 @@ namespace Lingua.Grammar
         private TranslationTreeNode FindNext(IEnumerable<ushort> previous,
             IEnumerable<TranslationTreeNode> next)
         {
-            var previousReversed = previous.Take(Horizon).Reverse().ToList();
+            var pastReversed = previous.Take(Horizon).Reverse().ToList();
             var evaluatedTranslations = next.SelectMany(node => Expand(node, Horizon))
-                .Select(seq => new
+                .Select(future => new
                 {
-                    node = seq.First(),
-                    evaluation = Evaluator.Evaluate(previousReversed.Concat(seq.Select(node => node.Code)).ToArray())
+                    current = future.First(),
+                    evaluation = Evaluator.Evaluate(GetCodeToAnalyze(pastReversed, future))
                 })
                 .OrderByDescending(scoredNode => scoredNode.evaluation.Score).
                 ToArray();
             _reason.Add(evaluatedTranslations.Select(et => et.evaluation));
-            return evaluatedTranslations.First().node;
+            return evaluatedTranslations.First().current;
         }
+
+        private static ushort[] GetCodeToAnalyze(IEnumerable<ushort> pastReversed, IEnumerable<TranslationTreeNode> future)
+            => pastReversed.Concat(future.Select(node => node.Code)).ToArray();
 
         private static IEnumerable<IList<TranslationTreeNode>> Expand(TranslationTreeNode node, int depth)
             => (depth > 0 && node.Children.Any()
