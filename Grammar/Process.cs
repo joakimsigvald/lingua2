@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 
 namespace Lingua.Grammar
@@ -11,10 +10,10 @@ namespace Lingua.Grammar
         private readonly TranslationTreeNode _possibilities;
         private const int Horizon = 6;
         private readonly IReason _reason = new Reason();
-        private IEnumerable<Translation> _selection;
+        private Translation[] _selection;
         private static readonly Evaluator Evaluator = new Evaluator();
 
-        internal static (IEnumerable<Translation> Translations, IReason Reason) Execute(TranslationTreeNode possibilities)
+        internal static (Translation[] Translations, IReason Reason) Execute(TranslationTreeNode possibilities)
         {
             var process = new Process(possibilities);
             process.Reduce();
@@ -25,7 +24,7 @@ namespace Lingua.Grammar
             => _possibilities = possibilities;
 
         private void Reduce()
-            => _selection = Choose(_possibilities).Skip(1);
+            => _selection = Choose(_possibilities).Skip(1).ToArray();
 
         private IEnumerable<Translation> Choose(TranslationTreeNode possibilities)
         {

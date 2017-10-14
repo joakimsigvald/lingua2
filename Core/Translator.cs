@@ -29,8 +29,8 @@ namespace Lingua.Core
             var possibilities = new TranslationTreeNode(null, Start.Code, () => Combine(candidates));
             (var translations, var reason) = _grammar.Reduce(possibilities);
             var arrangedTranslations = _grammar.Arrange(translations);
-            var adjustedResult = Adjust(arrangedTranslations);
-            var respacedResult = Respace(adjustedResult);
+            var adjustedResult = Adjust(arrangedTranslations).ToArray();
+            var respacedResult = Respace(adjustedResult).ToArray();
             return (Output(respacedResult), reason);
         }
 

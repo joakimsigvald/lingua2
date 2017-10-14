@@ -13,13 +13,14 @@ namespace Lingua.Grammar
         private static readonly IDictionary<string, int> StoredPatterns 
             = Loader.LoadScoredPatterns();
 
+        private static readonly ScoreTreeNode LoadedScoringTree = BuildScoringTree(StoredPatterns);
+
         private readonly ScoreTreeNode _scoringTree;
 
         public Evaluator(IDictionary<string, int> patterns = null)
-        {
-            patterns = patterns ?? StoredPatterns;
-            _scoringTree = BuildScoringTree(patterns);
-        }
+            => _scoringTree = patterns == null 
+                ? LoadedScoringTree 
+                : BuildScoringTree(patterns);
 
         private static ScoreTreeNode BuildScoringTree(IDictionary<string, int> patterns)
         {

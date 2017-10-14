@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 
 namespace Lingua.Grammar
@@ -11,14 +10,15 @@ namespace Lingua.Grammar
 
         private static readonly IList<Arranger> Arrangers = Rearrangements.Select(sp => new Arranger(sp.Key, sp.Value)).ToList();
 
-        public (IEnumerable<Translation> Translations, IReason Reason) Reduce(
+        public (Translation[] Translations, IReason Reason) Reduce(
             TranslationTreeNode possibilities)
             => Process.Execute(possibilities);
 
-        public IEnumerable<Translation> Arrange(IEnumerable<Translation> translations)
+        public Translation[] Arrange(IEnumerable<Translation> translations)
             => Arrangers
                 .Aggregate(translations
                     , (input, arranger) => arranger
-                        .Arrange(input.ToList()));
+                        .Arrange(input.ToList()))
+            .ToArray();
     }
 }
