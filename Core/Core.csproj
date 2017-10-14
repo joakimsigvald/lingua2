@@ -61,7 +61,6 @@
     <Compile Include="Tokens\Abbreviation.cs" />
     <Compile Include="Tokens\Element.cs" />
     <Compile Include="LazyTreeNode.cs" />
-    <Compile Include="TreeNode.cs" />
     <Compile Include="WordClasses\InfinitiveMarker.cs" />
     <Compile Include="WordClasses\Conjunction.cs" />
     <Compile Include="WordClasses\Preposition.cs" />

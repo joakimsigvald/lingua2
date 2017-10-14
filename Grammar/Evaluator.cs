@@ -24,7 +24,7 @@ namespace Lingua.Grammar
         private static ScoreTreeNode BuildScoringTree(IDictionary<string, int> patterns)
         {
             var path = new ushort[0];
-            return new ScoreTreeNode(0, path, null, BuildScoringNodes(EncodePatterns(patterns), path));
+            return new ScoreTreeNode(0, path, null, BuildScoringNodes(EncodePatterns(patterns), path).ToArray());
         }
 
         private static IEnumerable<Tuple<string, ushort[], sbyte>> EncodePatterns(IDictionary<string, int> patterns)
@@ -50,7 +50,7 @@ namespace Lingua.Grammar
                     g.Key,
                     path,
                     GetNodeScore(g, index),
-                    BuildScoringNodes(g, path, index));
+                    BuildScoringNodes(g, path, index).ToArray());
         }
 
         private static sbyte? GetNodeScore(IEnumerable<Tuple<string, ushort[], sbyte>> codeScores, int index)

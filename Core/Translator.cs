@@ -26,9 +26,7 @@ namespace Lingua.Core
                 return (string.Empty, null);
             var tokens = Expand(Tokenize(original)).ToArray();
             var candidates = Translate(tokens).ToArray();
-            var possibilities = new LazyTreeNode<Tuple<Translation, ushort>>(
-                new Tuple<Translation, ushort>(null, Start.Code), 
-                () => Combine(candidates));
+            var possibilities = new TranslationTreeNode(null, Start.Code, () => Combine(candidates));
             (var translations, var reason) = _grammar.Reduce(possibilities);
             var arrangedTranslations = _grammar.Arrange(translations);
             var adjustedResult = Adjust(arrangedTranslations);
@@ -76,12 +74,12 @@ namespace Lingua.Core
             int nextIndex)
             => candidates.Where(t => t.Matches(tokens, nextIndex));
 
-        private static IList<LazyTreeNode<Tuple<Translation, ushort>>> Combine(IReadOnlyList<Translation[]> alternatives)
+        private static IList<TranslationTreeNode> Combine(IReadOnlyList<Translation[]> alternatives)
             => alternatives.Any()
                 ? CombineRemaining(alternatives)
-                : new List<LazyTreeNode<Tuple<Translation, ushort>>>();
+                : new List<TranslationTreeNode>();
 
-        private static IList<LazyTreeNode<Tuple<Translation, ushort>>> CombineRemaining(IReadOnlyList<Translation[]> alternatives)
+        private static IList<TranslationTreeNode> CombineRemaining(IReadOnlyList<Translation[]> alternatives)
         {
             var first = alternatives.First();
             var incompleteCompounds = first.Where(t => t.IsIncompleteCompound).ToArray();
@@ -116,11 +114,9 @@ namespace Lingua.Core
             };
         }
 
-        private static LazyTreeNode<Tuple<Translation, ushort>> CreateTreeNode(Translation translation,
+        private static TranslationTreeNode CreateTreeNode(Translation translation,
             IReadOnlyList<Translation[]> future)
-            => new LazyTreeNode<Tuple<Translation, ushort>>(
-                new Tuple<Translation, ushort>(translation, Encoder.Encode(translation.From))
-                , () => Combine(future));
+            => new TranslationTreeNode(translation, Encoder.Encode(translation.From), () => Combine(future));
 
         private static IEnumerable<Translation> Adjust(IEnumerable<Translation> translations)
             => PromoteInvisibleCapitalization(

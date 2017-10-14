@@ -8,51 +8,51 @@ namespace Lingua.Grammar
 
     internal class Process
     {
-        private readonly LazyTreeNode<Tuple<Translation, ushort>> _possibilities;
+        private readonly TranslationTreeNode _possibilities;
         private const int Horizon = 6;
         private readonly IReason _reason = new Reason();
         private IEnumerable<Translation> _selection;
         private static readonly Evaluator Evaluator = new Evaluator();
 
-        internal static (IEnumerable<Translation> Translations, IReason Reason) Execute(LazyTreeNode<Tuple<Translation, ushort>> possibilities)
+        internal static (IEnumerable<Translation> Translations, IReason Reason) Execute(TranslationTreeNode possibilities)
         {
             var process = new Process(possibilities);
             process.Reduce();
             return (process._selection, process._reason);
         }
 
-        private Process(LazyTreeNode<Tuple<Translation, ushort>> possibilities)
+        private Process(TranslationTreeNode possibilities)
             => _possibilities = possibilities;
 
         private void Reduce()
             => _selection = Choose(_possibilities).Skip(1);
 
-        private IEnumerable<Translation> Choose(LazyTreeNode<Tuple<Translation, ushort>> possibilities)
+        private IEnumerable<Translation> Choose(TranslationTreeNode possibilities)
         {
-            var remaining = new List<LazyTreeNode<Tuple<Translation, ushort>>> {possibilities};
+            var remaining = new List<TranslationTreeNode> {possibilities};
             IList<ushort> previous = new List<ushort>();
             while (remaining.Any())
             {
                 var child = GetNext(previous, remaining);
-                yield return child.Value.Item1;
-                previous.Insert(0, child.Value.Item2);
+                yield return child.Translation;
+                previous.Insert(0, child.Code);
                 remaining = child.Children.ToList();
             }
         }
 
-        private LazyTreeNode<Tuple<Translation, ushort>> GetNext(IEnumerable<ushort> previous,
-            ICollection<LazyTreeNode<Tuple<Translation, ushort>>> next)
+        private TranslationTreeNode GetNext(IEnumerable<ushort> previous,
+            ICollection<TranslationTreeNode> next)
             => next.Count > 1 ? FindNext(previous, next) : next.Single();
 
-        private LazyTreeNode<Tuple<Translation, ushort>> FindNext(IEnumerable<ushort> previous,
-            IEnumerable<LazyTreeNode<Tuple<Translation, ushort>>> next)
+        private TranslationTreeNode FindNext(IEnumerable<ushort> previous,
+            IEnumerable<TranslationTreeNode> next)
         {
             var previousReversed = previous.Take(Horizon).Reverse().ToList();
             var evaluatedTranslations = next.SelectMany(node => Expand(node, Horizon))
                 .Select(seq => new
                 {
                     node = seq.First(),
-                    evaluation = Evaluator.Evaluate(previousReversed.Concat(seq.Select(node => node.Value.Item2)).ToArray())
+                    evaluation = Evaluator.Evaluate(previousReversed.Concat(seq.Select(node => node.Code)).ToArray())
                 })
                 .OrderByDescending(scoredNode => scoredNode.evaluation.Score).
                 ToArray();
@@ -60,11 +60,11 @@ namespace Lingua.Grammar
             return evaluatedTranslations.First().node;
         }
 
-        private static IEnumerable<IList<LazyTreeNode<Tuple<Translation, ushort>>>> Expand(LazyTreeNode<Tuple<Translation, ushort>> node, int depth)
+        private static IEnumerable<IList<TranslationTreeNode>> Expand(TranslationTreeNode node, int depth)
             => (depth > 0 && node.Children.Any()
                     ? node.Children
-                        .SelectMany(child => Expand(child, depth - child.Value.Item1.WordCount))
-                    : new[] {new LazyTreeNode<Tuple<Translation, ushort>>[0]})
+                        .SelectMany(child => Expand(child, depth - child.Translation.WordCount))
+                    : new[] {new TranslationTreeNode[0]})
                 .Select(seq => seq.Prepend(node).ToList());
     }
 }

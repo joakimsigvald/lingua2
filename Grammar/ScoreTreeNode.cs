@@ -1,20 +1,19 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using Lingua.Core;
-
-namespace Lingua.Grammar
+﻿namespace Lingua.Grammar
 {
-    public class ScoreTreeNode : TreeNode<Tuple<ushort, ushort[], sbyte?>, ScoreTreeNode>
+    public class ScoreTreeNode
     {
-        public ScoreTreeNode(ushort code, ushort[] path, sbyte? score, IEnumerable<ScoreTreeNode> children) 
-            : base(new Tuple<ushort, ushort[], sbyte?>(code, path, score), children.ToList())
+        public ScoreTreeNode(ushort code, ushort[] path, sbyte? score, ScoreTreeNode[] children)
         {
+            Code = code;
+            Path = path;
+            Score = score;
+            Children = children;
         }
 
-        public ushort Code => Value.Item1;
-        public ushort[] Path => Value.Item2;
-        public sbyte? Score => Value.Item3;
+        public readonly ScoreTreeNode[] Children;
+        public readonly ushort Code;
+        public readonly ushort[] Path;
+        public readonly sbyte? Score;
 
         public override string ToString()
             => string.Join(",", Path);

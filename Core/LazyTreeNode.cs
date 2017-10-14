@@ -4,17 +4,21 @@ using System.Linq;
 
 namespace Lingua.Core
 {
-    public class LazyTreeNode<TValue> : TreeNode<TValue, LazyTreeNode<TValue>>
+    public class TranslationTreeNode
     {
-        private readonly Func<IEnumerable<LazyTreeNode<TValue>>> _getChildren;
+        private IEnumerable<TranslationTreeNode> _children;
+        private readonly Func<IEnumerable<TranslationTreeNode>> _getChildren;
 
-        public LazyTreeNode(TValue value, Func<IEnumerable<LazyTreeNode<TValue>>> getChildren)
-            : base(value, null)
+        public TranslationTreeNode(Translation translation, ushort code, Func<IEnumerable<TranslationTreeNode>> getChildren)
         {
+            Translation = translation;
+            Code = code;
             _getChildren = getChildren;
         }
 
-        public override IEnumerable<LazyTreeNode<TValue>> Children
+        public readonly Translation Translation;
+        public readonly ushort Code;
+        public IEnumerable<TranslationTreeNode> Children
             => _children ?? (_children = _getChildren().ToList());
     }
 }
