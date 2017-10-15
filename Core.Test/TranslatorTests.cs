@@ -1,19 +1,21 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
-using Lingua.Grammar;
-using Lingua.Testing;
-using Lingua.Tokenization;
-using Lingua.Vocabulary;
 using NUnit.Framework;
 
 namespace Lingua.Core.Test
 {
+    using Grammar;
+    using Testing;
+    using Tokenization;
+    using Vocabulary;
+
     [TestFixture]
     public class TranslatorTests
     {
         private static readonly TestBench TestBench = new TestBench(
-            new Translator(new Tokenizer(), new Thesaurus(), new Engine()));
+            new Translator(new Tokenizer(), new Thesaurus(), new Engine(new Evaluator())), new FakeReporter());
 
         [Test]
         public void TranslateNull()
@@ -55,6 +57,14 @@ namespace Lingua.Core.Test
                 .Select(Encoder.Decode)
                 .Select(Encoder.Serialize);
             Console.WriteLine($"{string.Join(", ", symbols)}:{evaluation.Score}");
+        }
+    }
+
+    internal class FakeReporter : IReporter
+    {
+        public void Report(IEnumerable<TestCaseResult> testCaseResults)
+        {
+            // Nope
         }
     }
 }

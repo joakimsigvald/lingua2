@@ -8,7 +8,12 @@ namespace Lingua.Grammar
     using Core.Tokens;
     using Core.WordClasses;
 
-    public class Evaluator
+    public interface IEvaluator
+    {
+        Evaluation Evaluate(ushort[] code);
+    }
+
+    public class Evaluator : IEvaluator
     {
         private static readonly IDictionary<string, int> StoredPatterns 
             = Loader.LoadScoredPatterns();
@@ -21,36 +26,6 @@ namespace Lingua.Grammar
             => _scoringTree = patterns == null 
                 ? LoadedScoringTree 
                 : BuildScoringTree(patterns);
-
-        private static ScoreTreeNode BuildScoringTree(IDictionary<string, int> patterns)
-        {
-            var path = new ushort[0];
-            return new ScoreTreeNode(0, path, null, BuildScoringNodes(EncodePatterns(patterns), path).ToArray());
-        }
-
-        private static IEnumerable<Tuple<string, ushort[], sbyte>> EncodePatterns(IDictionary<string, int> patterns)
-            => patterns.Select(CreateCodeScore);
-
-        private static Tuple<string, ushort[], sbyte> CreateCodeScore(KeyValuePair<string, int> kvp)
-            => new Tuple<string, ushort[], sbyte>(kvp.Key, Encoder.Encode(Encoder.Deserialize(kvp.Key)).ToArray(), (sbyte)kvp.Value);
-
-        private static IEnumerable<ScoreTreeNode> BuildScoringNodes(IEnumerable<Tuple<string, ushort[], sbyte>> codedPatterns, ushort[] path, int index = 0)
-            => codedPatterns
-                .Where(t => t.Item2.Length > index)
-                .GroupBy(item => item.Item2[index])
-                .Select(g => BuildScoringNode(g, path.Append(g.Key).ToArray(), index + 1));
-
-        private static ScoreTreeNode BuildScoringNode(IGrouping<ushort, Tuple<string, ushort[], sbyte>> g, 
-            ushort[] path, 
-            int index)
-            => new ScoreTreeNode(
-                    g.Key,
-                    path,
-                    GetNodeScore(g, index),
-                    BuildScoringNodes(g, path, index).ToArray());
-
-        private static sbyte? GetNodeScore(IEnumerable<Tuple<string, ushort[], sbyte>> codeScores, int index)
-            => codeScores.SingleOrDefault(v => v.Item2.Length == index)?.Item3;
 
         public Evaluation Evaluate(ushort[] code)
         {
@@ -112,5 +87,34 @@ namespace Lingua.Grammar
 
         private static bool IsHomogeneousConjunction(ushort a, ushort c, ushort b)
             => c == Conjunction.Code && a == b;
+        private static ScoreTreeNode BuildScoringTree(IDictionary<string, int> patterns)
+        {
+            var path = new ushort[0];
+            return new ScoreTreeNode(0, path, null, BuildScoringNodes(EncodePatterns(patterns), path).ToArray());
+        }
+
+        private static IEnumerable<Tuple<string, ushort[], sbyte>> EncodePatterns(IDictionary<string, int> patterns)
+            => patterns.Select(CreateCodeScore);
+
+        private static Tuple<string, ushort[], sbyte> CreateCodeScore(KeyValuePair<string, int> kvp)
+            => new Tuple<string, ushort[], sbyte>(kvp.Key, Encoder.Encode(Encoder.Deserialize(kvp.Key)).ToArray(), (sbyte)kvp.Value);
+
+        private static IEnumerable<ScoreTreeNode> BuildScoringNodes(IEnumerable<Tuple<string, ushort[], sbyte>> codedPatterns, ushort[] path, int index = 0)
+            => codedPatterns
+                .Where(t => t.Item2.Length > index)
+                .GroupBy(item => item.Item2[index])
+                .Select(g => BuildScoringNode(g, path.Append(g.Key).ToArray(), index + 1));
+
+        private static ScoreTreeNode BuildScoringNode(IGrouping<ushort, Tuple<string, ushort[], sbyte>> g, 
+            ushort[] path, 
+            int index)
+            => new ScoreTreeNode(
+                    g.Key,
+                    path,
+                    GetNodeScore(g, index),
+                    BuildScoringNodes(g, path, index).ToArray());
+
+        private static sbyte? GetNodeScore(IEnumerable<Tuple<string, ushort[], sbyte>> codeScores, int index)
+            => codeScores.SingleOrDefault(v => v.Item2.Length == index)?.Item3;
     }
 }

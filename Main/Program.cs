@@ -1,29 +1,49 @@
 ﻿using System;
 using System.Linq;
-using Lingua.Core;
-using Lingua.Grammar;
-using Lingua.Testing;
-using Lingua.Tokenization;
-using Lingua.Vocabulary;
 
 namespace Lingua.Main
 {
+    using Core;
+    using Grammar;
+    using Testing;
+    using Tokenization;
+    using Vocabulary;
+
     class Program
     {
         private static readonly ITranslator Translator
-            = new Translator(new Tokenizer(), new Thesaurus(), new Engine());
+            = new Translator(new Tokenizer(), new Thesaurus(), new Engine(new Evaluator()));
 
         private static readonly TestBench TestBench
-            = new TestBench(Translator);
+            = new TestBench(Translator, new ConsoleReporter());
+
+        private static readonly Trainer Trainer
+            = new Trainer();
 
         static void Main(string[] args)
         {
-            if (args.FirstOrDefault() == "Test")
-                RunTestSuite();
-            else TranslateMAnual();
+            switch (args.FirstOrDefault())
+            {
+                case "Test":
+                    RunTestSuite();
+                    break;
+                case "Train":
+                    RunTrainingSession(1);
+                    break;
+                default:
+                    TranslateManual();
+                    break;
+            }
         }
 
-        private static void TranslateMAnual()
+        private static void RunTrainingSession(int exCount)
+        {
+            var success = Trainer.RunTrainingSession(exCount);
+            if (!success)
+                throw new Exception("Fail!!");
+        }
+
+        private static void TranslateManual()
         {
             var original = Input();
             var translation = Translate(original);

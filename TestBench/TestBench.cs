@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using Lingua.Core;
 
@@ -7,29 +6,48 @@ namespace Lingua.Testing
 {
     public class TestBench
     {
+        private readonly bool _abortOnFail;
         private readonly ITranslator _translator;
+        private readonly IReporter _reporter;
+        private readonly int? _caseLimit;
 
-        public TestBench(ITranslator translator) => _translator = translator;
+        public TestBench(ITranslator translator, IReporter reporter, int? caseLimit = null, bool abortOnFail = false)
+        {
+            _abortOnFail = abortOnFail;
+            _translator = translator;
+            _reporter = reporter;
+            _caseLimit = caseLimit;
+        }
 
         public bool RunTestSuites()
         {
+            var testCases = LoadTestCases();
+            var testCaseResults = RunTestCases(testCases).ToArray();
+            _reporter.Report(testCaseResults);
+            return testCaseResults.All(res => res.Success);
+        }
+
+        private IEnumerable<(string, string, string)> LoadTestCases()
+        {
             var testSuites = Loader.LoadTestSuites();
             var testCases = testSuites
-                .SelectMany(kvp => kvp.Value.Select(v => new Tuple<string, string, string>(kvp.Key, v.Key, v.Value)));
-            var testSuiteResults = testCases
+                .SelectMany(kvp => kvp.Value.Select(v => (kvp.Key, v.Key, v.Value)));
+            if (_caseLimit.HasValue)
+                testCases = testCases.Take(_caseLimit.Value);
+            return testCases;
+        }
+
+        private IEnumerable<TestCaseResult> RunTestCases(IEnumerable<(string, string, string)> testCases)
+        {
+            TestCaseResult prevResult = null;
+            return testCases
                 .Select(testCase => RunTestCase(testCase.Item1, testCase.Item2, testCase.Item3))
-                .ToArray()
-                .GroupBy(r => r.Group)
-                .Select(g => new TestSuiteResult
+                .TakeWhile(result =>
                 {
-                    Caption = g.Key,
-                    Succeeded = g.Where(result => result.Success).ToList(),
-                    Failed = g.Where(result => !result.Success).ToList()
-                })
-                .ToList();
-            var success = testSuiteResults.All(res => res.Success);
-            Report(testSuiteResults, success);
-            return success;
+                    var abort = !_abortOnFail || (prevResult?.Success ?? true);
+                    prevResult = result;
+                    return abort;
+                });
         }
 
         public TestCaseResult RunTestCase(string group, string from, string to)
@@ -44,50 +62,6 @@ namespace Lingua.Testing
                 Reason = translationResult.reason,
                 Success = translationResult.translation == to
             };
-        }
-
-        private static void Report(List<TestSuiteResult> testSuiteResults, bool success)
-        {
-            Console.WriteLine(success ? "Test succeeded!" : "Test failed!");
-            Console.WriteLine();
-            var failedSuites = testSuiteResults
-                .Where(res => !res.Success)
-                .ToList();
-            if (failedSuites.Any())
-                ReportFailed(failedSuites);
-            ReportPassed(testSuiteResults.ToList());
-        }
-
-        private static void ReportFailed(List<TestSuiteResult> failedSuites)
-        {
-            Console.WriteLine("Failed");
-            Console.WriteLine("======");
-            failedSuites.ForEach(ReportFailed);
-        }
-
-        private static void ReportPassed(List<TestSuiteResult> testSuiteResults)
-        {
-            Console.WriteLine("Passed");
-            Console.WriteLine("======");
-            testSuiteResults.ForEach(ReportSucceeded);
-        }
-
-        private static void ReportSucceeded(TestSuiteResult res)
-        {
-            Console.WriteLine(res.Caption);
-            Console.WriteLine(new string('-', res.Caption.Length));
-            foreach (var tcr in res.Succeeded)
-                Console.WriteLine($"|{tcr.From}| => |{tcr.Actual}|");
-            Console.WriteLine();
-        }
-
-        private static void ReportFailed(TestSuiteResult res)
-        {
-            Console.WriteLine(res.Caption);
-            Console.WriteLine(new string('-', res.Caption.Length));
-            foreach (var tcr in res.Failed)
-                Console.WriteLine($"|{tcr.From}| /=> |{tcr.Expected}| \\\\ |{tcr.Actual}|");
-            Console.WriteLine();
         }
     }
 }

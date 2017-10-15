@@ -11,17 +11,20 @@ namespace Lingua.Grammar
         private const int Horizon = 6;
         private readonly IReason _reason = new Reason();
         private Translation[] _selection;
-        private static readonly Evaluator Evaluator = new Evaluator();
+        private readonly IEvaluator _evaluator;
 
-        internal static (Translation[] Translations, IReason Reason) Execute(TranslationTreeNode possibilities)
+        internal static (Translation[] Translations, IReason Reason) Execute(IEvaluator evaluator, TranslationTreeNode possibilities)
         {
-            var process = new Process(possibilities);
+            var process = new Process(evaluator, possibilities);
             process.Reduce();
             return (process._selection, process._reason);
         }
 
-        private Process(TranslationTreeNode possibilities)
-            => _possibilities = possibilities;
+        private Process(IEvaluator evaluator, TranslationTreeNode possibilities)
+        {
+            _evaluator = evaluator;
+            _possibilities = possibilities;
+        }
 
         private void Reduce()
             => _selection = Choose(_possibilities).Skip(1).ToArray();
@@ -51,7 +54,7 @@ namespace Lingua.Grammar
                 .Select(future => new
                 {
                     current = future.First(),
-                    evaluation = Evaluator.Evaluate(GetCodeToAnalyze(pastReversed, future))
+                    evaluation = _evaluator.Evaluate(GetCodeToAnalyze(pastReversed, future))
                 })
                 .OrderByDescending(scoredNode => scoredNode.evaluation.Score).
                 ToArray();
