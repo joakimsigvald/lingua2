@@ -14,8 +14,16 @@ namespace Lingua.Core.Test
     [TestFixture]
     public class TranslatorTests
     {
-        private static readonly TestBench TestBench = new TestBench(
-            new Translator(new Tokenizer(), new Thesaurus(), new Engine(new Evaluator())), new FakeReporter());
+        private static readonly TestBench TestBench = CreateTestBench();
+
+        private static TestBench CreateTestBench()
+        {
+            var reporter = new FakeReporter();
+            var engine = new Engine(new Evaluator());
+            var translator = new Translator(new Tokenizer(), new Thesaurus(), engine);
+            var testRunner = new TestRunner(translator);
+            return new TestBench(testRunner, reporter);
+        }
 
         [Test]
         public void TranslateNull()

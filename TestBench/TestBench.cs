@@ -1,67 +1,26 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using Lingua.Core;
+﻿using System.Linq;
 
 namespace Lingua.Testing
 {
     public class TestBench
     {
-        private readonly bool _abortOnFail;
-        private readonly ITranslator _translator;
+        private readonly TestRunner _testRunner;
         private readonly IReporter _reporter;
-        private readonly int? _caseLimit;
 
-        public TestBench(ITranslator translator, IReporter reporter, int? caseLimit = null, bool abortOnFail = false)
+        public TestBench(TestRunner testRunner, IReporter reporter)
         {
-            _abortOnFail = abortOnFail;
-            _translator = translator;
+            _testRunner = testRunner;
             _reporter = reporter;
-            _caseLimit = caseLimit;
         }
 
         public bool RunTestSuites()
         {
-            var testCases = LoadTestCases();
-            var testCaseResults = RunTestCases(testCases).ToArray();
-            _reporter.Report(testCaseResults);
-            return testCaseResults.All(res => res.Success);
-        }
-
-        private IEnumerable<(string, string, string)> LoadTestCases()
-        {
-            var testSuites = Loader.LoadTestSuites();
-            var testCases = testSuites
-                .SelectMany(kvp => kvp.Value.Select(v => (kvp.Key, v.Key, v.Value)));
-            if (_caseLimit.HasValue)
-                testCases = testCases.Take(_caseLimit.Value);
-            return testCases;
-        }
-
-        private IEnumerable<TestCaseResult> RunTestCases(IEnumerable<(string, string, string)> testCases)
-        {
-            TestCaseResult prevResult = null;
-            return testCases
-                .Select(testCase => RunTestCase(testCase.Item1, testCase.Item2, testCase.Item3))
-                .TakeWhile(result =>
-                {
-                    var abort = !_abortOnFail || (prevResult?.Success ?? true);
-                    prevResult = result;
-                    return abort;
-                });
+            var results = _testRunner.RunTestCases();
+            _reporter.Report(results);
+            return results.All(res => res.Success);
         }
 
         public TestCaseResult RunTestCase(string group, string from, string to)
-        {
-            var translationResult = _translator.Translate(from);
-            return new TestCaseResult
-            {
-                Group = group,
-                From = from,
-                Expected = to,
-                Actual = translationResult.translation,
-                Reason = translationResult.reason,
-                Success = translationResult.translation == to
-            };
-        }
+            => _testRunner.RunTestCase(group, from, to);
     }
 }

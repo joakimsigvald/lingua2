@@ -15,7 +15,7 @@ namespace Lingua.Main
             = new Translator(new Tokenizer(), new Thesaurus(), new Engine(new Evaluator()));
 
         private static readonly TestBench TestBench
-            = new TestBench(Translator, new ConsoleReporter());
+            = new TestBench(new TestRunner(Translator), new ConsoleReporter());
 
         private static readonly Trainer Trainer
             = new Trainer();

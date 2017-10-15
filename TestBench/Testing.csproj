@@ -45,6 +45,7 @@
   <ItemGroup>
     <Compile Include="ConsoleReporter.cs" />
     <Compile Include="IReporter.cs" />
+    <Compile Include="TestRunner.cs" />
     <Compile Include="TrainableEvaluator.cs" />
     <Compile Include="Loader.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

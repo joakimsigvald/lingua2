@@ -12,5 +12,15 @@ namespace Lingua.Testing
 
         public Evaluation Evaluate(ushort[] code)
             => _evaluator.Evaluate(code);
+
+        public void AddPattern(string addPatternsCurrent)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public void RemovePattern(string currentPattern)
+        {
+            throw new System.NotImplementedException();
+        }
     }
 }

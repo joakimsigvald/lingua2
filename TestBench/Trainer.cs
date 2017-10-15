@@ -1,16 +1,18 @@
 ﻿using System.Collections.Generic;
-using Lingua.Core;
-using Lingua.Grammar;
-using Lingua.Tokenization;
-using Lingua.Vocabulary;
+using System.Linq;
 
 namespace Lingua.Testing
 {
-    public class Trainer : IReporter
+    using Core;
+    using Grammar;
+    using Tokenization;
+    using Vocabulary;
+
+    public class Trainer
     {
         private readonly TrainableEvaluator _evaluator;
         private readonly ITranslator _translator;
-        private TestBench _testBench;
+        private TestRunner _testRunner;
 
         public Trainer()
         {
@@ -20,18 +22,39 @@ namespace Lingua.Testing
 
         public bool RunTrainingSession(int caseCount)
         {
-            _testBench = new TestBench(_translator, this, caseCount, true);
-            while (!_testBench.RunTestSuites())
+            _testRunner = new TestRunner(_translator, caseCount, true);
+            IEnumerator<string> addPatterns = new List<string>().GetEnumerator();
+            var runTestsCount = 0;
+            string currentPattern = null;
+            TestCaseResult[] results;
+            while (!(results = _testRunner.RunTestCases()).All(result => result.Success))
             {
-
+                var failedCase = results.Last();
+                if (results.Length > runTestsCount)
+                {
+                    currentPattern = null;
+                    addPatterns.Dispose();
+                    addPatterns = GetPossiblePatternsToAdd(failedCase);
+                    runTestsCount = results.Length;
+                }
+                do
+                {
+                    _evaluator.RemovePattern(currentPattern);
+                    if (!addPatterns.MoveNext())
+                        return false;
+                    currentPattern = addPatterns.Current;
+                    _evaluator.AddPattern(currentPattern);
+                    failedCase = _testRunner.RunTestCase(failedCase.Group, failedCase.From,
+                        failedCase.Expected);
+                } while (!failedCase.Success);
             }
-            return false;
+            addPatterns.Dispose();
+            return true;
         }
 
-        public void Report(IEnumerable<TestCaseResult> testCaseResults)
+        private IEnumerator<string> GetPossiblePatternsToAdd(TestCaseResult result)
         {
-            
-
+            throw new System.NotImplementedException();
         }
     }
 }
