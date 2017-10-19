@@ -39,11 +39,11 @@ namespace Lingua.Testing
                 }
                 do
                 {
-                    _evaluator.RemovePattern(currentPattern);
+                    _evaluator.DownPattern(currentPattern);
                     if (!addPatterns.MoveNext())
                         return false;
                     currentPattern = addPatterns.Current;
-                    _evaluator.AddPattern(currentPattern);
+                    _evaluator.UpPattern(currentPattern);
                     failedCase = _testRunner.RunTestCase(failedCase.Group, failedCase.From,
                         failedCase.Expected);
                 } while (!failedCase.Success);
@@ -52,9 +52,19 @@ namespace Lingua.Testing
             return true;
         }
 
-        private IEnumerator<string> GetPossiblePatternsToAdd(TestCaseResult result)
+        private static IEnumerator<string> GetPossiblePatternsToAdd(TestCaseResult result)
+            => YieldPossiblePatternsToAdd(result).GetEnumerator();
+
+        private static IEnumerable<string> YieldPossiblePatternsToAdd(TestCaseResult result)
         {
-            throw new System.NotImplementedException();
+            foreach (var single in result.Reason.Code)
+            {
+                yield return Encoder.Serialize(new[] { (ushort)(Encoder.ModifiersMask | single) });
+            }
+            foreach (var single in result.Reason.Code)
+            {
+                yield return Encoder.Serialize(new[] { single });
+            }
         }
     }
 }

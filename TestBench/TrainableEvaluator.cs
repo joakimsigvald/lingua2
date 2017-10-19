@@ -1,26 +1,48 @@
 ﻿using System.Collections.Generic;
-using Lingua.Grammar;
+using System.Linq;
 
 namespace Lingua.Testing
 {
-    public class TrainableEvaluator : IEvaluator
+    using Core;
+    using Grammar;
+
+    public class TrainableEvaluator : Evaluator
     {
-        private readonly Evaluator _evaluator;
-
-        public TrainableEvaluator(IDictionary<string, int> patterns = null) 
-            => _evaluator = new Evaluator(patterns);
-
-        public Evaluation Evaluate(ushort[] code)
-            => _evaluator.Evaluate(code);
-
-        public void AddPattern(string addPatternsCurrent)
+        public TrainableEvaluator() : base(new Dictionary<string, sbyte>())
         {
-            throw new System.NotImplementedException();
         }
 
-        public void RemovePattern(string currentPattern)
+        public void UpPattern(string pattern)
         {
-            throw new System.NotImplementedException();
+            if (string.IsNullOrEmpty(pattern))
+                return;
+            UpdateScore(ScoringTree, CreateCodeScore(pattern, 1), 0);
+        }
+
+        public void DownPattern(string pattern)
+        {
+            if (string.IsNullOrEmpty(pattern))
+                return;
+            UpdateScore(ScoringTree, CreateCodeScore(pattern, -1), 0);
+        }
+
+        private static void UpdateScore(ScoreTreeNode node, (string, ushort[], sbyte) codedPattern, int index)
+        {
+            if (codedPattern.Item2.Length == index + 1)
+                node.Score += codedPattern.Item3;
+            else
+            {
+                var next = codedPattern.Item2[index];
+                var child = node.Children.FirstOrDefault(c => c.Code == next);
+                if (child == null)
+                {
+                    child = new ScoreTreeNode(next, node.Path.Append(next).ToArray(), codedPattern.Item3, new List<ScoreTreeNode>());
+                    node.Children.Add(child);
+                }
+                UpdateScore(child, codedPattern, index+1);
+                if (child.Score == 0)
+                    node.Children.Remove(child);
+            }
         }
     }
 }

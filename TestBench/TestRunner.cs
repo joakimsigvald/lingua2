@@ -7,12 +7,14 @@ namespace Lingua.Testing
     public class TestRunner
     {
         private readonly bool _abortOnFail;
+        private readonly string[] _suites;
         private readonly ITranslator _translator;
         private readonly int? _caseLimit;
 
-        public TestRunner(ITranslator translator, int? caseLimit = null, bool abortOnFail = false)
+        public TestRunner(ITranslator translator, int? caseLimit = null, bool abortOnFail = false, params string[] suites)
         {
             _abortOnFail = abortOnFail;
+            _suites = suites;
             _translator = translator;
             _caseLimit = caseLimit;
         }
@@ -23,6 +25,8 @@ namespace Lingua.Testing
         private IEnumerable<(string, string, string)> LoadTestCases()
         {
             var testSuites = Loader.LoadTestSuites();
+            if (_suites.Any())
+                testSuites = testSuites.Where(kvp => _suites.Contains(kvp.Key)).ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
             var testCases = testSuites
                 .SelectMany(kvp => kvp.Value.Select(v => (kvp.Key, v.Key, v.Value)));
             if (_caseLimit.HasValue)

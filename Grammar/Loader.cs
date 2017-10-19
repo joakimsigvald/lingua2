@@ -1,14 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Lingua.Core;
 
 namespace Lingua.Grammar
 {
+    using Core;
+
     public static class Loader
     {
-        public static IDictionary<string, int> LoadScoredPatterns()
-            => ReadLines("Patterns.txt").ToDictionary(int.Parse);
+        public static IDictionary<string, sbyte> LoadScoredPatterns()
+            => ReadLines("Patterns.txt").ToDictionary(sbyte.Parse);
 
         public static Dictionary<string, string> LoadRearrangements()
             => ReadLines("Rearrangements.txt").ToDictionary(v => v);

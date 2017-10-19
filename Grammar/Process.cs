@@ -9,7 +9,7 @@ namespace Lingua.Grammar
     {
         private readonly TranslationTreeNode _possibilities;
         private const int Horizon = 6;
-        private readonly IReason _reason = new Reason();
+        private readonly Reason _reason = new Reason();
         private Translation[] _selection;
         private readonly IEvaluator _evaluator;
 
@@ -27,7 +27,10 @@ namespace Lingua.Grammar
         }
 
         private void Reduce()
-            => _selection = Choose(_possibilities).Skip(1).ToArray();
+        {
+            _selection = Choose(_possibilities).Skip(1).ToArray();
+            _reason.Code = Encoder.Encode(_selection.Select(t => t.From)).ToArray();
+        }
 
         private IEnumerable<Translation> Choose(TranslationTreeNode possibilities)
         {
@@ -54,7 +57,7 @@ namespace Lingua.Grammar
                 .Select(future => new
                 {
                     current = future.First(),
-                    evaluation = _evaluator.Evaluate(GetCodeToAnalyze(pastReversed, future))
+                    evaluation = _evaluator.Evaluate(GetCodeWithinHorizon(pastReversed, future))
                 })
                 .OrderByDescending(scoredNode => scoredNode.evaluation.Score).
                 ToArray();
@@ -62,7 +65,7 @@ namespace Lingua.Grammar
             return evaluatedTranslations.First().current;
         }
 
-        private static ushort[] GetCodeToAnalyze(IEnumerable<ushort> pastReversed, IEnumerable<TranslationTreeNode> future)
+        private static ushort[] GetCodeWithinHorizon(IEnumerable<ushort> pastReversed, IEnumerable<TranslationTreeNode> future)
             => pastReversed.Concat(future.Select(node => node.Code)).ToArray();
 
         private static IEnumerable<IList<TranslationTreeNode>> Expand(TranslationTreeNode node, int depth)

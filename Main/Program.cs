@@ -28,7 +28,7 @@ namespace Lingua.Main
                     RunTestSuite();
                     break;
                 case "Train":
-                    RunTrainingSession(1);
+                    RunTrainingSession(10);
                     break;
                 default:
                     TranslateManual();
@@ -41,6 +41,8 @@ namespace Lingua.Main
             var success = Trainer.RunTrainingSession(exCount);
             if (!success)
                 throw new Exception("Fail!!");
+            Console.WriteLine($"Successfully completed training session with {exCount} cases!");
+            Console.ReadKey();
         }
 
         private static void TranslateManual()

@@ -28,8 +28,8 @@ namespace Lingua.Grammar.Test
         [TestCase("^Vi", "^Vi")]
         public void MatchScorer(string pattern, string symbols)
         {
-            const int score = 1;
-            var evaluator = new Evaluator(new Dictionary<string, int> {{pattern, score } });
+            const sbyte score = 1;
+            var evaluator = new Evaluator(new Dictionary<string, sbyte> {{pattern, score } });
             var code = Encoder.Encode(symbols);
             var actualScore = evaluator.Evaluate(code).Score;
             Assert.That(actualScore, Is.EqualTo(score));
