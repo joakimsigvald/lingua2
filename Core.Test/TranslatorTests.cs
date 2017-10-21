@@ -20,8 +20,9 @@ namespace Lingua.Core.Test
         {
             var reporter = new FakeReporter();
             var engine = new Engine(new Evaluator());
+            var tokenizer = new Tokenizer();
             var translator = new Translator(new Tokenizer(), new Thesaurus(), engine);
-            var testRunner = new TestRunner(translator);
+            var testRunner = new TestRunner(translator, tokenizer);
             return new TestBench(testRunner, reporter);
         }
 

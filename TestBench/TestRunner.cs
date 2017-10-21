@@ -1,22 +1,22 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using Lingua.Core;
 
 namespace Lingua.Testing
 {
+    using Core;
+    using Core.Tokens;
+
     public class TestRunner
     {
         private readonly bool _abortOnFail;
-        private readonly string[] _suites;
         private readonly ITranslator _translator;
-        private readonly int? _caseLimit;
+        private readonly ITokenizer _tokenizer;
 
-        public TestRunner(ITranslator translator, int? caseLimit = null, bool abortOnFail = false, params string[] suites)
+        public TestRunner(ITranslator translator, ITokenizer tokenizer, bool abortOnFail = false)
         {
             _abortOnFail = abortOnFail;
-            _suites = suites;
             _translator = translator;
-            _caseLimit = caseLimit;
+            _tokenizer = tokenizer;
         }
 
         public TestCaseResult[] RunTestCases()
@@ -25,12 +25,8 @@ namespace Lingua.Testing
         private IEnumerable<(string, string, string)> LoadTestCases()
         {
             var testSuites = Loader.LoadTestSuites();
-            if (_suites.Any())
-                testSuites = testSuites.Where(kvp => _suites.Contains(kvp.Key)).ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
             var testCases = testSuites
                 .SelectMany(kvp => kvp.Value.Select(v => (kvp.Key, v.Key, v.Value)));
-            if (_caseLimit.HasValue)
-                testCases = testCases.Take(_caseLimit.Value);
             return testCases;
         }
 
@@ -49,16 +45,27 @@ namespace Lingua.Testing
 
         public TestCaseResult RunTestCase(string group, string from, string to)
         {
+            var toTokens = _tokenizer.Tokenize(to).ToArray();
             var translationResult = _translator.Translate(from);
             return new TestCaseResult
             {
                 Group = group,
                 From = from,
                 Expected = to,
-                Actual = translationResult.translation,
-                Reason = translationResult.reason,
-                Success = translationResult.translation == to
+                Actual = translationResult.Translation,
+                Reason = translationResult.Reason,
+                ExpectedCandidates = FilterCandidates(translationResult.Candidates, toTokens)?.ToArray()
             };
         }
+
+        private static IEnumerable<Translation[]> FilterCandidates(ICollection<Translation[]> candidates, IReadOnlyList<Token> toTokens)
+            => candidates == null || candidates.Count != toTokens.Count
+                ? candidates
+                : candidates.Select((c, i) => FilterTranslations(c, toTokens[i]).ToArray());
+
+        private static IEnumerable<Translation> FilterTranslations(
+            IEnumerable<Translation> translations,
+            Token toToken)
+            => translations.Where(t => t.To == toToken.Value);
     }
 }

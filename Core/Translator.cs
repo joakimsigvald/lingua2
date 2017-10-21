@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 using Lingua.Core.Tokens;
@@ -20,18 +19,26 @@ namespace Lingua.Core
             _grammar = grammar;
         }
 
-        public (string translation, IReason reason) Translate(string original)
+        public TranslationResult Translate(string original)
         {
             if (string.IsNullOrWhiteSpace(original))
-                return (string.Empty, null);
+                return new TranslationResult
+                {
+                    Translation = string.Empty
+                };
             var tokens = Expand(Tokenize(original)).ToArray();
-            var candidates = Translate(tokens).ToArray();
+            var candidates = Translate(tokens).ToList();
             var possibilities = new TranslationTreeNode(null, Start.Code, () => Combine(candidates));
             (var translations, var reason) = _grammar.Reduce(possibilities);
             var arrangedTranslations = _grammar.Arrange(translations);
             var adjustedResult = Adjust(arrangedTranslations).ToArray();
             var respacedResult = Respace(adjustedResult).ToArray();
-            return (Output(respacedResult), reason);
+            return new TranslationResult
+            {
+                Translation = Output(respacedResult),
+                Reason = reason,
+                Candidates = candidates
+            };
         }
 
         private static IEnumerable<Translation> Respace(IEnumerable<Translation> translations)
@@ -110,7 +117,7 @@ namespace Lingua.Core
                 From = completedFrom,
                 To = incompleteCompound.To + completion.To,
                 IsIncompleteCompound = completion.IsIncompleteCompound,
-                Continuation = completion.Continuation.Prepend(completion.From as Word).ToArray()
+                Continuation = completion.Continuation.Prepend((Word) completion.From).ToArray()
             };
         }
 

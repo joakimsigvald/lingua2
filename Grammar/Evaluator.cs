@@ -89,7 +89,7 @@ namespace Lingua.Grammar
         private static ScoreTreeNode BuildScoringTree(IDictionary<string, sbyte> patterns)
         {
             var path = new ushort[0];
-            return new ScoreTreeNode(0, path, 0, BuildScoringNodes(EncodePatterns(patterns), path).ToArray());
+            return new ScoreTreeNode(0, path, 0, BuildScoringNodes(EncodePatterns(patterns), path).ToList());
         }
 
         private static IEnumerable<(string, ushort[], sbyte)> EncodePatterns(IDictionary<string, sbyte> patterns)

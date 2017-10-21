@@ -11,11 +11,14 @@ namespace Lingua.Main
 
     class Program
     {
+        private static readonly ITokenizer Tokenizer
+            = new Tokenizer();
+
         private static readonly ITranslator Translator
-            = new Translator(new Tokenizer(), new Thesaurus(), new Engine(new Evaluator()));
+            = new Translator(Tokenizer, new Thesaurus(), new Engine(new Evaluator()));
 
         private static readonly TestBench TestBench
-            = new TestBench(new TestRunner(Translator), new ConsoleReporter());
+            = new TestBench(new TestRunner(Translator, Tokenizer), new ConsoleReporter());
 
         private static readonly Trainer Trainer
             = new Trainer();
@@ -28,7 +31,7 @@ namespace Lingua.Main
                     RunTestSuite();
                     break;
                 case "Train":
-                    RunTrainingSession(10);
+                    RunTrainingSession();
                     break;
                 default:
                     TranslateManual();
@@ -36,12 +39,12 @@ namespace Lingua.Main
             }
         }
 
-        private static void RunTrainingSession(int exCount)
+        private static void RunTrainingSession()
         {
-            var success = Trainer.RunTrainingSession(exCount);
-            if (!success)
-                throw new Exception("Fail!!");
-            Console.WriteLine($"Successfully completed training session with {exCount} cases!");
+            (var failedTestCase, var runTestCount) = Trainer.RunTrainingSession();
+            if (failedTestCase != null)
+                throw new Exception("Failed on test case " + runTestCount);
+            Console.WriteLine($"Successfully completed training session with {runTestCount} cases!");
             Console.ReadKey();
         }
 
@@ -67,7 +70,7 @@ namespace Lingua.Main
         }
 
         private static string Translate(string text)
-            => Translator.Translate(text).translation;
+            => Translator.Translate(text).Translation;
 
         private static string Input()
         {

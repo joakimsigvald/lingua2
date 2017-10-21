@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using Lingua.Core;
 
 namespace Lingua.Testing
@@ -8,7 +9,8 @@ namespace Lingua.Testing
         public string From { get; set; }
         public string Expected { get; set; }
         public string Actual { get; set; }
-        public bool Success { get; set; }
+        public bool Success => Actual == Expected;
         public IReason Reason { get; set; }
+        public IList<Translation[]> ExpectedCandidates { get; set; }
     }
 }

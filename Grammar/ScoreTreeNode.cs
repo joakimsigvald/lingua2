@@ -4,7 +4,7 @@ namespace Lingua.Grammar
 {
     public class ScoreTreeNode
     {
-        public ScoreTreeNode(ushort code, ushort[] path, sbyte score, IList<ScoreTreeNode> children)
+        public ScoreTreeNode(ushort code, ushort[] path, sbyte score, List<ScoreTreeNode> children)
         {
             Code = code;
             Path = path;
@@ -12,7 +12,7 @@ namespace Lingua.Grammar
             Children = children;
         }
 
-        public readonly IList<ScoreTreeNode> Children;
+        public readonly List<ScoreTreeNode> Children;
         public readonly ushort Code;
         public readonly ushort[] Path;
         public sbyte Score { get; set; }

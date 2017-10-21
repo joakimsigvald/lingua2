@@ -2,6 +2,6 @@
 {
     public interface ITranslator
     {
-        (string translation, IReason reason) Translate(string text);
+        TranslationResult Translate(string text);
     }
 }

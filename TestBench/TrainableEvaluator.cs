@@ -28,7 +28,7 @@ namespace Lingua.Testing
 
         private static void UpdateScore(ScoreTreeNode node, (string, ushort[], sbyte) codedPattern, int index)
         {
-            if (codedPattern.Item2.Length == index + 1)
+            if (codedPattern.Item2.Length == index)
                 node.Score += codedPattern.Item3;
             else
             {
@@ -39,7 +39,7 @@ namespace Lingua.Testing
                     child = new ScoreTreeNode(next, node.Path.Append(next).ToArray(), codedPattern.Item3, new List<ScoreTreeNode>());
                     node.Children.Add(child);
                 }
-                UpdateScore(child, codedPattern, index+1);
+                UpdateScore(child, codedPattern, index + 1);
                 if (child.Score == 0)
                     node.Children.Remove(child);
             }

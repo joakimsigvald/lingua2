@@ -12,17 +12,19 @@ namespace Lingua.Testing
     {
         private readonly TrainableEvaluator _evaluator;
         private readonly ITranslator _translator;
+        private readonly ITokenizer _tokenizer;
         private TestRunner _testRunner;
 
         public Trainer()
         {
             _evaluator = new TrainableEvaluator();
-            _translator = new Translator(new Tokenizer(), new Thesaurus(), new Engine(_evaluator));
+            _tokenizer = new Tokenizer();
+            _translator = new Translator(_tokenizer, new Thesaurus(), new Engine(_evaluator));
         }
 
-        public bool RunTrainingSession(int caseCount)
+        public (TestCaseResult, int) RunTrainingSession()
         {
-            _testRunner = new TestRunner(_translator, caseCount, true);
+            _testRunner = new TestRunner(_translator, _tokenizer, true);
             IEnumerator<string> addPatterns = new List<string>().GetEnumerator();
             var runTestsCount = 0;
             string currentPattern = null;
@@ -41,7 +43,7 @@ namespace Lingua.Testing
                 {
                     _evaluator.DownPattern(currentPattern);
                     if (!addPatterns.MoveNext())
-                        return false;
+                        return (failedCase, runTestsCount);
                     currentPattern = addPatterns.Current;
                     _evaluator.UpPattern(currentPattern);
                     failedCase = _testRunner.RunTestCase(failedCase.Group, failedCase.From,
@@ -49,7 +51,7 @@ namespace Lingua.Testing
                 } while (!failedCase.Success);
             }
             addPatterns.Dispose();
-            return true;
+            return (null, runTestsCount);
         }
 
         private static IEnumerator<string> GetPossiblePatternsToAdd(TestCaseResult result)
@@ -57,14 +59,12 @@ namespace Lingua.Testing
 
         private static IEnumerable<string> YieldPossiblePatternsToAdd(TestCaseResult result)
         {
-            foreach (var single in result.Reason.Code)
-            {
-                yield return Encoder.Serialize(new[] { (ushort)(Encoder.ModifiersMask | single) });
-            }
-            foreach (var single in result.Reason.Code)
-            {
-                yield return Encoder.Serialize(new[] { single });
-            }
+            var codes = YieldPossibleCodesToAdd(result).Distinct().ToArray();
+            var generalizedCodes = codes.Select(code => (ushort)(Encoder.ModifiersMask | code)).Distinct().ToArray();
+            return generalizedCodes.Concat(codes).Select(code => Encoder.Serialize(new[] { code }));
         }
+
+        private static IEnumerable<ushort> YieldPossibleCodesToAdd(TestCaseResult result) 
+            => result.ExpectedCandidates.SelectMany(c => c.Select(t => Encoder.Encode(t.From))).ToArray();
     }
 }
