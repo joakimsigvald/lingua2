@@ -44,9 +44,14 @@ namespace Lingua.Testing
 
         public TestCaseResult RunTestCase(TestCase testCase)
         {
-            var toTokens = _tokenizer.Tokenize(testCase.Expected).ToArray();
+            var expectedTokens = _tokenizer.Tokenize(testCase.Expected).ToArray();
             var translationResult = _translator.Translate(testCase.From);
-            return new TestCaseResult(testCase, translationResult, toTokens);
+            var expectedCandidates = CandidateFilter
+                .FilterCandidates(translationResult.Candidates, expectedTokens)
+                ?.ToArray();
+            return new TestCaseResult(testCase
+                , _translator.Translate(testCase.From)
+                , expectedCandidates);
         }
     }
 }

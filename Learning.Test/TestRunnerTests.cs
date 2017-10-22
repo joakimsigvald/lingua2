@@ -13,6 +13,7 @@ namespace Lingua.Learning.Test
     public class TestRunnerTests
     {
         [TestCase("I run", "jag springer", "R1V1")]
+        [TestCase("2 [[ball]]", "2 bollar", "QnNn")]
         public void Test(string from, string expected, params string[] expectedPatterns)
         {
             var testCase = new TestCase

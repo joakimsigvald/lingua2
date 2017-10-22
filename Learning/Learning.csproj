@@ -47,6 +47,7 @@
     <Compile Include="ConsoleReporter.cs" />
     <Compile Include="IReporter.cs" />
     <Compile Include="TestCase.cs" />
+    <Compile Include="CandidateFilter.cs" />
     <Compile Include="TestRunner.cs" />
     <Compile Include="TrainableEvaluator.cs" />
     <Compile Include="Loader.cs" />
