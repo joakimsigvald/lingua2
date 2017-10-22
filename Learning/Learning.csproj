@@ -4,11 +4,11 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{7D630F36-7C78-4593-96A8-DB6445E0D5B1}</ProjectGuid>
+    <ProjectGuid>{6F12FC3A-0E11-4E2B-BE31-3114F671D869}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Lingua.Learning</RootNamespace>
-    <AssemblyName>Lingua.Learning</AssemblyName>
+    <RootNamespace>Lingua.Testing</RootNamespace>
+    <AssemblyName>Lingua.Testing</AssemblyName>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
@@ -43,13 +43,36 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CodeEqualityComparer.cs" />
+    <Compile Include="ConsoleReporter.cs" />
+    <Compile Include="IReporter.cs" />
+    <Compile Include="TestCase.cs" />
+    <Compile Include="TestRunner.cs" />
+    <Compile Include="TrainableEvaluator.cs" />
     <Compile Include="Loader.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="PatternGenerator.cs" />
+    <Compile Include="Trainer.cs" />
+    <Compile Include="TestBench.cs" />
+    <Compile Include="TestCaseResult.cs" />
+    <Compile Include="TestSuiteResult.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Core\Core.csproj">
       <Project>{5442d2b6-c698-464d-a934-aa2706f3b95c}</Project>
       <Name>Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Grammar\Grammar.csproj">
+      <Project>{13FC0B05-5926-4626-89C0-296CCF7444A7}</Project>
+      <Name>Grammar</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Tokenization\Tokenization.csproj">
+      <Project>{BF62CD42-7CDC-4616-9B25-49E985FFF1F7}</Project>
+      <Name>Tokenization</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Vocabulary\Vocabulary.csproj">
+      <Project>{9C9EFB87-FDD6-42D2-A32E-8F3E3A95ED5B}</Project>
+      <Name>Vocabulary</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

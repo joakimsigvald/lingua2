@@ -1,10 +1,11 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
-using Lingua.Core;
 
-namespace Lingua.Learning
+namespace Lingua.Testing
 {
+    using Core;
+
     public static class Loader
     {
         public static Dictionary<string, Dictionary<string, string>> LoadTestSuites()

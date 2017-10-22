@@ -4,9 +4,9 @@
     {
         public virtual string Value { get; set; }
 
-        public override string ToString()
-            => $"{GetType().Name}: {Value}";
-
         public virtual Token Capitalize() => this;
+
+        public override string ToString()
+            => $"{Encoder.Serialize(this)}: {Value}";
     }
 }

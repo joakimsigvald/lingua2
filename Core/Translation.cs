@@ -50,7 +50,7 @@ namespace Lingua.Core
         public string Output => To ?? From.Value;
         public bool IsIncompleteCompound { get; set; }
 
-        public override string ToString() => Output + (Continuation.Any() ? "..." : "");
+        public override string ToString() => $"{From}->{To}{(Continuation.Any() ? "..." : "")}";
 
         public bool Matches(IReadOnlyList<Token> tokens, int nextIndex)
             => IsTranslatedWord || MatchesContinuation(tokens, nextIndex);

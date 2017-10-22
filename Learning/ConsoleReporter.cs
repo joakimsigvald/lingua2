@@ -21,7 +21,7 @@ namespace Lingua.Testing
 
         private IEnumerable<TestSuiteResult> GetTestSuiteResults(IEnumerable<TestCaseResult> testCaseResults)
             => testCaseResults
-                .GroupBy(r => r.Group)
+                .GroupBy(r => r.TestCase.Suite)
                 .Select(g => new TestSuiteResult
                 {
                     Caption = g.Key,

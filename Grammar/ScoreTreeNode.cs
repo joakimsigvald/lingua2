@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using Lingua.Core;
 
 namespace Lingua.Grammar
 {
@@ -18,6 +19,6 @@ namespace Lingua.Grammar
         public sbyte Score { get; set; }
 
         public override string ToString()
-            => string.Join(",", Path);
+            => $"{Encoder.Serialize(Path)}: {Score}";
     }
 }

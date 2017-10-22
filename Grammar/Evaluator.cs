@@ -19,7 +19,7 @@ namespace Lingua.Grammar
 
         private static readonly ScoreTreeNode LoadedScoringTree = BuildScoringTree(StoredPatterns);
 
-        protected readonly ScoreTreeNode ScoringTree;
+        public readonly ScoreTreeNode ScoringTree;
 
         public Evaluator(IDictionary<string, sbyte> patterns = null)
             => ScoringTree = patterns == null 

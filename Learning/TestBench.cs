@@ -15,12 +15,13 @@ namespace Lingua.Testing
 
         public bool RunTestSuites()
         {
-            var results = _testRunner.RunTestCases();
+            var testCases = TestRunner.LoadTestCases();
+            var results = _testRunner.RunTestCases(testCases);
             _reporter.Report(results);
             return results.All(res => res.Success);
         }
 
-        public TestCaseResult RunTestCase(string group, string from, string to)
-            => _testRunner.RunTestCase(group, from, to);
+        public TestCaseResult RunTestCase(TestCase testCase)
+            => _testRunner.RunTestCase(testCase);
     }
 }

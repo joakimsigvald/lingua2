@@ -27,6 +27,9 @@ namespace Lingua.Core
         public static string Serialize(IEnumerable<Token> tokens)
             => string.Join("", tokens.Select(Serialize));
 
+        public static string Serialize(Token token)
+            => SerializeClass(token) + SerializeModifiers(token as Element);
+
         public static IEnumerable<Token> Deserialize(string serial)
         {
             if (string.IsNullOrEmpty(serial))
@@ -130,9 +133,6 @@ namespace Lingua.Core
 
         private static bool IsWordClass(char c)
             => char.IsUpper(c);
-
-        private static string Serialize(Token token)
-            => SerializeClass(token) + SerializeModifiers(token as Element);
 
         private static string SerializeClass(Token token)
         {
