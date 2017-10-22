@@ -12,18 +12,11 @@ namespace Lingua.Testing
         {
         }
 
-        public void UpPattern(string pattern)
+        public void UpdateScore(string pattern, sbyte addScore)
         {
-            if (string.IsNullOrEmpty(pattern))
+            if (addScore == 0)
                 return;
-            UpdateScore(ScoringTree, CreateCodeScore(pattern, 1), 0);
-        }
-
-        public void DownPattern(string pattern)
-        {
-            if (string.IsNullOrEmpty(pattern))
-                return;
-            UpdateScore(ScoringTree, CreateCodeScore(pattern, -1), 0);
+            UpdateScore(ScoringTree, CreateCodeScore(pattern, addScore), 0);
         }
 
         private static void UpdateScore(ScoreTreeNode node, (string, ushort[], sbyte) codedPattern, int index)

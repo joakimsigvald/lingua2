@@ -6,23 +6,25 @@ namespace Lingua.Testing
 
     public class TestCaseResult
     {
+        private readonly TranslationResult _translationResult;
+
         public TestCaseResult(TestCase testCase
             , TranslationResult translationResult
             , IList<Translation[]> expectedCandidates)
         {
             TestCase = testCase;
-            Actual = translationResult.Translation;
-            Reason = translationResult.Reason;
+            _translationResult = translationResult;
             ExpectedCandidates = expectedCandidates;
         }
 
         public TestCase TestCase { get; }
         public string From => TestCase.From;
         public string Expected => TestCase.Expected;
-        public string Actual { get; }
+        public string Actual => _translationResult.Translation;
         public bool Success => Actual == TestCase.Expected;
-        public IReason Reason { get; }
+        public IReason Reason => _translationResult.Reason;
         public IList<Translation[]> ExpectedCandidates { get; }
+        public Translation[] Translations => _translationResult.Translations;
 
         public override string ToString()
             => $"{From}=>{Expected}/{Actual}:{Success}";

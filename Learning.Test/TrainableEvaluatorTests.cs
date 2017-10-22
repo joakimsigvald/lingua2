@@ -1,10 +1,11 @@
 ﻿using System.Linq;
-using Lingua.Grammar;
-using Lingua.Testing;
 using NUnit.Framework;
 
 namespace Lingua.Learning.Test
 {
+    using Grammar;
+    using Testing;
+
     [TestFixture]
     public class TrainableEvaluatorTests
     {
@@ -13,7 +14,7 @@ namespace Lingua.Learning.Test
         public void GivenEmptyTree_UpPatternAddsNodeWithScore_1(string pattern)
         {
             var evaluator = new TrainableEvaluator();
-            evaluator.UpPattern(pattern);
+            evaluator.UpdateScore(pattern, 1);
             var leaf = GetLeaf(evaluator.ScoringTree, pattern.Length);
             Assert.That(leaf?.Score, Is.EqualTo(1));
         }
@@ -30,8 +31,8 @@ namespace Lingua.Learning.Test
         public void UpAndDownPatternAreSymetrical(string pattern)
         {
             var evaluator = new TrainableEvaluator();
-            evaluator.UpPattern(pattern);
-            evaluator.DownPattern(pattern);
+            evaluator.UpdateScore(pattern, 1);
+            evaluator.UpdateScore(pattern, -1);
             Assert.That(evaluator.ScoringTree.Children, Is.Empty);
         }
     }

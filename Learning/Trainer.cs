@@ -25,9 +25,9 @@ namespace Lingua.Testing
         public (TestCaseResult, int) RunTrainingSession(params TestCase[] testCases)
         {
             _testRunner = new TestRunner(_translator, _tokenizer, true);
-            IEnumerator<string> matchingPatterns = new List<string>().GetEnumerator();
+            IEnumerator<(string, sbyte)> scoredPatterns = new List<(string, sbyte)>().GetEnumerator();
             var runTestsCount = 0;
-            string currentPattern = null;
+            (string currentPattern, sbyte currentScore) = (null, 0);
             TestCaseResult[] results;
             TestCaseResult failedCase = null;
             while (!(results = _testRunner.RunTestCases(testCases)).All(result => result.Success))
@@ -36,26 +36,26 @@ namespace Lingua.Testing
                 if (results.Length > runTestsCount)
                 {
                     failedCase = lastFailedCase;
-                    currentPattern = null;
-                    matchingPatterns.Dispose();
-                    matchingPatterns = EnumerateMatchingPatterns(failedCase);
+                    (currentPattern, currentScore) = (null, 0);
+                    scoredPatterns.Dispose();
+                    scoredPatterns = EnumerateMatchingPatterns(failedCase);
                     runTestsCount = results.Length;
                 }
                 do
                 {
-                    _evaluator.DownPattern(currentPattern);
-                    if (!matchingPatterns.MoveNext())
+                    _evaluator.UpdateScore(currentPattern, (sbyte)-currentScore);
+                    if (!scoredPatterns.MoveNext())
                         return (failedCase, runTestsCount);
-                    currentPattern = matchingPatterns.Current;
-                    _evaluator.UpPattern(currentPattern);
+                    (currentPattern, currentScore) = scoredPatterns.Current;
+                    _evaluator.UpdateScore(currentPattern, currentScore);
                     lastFailedCase = _testRunner.RunTestCase(lastFailedCase.TestCase);
                 } while (!lastFailedCase.Success);
             }
-            matchingPatterns.Dispose();
+            scoredPatterns.Dispose();
             return (null, runTestsCount);
         }
 
-        private static IEnumerator<string> EnumerateMatchingPatterns(TestCaseResult result)
+        private static IEnumerator<(string, sbyte)> EnumerateMatchingPatterns(TestCaseResult result)
             => PatternGenerator.GetMatchingPatterns(result).GetEnumerator();
     }
 }

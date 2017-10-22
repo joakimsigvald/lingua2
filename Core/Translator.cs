@@ -1,11 +1,12 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
-using Lingua.Core.Tokens;
-using Lingua.Core.WordClasses;
 
 namespace Lingua.Core
 {
+    using Tokens;
+    using WordClasses;
+
     public class Translator : ITranslator
     {
         private readonly ITokenizer _tokenizer;
@@ -35,6 +36,7 @@ namespace Lingua.Core
             var respacedResult = Respace(adjustedResult).ToArray();
             return new TranslationResult
             {
+                Translations = translations,
                 Translation = Output(respacedResult),
                 Reason = reason,
                 Candidates = candidates

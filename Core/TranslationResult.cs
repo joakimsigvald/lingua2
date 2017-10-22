@@ -7,5 +7,6 @@ namespace Lingua.Core
         public string Translation { get; set; }
         public IReason Reason { get; set; }
         public IList<Translation[]> Candidates { get; set; }
+        public Translation[] Translations { get; set; }
     }
 }
