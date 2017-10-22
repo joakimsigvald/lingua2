@@ -76,7 +76,7 @@ namespace Lingua.Core
         {
             switch (code & ClassMask)
             {
-                case Start.Code: return new Start();
+                case Start.Code: return Start.Singleton;
                 case Terminator.Code: return new Terminator('.');
                 case Separator.Code: return new Separator(',');
                 case Number.Code: return new Number();
@@ -172,7 +172,7 @@ namespace Lingua.Core
         {
             switch (primary)
             {
-                case '^': return new Start();
+                case '^': return Start.Singleton;
                 case '.': return new Terminator(primary);
                 case ',': return new Separator(primary);
                 case 'A': return new Adjective();

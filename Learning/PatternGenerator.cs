@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using Lingua.Core.Tokens;
 
 namespace Lingua.Testing
 {
@@ -11,11 +12,17 @@ namespace Lingua.Testing
 
         public static IEnumerable<string> GetMatchingPatterns(TestCaseResult result)
         {
-            var atoms = YieldMatchingAtoms(result).Distinct().ToArray();
+            var atoms = GetMatchingAtoms(result).Distinct().ToArray();
             return GetMatchingMonoCodes(atoms.SelectMany(a => a).ToArray())
                 .Concat(GetMatchingTwins(atoms))
                 .Select(Encoder.Serialize);
         }
+
+        private static IEnumerable<ushort[]> GetMatchingAtoms(TestCaseResult result)
+            => result.ExpectedCandidates.Select(GetMatchingAtoms);
+
+        private static ushort[] GetMatchingAtoms(IEnumerable<Translation> translations)
+            => translations.Select(t => Encoder.Encode(t.From)).ToArray();
 
         private static IEnumerable<ushort[]> GetMatchingMonoCodes(ushort[] atoms)
         {
@@ -27,7 +34,10 @@ namespace Lingua.Testing
 
         private static IEnumerable<ushort[]> GetMatchingTwins(IList<ushort[]> candidates)
         {
-            var twins = candidates.Skip(1).SelectMany((c, i) => CreateTwins(candidates[i], c));
+            var twins = candidates
+                .Prepend(new []{ Start.Code })
+                .Take(candidates.Count)
+                .SelectMany((c, i) => CreateTwins(c, candidates[i]));
             return TwinMasks
                 .SelectMany(
                     mask => twins.Select(twin => new[]
@@ -51,11 +61,5 @@ namespace Lingua.Testing
 
         private static ushort Mask(ushort code, ushort mask)
             => (ushort) (code | mask);
-
-        private static IEnumerable<ushort[]> YieldMatchingAtoms(TestCaseResult result)
-            => result.ExpectedCandidates.Select(GetMatchingAtoms);
-
-        private static ushort[] GetMatchingAtoms(IEnumerable<Translation> translations)
-            => translations.Select(t => Encoder.Encode(t.From)).ToArray();
     }
 }
