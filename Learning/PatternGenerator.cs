@@ -22,6 +22,10 @@ namespace Lingua.Testing
                 .Concat(PatternExtractor.GetMatchingPatterns(wanted, 3)
                     .Select(x => (x, (sbyte)1)))
                 .Concat(PatternExtractor.GetMatchingPatterns(unwanted, 3)
+                    .Select(x => (x, (sbyte)-1)))
+                .Concat(PatternExtractor.GetMatchingPatterns(wanted, 4)
+                    .Select(x => (x, (sbyte)1)))
+                .Concat(PatternExtractor.GetMatchingPatterns(unwanted, 4)
                     .Select(x => (x, (sbyte)-1)));
         }
 
