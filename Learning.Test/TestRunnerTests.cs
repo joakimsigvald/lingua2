@@ -14,6 +14,9 @@ namespace Lingua.Learning.Test
     public class TestRunnerTests
     {
         [TestCase("I run", "jag springer", "R1V1")]
+        [TestCase("The red ball", "Den röda bollen", "TdqAdn")]
+        [TestCase("The red ball", "Den röda bollen", "AdnNd")]
+        [TestCase("The red ball", "Den röda bollen", "TdqAdnNd")]
         [TestCase("2 [[ball]]", "2 bollar", "QnNn")]
         public void MatchesPositivePatterns(string from, string expected, params string[] expectedPatterns)
         {
