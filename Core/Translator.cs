@@ -29,7 +29,7 @@ namespace Lingua.Core
                 };
             var tokens = Expand(Tokenize(original)).ToArray();
             var candidates = Translate(tokens).ToList();
-            var possibilities = new TranslationTreeNode(null, Start.Code, () => Combine(candidates));
+            var possibilities = new TranslationTreeNode(null, candidates, true);
             (var translations, var reason) = _grammar.Reduce(possibilities);
             var arrangedTranslations = _grammar.Arrange(translations);
             var adjustedResult = Adjust(arrangedTranslations).ToArray();
@@ -82,50 +82,6 @@ namespace Lingua.Core
         private static IEnumerable<Translation> Reduce(IEnumerable<Translation> candidates, IReadOnlyList<Token> tokens,
             int nextIndex)
             => candidates.Where(t => t.Matches(tokens, nextIndex));
-
-        private static IList<TranslationTreeNode> Combine(IReadOnlyList<Translation[]> alternatives)
-            => alternatives.Any()
-                ? CombineRemaining(alternatives)
-                : new List<TranslationTreeNode>();
-
-        private static IList<TranslationTreeNode> CombineRemaining(IReadOnlyList<Translation[]> alternatives)
-        {
-            var first = alternatives.First();
-            var incompleteCompounds = first.Where(t => t.IsIncompleteCompound).ToArray();
-            var words = first.Except(incompleteCompounds);
-            var compounds =
-                incompleteCompounds.SelectMany(ic => CompleteCompound(ic, alternatives.Skip(ic.WordCount).ToArray()));
-            return words.Concat(compounds)
-                .Select(t => CreateTreeNode(t, alternatives.Skip(t.WordCount).ToList()))
-                .ToList();
-        }
-
-        private static IEnumerable<Translation> CompleteCompound(Translation incompleteCompound,
-            IReadOnlyList<Translation[]> future)
-        {
-            if (!future.Any() || !(future.First()[0].From is Word))
-                return new Translation[0];
-            var nextWords = future.First().Where(t => t.From.GetType() == incompleteCompound.From.GetType());
-            return nextWords.Select(completion => CompleteCompound(incompleteCompound, completion));
-        }
-
-        private static Translation CompleteCompound(Translation incompleteCompound, Translation completion)
-        {
-            var completedFrom = ((Word) incompleteCompound.From).Clone();
-            var fromCompletion = (Word) completion.From;
-            completedFrom.Modifiers = fromCompletion.Modifiers;
-            return new Translation
-            {
-                From = completedFrom,
-                To = incompleteCompound.To + completion.To,
-                IsIncompleteCompound = completion.IsIncompleteCompound,
-                Continuation = completion.Continuation.Prepend((Word) completion.From).ToArray()
-            };
-        }
-
-        private static TranslationTreeNode CreateTreeNode(Translation translation,
-            IReadOnlyList<Translation[]> future)
-            => new TranslationTreeNode(translation, Encoder.Encode(translation.From), () => Combine(future));
 
         private static IEnumerable<Translation> Adjust(IEnumerable<Translation> translations)
             => PromoteInvisibleCapitalization(

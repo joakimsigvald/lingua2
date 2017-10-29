@@ -56,8 +56,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="TestHelper.cs" />
+    <Compile Include="CandidateFilterTests.cs" />
     <Compile Include="PatternExtractorTests.cs" />
-    <Compile Include="PatternGeneratorTests.cs" />
     <Compile Include="TestRunnerTests.cs" />
     <Compile Include="TrainableEvaluatorTests.cs" />
     <Compile Include="TrainerTests.cs" />

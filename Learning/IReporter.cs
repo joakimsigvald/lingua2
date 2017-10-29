@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Lingua.Testing
+namespace Lingua.Learning
 {
     public interface IReporter
     {

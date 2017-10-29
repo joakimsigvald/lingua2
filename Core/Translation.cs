@@ -32,7 +32,7 @@ namespace Lingua.Core
 
         public Token From { get; set; }
         public string To { get; set; }
-        public Word[] Continuation { get; set; }
+        public Word[] Continuation { get; set; } = new Word[0];
         public Translation[] Variations { get; set; } = new Translation[0];
         public byte WordCount => (byte)(Continuation.Length + 1);
         public bool IsTranslatedWord => To != null && !Continuation.Any();

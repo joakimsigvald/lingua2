@@ -5,7 +5,7 @@ namespace Lingua.Main
 {
     using Core;
     using Grammar;
-    using Testing;
+    using Learning;
     using Tokenization;
     using Vocabulary;
 
@@ -14,8 +14,14 @@ namespace Lingua.Main
         private static readonly ITokenizer Tokenizer
             = new Tokenizer();
 
-        private static readonly ITranslator Translator
-            = new Translator(Tokenizer, new Thesaurus(), new Engine(new Evaluator()));
+        private static readonly ITranslator Translator = CreateTranslator();
+
+        private static ITranslator CreateTranslator()
+        {
+            var evaluator = new Evaluator();
+            evaluator.Load();
+            return new Translator(Tokenizer, new Thesaurus(), new Engine(evaluator));
+        }
 
         private static readonly TestBench TestBench
             = new TestBench(new TestRunner(Translator, Tokenizer), new ConsoleReporter());

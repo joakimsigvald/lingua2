@@ -1,6 +1,6 @@
 ﻿using System.Linq;
 
-namespace Lingua.Testing
+namespace Lingua.Learning
 {
     public class TestBench
     {

@@ -4,7 +4,6 @@ using NUnit.Framework;
 namespace Lingua.Learning.Test
 {
     using Grammar;
-    using Testing;
 
     [TestFixture]
     public class TrainableEvaluatorTests

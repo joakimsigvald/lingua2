@@ -13,7 +13,8 @@ namespace Lingua.Grammar
         private Translation[] _selection;
         private readonly IEvaluator _evaluator;
 
-        internal static (Translation[] Translations, IReason Reason) Execute(IEvaluator evaluator, TranslationTreeNode possibilities)
+        internal static (Translation[] Translations, IReason Reason) Execute(IEvaluator evaluator,
+            TranslationTreeNode possibilities)
         {
             var process = new Process(evaluator, possibilities);
             process.Reduce();
@@ -53,26 +54,19 @@ namespace Lingua.Grammar
             IEnumerable<TranslationTreeNode> next)
         {
             var pastReversed = previous.Take(Horizon).Reverse().ToList();
-            var evaluatedTranslations = next.SelectMany(node => Expand(node, Horizon))
+            var evaluatedTranslations = next.SelectMany(node => node.Expand(Horizon))
                 .Select(future => new
                 {
                     current = future.First(),
                     evaluation = _evaluator.Evaluate(GetCodeWithinHorizon(pastReversed, future))
                 })
-                .OrderByDescending(scoredNode => scoredNode.evaluation.Score).
-                ToArray();
+                .OrderByDescending(scoredNode => scoredNode.evaluation.Score).ToArray();
             _reason.Add(evaluatedTranslations.Select(et => et.evaluation));
             return evaluatedTranslations.First().current;
         }
 
-        private static ushort[] GetCodeWithinHorizon(IEnumerable<ushort> pastReversed, IEnumerable<TranslationTreeNode> future)
+        private static ushort[] GetCodeWithinHorizon(IEnumerable<ushort> pastReversed,
+            IEnumerable<TranslationTreeNode> future)
             => pastReversed.Concat(future.Select(node => node.Code)).ToArray();
-
-        private static IEnumerable<IList<TranslationTreeNode>> Expand(TranslationTreeNode node, int depth)
-            => (depth > 0 && node.Children.Any()
-                    ? node.Children
-                        .SelectMany(child => Expand(child, depth - child.Translation.WordCount))
-                    : new[] {new TranslationTreeNode[0]})
-                .Select(seq => seq.Prepend(node).ToList());
     }
 }

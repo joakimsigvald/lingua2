@@ -1,41 +1,43 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 
-namespace Lingua.Testing
+namespace Lingua.Learning
 {
     using Core;
 
     public static class PatternGenerator
     {
-        public static IEnumerable<(string, sbyte)> GetMatchingPatterns(TestCaseResult result)
+        public static IList<(string, sbyte)> GetMatchingPatterns(TestCaseResult result)
         {
-            var wanted = GetWantedAtoms(result).ToArray();
-            var unwanted = GetUnwantedAtoms(result).ToArray();
-            return PatternExtractor.GetMatchingMonoPatterns(wanted.SelectMany(a => a).ToArray())
+            var wantedAlternatives = GetWantedTranslations(result).ToList();
+            var unwanted = GetUnwantedTranslations(result)
+                .ToList();
+            var unwantedAlternatives = GetUnwantedTranslations(result)
+                .Select(t => new[] { t })
+                .ToList();
+            return PatternExtractor.GetMatchingMonoPatterns(wantedAlternatives.SelectMany(a => a).ToArray())
                 .Select(x => (x, (sbyte)1))
                 .Concat(PatternExtractor.GetMatchingMonoPatterns(unwanted)
                     .Select(x => (x, (sbyte)-1)))
-                .Concat(PatternExtractor.GetMatchingPatterns(wanted, 2)
+                .Concat(PatternExtractor.GetMatchingPatterns(wantedAlternatives, 2)
                     .Select(x => (x, (sbyte)1)))
-                .Concat(PatternExtractor.GetMatchingPatterns(unwanted, 2)
+                .Concat(PatternExtractor.GetMatchingPatterns(unwantedAlternatives, 2)
                     .Select(x => (x, (sbyte)-1)))
-                .Concat(PatternExtractor.GetMatchingPatterns(wanted, 3)
+                .Concat(PatternExtractor.GetMatchingPatterns(wantedAlternatives, 3)
                     .Select(x => (x, (sbyte)1)))
-                .Concat(PatternExtractor.GetMatchingPatterns(unwanted, 3)
+                .Concat(PatternExtractor.GetMatchingPatterns(unwantedAlternatives, 3)
                     .Select(x => (x, (sbyte)-1)))
-                .Concat(PatternExtractor.GetMatchingPatterns(wanted, 4)
+                .Concat(PatternExtractor.GetMatchingPatterns(wantedAlternatives, 4)
                     .Select(x => (x, (sbyte)1)))
-                .Concat(PatternExtractor.GetMatchingPatterns(unwanted, 4)
-                    .Select(x => (x, (sbyte)-1)));
+                .Concat(PatternExtractor.GetMatchingPatterns(unwantedAlternatives, 4)
+                    .Select(x => (x, (sbyte)-1)))
+                    .ToList();
         }
 
-        private static IEnumerable<ushort[]> GetWantedAtoms(TestCaseResult result)
-            => result.ExpectedCandidates.Select(Encode);
+        private static IEnumerable<Translation[]> GetWantedTranslations(TestCaseResult result)
+            => result.ExpectedCandidates;
 
-        private static IEnumerable<ushort> GetUnwantedAtoms(TestCaseResult result)
-            => Encode(result.Translations);
-
-        private static ushort[] Encode(IEnumerable<Translation> translations)
-            => translations.Select(t => Encoder.Encode(t.From)).ToArray();
+        private static IEnumerable<Translation> GetUnwantedTranslations(TestCaseResult result)
+            => result.Translations;
     }
 }

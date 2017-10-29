@@ -7,8 +7,8 @@
     <ProjectGuid>{6F12FC3A-0E11-4E2B-BE31-3114F671D869}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Lingua.Testing</RootNamespace>
-    <AssemblyName>Lingua.Testing</AssemblyName>
+    <RootNamespace>Lingua.Learning</RootNamespace>
+    <AssemblyName>Lingua.Learning</AssemblyName>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>

@@ -1,17 +1,13 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 
-namespace Lingua.Testing
+namespace Lingua.Learning
 {
     using Core;
     using Grammar;
 
     public class TrainableEvaluator : Evaluator
     {
-        public TrainableEvaluator() : base(new Dictionary<string, sbyte>())
-        {
-        }
-
         public void UpdateScore(string pattern, sbyte addScore)
         {
             if (addScore == 0)

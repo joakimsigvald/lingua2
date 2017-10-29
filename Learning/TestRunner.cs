@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 
-namespace Lingua.Testing
+namespace Lingua.Learning
 {
     using Core;
 
@@ -20,11 +20,9 @@ namespace Lingua.Testing
 
         public static TestCase[] LoadTestCases()
             => Loader.LoadTestSuites()
-                .SelectMany(kvp => kvp.Value.Select(v => new TestCase
+                .SelectMany(kvp => kvp.Value.Select(v => new TestCase(v.Key, v.Value)
                 {
-                    Suite = kvp.Key,
-                    From = v.Key,
-                    Expected = v.Value
+                    Suite = kvp.Key
                 }))
                 .ToArray();
 

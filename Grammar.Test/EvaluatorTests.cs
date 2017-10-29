@@ -1,13 +1,21 @@
 ﻿using System.Collections.Generic;
-using Lingua.Core;
 using NUnit.Framework;
 
 namespace Lingua.Grammar.Test
 {
+    using Core;
+
     [TestFixture]
     public class EvaluatorTests
     {
-        private static readonly Evaluator StoredEvaluator = new Evaluator();
+        private static Evaluator _storedEvaluator;
+
+        [OneTimeSetUp]
+        public void SetUp()
+        {
+            _storedEvaluator = new Evaluator();
+            _storedEvaluator.Load();
+        }
 
         [TestCase("^TN", 0)]
         [TestCase("^TdqAdnNd", 1)]
@@ -20,7 +28,7 @@ namespace Lingua.Grammar.Test
         public void Score(string symbols, int expectedScore)
         {
             var code = Encoder.Encode(symbols);
-            var actualScore = StoredEvaluator.Evaluate(code).Score;
+            var actualScore = _storedEvaluator.Evaluate(code).Score;
             Assert.That(actualScore, Is.EqualTo(expectedScore));
         }
 

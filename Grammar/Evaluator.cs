@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace Lingua.Grammar
@@ -17,14 +18,16 @@ namespace Lingua.Grammar
         private static readonly IDictionary<string, sbyte> StoredPatterns 
             = Loader.LoadScoredPatterns();
 
-        private static readonly ScoreTreeNode LoadedScoringTree = BuildScoringTree(StoredPatterns);
+        private static readonly Lazy<ScoreTreeNode> LoadedScoringTree = 
+            new Lazy<ScoreTreeNode>(() => BuildScoringTree(StoredPatterns));
 
-        public readonly ScoreTreeNode ScoringTree;
+        public ScoreTreeNode ScoringTree;
 
         public Evaluator(IDictionary<string, sbyte> patterns = null)
-            => ScoringTree = patterns == null 
-                ? LoadedScoringTree 
-                : BuildScoringTree(patterns);
+            => ScoringTree = BuildScoringTree(patterns ?? new Dictionary<string, sbyte>());
+
+        public void Load()
+            => ScoringTree = LoadedScoringTree.Value;
 
         public Evaluation Evaluate(ushort[] code)
         {

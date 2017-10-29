@@ -7,7 +7,7 @@ using NUnit.Framework;
 namespace Lingua.Core.Test
 {
     using Grammar;
-    using Testing;
+    using Learning;
     using Tokenization;
     using Vocabulary;
 
@@ -19,7 +19,9 @@ namespace Lingua.Core.Test
         private static TestBench CreateTestBench()
         {
             var reporter = new FakeReporter();
-            var engine = new Engine(new Evaluator());
+            var evaluator = new Evaluator();
+            evaluator.Load();
+            var engine = new Engine(evaluator);
             var tokenizer = new Tokenizer();
             var translator = new Translator(new Tokenizer(), new Thesaurus(), engine);
             var testRunner = new TestRunner(translator, tokenizer);
@@ -51,7 +53,7 @@ namespace Lingua.Core.Test
 
         private static void TestCase(string from, string to)
         {
-            var result = TestBench.RunTestCase(new TestCase {Suite = "Single", From = from, Expected = to});
+            var result = TestBench.RunTestCase(new TestCase(from, to) {Suite = "Single"});
             if (!result.Success)
                 Output(result.Reason);
             Assert.That(result.Success, $"Expected \"{result.Expected}\" but was \"{result.Actual}\"");

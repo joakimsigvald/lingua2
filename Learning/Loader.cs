@@ -2,7 +2,7 @@
 using System.Linq;
 using System.Text.RegularExpressions;
 
-namespace Lingua.Testing
+namespace Lingua.Learning
 {
     using Core;
 
