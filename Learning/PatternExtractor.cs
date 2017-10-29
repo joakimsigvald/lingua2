@@ -6,15 +6,21 @@ namespace Lingua.Learning
     using Core;
     using Core.Tokens;
 
-    public static class PatternExtractor
+    public interface IPatternExtractor
+    {
+        IEnumerable<string> GetMatchingMonoPatterns(IEnumerable<Translation> translations);
+        IEnumerable<string> GetMatchingPatterns(ICollection<Translation[]> candidates, int n);
+    }
+
+    public class PatternExtractor : IPatternExtractor
     {
         private static readonly List<IList<ushort[]>> Masks = new List<IList<ushort[]>>();
 
-        public static IEnumerable<string> GetMatchingMonoPatterns(IEnumerable<Translation> translations)
+        public IEnumerable<string> GetMatchingMonoPatterns(IEnumerable<Translation> translations)
             => GetMatchingMonoCodes(translations)
                 .Select(Encoder.Serialize);
 
-        public static IEnumerable<string> GetMatchingPatterns(ICollection<Translation[]> candidates, int n)
+        public IEnumerable<string> GetMatchingPatterns(ICollection<Translation[]> candidates, int n)
             => GetMatching(candidates, n)
                 .Select(Encoder.Serialize);
 

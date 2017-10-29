@@ -13,6 +13,7 @@ namespace Lingua.Learning
         private readonly TrainableEvaluator _evaluator;
         private readonly ITranslator _translator;
         private readonly ITokenizer _tokenizer;
+        private readonly PatternGenerator _patternGenerator;
         private TestRunner _testRunner;
 
         public Trainer()
@@ -20,6 +21,7 @@ namespace Lingua.Learning
             _evaluator = new TrainableEvaluator();
             _tokenizer = new Tokenizer();
             _translator = new Translator(_tokenizer, new Thesaurus(), new Engine(_evaluator));
+            _patternGenerator = new PatternGenerator(new PatternExtractor(), new TranslationExtractor());
         }
 
         public (TestCaseResult, int) RunTrainingSession(params TestCase[] testCases)
@@ -55,7 +57,7 @@ namespace Lingua.Learning
             return (null, runTestsCount);
         }
 
-        private static IEnumerator<(string, sbyte)> EnumerateMatchingPatterns(TestCaseResult result)
-            => PatternGenerator.GetMatchingPatterns(result).GetEnumerator();
+        private IEnumerator<(string, sbyte)> EnumerateMatchingPatterns(TestCaseResult result)
+            => _patternGenerator.GetMatchingPatterns(result).GetEnumerator();
     }
 }

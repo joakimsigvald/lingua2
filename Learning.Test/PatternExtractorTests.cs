@@ -8,6 +8,8 @@ namespace Lingua.Learning.Test
     [TestFixture]
     public class PatternExtractorTests
     {
+        private static readonly PatternExtractor PatternExtractor = new PatternExtractor();
+
         [TestCase("N", "N*", "N")]
         [TestCase("Nn", "N*", "Nn")]
         public void ExtractMonoPatterns(string from, params string[] expected)
