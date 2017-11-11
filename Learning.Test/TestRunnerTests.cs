@@ -6,7 +6,7 @@ namespace Lingua.Learning.Test
     [TestFixture]
     public class TestRunnerTests
     {
-        private static readonly PatternGenerator PatternGenerator = new PatternGenerator(new PatternExtractor(), new TranslationExtractor());
+        private static readonly PatternGenerator PatternGenerator = new PatternGenerator(new TranslationExtractor(), new PatternExtractor());
 
         [TestCase("I run", "jag springer", "R1V1")]
         [TestCase("The red ball", "Den röda bollen", "TdqAdn")]

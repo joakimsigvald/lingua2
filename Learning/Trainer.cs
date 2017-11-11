@@ -21,7 +21,7 @@ namespace Lingua.Learning
             _evaluator = new TrainableEvaluator();
             _tokenizer = new Tokenizer();
             _translator = new Translator(_tokenizer, new Thesaurus(), new Engine(_evaluator));
-            _patternGenerator = new PatternGenerator(new PatternExtractor(), new TranslationExtractor());
+            _patternGenerator = new PatternGenerator(new TranslationExtractor(), new PatternExtractor());
         }
 
         public (TestCaseResult, int) RunTrainingSession(params TestCase[] testCases)

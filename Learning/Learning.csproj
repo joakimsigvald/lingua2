@@ -45,9 +45,10 @@
   <ItemGroup>
     <Compile Include="CodeEqualityComparer.cs" />
     <Compile Include="ConsoleReporter.cs" />
+    <Compile Include="ITranslationExtractor.cs" />
     <Compile Include="IReporter.cs" />
-    <Compile Include="PatternExtractor.cs" />
     <Compile Include="TranslationExtractor.cs" />
+    <Compile Include="PatternExtractor.cs" />
     <Compile Include="TestCase.cs" />
     <Compile Include="CandidateFilter.cs" />
     <Compile Include="TestRunner.cs" />

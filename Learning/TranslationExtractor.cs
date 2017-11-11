@@ -5,18 +5,12 @@ namespace Lingua.Learning
 {
     using Core;
 
-    public interface ITranslationExtractor
-    {
-        IEnumerable<Translation[]> GetWantedTranslations(TestCaseResult result);
-        IEnumerable<Translation> GetUnwantedTranslations(TestCaseResult result);
-    }
-
     public class TranslationExtractor : ITranslationExtractor
     {
         public IEnumerable<Translation[]> GetWantedTranslations(TestCaseResult result)
-            => result.ExpectedCandidates;
+            => result?.ExpectedCandidates ?? Enumerable.Empty<Translation[]>();
 
         public IEnumerable<Translation> GetUnwantedTranslations(TestCaseResult result)
-            => result.Translations;
+            => result?.Translations ?? Enumerable.Empty<Translation>();
     }
 }

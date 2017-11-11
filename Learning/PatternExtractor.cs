@@ -9,7 +9,8 @@ namespace Lingua.Learning
     public interface IPatternExtractor
     {
         IEnumerable<string> GetMatchingMonoPatterns(IEnumerable<Translation> translations);
-        IEnumerable<string> GetMatchingPatterns(ICollection<Translation[]> candidates, int n);
+        IEnumerable<string> GetMatchingPatterns(ICollection<Translation[]> candidates, int length);
+        IEnumerable<string> GetMatchingPatterns(ICollection<Translation> sequence, int length);
     }
 
     public class PatternExtractor : IPatternExtractor
@@ -20,8 +21,12 @@ namespace Lingua.Learning
             => GetMatchingMonoCodes(translations)
                 .Select(Encoder.Serialize);
 
-        public IEnumerable<string> GetMatchingPatterns(ICollection<Translation[]> candidates, int n)
-            => GetMatching(candidates, n)
+        public IEnumerable<string> GetMatchingPatterns(ICollection<Translation> sequence, int length)
+            => GetMatchingSnippets(sequence, length)
+                .Select(Encoder.Serialize);
+
+        public IEnumerable<string> GetMatchingPatterns(ICollection<Translation[]> candidates, int length)
+            => GetMatchingSnippets(candidates, length)
                 .Select(Encoder.Serialize);
 
         private static IEnumerable<ushort[]> GetMatchingMonoCodes(IEnumerable<Translation> translations)
@@ -33,28 +38,54 @@ namespace Lingua.Learning
                 .Distinct()
                 .Select(code => new[] { code });
         }
-
-        private static IEnumerable<ushort[]> GetMatching(ICollection<Translation[]> candidates, int n)
+        private static IEnumerable<ushort[]> GetMatchingSnippets(ICollection<Translation> sequence, int length)
         {
-            if (candidates.Count < n - 1)
+            if (sequence.Count < length - 1)
                 return new ushort[0][];
 
-            var startingCodes = GetStartingCodes(candidates, n).ToList();
-            var nonStartingCodes = GetNonStartingCodes(candidates, n).ToList();
+            var startingCodes = GetStartingCodes(sequence, length - 1).ToList();
+            if (sequence.Count < length - 1)
+                return startingCodes;
+
+            var nonStartingCodes = GetNonStartingCodes(sequence, length).ToList();
             return startingCodes.Concat(nonStartingCodes);
         }
 
-        private static IEnumerable<ushort[]> GetStartingCodes(IEnumerable<Translation[]> candidates, int n)
-            => MaskSnippets(GetFirstSnippets(candidates, n - 1), n - 1)
+        private static IEnumerable<ushort[]> GetStartingCodes(IEnumerable<Translation> sequence, int length)
+            => MaskSnippet(Encode(sequence.Take(length)))
                 .Select(code => code.Prepend(Start.Code).ToArray());
 
-        private static IEnumerable<ushort[]> GetNonStartingCodes(ICollection<Translation[]> candidates, int n)
-            => MaskSnippets(GetSnippets(candidates, n), n)
+        private static IEnumerable<ushort[]> GetNonStartingCodes(ICollection<Translation> sequence, int length)
+            => MaskSnippets(GetSnippets(sequence, length), length).Distinct();
+
+        private static IEnumerable<ushort[]> GetSnippets(ICollection<Translation> sequence, int length)
+            => Enumerable.Range(0, sequence.Count + 1 - length)
+                .Select(i => Encode(sequence.Skip(i).Take(length)));
+
+        private static IEnumerable<ushort[]> GetMatchingSnippets(ICollection<Translation[]> candidates, int length)
+        {
+            if (candidates.Count < length - 1)
+                return new ushort[0][];
+
+            var startingCodes = GetStartingCodes(candidates, length - 1).ToList();
+            if (candidates.Count < length)
+                return startingCodes;
+
+            var nonStartingCodes = GetNonStartingCodes(candidates, length).ToList();
+            return startingCodes.Concat(nonStartingCodes);
+        }
+
+        private static IEnumerable<ushort[]> GetStartingCodes(IEnumerable<Translation[]> candidates, int length)
+            => MaskSnippets(GetFirstSnippets(candidates, length), length)
+                .Select(code => code.Prepend(Start.Code).ToArray());
+
+        private static IEnumerable<ushort[]> GetNonStartingCodes(ICollection<Translation[]> candidates, int length)
+            => MaskSnippets(GetSnippets(candidates, length), length)
                 .Distinct();
 
-        private static IEnumerable<ushort[]> GetSnippets(ICollection<Translation[]> candidates, int n)
-            => Enumerable.Range(0, candidates.Count + 1 - n)
-            .SelectMany(i => GetFirstSnippets(candidates.Skip(i), n));
+        private static IEnumerable<ushort[]> GetSnippets(ICollection<Translation[]> candidates, int length)
+            => Enumerable.Range(0, candidates.Count + 1 - length)
+                .SelectMany(i => GetFirstSnippets(candidates.Skip(i), length));
 
         private static IEnumerable<ushort[]> GetFirstSnippets(IEnumerable<Translation[]> candidates, int n)
         {
@@ -66,12 +97,20 @@ namespace Lingua.Learning
         private static TranslationTreeNode Combine(IEnumerable<Translation[]> candidates)
             => new TranslationTreeNode(null, candidates.ToList());
 
-        private static IEnumerable<ushort[]> Expand(TranslationTreeNode node, int n)
-            => node.ExpandChildren(n).Select(l => l.Select(tn => Encoder.Encode(tn.Translation.From)).ToArray());
+        private static IEnumerable<ushort[]> Expand(TranslationTreeNode node, int length)
+            => node.ExpandChildren(length).Select(l => Encode(l.Select(tn => tn.Translation)));
 
-        private static IEnumerable<ushort[]> MaskSnippets(IEnumerable<ushort[]> snippets, int n)
-            => GetMasks(n).SelectMany(
-                mask => snippets.Select(code => ApplyMask(code, mask)));
+        private static ushort[] Encode(IEnumerable<Translation> translations)
+            => translations.Select(translation => Encoder.Encode(translation.From)).ToArray();
+
+        private static IEnumerable<ushort[]> MaskSnippet(ushort[] snippet)
+            => Mask(GetMasks(snippet.Length), snippet);
+
+        private static IEnumerable<ushort[]> MaskSnippets(IEnumerable<ushort[]> snippets, int length)
+            => GetMasks(length).SelectMany(mask => Mask(snippets, mask));
+
+        private static IEnumerable<ushort[]> Mask(IEnumerable<ushort[]> snippets, ushort[] mask)
+            => snippets.Select(snippet => ApplyMask(snippet, mask));
 
         private static ushort[] ApplyMask(ushort[] code, ushort[] mask)
             => code.Select((c, i) => Mask(c, mask[i])).ToArray();

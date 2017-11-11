@@ -12,9 +12,10 @@ namespace Lingua.Learning.Test
         [Test]
         public void GivenNoExtractedPatterns_GenerateNoPatterns()
         {
+            var patternCandidateExtractorMock = new Mock<ITranslationExtractor>();
             var patternExtractorMock = new Mock<IPatternExtractor>();
             patternExtractorMock.SetReturnsDefault(new string[0]);
-            var patternGenerator = new PatternGenerator(patternExtractorMock.Object, Mock.Of<ITranslationExtractor>());
+            var patternGenerator = new PatternGenerator(patternCandidateExtractorMock.Object, patternExtractorMock.Object);
             var patterns = patternGenerator.GetMatchingPatterns(null);
             Assert.That(patterns, Is.Empty);
         }
@@ -23,19 +24,20 @@ namespace Lingua.Learning.Test
         public void GivenOneWantedExtractedMonoPattern_GenerateThatPatternWithScore_1()
         {
             var expectedPatterns = new[] { "ABC" };
-            IEnumerable<Translation[]> wanted = new [] { new [] { new Translation()} };
+            var wanted = new []{new [] {new Translation()} };
+            var unwanted = new Translation[0];
 
+            var patternCandidateExtractorMock = new Mock<ITranslationExtractor>();
+            patternCandidateExtractorMock.Setup(extractor => extractor.GetWantedTranslations(null))
+                .Returns(wanted);
+            patternCandidateExtractorMock.Setup(extractor => extractor.GetUnwantedTranslations(null))
+                .Returns(unwanted);
             var patternExtractorMock = new Mock<IPatternExtractor>();
             patternExtractorMock.SetReturnsDefault(new string[0]);
-            patternExtractorMock.Setup(extractor => extractor.GetMatchingMonoPatterns(It.Is<IEnumerable<Translation>>(x => x.Any())))
+            patternExtractorMock.Setup(extractor => extractor.GetMatchingMonoPatterns(It.Is<IEnumerable<Translation>>(v => v.Any())))
                 .Returns(expectedPatterns);
 
-            var translationExtractorMock = new Mock<ITranslationExtractor>();
-            patternExtractorMock.SetReturnsDefault(new string[0]);
-            translationExtractorMock.Setup(extractor => extractor.GetWantedTranslations(It.IsAny<TestCaseResult>()))
-                .Returns(wanted);
-
-            var patternGenerator = new PatternGenerator(patternExtractorMock.Object, translationExtractorMock.Object);
+            var patternGenerator = new PatternGenerator(patternCandidateExtractorMock.Object, patternExtractorMock.Object);
             var scoredPatterns = patternGenerator.GetMatchingPatterns(null);
             Assert.That(scoredPatterns.Count, Is.EqualTo(1));
             var scoredPattern = scoredPatterns.Single();
