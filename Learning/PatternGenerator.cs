@@ -19,22 +19,25 @@ namespace Lingua.Learning
             var wantedAlternatives = _translationExtractor.GetWantedTranslations(result).ToList();
             var unwanted = _translationExtractor.GetUnwantedTranslations(result).ToList();
             return _patternExtractor.GetMatchingMonoPatterns(wantedAlternatives.SelectMany(a => a).ToArray())
-                .Select(x => (x, (sbyte)1))
+                .Select(pattern => (pattern, (sbyte) 1))
                 .Concat(_patternExtractor.GetMatchingMonoPatterns(unwanted)
-                    .Select(x => (x, (sbyte)-1)))
+                    .Select(pattern => (pattern, (sbyte) -1)))
                 .Concat(_patternExtractor.GetMatchingPatterns(wantedAlternatives, 2)
-                    .Select(x => (x, (sbyte)1)))
+                    .Select(pattern => (pattern, (sbyte) 1)))
                 .Concat(_patternExtractor.GetMatchingPatterns(unwanted, 2)
-                    .Select(x => (x, (sbyte)-1)))
+                    .Select(pattern => (pattern, (sbyte) -1)))
                 .Concat(_patternExtractor.GetMatchingPatterns(wantedAlternatives, 3)
-                    .Select(x => (x, (sbyte)1)))
+                    .Select(pattern => (pattern, (sbyte) 1)))
                 .Concat(_patternExtractor.GetMatchingPatterns(unwanted, 3)
-                    .Select(x => (x, (sbyte)-1)))
+                    .Select(pattern => (pattern, (sbyte) -1)))
                 .Concat(_patternExtractor.GetMatchingPatterns(wantedAlternatives, 4)
-                    .Select(x => (x, (sbyte)1)))
+                    .Select(pattern => (pattern, (sbyte) 1)))
                 .Concat(_patternExtractor.GetMatchingPatterns(unwanted, 4)
-                    .Select(x => (x, (sbyte)-1)))
-                    .ToList();
+                    .Select(pattern => (pattern, (sbyte) -1)))
+                .GroupBy(sp => sp.Item1)
+                .Select(spg => (spg.Key, (sbyte) spg.Sum(sp => sp.Item2)))
+                .Where(sp => sp.Item2 != 0)
+                .ToList();
         }
     }
 }

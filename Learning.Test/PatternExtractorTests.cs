@@ -12,6 +12,8 @@ namespace Lingua.Learning.Test
 
         [TestCase("N", "N*", "N")]
         [TestCase("Nn", "N*", "Nn")]
+        [TestCase("NN", "N*", "N")]
+        [TestCase("AAA", "A*", "A")]
         public void ExtractMonoPatterns(string from, params string[] expected)
         {
             var atoms = Decode(from);
