@@ -36,11 +36,7 @@ namespace Lingua.Learning
                 .Concat(_patternExtractor.GetMatchingPatterns(unwanted, 4)
                     .Select(pattern => (pattern, (sbyte) -1)));
             var allPAtterns = monopatterns.Concat(multipatterns).ToArray();
-            return allPAtterns
-                .GroupBy(sp => sp.Item1)
-                .Select(spg => (spg.Key, (sbyte) spg.Sum(sp => sp.Item2)))
-                .Where(sp => sp.Item2 != 0)
-                .ToList();
+            return allPAtterns.ToList();
         }
     }
 }

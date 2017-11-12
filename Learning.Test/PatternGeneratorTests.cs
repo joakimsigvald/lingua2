@@ -41,7 +41,9 @@ namespace Lingua.Learning.Test
         [TestCase(new[] { "A" }, new[] { "B" })]
         [TestCase(new[] { "A", "B" }, new[] { "C" })]
         [TestCase(new[] { "A" }, new[] { "B", "C" })]
-        public void GivenDifferentWantedAndUnwantedMonoPatterns_GenerateThosePatternsWithScore_PlusOrMinus_1(
+        [TestCase(new[] { "A" }, new[] { "A" })]
+        [TestCase(new[] { "A", "B" }, new[] { "A", "C" })]
+        public void GivenWantedAndUnwantedMonoPatterns_GenerateThosePatternsWithScore_PlusOrMinus_1(
             string[] wantedMonoPatterns
             , string[] unwantedMonoPatterns)
         {
@@ -54,8 +56,6 @@ namespace Lingua.Learning.Test
                 .Select(sp => sp.Item1), Is.EquivalentTo(unwantedMonoPatterns));
         }
 
-        [TestCase(new[] { "A" }, new[] { "A" })]
-        [TestCase(new[] { "A", "B" }, new[] { "A", "C" })]
         public void GivenOverlappingWantedAndUnwantedMonoPatterns_GenerateNonOverlappingPatternsWithScore_PlusOrMinus_1(
             string[] wantedMonoPatterns
             , string[] unwantedMonoPatterns)
