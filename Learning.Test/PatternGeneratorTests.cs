@@ -32,7 +32,7 @@ namespace Lingua.Learning.Test
         [TestCase("A", "B")]
         public void GivenUnwantedMonoPatterns_GenerateThosePatternsWithScore_Minus_1(params string[] unwantedMonoPatterns)
         {
-            var scoredPatterns = GetScoredPatterns(unwantedMonoPatterns: unwantedMonoPatterns);
+            var scoredPatterns = GetScoredPatterns(unwantedPatterns: unwantedMonoPatterns);
             Assert.That(scoredPatterns.Select(sp => sp.Item1), Is.EquivalentTo(unwantedMonoPatterns));
             Assert.That(scoredPatterns.All(sp => sp.Item2 == -1));
         }
@@ -68,30 +68,78 @@ namespace Lingua.Learning.Test
                 .Select(sp => sp.Item1), Is.EquivalentTo(distinctPatterns));
         }
 
+        [TestCase("^A", "A")]
+        [TestCase("^AA", "AA")]
+        [TestCase("^A", "A", "^AA", "AA")]
+        [TestCase("A", "AB", "ABC", "^ABC")]
+        public void GivenMixedWantedPatterns_GenerateThosePatternsWithScore_1(params string[] wantedPatterns)
+        {
+            var scoredPatterns = GetScoredPatterns(wantedPatterns);
+            Assert.That(scoredPatterns.Select(sp => sp.Item1), Is.EquivalentTo(wantedPatterns));
+            Assert.That(scoredPatterns.All(sp => sp.Item2 == 1));
+        }
+
         private static IList<(string, sbyte)> GetScoredPatterns(
-            IEnumerable<string> wantedMonoPatterns = null
-            , IEnumerable<string> unwantedMonoPatterns = null) 
-            => CreatePatternGenerator(wantedMonoPatterns, unwantedMonoPatterns)
+            IReadOnlyCollection<string> wantedPatterns = null
+            , IReadOnlyCollection<string> unwantedPatterns = null) 
+            => CreatePatternGenerator(
+                wantedPatterns ?? new string[0]
+                , unwantedPatterns ?? new string[0])
             .GetMatchingPatterns(null);
 
         private static PatternGenerator CreatePatternGenerator(
-            IEnumerable<string> wantedMonoPatterns = null
-            , IEnumerable<string> unwantedMonoPatterns = null) 
-            => new PatternGenerator(MockTranslationExtractor(), MockPatternExtractor(wantedMonoPatterns, unwantedMonoPatterns));
+            IReadOnlyCollection<string> wantedPatterns
+            , IReadOnlyCollection<string> unwantedPatterns) 
+            => new PatternGenerator(MockTranslationExtractor(), MockPatternExtractor(wantedPatterns, unwantedPatterns));
 
         private static IPatternExtractor MockPatternExtractor(
-            IEnumerable<string> wantedMonoPatterns = null
-            , IEnumerable<string> unwantedMonoPatterns = null)
+            IReadOnlyCollection<string> wantedPatterns
+            , IReadOnlyCollection<string> unwantedPatterns)
         {
             var patternExtractorMock = new Mock<IPatternExtractor>();
             patternExtractorMock.SetReturnsDefault(new string[0]);
-            patternExtractorMock.Setup(extractor => extractor.GetMatchingMonoPatterns(
-                    It.Is<IEnumerable<Translation>>(v => v.Contains(WantedTranslation))))
-                .Returns(wantedMonoPatterns);
-            patternExtractorMock.Setup(extractor => extractor.GetMatchingMonoPatterns(
-                    It.Is<IEnumerable<Translation>>(v => v.Contains(UnwantedTranslation))))
-                .Returns(unwantedMonoPatterns);
+            MockPatterns(patternExtractorMock, WantedTranslation, wantedPatterns);
+            MockPatterns(patternExtractorMock, UnwantedTranslation, unwantedPatterns);
             return patternExtractorMock.Object;
+        }
+
+        private static void MockPatterns(
+            Mock<IPatternExtractor> patternExtractorMock
+            , Translation translation
+            , IReadOnlyCollection<string> patterns)
+        {
+            var monopatterns = patterns.Where(p => p.Length == 1).ToArray();
+            MockMonoPatterns(patternExtractorMock, translation, monopatterns);
+            var multipatterns = patterns.Except(monopatterns).ToArray();
+            var length = 1;
+            while (multipatterns.Any())
+            {
+                length++;
+                var next = multipatterns.Where(p => p.Length == length).ToArray();
+                multipatterns = multipatterns.Except(next).ToArray();
+                MockMultipatterns(patternExtractorMock, translation, next, length);
+            }
+        }
+
+        private static void MockMonoPatterns(
+            Mock<IPatternExtractor> patternExtractorMock
+            , Translation translation
+            , IEnumerable<string> patterns)
+        {
+            patternExtractorMock.Setup(extractor => extractor.GetMatchingMonoPatterns(
+                    It.Is<IEnumerable<Translation>>(v => v.Contains(translation))))
+                .Returns(patterns);
+        }
+
+        private static void MockMultipatterns(
+            Mock<IPatternExtractor> patternExtractorMock
+            , Translation translation
+            , IEnumerable<string> patterns
+            , int length)
+        {
+            patternExtractorMock.Setup(extractor => extractor.GetMatchingPatterns(
+                    It.Is<ICollection<Translation[]>>(v => v.Single().Contains(translation)), length))
+                .Returns(patterns);
         }
 
         private static ITranslationExtractor MockTranslationExtractor()

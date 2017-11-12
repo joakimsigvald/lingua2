@@ -18,12 +18,13 @@ namespace Lingua.Learning
         {
             var wantedAlternatives = _translationExtractor.GetWantedTranslations(result).ToList();
             var unwanted = _translationExtractor.GetUnwantedTranslations(result).ToList();
-            return _patternExtractor.GetMatchingMonoPatterns(wantedAlternatives.SelectMany(a => a).ToArray())
+            var monopatterns = _patternExtractor
+                .GetMatchingMonoPatterns(wantedAlternatives.SelectMany(a => a).ToArray())
                 .Select(pattern => (pattern, (sbyte) 1))
                 .Concat(_patternExtractor.GetMatchingMonoPatterns(unwanted)
-                    .Select(pattern => (pattern, (sbyte) -1)))
-                .Concat(_patternExtractor.GetMatchingPatterns(wantedAlternatives, 2)
-                    .Select(pattern => (pattern, (sbyte) 1)))
+                    .Select(pattern => (pattern, (sbyte) -1)));
+            var multipatterns = _patternExtractor.GetMatchingPatterns(wantedAlternatives, 2)
+                    .Select(pattern => (pattern, (sbyte) 1))
                 .Concat(_patternExtractor.GetMatchingPatterns(unwanted, 2)
                     .Select(pattern => (pattern, (sbyte) -1)))
                 .Concat(_patternExtractor.GetMatchingPatterns(wantedAlternatives, 3)
@@ -33,7 +34,9 @@ namespace Lingua.Learning
                 .Concat(_patternExtractor.GetMatchingPatterns(wantedAlternatives, 4)
                     .Select(pattern => (pattern, (sbyte) 1)))
                 .Concat(_patternExtractor.GetMatchingPatterns(unwanted, 4)
-                    .Select(pattern => (pattern, (sbyte) -1)))
+                    .Select(pattern => (pattern, (sbyte) -1)));
+            var allPAtterns = monopatterns.Concat(multipatterns).ToArray();
+            return allPAtterns
                 .GroupBy(sp => sp.Item1)
                 .Select(spg => (spg.Key, (sbyte) spg.Sum(sp => sp.Item2)))
                 .Where(sp => sp.Item2 != 0)
