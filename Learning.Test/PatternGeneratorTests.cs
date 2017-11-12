@@ -56,19 +56,6 @@ namespace Lingua.Learning.Test
                 .Select(sp => sp.Item1), Is.EquivalentTo(unwantedMonoPatterns));
         }
 
-        public void GivenOverlappingWantedAndUnwantedMonoPatterns_GenerateNonOverlappingPatternsWithScore_PlusOrMinus_1(
-            string[] wantedMonoPatterns
-            , string[] unwantedMonoPatterns)
-        {
-            var distinctPatterns = wantedMonoPatterns.Except(unwantedMonoPatterns)
-                .Concat(unwantedMonoPatterns.Except(wantedMonoPatterns))
-                .Distinct()
-                .ToArray();
-            var scoredPatterns = GetScoredPatterns(wantedMonoPatterns, unwantedMonoPatterns);
-            Assert.That(scoredPatterns
-                .Select(sp => sp.Item1), Is.EquivalentTo(distinctPatterns));
-        }
-
         [TestCase("^A", "A")]
         [TestCase("^AA", "AA")]
         [TestCase("^A", "A", "^AA", "AA")]

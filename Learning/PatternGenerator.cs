@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using Lingua.Core;
 
 namespace Lingua.Learning
 {
@@ -23,20 +24,23 @@ namespace Lingua.Learning
                 .Select(pattern => (pattern, (sbyte) 1))
                 .Concat(_patternExtractor.GetMatchingMonoPatterns(unwanted)
                     .Select(pattern => (pattern, (sbyte) -1)));
-            var multipatterns = _patternExtractor.GetMatchingPatterns(wantedAlternatives, 2)
-                    .Select(pattern => (pattern, (sbyte) 1))
-                .Concat(_patternExtractor.GetMatchingPatterns(unwanted, 2)
-                    .Select(pattern => (pattern, (sbyte) -1)))
-                .Concat(_patternExtractor.GetMatchingPatterns(wantedAlternatives, 3)
-                    .Select(pattern => (pattern, (sbyte) 1)))
-                .Concat(_patternExtractor.GetMatchingPatterns(unwanted, 3)
-                    .Select(pattern => (pattern, (sbyte) -1)))
-                .Concat(_patternExtractor.GetMatchingPatterns(wantedAlternatives, 4)
-                    .Select(pattern => (pattern, (sbyte) 1)))
-                .Concat(_patternExtractor.GetMatchingPatterns(unwanted, 4)
-                    .Select(pattern => (pattern, (sbyte) -1)));
+            var multipatterns =
+                Enumerable.Range(1, 2)
+                    .SelectMany(score =>
+                        Enumerable.Range(2, 3)
+                            .SelectMany(length => GetMultiPatterns(wantedAlternatives, unwanted, length, score)));
             var allPAtterns = monopatterns.Concat(multipatterns).ToArray();
             return allPAtterns.ToList();
         }
+
+        private IEnumerable<(string, sbyte)> GetMultiPatterns(
+            ICollection<Translation[]> wantedAlternatives
+            , ICollection<Translation> unwanted
+            , int length
+            , int score)
+            => _patternExtractor.GetMatchingPatterns(wantedAlternatives, length)
+                .Select(pattern => (pattern, (sbyte) score))
+                .Concat(_patternExtractor.GetMatchingPatterns(unwanted, length)
+                    .Select(pattern => (pattern, (sbyte) -score)));
     }
 }

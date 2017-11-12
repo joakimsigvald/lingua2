@@ -4,7 +4,8 @@ namespace Lingua.Core
 {
     public interface IReason
     {
-        IEnumerable<IEvaluation> Evaluations { get; }
+        IList<IEvaluation> Evaluations { get; }
         ushort[] Code { get; }
+        string Pattern { get; }
     }
 }
