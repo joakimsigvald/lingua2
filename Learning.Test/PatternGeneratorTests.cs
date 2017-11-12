@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Moq;
 using NUnit.Framework;
@@ -72,11 +73,22 @@ namespace Lingua.Learning.Test
         [TestCase("^AA", "AA")]
         [TestCase("^A", "A", "^AA", "AA")]
         [TestCase("A", "AB", "ABC", "^ABC")]
-        public void GivenMixedWantedPatterns_GenerateThosePatternsWithScore_1(params string[] wantedPatterns)
+        public void GivenMixedWantedPatterns_GenerateThosePatternsWithScore_1(params string[] patterns)
         {
-            var scoredPatterns = GetScoredPatterns(wantedPatterns);
-            Assert.That(scoredPatterns.Select(sp => sp.Item1), Is.EquivalentTo(wantedPatterns));
+            var scoredPatterns = GetScoredPatterns(patterns);
+            Assert.That(scoredPatterns.Select(sp => sp.Item1), Is.EquivalentTo(patterns));
             Assert.That(scoredPatterns.All(sp => sp.Item2 == 1));
+        }
+
+        [TestCase("^A", "A")]
+        [TestCase("^AA", "AA")]
+        [TestCase("^A", "A", "^AA", "AA")]
+        [TestCase("A", "AB", "ABC", "^ABC")]
+        public void GivenMixedUnwantedPatterns_GenerateThosePatternsWithScore_Minus_1(params string[] patterns)
+        {
+            var scoredPatterns = GetScoredPatterns(unwantedPatterns: patterns);
+            Assert.That(scoredPatterns.Select(sp => sp.Item1), Is.EquivalentTo(patterns));
+            Assert.That(scoredPatterns.All(sp => sp.Item2 == -1));
         }
 
         private static IList<(string, sbyte)> GetScoredPatterns(
@@ -98,14 +110,15 @@ namespace Lingua.Learning.Test
         {
             var patternExtractorMock = new Mock<IPatternExtractor>();
             patternExtractorMock.SetReturnsDefault(new string[0]);
-            MockPatterns(patternExtractorMock, WantedTranslation, wantedPatterns);
-            MockPatterns(patternExtractorMock, UnwantedTranslation, unwantedPatterns);
+            MockPatterns(patternExtractorMock, WantedTranslation, MockWantedMultipatterns, wantedPatterns);
+            MockPatterns(patternExtractorMock, UnwantedTranslation, MockUnwantedMultipatterns, unwantedPatterns);
             return patternExtractorMock.Object;
         }
 
         private static void MockPatterns(
             Mock<IPatternExtractor> patternExtractorMock
             , Translation translation
+            , Action<Mock<IPatternExtractor>, IReadOnlyCollection<string>, int> mockMultiPatterns
             , IReadOnlyCollection<string> patterns)
         {
             var monopatterns = patterns.Where(p => p.Length == 1).ToArray();
@@ -117,7 +130,7 @@ namespace Lingua.Learning.Test
                 length++;
                 var next = multipatterns.Where(p => p.Length == length).ToArray();
                 multipatterns = multipatterns.Except(next).ToArray();
-                MockMultipatterns(patternExtractorMock, translation, next, length);
+                mockMultiPatterns(patternExtractorMock, next, length);
             }
         }
 
@@ -131,14 +144,23 @@ namespace Lingua.Learning.Test
                 .Returns(patterns);
         }
 
-        private static void MockMultipatterns(
+        private static void MockWantedMultipatterns(
             Mock<IPatternExtractor> patternExtractorMock
-            , Translation translation
             , IEnumerable<string> patterns
             , int length)
         {
             patternExtractorMock.Setup(extractor => extractor.GetMatchingPatterns(
-                    It.Is<ICollection<Translation[]>>(v => v.Single().Contains(translation)), length))
+                    It.Is<ICollection<Translation[]>>(v => v.Single().Single() == WantedTranslation), length))
+                .Returns(patterns);
+        }
+
+        private static void MockUnwantedMultipatterns(
+            Mock<IPatternExtractor> patternExtractorMock
+            , IEnumerable<string> patterns
+            , int length)
+        {
+            patternExtractorMock.Setup(extractor => extractor.GetMatchingPatterns(
+                    It.Is<ICollection<Translation>>(v => v.Single() == UnwantedTranslation), length))
                 .Returns(patterns);
         }
 
