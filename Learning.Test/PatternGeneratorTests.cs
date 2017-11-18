@@ -63,8 +63,9 @@ namespace Lingua.Learning.Test
         public void GivenMixedWantedPatterns_GenerateThosePatternsWithScore_1(params string[] patterns)
         {
             var scoredPatterns = GetScoredPatterns(patterns);
-            Assert.That(scoredPatterns.Select(sp => sp.Item1), Is.EquivalentTo(patterns));
-            Assert.That(scoredPatterns.All(sp => sp.Item2 == 1));
+            Assert.That(scoredPatterns
+                .Where(sp => sp.Item2 == 1)
+                .Select(sp => sp.Item1), Is.EquivalentTo(patterns));
         }
 
         [TestCase("^A", "A")]
@@ -74,8 +75,9 @@ namespace Lingua.Learning.Test
         public void GivenMixedUnwantedPatterns_GenerateThosePatternsWithScore_Minus_1(params string[] patterns)
         {
             var scoredPatterns = GetScoredPatterns(unwantedPatterns: patterns);
-            Assert.That(scoredPatterns.Select(sp => sp.Item1), Is.EquivalentTo(patterns));
-            Assert.That(scoredPatterns.All(sp => sp.Item2 == -1));
+            Assert.That(scoredPatterns
+                .Where(sp => sp.Item2 == -1)
+                .Select(sp => sp.Item1), Is.EquivalentTo(patterns));
         }
 
         private static IList<(string, sbyte)> GetScoredPatterns(
