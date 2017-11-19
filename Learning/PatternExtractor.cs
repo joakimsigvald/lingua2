@@ -9,7 +9,6 @@ namespace Lingua.Learning
     public interface IPatternExtractor
     {
         IEnumerable<string> GetMatchingMonoPatterns(IEnumerable<Translation> translations);
-        IEnumerable<string> GetMatchingPatterns(ICollection<Translation[]> candidates, int length);
         IEnumerable<string> GetMatchingPatterns(ICollection<Translation> sequence, int length);
     }
 
@@ -23,10 +22,6 @@ namespace Lingua.Learning
 
         public IEnumerable<string> GetMatchingPatterns(ICollection<Translation> sequence, int length)
             => GetMatchingSnippets(sequence, length)
-                .Select(Encoder.Serialize);
-
-        public IEnumerable<string> GetMatchingPatterns(ICollection<Translation[]> candidates, int length)
-            => GetMatchingSnippets(candidates, length)
                 .Select(Encoder.Serialize);
 
         private static IEnumerable<ushort[]> GetMatchingMonoCodes(IEnumerable<Translation> translations)
@@ -61,44 +56,6 @@ namespace Lingua.Learning
         private static IEnumerable<ushort[]> GetSnippets(ICollection<Translation> sequence, int length)
             => Enumerable.Range(0, sequence.Count + 1 - length)
                 .Select(i => Encode(sequence.Skip(i).Take(length)));
-
-        private static IEnumerable<ushort[]> GetMatchingSnippets(ICollection<Translation[]> candidates, int length)
-        {
-            if (candidates.Count < length - 1)
-                return new ushort[0][];
-
-            var startingCodes = GetStartingCodes(candidates, length - 1).ToList();
-            if (candidates.Count < length)
-                return startingCodes;
-
-            var nonStartingCodes = GetNonStartingCodes(candidates, length).ToList();
-            return startingCodes.Concat(nonStartingCodes);
-        }
-
-        private static IEnumerable<ushort[]> GetStartingCodes(IEnumerable<Translation[]> candidates, int length)
-            => MaskSnippets(GetFirstSnippets(candidates, length), length)
-                .Select(code => code.Prepend(Start.Code).ToArray());
-
-        private static IEnumerable<ushort[]> GetNonStartingCodes(ICollection<Translation[]> candidates, int length)
-            => MaskSnippets(GetSnippets(candidates, length), length)
-                .Distinct();
-
-        private static IEnumerable<ushort[]> GetSnippets(ICollection<Translation[]> candidates, int length)
-            => Enumerable.Range(0, candidates.Count + 1 - length)
-                .SelectMany(i => GetFirstSnippets(candidates.Skip(i), length));
-
-        private static IEnumerable<ushort[]> GetFirstSnippets(IEnumerable<Translation[]> candidates, int n)
-        {
-            var tree = Combine(candidates);
-            var paths = Expand(tree, n);
-            return paths.Where(path => path.Length == n);
-        }
-
-        private static TranslationTreeNode Combine(IEnumerable<Translation[]> candidates)
-            => new TranslationTreeNode(null, candidates.ToList());
-
-        private static IEnumerable<ushort[]> Expand(TranslationTreeNode node, int length)
-            => node.ExpandChildren(length).Select(l => Encode(l.Select(tn => tn.Translation)));
 
         private static ushort[] Encode(IEnumerable<Translation> translations)
             => translations.Select(translation => Encoder.Encode(translation.From)).ToArray();

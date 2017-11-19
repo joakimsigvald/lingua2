@@ -25,7 +25,7 @@ namespace Lingua.Learning.Test
         [TestCase("NV", "^N*", "^N", "N*V", "NV", "N*V*", "NV*")]
         public void ExtracTwinPatterns(string from, params string[] expected)
         {
-            var candidates = Decode(from).Select(t => new[] { t }).ToList();
+            var candidates = Decode(from);
             var patterns = PatternExtractor.GetMatchingPatterns(candidates, 2);
             Assert.That(patterns, Is.EquivalentTo(expected));
         }
@@ -35,20 +35,12 @@ namespace Lingua.Learning.Test
         [TestCase("ANV", "^A*N", "^AN", "^A*N*", "^AN*", "A*N*V*", "AN*V*", "A*NV*", "A*N*V", "A*NV", "AN*V", "ANV*", "ANV")]
         public void ExtracTripplePatterns(string from, params string[] expected)
         {
-            var candidates = Decode(from).Select(t => new [] {t}).ToList();
+            var candidates = Decode(from);
             var patterns = PatternExtractor.GetMatchingPatterns(candidates, 3);
             Assert.That(patterns, Is.EquivalentTo(expected));
         }
 
-        [TestCase("AN", "^A*", "^A", "^N*", "^N")]
-        [TestCase("AN,V", "^A*", "^A", "^N*", "^N", "A*V*", "A*V", "AV*", "AV", "N*V*", "N*V", "NV*", "NV")]
-        public void ExtracTwinCandidatePatterns(string from, params string[] expected)
-        {
-            var candidates = from.Split(',').Select(Decode).ToList();
-            var patterns = PatternExtractor.GetMatchingPatterns(candidates, 2);
-            Assert.That(patterns, Is.EquivalentTo(expected));
-        }
-
+        [TestCase("I have been running", "jag har sprungit", "R1XfVf")]
         [TestCase("I will be running", "jag kommer att springa", "R1XfVf")]
         public void Test(string from, string to, params string[] expectedPatterns)
         {

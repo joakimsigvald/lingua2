@@ -7,8 +7,8 @@ namespace Lingua.Learning
 
     public class TranslationExtractor : ITranslationExtractor
     {
-        public IEnumerable<Translation[]> GetWantedTranslations(TestCaseResult result)
-            => result?.ExpectedCandidates ?? Enumerable.Empty<Translation[]>();
+        public IEnumerable<Translation> GetWantedTranslations(TestCaseResult result)
+            => result?.ExpectedCandidates ?? Enumerable.Empty<Translation>();
 
         public IEnumerable<Translation> GetUnwantedTranslations(TestCaseResult result)
             => result?.Translations ?? Enumerable.Empty<Translation>();

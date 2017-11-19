@@ -1,6 +1,4 @@
-﻿using System.Linq;
-
-namespace Lingua.Learning
+﻿namespace Lingua.Learning
 {
     public class TestBench
     {
@@ -16,9 +14,9 @@ namespace Lingua.Learning
         public bool RunTestSuites()
         {
             var testCases = TestRunner.LoadTestCases();
-            var results = _testRunner.RunTestCases(testCases);
-            _reporter.Report(results);
-            return results.All(res => res.Success);
+            var result = _testRunner.RunTestCases(testCases);
+            _reporter.Report(result);
+            return result.Success;
         }
 
         public TestCaseResult RunTestCase(TestCase testCase)

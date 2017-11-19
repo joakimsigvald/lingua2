@@ -11,16 +11,18 @@ namespace Lingua.Learning.Test
             var trainer = new Trainer();
             var testCases = TestRunner.LoadTestCases();
             var res = trainer.RunTrainingSession(testCases);
-            Assert.That(res.Item1?.Success ?? true, $"Failed on {res.Item2}th case");
+            Assert.That(res.FailedCase?.Success ?? true, $"Failed on {res.SuccessCount + 1}th case");
         }
 
+        [TestCase("I have been running", "jag har sprungit")]
         [TestCase("I will be running", "jag kommer att springa")]
+        [TestCase("I will have been running", "jag kommer att ha sprungit")]
         public void Test(string from, string expected)
         {
             var trainer = new Trainer();
             var testCase = new TestCase(from, expected);
             var res = trainer.RunTrainingSession(testCase);
-            Assert.That(res.Item1?.Success ?? true, $"Failed on {res.Item2}th case");
+            Assert.That(res.FailedCase?.Success ?? true, $"Failed on {res.SuccessCount + 1}th case");
         }
     }
 }

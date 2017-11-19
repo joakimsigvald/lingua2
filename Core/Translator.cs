@@ -39,7 +39,7 @@ namespace Lingua.Core
                 Translations = translations,
                 Translation = Output(respacedResult),
                 Reason = reason,
-                Candidates = candidates
+                Possibilities = possibilities
             };
         }
 

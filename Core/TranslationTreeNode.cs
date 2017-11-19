@@ -20,7 +20,7 @@ namespace Lingua.Core
         public readonly Translation Translation;
         public readonly ushort Code;
 
-        public IEnumerable<TranslationTreeNode> Children => _lazyChildren.Value;
+        public IList<TranslationTreeNode> Children => _lazyChildren.Value;
 
         public IEnumerable<IList<TranslationTreeNode>> Expand(int depth)
             => ExpandChildren(depth).Select(seq => seq.Prepend(this).ToList());

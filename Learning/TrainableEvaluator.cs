@@ -33,5 +33,7 @@ namespace Lingua.Learning
                     node.Children.Remove(child);
             }
         }
+
+        public int PatternCount => ScoringTree.LeafCount;
     }
 }

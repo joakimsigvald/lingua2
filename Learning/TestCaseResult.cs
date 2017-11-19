@@ -10,7 +10,7 @@ namespace Lingua.Learning
 
         public TestCaseResult(TestCase testCase
             , TranslationResult translationResult
-            , IList<Translation[]> expectedCandidates)
+            , IList<Translation> expectedCandidates)
         {
             TestCase = testCase;
             _translationResult = translationResult;
@@ -23,8 +23,9 @@ namespace Lingua.Learning
         public string Actual => _translationResult.Translation;
         public bool Success => Actual == TestCase.Expected;
         public IReason Reason => _translationResult.Reason;
-        public IList<Translation[]> ExpectedCandidates { get; }
+        public IList<Translation> ExpectedCandidates { get; }
         public Translation[] Translations => _translationResult.Translations;
+        public int ScoreDeficit => 0;
 
         public override string ToString()
             => $"{From}=>{Expected}/{Actual}:{Success}";

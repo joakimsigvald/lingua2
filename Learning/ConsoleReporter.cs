@@ -6,9 +6,9 @@ namespace Lingua.Learning
 {
     public class ConsoleReporter : IReporter
     {
-        public void Report(IEnumerable<TestCaseResult> testCaseResults)
+        public void Report(TestSessionResult result)
         {
-            var testSuiteResults = GetTestSuiteResults(testCaseResults).ToList();
+            var testSuiteResults = GetTestSuiteResults(result).ToList();
             Console.WriteLine(testSuiteResults.All(r => r.Success) ? "Test succeeded!" : "Test failed!");
             Console.WriteLine();
             var failedSuites = testSuiteResults
@@ -19,14 +19,14 @@ namespace Lingua.Learning
             ReportPassed(testSuiteResults.ToList());
         }
 
-        private IEnumerable<TestSuiteResult> GetTestSuiteResults(IEnumerable<TestCaseResult> testCaseResults)
-            => testCaseResults
+        private IEnumerable<TestSuiteResult> GetTestSuiteResults(TestSessionResult result)
+            => result.Results
                 .GroupBy(r => r.TestCase.Suite)
                 .Select(g => new TestSuiteResult
                 {
                     Caption = g.Key,
-                    Succeeded = g.Where(result => result.Success).ToList(),
-                    Failed = g.Where(result => !result.Success).ToList()
+                    Succeeded = g.Where(tcr => result.Success).ToList(),
+                    Failed = g.Where(tcr => !result.Success).ToList()
                 });
 
         private static void ReportFailed(List<TestSuiteResult> failedSuites)

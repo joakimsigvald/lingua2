@@ -8,21 +8,36 @@ namespace Lingua.Learning
 
     public static class CandidateFilter
     {
-        public static IEnumerable<Translation[]> FilterCandidates(
-            ICollection<Translation[]> candidates
-            , Token[] toTokens)
-            => candidates == null || candidates.Count != toTokens.Length
-                ? candidates
-                : candidates.Select((c, i) => FilterTranslations(c, toTokens, i).ToArray());
+        public static IEnumerable<Translation> FilterCandidates(
+            TranslationTreeNode possibilities
+            , IEnumerable<Token> toTokens)
+            => possibilities == null
+                ? null
+                : FilterCandidates(possibilities.Children, string.Join(" ", toTokens.Select(t => t.Value)));
 
-        private static IEnumerable<Translation> FilterTranslations(
-            IEnumerable<Translation> translations,
-            Token[] toTokens, int index)
-            => translations.Where(t => Matches(t, toTokens, index));
+        private static IEnumerable<Translation> FilterCandidates(
+            ICollection<TranslationTreeNode> candidates
+            , string translated)
+        {
+            if (!candidates.Any())
+                return string.IsNullOrWhiteSpace(translated) ? new Translation[0] : null;
+            var matchingCandidates = candidates.Where(tn => translated.Contains(tn.Translation.Output))
+                .OrderByDescending(tn => tn.Translation.Output.Length)
+                .ToArray();
+            return matchingCandidates.Append(candidates.First())
+                    .Select(tn => FilterPossibilities(tn, translated))
+                    .NotNull()
+                    .FirstOrDefault();
+        }
 
-        private static bool Matches(
-            Translation translation,
-            Token[] toTokens, int index)
-            => translation.Output == string.Join(" ", toTokens.Skip(index).Take(translation.WordCount).Select(t => t.Value));
+        private static IEnumerable<Translation> FilterPossibilities(
+            TranslationTreeNode possibilities
+            , string translated)
+            => FilterCandidates(possibilities.Children,
+                    Remove(translated, possibilities.Translation.Output))
+                ?.Prepend(possibilities.Translation);
+
+        private static string Remove(string translated, string output)
+            => string.IsNullOrEmpty(output) ? translated : translated.Replace(output, "");
     }
 }

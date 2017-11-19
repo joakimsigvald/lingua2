@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 
 namespace Lingua.Learning
 {
@@ -24,37 +23,37 @@ namespace Lingua.Learning
             _patternGenerator = new PatternGenerator(new TranslationExtractor(), new PatternExtractor());
         }
 
-        public (TestCaseResult, int) RunTrainingSession(params TestCase[] testCases)
+        public TestSessionResult RunTrainingSession(params TestCase[] testCases)
         {
             _testRunner = new TestRunner(_translator, _tokenizer, true);
             IEnumerator<(string, sbyte)> scoredPatterns = new List<(string, sbyte)>().GetEnumerator();
-            var runTestsCount = 0;
+            var previousResult = new TestSessionResult();
             (string currentPattern, sbyte currentScore) = (null, 0);
-            TestCaseResult[] results;
-            TestCaseResult failedCase = null;
-            while (!(results = _testRunner.RunTestCases(testCases)).All(result => result.Success))
+            TestSessionResult result;
+            while (!(result = _testRunner.RunTestCases(testCases)).Success)
             {
-                var lastFailedCase = results.Last();
-                if (results.Length > runTestsCount)
+                if (result > previousResult)
                 {
-                    failedCase = lastFailedCase;
                     (currentPattern, currentScore) = (null, 0);
                     scoredPatterns.Dispose();
-                    scoredPatterns = EnumerateMatchingPatterns(failedCase);
-                    runTestsCount = results.Length;
+                    if (result.SuccessCount > previousResult.SuccessCount)
+                        scoredPatterns = EnumerateMatchingPatterns(result.FailedCase);
+                    else scoredPatterns.Reset();
+                    previousResult = result;
                 }
+                var lastFailedCase = result.FailedCase;
                 do
                 {
                     _evaluator.UpdateScore(currentPattern, (sbyte)-currentScore);
                     if (!scoredPatterns.MoveNext())
-                        return (failedCase, runTestsCount);
+                        return result;
                     (currentPattern, currentScore) = scoredPatterns.Current;
                     _evaluator.UpdateScore(currentPattern, currentScore);
                     lastFailedCase = _testRunner.RunTestCase(lastFailedCase.TestCase);
                 } while (!lastFailedCase.Success);
             }
             scoredPatterns.Dispose();
-            return (null, runTestsCount);
+            return result;
         }
 
         private IEnumerator<(string, sbyte)> EnumerateMatchingPatterns(TestCaseResult result)

@@ -26,30 +26,31 @@ namespace Lingua.Learning
                 }))
                 .ToArray();
 
-        public TestCaseResult[] RunTestCases(IEnumerable<TestCase> testCases)
-        {
-            TestCaseResult prevResult = null;
-            return testCases
-                .Select(RunTestCase)
-                .TakeWhile(result =>
-                {
-                    var abort = !_abortOnFail || (prevResult?.Success ?? true);
-                    prevResult = result;
-                    return abort;
-                })
-                .ToArray();
-        }
+        public TestSessionResult RunTestCases(IEnumerable<TestCase> testCases)
+            => new TestSessionResult(RunTestCases(testCases, null).ToArray());
 
         public TestCaseResult RunTestCase(TestCase testCase)
         {
             var expectedTokens = _tokenizer.Tokenize(testCase.Expected).ToArray();
             var translationResult = _translator.Translate(testCase.From);
             var expectedCandidates = CandidateFilter
-                .FilterCandidates(translationResult.Candidates, expectedTokens)
+                .FilterCandidates(translationResult.Possibilities, expectedTokens)
                 ?.ToArray();
             return new TestCaseResult(testCase
                 , _translator.Translate(testCase.From)
                 , expectedCandidates);
         }
+
+        private IEnumerable<TestCaseResult> RunTestCases(
+            IEnumerable<TestCase> testCases
+            , TestCaseResult prevResult) 
+            => testCases
+                .Select(RunTestCase)
+                .TakeWhile(result =>
+                {
+                    var abort = !_abortOnFail || (prevResult?.Success ?? true);
+                    prevResult = result;
+                    return abort;
+                });
     }
 }

@@ -48,10 +48,10 @@ namespace Lingua.Main
         private static void RunTrainingSession()
         {
             var testCases = TestRunner.LoadTestCases();
-            (var failedTestCase, var runTestCount) = Trainer.RunTrainingSession(testCases);
-            Console.WriteLine(failedTestCase != null
-                ? $"Failed on test case {runTestCount}: Expected'{failedTestCase.Expected}' but was '{failedTestCase.Actual}'"
-                : $"Successfully completed training session with {runTestCount} cases!");
+            var result = Trainer.RunTrainingSession(testCases);
+            Console.WriteLine(result.FailedCase != null
+                ? $"Failed on test case {result.SuccessCount + 1}: Expected'{result.FailedCase.Expected}' but was '{result.FailedCase.Actual}'"
+                : $"Successfully completed training session with {result.SuccessCount} cases!");
             Console.ReadKey();
         }
 

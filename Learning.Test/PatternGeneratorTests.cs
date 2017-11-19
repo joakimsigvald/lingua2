@@ -139,7 +139,7 @@ namespace Lingua.Learning.Test
             , int length)
         {
             patternExtractorMock.Setup(extractor => extractor.GetMatchingPatterns(
-                    It.Is<ICollection<Translation[]>>(v => v.Single().Single() == WantedTranslation), length))
+                    It.Is<ICollection<Translation>>(v => v.Single() == WantedTranslation), length))
                 .Returns(patterns);
         }
 
@@ -157,7 +157,7 @@ namespace Lingua.Learning.Test
         {
             var translationExtractorMock = new Mock<ITranslationExtractor>();
             translationExtractorMock.Setup(extractor => extractor.GetWantedTranslations(null))
-                .Returns(new[] { new[] { WantedTranslation } });
+                .Returns(new[] { WantedTranslation });
             translationExtractorMock.Setup(extractor => extractor.GetUnwantedTranslations(null))
                 .Returns(new[] { UnwantedTranslation });
             return translationExtractorMock.Object;

@@ -36,6 +36,7 @@ namespace Lingua.Core.Test
         [TestCase("|It is my pen| /=> |Det är min penna|")]
         [TestCase("|I am painting the wall| /=> |jag målar väggen|")]
         [TestCase("|search results| /=> |sökresultat|")]
+        [TestCase("|I have been running| /=> |jag har sprungit|")]
         public void RunTestCase(string testCase)
         {
             var parts = Regex.Split(testCase, @"\s+/=>\s+");
@@ -73,7 +74,7 @@ namespace Lingua.Core.Test
 
     internal class FakeReporter : IReporter
     {
-        public void Report(IEnumerable<TestCaseResult> testCaseResults)
+        public void Report(TestSessionResult result)
         {
             // Nope
         }

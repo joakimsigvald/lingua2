@@ -6,7 +6,7 @@ namespace Lingua.Learning
 
     public interface ITranslationExtractor
     {
-        IEnumerable<Translation[]> GetWantedTranslations(TestCaseResult result);
+        IEnumerable<Translation> GetWantedTranslations(TestCaseResult result);
         IEnumerable<Translation> GetUnwantedTranslations(TestCaseResult result);
     }
 }

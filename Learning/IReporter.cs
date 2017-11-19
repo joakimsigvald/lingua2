@@ -1,9 +1,7 @@
-﻿using System.Collections.Generic;
-
-namespace Lingua.Learning
+﻿namespace Lingua.Learning
 {
     public interface IReporter
     {
-        void Report(IEnumerable<TestCaseResult> testCaseResults);
+        void Report(TestSessionResult result);
     }
 }
