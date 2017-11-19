@@ -27,26 +27,28 @@ namespace Lingua.Learning
         {
             _testRunner = new TestRunner(_translator, _tokenizer, _evaluator, true);
             IEnumerator<(string, sbyte)> scoredPatterns = new List<(string, sbyte)>().GetEnumerator();
-            var previousResult = new TestSessionResult();
+            var bestResult = new TestSessionResult();
             (string currentPattern, sbyte currentScore) = (null, 0);
             TestSessionResult result;
             while (!(result = Evaluate(testCases)).Success)
             {
-                if (result > previousResult)
+                if (result > bestResult)
                 {
                     (currentPattern, currentScore) = (null, 0);
-                    scoredPatterns.Dispose();
-                    if (result.SuccessCount > previousResult.SuccessCount)
+                    if (result.SuccessCount > bestResult.SuccessCount)
+                    {
+                        scoredPatterns.Dispose();
                         scoredPatterns = EnumerateMatchingPatterns(result.FailedCase);
+                    }
                     else scoredPatterns.Reset();
-                    previousResult = result;
+                    bestResult = result;
                 }
                 var lastFailedCase = result.FailedCase;
                 do
                 {
                     _evaluator.UpdateScore(currentPattern, (sbyte)-currentScore);
                     if (!scoredPatterns.MoveNext())
-                        return result;
+                        return bestResult;
                     (currentPattern, currentScore) = scoredPatterns.Current;
                     _evaluator.UpdateScore(currentPattern, currentScore);
                     lastFailedCase = _testRunner.RunTestCase(lastFailedCase.TestCase);
