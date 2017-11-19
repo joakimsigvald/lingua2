@@ -13,7 +13,8 @@ namespace Lingua.Learning
             , IEnumerable<Token> toTokens)
             => possibilities == null
                 ? null
-                : FilterCandidates(possibilities.Children, string.Join(" ", toTokens.Select(t => t.Value)));
+                : FilterCandidates(possibilities.Children
+                    , string.Join(" ", toTokens.Select(t => t.Value)).ToLower());
 
         private static IEnumerable<Translation> FilterCandidates(
             ICollection<TranslationTreeNode> candidates
@@ -21,7 +22,7 @@ namespace Lingua.Learning
         {
             if (!candidates.Any())
                 return string.IsNullOrWhiteSpace(translated) ? new Translation[0] : null;
-            var matchingCandidates = candidates.Where(tn => translated.Contains(tn.Translation.Output))
+            var matchingCandidates = candidates.Where(tn => translated.Contains(tn.Translation.Output.ToLower()))
                 .OrderByDescending(tn => tn.Translation.Output.Length)
                 .ToArray();
             return matchingCandidates.Append(candidates.First())
@@ -38,6 +39,6 @@ namespace Lingua.Learning
                 ?.Prepend(possibilities.Translation);
 
         private static string Remove(string translated, string output)
-            => string.IsNullOrEmpty(output) ? translated : translated.Replace(output, "");
+            => string.IsNullOrEmpty(output) ? translated : translated.Replace(output.ToLower(), "");
     }
 }

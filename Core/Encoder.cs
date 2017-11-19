@@ -15,6 +15,9 @@ namespace Lingua.Core
         public static ushort[] Encode(string serial)
             => Encode(Deserialize(serial)).ToArray();
 
+        public static IEnumerable<ushort> Encode(IEnumerable<Translation> translations)
+            => Encode(translations.Select(t => t.From));
+
         public static IEnumerable<ushort> Encode(IEnumerable<Token> tokens)
             => tokens.Select(Encode);
 

@@ -8,6 +8,8 @@ namespace Lingua.Learning.Test
     {
         [TestCase("I have been running", "jag har sprungit", "I", "have", "been", "running")]
         [TestCase("I will be running", "jag kommer att springa", "I", "will be", "running")]
+        [TestCase("The balls' colour", "Bollarnas färg", "The", "balls'", "colour")]
+        [TestCase("Bouncing ball to play with", "Studsboll att leka med", "Bouncing ball", "to", "play", "with")]
         public void Test(string from, string to, params string[] expectedCandidates)
         {
             var translationResult = TestHelper.Translator.Translate(from);

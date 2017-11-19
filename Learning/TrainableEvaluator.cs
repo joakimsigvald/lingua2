@@ -35,5 +35,14 @@ namespace Lingua.Learning
         }
 
         public int PatternCount => ScoringTree.LeafCount;
+
+        public int ComputeScoreDeficit(TestCaseResult failedCase)
+        {
+            var expected = Encoder.Encode(failedCase.ExpectedCandidates).ToArray();
+            var actual = Encoder.Encode(failedCase.Translations).ToArray();
+            var expectedScore = Evaluate(expected).Score;
+            var actualScore = Evaluate(actual).Score;
+            return actualScore - expectedScore;
+        }
     }
 }

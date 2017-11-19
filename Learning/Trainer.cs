@@ -30,7 +30,7 @@ namespace Lingua.Learning
             var previousResult = new TestSessionResult();
             (string currentPattern, sbyte currentScore) = (null, 0);
             TestSessionResult result;
-            while (!(result = _testRunner.RunTestCases(testCases)).Success)
+            while (!(result = Evaluate(testCases)).Success)
             {
                 if (result > previousResult)
                 {
@@ -53,6 +53,15 @@ namespace Lingua.Learning
                 } while (!lastFailedCase.Success);
             }
             scoredPatterns.Dispose();
+            return result;
+        }
+
+        private TestSessionResult Evaluate(IEnumerable<TestCase> testCases)
+        {
+            var result = _testRunner.RunTestCases(testCases);
+            if (result.FailedCase != null)
+            result.ScoreDeficit = _evaluator.ComputeScoreDeficit(result.FailedCase);
+            result.PatternCount = _evaluator.PatternCount;
             return result;
         }
 

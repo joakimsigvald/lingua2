@@ -40,14 +40,14 @@ namespace Lingua.Learning.Test
             Assert.That(patterns, Is.EquivalentTo(expected));
         }
 
-        [TestCase("I have been running", "jag har sprungit", "R1XfVf")]
+        [TestCase("I have been running", "jag har sprungit", "R1X1Xp", "X1XpVlr")]
         [TestCase("I will be running", "jag kommer att springa", "R1XfVf")]
         public void Test(string from, string to, params string[] expectedPatterns)
         {
             var testCaseResult = TestHelper.GetTestCaseResult(from, to);
             var candidates = testCaseResult.ExpectedCandidates;
             var patterns = PatternExtractor.GetMatchingPatterns(candidates, 3);
-            Assert.That(patterns.Intersect(expectedPatterns), Is.EqualTo(expectedPatterns));
+            Assert.That(patterns.Intersect(expectedPatterns), Is.EquivalentTo(expectedPatterns));
         }
 
         private static Translation[] Decode(string pattern)
