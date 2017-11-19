@@ -15,7 +15,7 @@ namespace Lingua.Learning
             FailedCase = Results.Skip(SuccessCount).FirstOrDefault();
         }
 
-        public int ScoreDeficit { get; set; } = -1;
+        private int ScoreDeficit => FailedCase?.ScoreDeficit ?? -1;
         public int PatternCount { get; set; }
 
         public bool Success => Results.Any() && FailedCase == null;

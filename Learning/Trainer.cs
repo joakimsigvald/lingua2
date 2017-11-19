@@ -25,7 +25,7 @@ namespace Lingua.Learning
 
         public TestSessionResult RunTrainingSession(params TestCase[] testCases)
         {
-            _testRunner = new TestRunner(_translator, _tokenizer, true);
+            _testRunner = new TestRunner(_translator, _tokenizer, _evaluator, true);
             IEnumerator<(string, sbyte)> scoredPatterns = new List<(string, sbyte)>().GetEnumerator();
             var previousResult = new TestSessionResult();
             (string currentPattern, sbyte currentScore) = (null, 0);
@@ -50,7 +50,7 @@ namespace Lingua.Learning
                     (currentPattern, currentScore) = scoredPatterns.Current;
                     _evaluator.UpdateScore(currentPattern, currentScore);
                     lastFailedCase = _testRunner.RunTestCase(lastFailedCase.TestCase);
-                } while (!lastFailedCase.Success);
+                } while (lastFailedCase.ScoreDeficit >= result.FailedCase.ScoreDeficit);
             }
             scoredPatterns.Dispose();
             return result;
@@ -60,7 +60,6 @@ namespace Lingua.Learning
         {
             var result = _testRunner.RunTestCases(testCases);
             if (result.FailedCase != null)
-            result.ScoreDeficit = _evaluator.ComputeScoreDeficit(result.FailedCase);
             result.PatternCount = _evaluator.PatternCount;
             return result;
         }

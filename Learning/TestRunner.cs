@@ -10,12 +10,14 @@ namespace Lingua.Learning
         private readonly bool _abortOnFail;
         private readonly ITranslator _translator;
         private readonly ITokenizer _tokenizer;
+        private readonly TrainableEvaluator _evaluator;
 
-        public TestRunner(ITranslator translator, ITokenizer tokenizer, bool abortOnFail = false)
+        public TestRunner(ITranslator translator, ITokenizer tokenizer, TrainableEvaluator evaluator = null, bool abortOnFail = false)
         {
             _abortOnFail = abortOnFail;
             _translator = translator;
             _tokenizer = tokenizer;
+            _evaluator = evaluator;
         }
 
         public static TestCase[] LoadTestCases()
@@ -36,9 +38,12 @@ namespace Lingua.Learning
             var expectedCandidates = CandidateFilter
                 .FilterCandidates(translationResult.Possibilities, expectedTokens)
                 ?.ToArray();
-            return new TestCaseResult(testCase
+            var result = new TestCaseResult(testCase
                 , _translator.Translate(testCase.From)
                 , expectedCandidates);
+            if (_evaluator != null && !result.Success)
+                result.ScoreDeficit = _evaluator.ComputeScoreDeficit(result);
+            return result;
         }
 
         private IEnumerable<TestCaseResult> RunTestCases(

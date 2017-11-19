@@ -25,6 +25,7 @@ namespace Lingua.Learning
         public IReason Reason => _translationResult.Reason;
         public IList<Translation> ExpectedCandidates { get; }
         public Translation[] Translations => _translationResult.Translations;
+        public int ScoreDeficit { get; set; } = -1;
 
         public override string ToString()
             => $"{From}=>{Expected}/{Actual}:{Success}";
