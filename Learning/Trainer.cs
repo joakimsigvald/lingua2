@@ -52,7 +52,7 @@ namespace Lingua.Learning
                     (currentPattern, currentScore) = scoredPatterns.Current;
                     _evaluator.UpdateScore(currentPattern, currentScore);
                     lastFailedCase = _testRunner.RunTestCase(lastFailedCase.TestCase);
-                } while (lastFailedCase.ScoreDeficit >= result.FailedCase.ScoreDeficit);
+                } while (lastFailedCase.ScoreDeficit >= bestResult.FailedCase.ScoreDeficit);
             }
             scoredPatterns.Dispose();
             return result;

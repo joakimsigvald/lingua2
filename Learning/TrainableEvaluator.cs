@@ -34,7 +34,7 @@ namespace Lingua.Learning
             }
         }
 
-        public int PatternCount => ScoringTree.LeafCount;
+        public int PatternCount => ScoringTree.ScoredNodeCount;
 
         public int ComputeScoreDeficit(TestCaseResult failedCase)
         {

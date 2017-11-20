@@ -19,7 +19,8 @@ namespace Lingua.Grammar
         public readonly ushort Code;
         public readonly ushort[] Path;
         public sbyte Score { get; set; }
-        public int LeafCount => Children.Any() ? Children.Sum(child => child.LeafCount) : 1;
+
+        public int ScoredNodeCount => (Score == 0 ? 0 : 1) + Children.Sum(child => child.ScoredNodeCount); 
 
         public override string ToString()
             => $"{Encoder.Serialize(Path)}: {Score}";

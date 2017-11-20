@@ -40,13 +40,25 @@ namespace Lingua.Learning.Test
             Assert.That(patterns, Is.EquivalentTo(expected));
         }
 
-        [TestCase("I have been running", "jag har sprungit", "R1X1Xp", "X1XpVlr")]
-        [TestCase("I will be running", "jag kommer att springa", "R1XfVf")]
-        public void Test(string from, string to, params string[] expectedPatterns)
+        [TestCase(3, "I have been running", "jag har sprungit", "R1X1Xp", "X1XpVlr")]
+        [TestCase(3, "I will be running", "jag kommer att springa", "R1XfVf")]
+        [TestCase(2, "it is", "det är", "R3tX*")]
+        [TestCase(3, "it is my", "det är min", "R3tX*R*")]
+        [TestCase(4, "it is my pen", "det är min penna", "R3tX*R*N*")]
+        public void TestMultiPatterns(int count, string from, string to, params string[] expectedPatterns)
         {
             var testCaseResult = TestHelper.GetTestCaseResult(from, to);
             var candidates = testCaseResult.ExpectedCandidates;
-            var patterns = PatternExtractor.GetMatchingPatterns(candidates, 3);
+            var patterns = PatternExtractor.GetMatchingPatterns(candidates, count);
+            Assert.That(patterns.Intersect(expectedPatterns), Is.EquivalentTo(expectedPatterns));
+        }
+
+        [TestCase("it", "det", "R3t")]
+        public void TestMonoPatterns(string from, string to, params string[] expectedPatterns)
+        {
+            var testCaseResult = TestHelper.GetTestCaseResult(from, to);
+            var candidates = testCaseResult.ExpectedCandidates;
+            var patterns = PatternExtractor.GetMatchingMonoPatterns(candidates);
             Assert.That(patterns.Intersect(expectedPatterns), Is.EquivalentTo(expectedPatterns));
         }
 

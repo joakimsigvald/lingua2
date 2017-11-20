@@ -17,6 +17,7 @@ namespace Lingua.Learning.Test
         [TestCase("I have been running", "jag har sprungit")]
         [TestCase("I will be running", "jag kommer att springa")]
         [TestCase("I will have been running", "jag kommer att ha sprungit")]
+        [TestCase("It is my pen", "Det är min penna")]
         public void Test(string from, string expected)
         {
             var trainer = new Trainer();
