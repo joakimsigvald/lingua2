@@ -7,7 +7,7 @@ namespace Lingua.Grammar
     public class Engine : IGrammar
     {
         private readonly IEvaluator _evaluator;
-        private static readonly Dictionary<string, string> Rearrangements = Loader.LoadRearrangements();
+        private static readonly Dictionary<string, string> Rearrangements = Repository.LoadRearrangements();
 
         private static readonly IList<Arranger> Arrangers = Rearrangements.Select(sp => new Arranger(sp.Key, sp.Value)).ToList();
 

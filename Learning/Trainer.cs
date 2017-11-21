@@ -58,6 +58,11 @@ namespace Lingua.Learning
             return result;
         }
 
+        public void SavePatterns()
+        {
+            _evaluator.SavePatterns();
+        }
+
         private TestSessionResult Evaluate(IEnumerable<TestCase> testCases)
         {
             var result = _testRunner.RunTestCases(testCases);

@@ -16,7 +16,7 @@ namespace Lingua.Grammar
     public class Evaluator : IEvaluator
     {
         private static readonly IDictionary<string, sbyte> StoredPatterns 
-            = Loader.LoadScoredPatterns();
+            = Repository.LoadScoredPatterns();
 
         private static readonly Lazy<ScoreTreeNode> LoadedScoringTree = 
             new Lazy<ScoreTreeNode>(() => BuildScoringTree(StoredPatterns));

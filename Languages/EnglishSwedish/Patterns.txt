@@ -1,61 +1,32 @@
-// <Types>
-// T: ArTicle
-// R: Pronoun
-// N: Noun
-// A: Adjective
-// V: Verb
-// X: Auxilery
-// Q: quantifier (number)
-// .: Terminator
-// ,: Separator
-// </Types>
-
-// <Modifiers>
-// d: definite
-// n: plural
-// g: genitive
-// 1: 1st person
-// 2: 2nd person
-// 3: 3rd person
-// </Modifiers>
-
-TdnqAdnNdn:2
-TdnqQAdnNdn:2
-XfVf:2
-XfrVlr:2
-AdnNn:1
-TdNd:1
-TdNdn:1
-TdNdg:1
-TdNdng:1
-QnNn:1
-TdqAdnNd:1
-TdqAcdNd:1
-TdqAdsNd:1
-TdnqAdsNdn:1
-R*V1:1
-R3V3:1
-R3nV3n:1
-VpAa:1
-R1X1Vr:1
-R1X1XpVlr:1
-R2X2XpVlr:1
-R3X3XpVlr:1
-R3nX3nXpVlr:1
-R*XpXpVlr:1
-R*X*Vl:1
-R2X2Vr:1
-R3X3Vr:1
-R3nXn3Vr:1
-R*XpVr:1
+﻿Xfr:2
+^Adn:1
 ^Vi:1
-R3tX3R*N:1
-R3tX3A:1
-IV:1
-NN:-1
-NNd:-1
-NNdn:-1
-NNn:-1
-NdN:-1
-NdNd:-1
-C:-1
+I*:1
+Q*Adn:1
+Q*Ngn:1
+QnNn:1
+R*Adn:1
+R*V1:1
+R3tX*A*:1
+R3tX*R1m:1
+T*Ndn:1
+TdNd:1
+TdnqAdnNdn:1
+TdnqAdsNdn:1
+TdnqQ*A*Ndn:1
+TdqAdnNd:1
+TdqAdsNd:1
+TNg:1
+V*At:1
+V*P*:1
+X*Vr:1
+X1Vr:1
+X1X*Vlr:1
+Xf:1
+XfrVlr:1
+XfVf:1
+XpVlr:1
+A*:-1
+N*:-1
+Ng:-1
+Ngn:-1

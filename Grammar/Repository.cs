@@ -6,10 +6,31 @@ namespace Lingua.Grammar
 {
     using Core;
 
-    public static class Loader
+    public static class Repository
     {
         public static IDictionary<string, sbyte> LoadScoredPatterns()
             => ReadLines("Patterns.txt").ToDictionary(sbyte.Parse);
+
+        public static void StoreScoredPatterns(IDictionary<string, sbyte> patterns)
+            => WriteLines(GetUniqueName("Patterns.txt")
+                , GetPatternLines(patterns));
+
+        private static string[] GetPatternLines(IDictionary<string, sbyte> patterns)
+        {
+            return patterns
+                .OrderByDescending(sp => sp.Value)
+                .ThenBy(sp => sp.Key)
+                .Select(ToLine).ToArray();
+        }
+
+        private static void WriteLines(string filename, string[] lines)
+            => LoaderBase.WriteToFile(filename, lines);
+
+        private static string GetUniqueName(string filename)
+            => LoaderBase.GetUniqueName(filename);
+
+        private static string ToLine(KeyValuePair<string, sbyte> scoredPattern)
+            => $"{scoredPattern.Key}:{scoredPattern.Value}";
 
         public static Dictionary<string, string> LoadRearrangements()
             => ReadLines("Rearrangements.txt").ToDictionary(v => v);

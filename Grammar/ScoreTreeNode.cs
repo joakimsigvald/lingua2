@@ -20,9 +20,21 @@ namespace Lingua.Grammar
         public readonly ushort[] Path;
         public sbyte Score { get; set; }
 
-        public int ScoredNodeCount => (Score == 0 ? 0 : 1) + Children.Sum(child => child.ScoredNodeCount); 
+        public int ScoredNodeCount => (Score == 0 ? 0 : 1) + Children.Sum(child => child.ScoredNodeCount);
+        private string Pattern => Encoder.Serialize(Path);
 
         public override string ToString()
-            => $"{Encoder.Serialize(Path)}: {Score}";
+            => $"{Pattern}: {Score}";
+
+        public IDictionary<string, sbyte> ToDictionary() 
+            => GetScoredPatterns().ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
+
+        private IEnumerable<KeyValuePair<string, sbyte>> GetScoredPatterns()
+        {
+            var scoredPatterns = Children.SelectMany(child => child.ToDictionary());
+            return Score == 0
+                ? scoredPatterns
+                : scoredPatterns.Prepend(new KeyValuePair<string, sbyte>(Pattern, Score));
+        }
     }
 }

@@ -44,5 +44,10 @@ namespace Lingua.Learning
             var actualScore = Evaluate(actual).Score;
             return actualScore - expectedScore;
         }
+
+        public void SavePatterns()
+        {
+            Repository.StoreScoredPatterns(ScoringTree.ToDictionary());
+        }
     }
 }
