@@ -14,9 +14,9 @@ namespace Lingua.Learning.Test
         {
             var translationResult = TestHelper.Translator.Translate(from);
             var toTokens = TestHelper.Tokenizer.Tokenize(to).ToArray();
-            var filteredCandidates = CandidateFilter
-                .FilterCandidates(translationResult.Possibilities, toTokens)
-                .Select(t => t.From.Value);
+            var filteredCandidates = TargetSelector
+                .SelectTarget(translationResult.Possibilities, toTokens)
+                .Translations.Select(t => t.From.Value);
             Assert.That(filteredCandidates, Is.EquivalentTo(expectedCandidates));
         }
     }

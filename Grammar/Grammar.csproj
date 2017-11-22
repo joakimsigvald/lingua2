@@ -44,6 +44,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Arranger.cs" />
+    <Compile Include="IEvaluator.cs" />
     <Compile Include="Repository.cs" />
     <Compile Include="Process.cs" />
     <Compile Include="Engine.cs" />

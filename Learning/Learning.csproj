@@ -51,7 +51,7 @@
     <Compile Include="TranslationExtractor.cs" />
     <Compile Include="PatternExtractor.cs" />
     <Compile Include="TestCase.cs" />
-    <Compile Include="CandidateFilter.cs" />
+    <Compile Include="TargetSelector.cs" />
     <Compile Include="TestRunner.cs" />
     <Compile Include="TrainableEvaluator.cs" />
     <Compile Include="Loader.cs" />

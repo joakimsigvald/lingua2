@@ -7,14 +7,15 @@ namespace Lingua.Learning
     public class TestCaseResult
     {
         private readonly TranslationResult _translationResult;
+        private readonly TranslationTarget _translationTarget;
 
         public TestCaseResult(TestCase testCase
             , TranslationResult translationResult
-            , IList<Translation> expectedCandidates)
+            , TranslationTarget translationTarget)
         {
             TestCase = testCase;
             _translationResult = translationResult;
-            ExpectedCandidates = expectedCandidates;
+            _translationTarget = translationTarget;
         }
 
         public TestCase TestCase { get; }
@@ -23,8 +24,8 @@ namespace Lingua.Learning
         public string Actual => _translationResult.Translation;
         public bool Success => Actual == TestCase.Expected;
         public IReason Reason => _translationResult.Reason;
-        public IList<Translation> ExpectedCandidates { get; }
-        public Translation[] Translations => _translationResult.Translations;
+        public IList<Translation> ExpectedTranslations => _translationTarget.Translations;
+        public IEnumerable<Translation> Translations => _translationResult.Translations;
         public int ScoreDeficit { get; set; } = -1;
 
         public override string ToString()

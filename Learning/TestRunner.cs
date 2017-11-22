@@ -35,12 +35,11 @@ namespace Lingua.Learning
         {
             var expectedTokens = _tokenizer.Tokenize(testCase.Expected).ToArray();
             var translationResult = _translator.Translate(testCase.From);
-            var expectedCandidates = CandidateFilter
-                .FilterCandidates(translationResult.Possibilities, expectedTokens)
-                ?.ToArray();
+            var target = TargetSelector
+                .SelectTarget(translationResult.Possibilities, expectedTokens);
             var result = new TestCaseResult(testCase
                 , _translator.Translate(testCase.From)
-                , expectedCandidates);
+                , target);
             if (_evaluator != null && !result.Success)
                 result.ScoreDeficit = _evaluator.ComputeScoreDeficit(result);
             return result;

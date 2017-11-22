@@ -8,11 +8,6 @@ namespace Lingua.Grammar
     using Core.Tokens;
     using Core.WordClasses;
 
-    public interface IEvaluator
-    {
-        Evaluation Evaluate(ushort[] code);
-    }
-
     public class Evaluator : IEvaluator
     {
         private static readonly IDictionary<string, sbyte> StoredPatterns 

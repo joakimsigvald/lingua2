@@ -38,7 +38,7 @@ namespace Lingua.Learning
 
         public int ComputeScoreDeficit(TestCaseResult failedCase)
         {
-            var expected = Encoder.Encode(failedCase.ExpectedCandidates).ToArray();
+            var expected = Encoder.Encode(failedCase.ExpectedTranslations).ToArray();
             var actual = Encoder.Encode(failedCase.Translations).ToArray();
             var expectedScore = Evaluate(expected).Score;
             var actualScore = Evaluate(actual).Score;

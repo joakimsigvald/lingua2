@@ -6,15 +6,21 @@ namespace Lingua.Learning
     using Core;
     using Core.Tokens;
 
-    public static class CandidateFilter
+    public static class TargetSelector
     {
-        public static IEnumerable<Translation> FilterCandidates(
+        public static TranslationTarget SelectTarget(
             TranslationTreeNode possibilities
             , IEnumerable<Token> toTokens)
-            => possibilities == null
-                ? null
+        {
+            var translations = possibilities == null 
+                ? null 
                 : FilterCandidates(possibilities.Children
-                    , string.Join(" ", toTokens.Select(t => t.Value)).ToLower());
+                , string.Join(" ", toTokens.Select(t => t.Value)).ToLower());
+            return new TranslationTarget
+            {
+                Translations = translations?.ToArray()
+            };
+        }
 
         private static IEnumerable<Translation> FilterCandidates(
             ICollection<TranslationTreeNode> candidates
@@ -40,5 +46,11 @@ namespace Lingua.Learning
 
         private static string Remove(string translated, string output)
             => string.IsNullOrEmpty(output) ? translated : translated.Replace(output.ToLower(), "");
+    }
+
+    public class TranslationTarget
+    {
+        public Translation[] Translations { get; set; }
+        public Dictionary<string, byte[]> Rearrangements { get; set; }
     }
 }
