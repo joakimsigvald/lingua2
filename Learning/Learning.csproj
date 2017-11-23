@@ -61,6 +61,7 @@
     <Compile Include="TestBench.cs" />
     <Compile Include="TestCaseResult.cs" />
     <Compile Include="TestSuiteResult.cs" />
+    <Compile Include="TranslationTarget.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Core\Core.csproj">
