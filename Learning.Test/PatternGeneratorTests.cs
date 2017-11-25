@@ -86,7 +86,7 @@ namespace Lingua.Learning.Test
             => CreatePatternGenerator(
                 wantedPatterns ?? new string[0]
                 , unwantedPatterns ?? new string[0])
-            .GetEvaluatorEnhancements(null).ScoredPatterns;
+            .GetScoredPatterns(null);
 
         private static PatternGenerator CreatePatternGenerator(
             IReadOnlyCollection<string> wantedPatterns

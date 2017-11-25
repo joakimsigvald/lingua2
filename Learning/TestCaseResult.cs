@@ -7,7 +7,7 @@ namespace Lingua.Learning
     public class TestCaseResult
     {
         private readonly TranslationResult _translationResult;
-        private readonly TranslationTarget _translationTarget;
+        public readonly TranslationTarget TranslationTarget;
 
         public TestCaseResult(TestCase testCase
             , TranslationResult translationResult
@@ -15,7 +15,7 @@ namespace Lingua.Learning
         {
             TestCase = testCase;
             _translationResult = translationResult;
-            _translationTarget = translationTarget;
+            TranslationTarget = translationTarget;
         }
 
         public TestCase TestCase { get; }
@@ -24,7 +24,7 @@ namespace Lingua.Learning
         public string Actual => _translationResult.Translation;
         public bool Success => Actual == TestCase.Expected;
         public IReason Reason => _translationResult.Reason;
-        public IList<Translation> ExpectedTranslations => _translationTarget.Translations;
+        public IList<Translation> ExpectedTranslations => TranslationTarget.Translations;
         public IEnumerable<Translation> Translations => _translationResult.Translations;
         public int ScoreDeficit { get; set; } = -1;
 

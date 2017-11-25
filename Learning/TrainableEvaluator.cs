@@ -27,6 +27,12 @@ namespace Lingua.Learning
             UpdateScore(scoredPattern.Pattern, (sbyte)-scoredPattern.Score);
         }
 
+        public void Add(Arranger arranger)
+        {
+            if (arranger != null && !Arrangers.Contains(arranger))
+                Arrangers.Add(arranger);
+        }
+
         public int ComputeScoreDeficit(TestCaseResult failedCase)
         {
             var expected = Encoder.Encode(failedCase.ExpectedTranslations).ToArray();
@@ -58,17 +64,6 @@ namespace Lingua.Learning
                 if (child.Score == 0 && !child.Children.Any())
                     node.Children.Remove(child);
             }
-        }
-
-        private void AddRearrangement(Arranger arranger)
-        {
-            if (arranger != null)
-                Arrangers.Add(arranger);
-        }
-
-        private void RemoveRearrangement(Arranger arranger)
-        {
-            Arrangers.Remove(arranger);
         }
     }
 }

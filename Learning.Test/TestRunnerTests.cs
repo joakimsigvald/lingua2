@@ -16,7 +16,7 @@ namespace Lingua.Learning.Test
         public void MatchesPositivePatterns(string from, string expected, params string[] expectedPatterns)
         {
             var result = TestHelper.GetTestCaseResult(from, expected);
-            var positivePatterns = PatternGenerator.GetEvaluatorEnhancements(result).ScoredPatterns
+            var positivePatterns = PatternGenerator.GetScoredPatterns(result)
                 .Where(sp => sp.Score > 0)
                 .Select(sp => sp.Pattern);
             Assert.That(positivePatterns.Intersect(expectedPatterns), Is.EquivalentTo(expectedPatterns));
@@ -26,7 +26,7 @@ namespace Lingua.Learning.Test
         public void MatchesNegativePatterns(string from, string expected, params string[] expectedPatterns)
         {
             var result = TestHelper.GetTestCaseResult(from, expected);
-            var positivePatterns = PatternGenerator.GetEvaluatorEnhancements(result).ScoredPatterns
+            var positivePatterns = PatternGenerator.GetScoredPatterns(result)
                 .Where(sp => sp.Score < 0)
                 .Select(sp => sp.Pattern);
             Assert.That(positivePatterns.Intersect(expectedPatterns), Is.EquivalentTo(expectedPatterns));

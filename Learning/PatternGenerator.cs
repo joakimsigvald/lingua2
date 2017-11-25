@@ -15,7 +15,7 @@ namespace Lingua.Learning
             _patternExtractor = patternExtractor;
         }
 
-        public EvaluatorEnhancement GetEvaluatorEnhancements(TestCaseResult result)
+        public IList<ScoredPattern> GetScoredPatterns(TestCaseResult result)
         {
             var wanted = _translationExtractor.GetWantedTranslations(result).ToList();
             var unwanted = _translationExtractor.GetUnwantedTranslations(result).ToList();
@@ -27,7 +27,7 @@ namespace Lingua.Learning
             var multipatterns =
                         Enumerable.Range(2, 3)
                             .SelectMany(length => GetMultiPatterns(wanted, unwanted, length));
-            return new EvaluatorEnhancement(monopatterns.Concat(multipatterns).ToArray());
+            return monopatterns.Concat(multipatterns).ToArray();
         }
 
         private IEnumerable<ScoredPattern> GetMultiPatterns(
