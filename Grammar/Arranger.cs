@@ -1,19 +1,22 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Lingua.Core;
 
 namespace Lingua.Grammar
 {
-    internal class Arranger
+    public class Arranger : IEquatable<Arranger>
     {
-        public Arranger(string from, string to)
+        public Arranger(string pattern, byte[] order)
         {
-            From = Encoder.Encode(Encoder.Deserialize(from)).ToArray();
-            To = to.Select(c => (byte)(c - 49)).ToArray();
+            Pattern = pattern;
+            Code = Encoder.Encode(Encoder.Deserialize(pattern)).ToArray();
+            Order = order;
         }
 
-        private ushort[] From { get; }
-        private byte[] To { get; }
+        public string Pattern { get; }
+        private ushort[] Code { get; }
+        public byte[] Order { get; }
 
         public IEnumerable<Translation> Arrange(IList<Translation> input)
             => ArrangeSegments(input).SelectMany(x => x.Select(y => y));
@@ -23,12 +26,12 @@ namespace Lingua.Grammar
             for (var i = 0; i < input.Count; i++)
             {
                 var segment = input
-                    .Skip(i).Take(From.Length)
+                    .Skip(i).Take(Code.Length)
                     .ToArray();
                 var arrangedSegment = Arrange(segment);
                 if (arrangedSegment != null)
                 {
-                    i += From.Length - 1;
+                    i += Code.Length - 1;
                     yield return arrangedSegment;
                 }
                 else yield return segment.Take(1);
@@ -39,13 +42,22 @@ namespace Lingua.Grammar
         {
             var tokens = segment.Select(t => t.From).ToArray();
             var codedSegment = Encoder.Encode(tokens).ToArray();
-            if (!Encoder.Matches(codedSegment, From))
+            if (!Encoder.Matches(codedSegment, Code))
                 return null;
             var rearrangedSegment = Rearrange(segment).ToList();
             return rearrangedSegment;
         }
 
         private IEnumerable<Translation> Rearrange(IList<Translation> segment)
-            => To.Select(i => segment[i]);
+            => Order.Select(i => segment[i]);
+
+        public bool Equals(Arranger other)
+            => other != null && other.Pattern == Pattern;
+
+        public override bool Equals(object obj)
+            => Equals(obj as Arranger);
+
+        public override int GetHashCode()
+            => Pattern.GetHashCode();
     }
 }

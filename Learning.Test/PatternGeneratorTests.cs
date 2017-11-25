@@ -25,8 +25,8 @@ namespace Lingua.Learning.Test
         public void GivenWantedMonoPatterns_GenerateThosePatternsWithScore_1(params string[] wantedMonoPatterns)
         {
             var scoredPatterns = GetScoredPatterns(wantedMonoPatterns);
-            Assert.That(scoredPatterns.Select(sp => sp.Item1), Is.EquivalentTo(wantedMonoPatterns));
-            Assert.That(scoredPatterns.All(sp => sp.Item2 == 1));
+            Assert.That(scoredPatterns.Select(sp => sp.Pattern), Is.EquivalentTo(wantedMonoPatterns));
+            Assert.That(scoredPatterns.All(sp => sp.Score == 1));
         }
 
         [TestCase("A")]
@@ -34,8 +34,8 @@ namespace Lingua.Learning.Test
         public void GivenUnwantedMonoPatterns_GenerateThosePatternsWithScore_Minus_1(params string[] unwantedMonoPatterns)
         {
             var scoredPatterns = GetScoredPatterns(unwantedPatterns: unwantedMonoPatterns);
-            Assert.That(scoredPatterns.Select(sp => sp.Item1), Is.EquivalentTo(unwantedMonoPatterns));
-            Assert.That(scoredPatterns.All(sp => sp.Item2 == -1));
+            Assert.That(scoredPatterns.Select(sp => sp.Pattern), Is.EquivalentTo(unwantedMonoPatterns));
+            Assert.That(scoredPatterns.All(sp => sp.Score == -1));
         }
 
         [TestCase(new[] { "A" }, new[] { "B" })]
@@ -49,11 +49,11 @@ namespace Lingua.Learning.Test
         {
             var scoredPatterns = GetScoredPatterns(wantedMonoPatterns, unwantedMonoPatterns);
             Assert.That(scoredPatterns
-                .Where(sp => sp.Item2 == 1)
-                .Select(sp => sp.Item1), Is.EquivalentTo(wantedMonoPatterns));
+                .Where(sp => sp.Score == 1)
+                .Select(sp => sp.Pattern), Is.EquivalentTo(wantedMonoPatterns));
             Assert.That(scoredPatterns
-                .Where(sp => sp.Item2 == -1)
-                .Select(sp => sp.Item1), Is.EquivalentTo(unwantedMonoPatterns));
+                .Where(sp => sp.Score == -1)
+                .Select(sp => sp.Pattern), Is.EquivalentTo(unwantedMonoPatterns));
         }
 
         [TestCase("^A", "A")]
@@ -64,8 +64,8 @@ namespace Lingua.Learning.Test
         {
             var scoredPatterns = GetScoredPatterns(patterns);
             Assert.That(scoredPatterns
-                .Where(sp => sp.Item2 == 1)
-                .Select(sp => sp.Item1), Is.EquivalentTo(patterns));
+                .Where(sp => sp.Score == 1)
+                .Select(sp => sp.Pattern), Is.EquivalentTo(patterns));
         }
 
         [TestCase("^A", "A")]
@@ -76,17 +76,17 @@ namespace Lingua.Learning.Test
         {
             var scoredPatterns = GetScoredPatterns(unwantedPatterns: patterns);
             Assert.That(scoredPatterns
-                .Where(sp => sp.Item2 == -1)
-                .Select(sp => sp.Item1), Is.EquivalentTo(patterns));
+                .Where(sp => sp.Score == -1)
+                .Select(sp => sp.Pattern), Is.EquivalentTo(patterns));
         }
 
-        private static IList<(string, sbyte)> GetScoredPatterns(
+        private static IList<ScoredPattern> GetScoredPatterns(
             IReadOnlyCollection<string> wantedPatterns = null
             , IReadOnlyCollection<string> unwantedPatterns = null) 
             => CreatePatternGenerator(
                 wantedPatterns ?? new string[0]
                 , unwantedPatterns ?? new string[0])
-            .GetMatchingPatterns(null);
+            .GetEvaluatorEnhancements(null).ScoredPatterns;
 
         private static PatternGenerator CreatePatternGenerator(
             IReadOnlyCollection<string> wantedPatterns

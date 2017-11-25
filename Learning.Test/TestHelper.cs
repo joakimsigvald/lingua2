@@ -26,7 +26,7 @@ namespace Lingua.Learning.Test
         {
             var thesaurus = new Thesaurus();
             var evaluator = new Evaluator();
-            var grammar = new Engine(evaluator);
+            var grammar = new GrammarEngine(evaluator);
             return new Translator(Tokenizer, thesaurus, grammar);
         }
 

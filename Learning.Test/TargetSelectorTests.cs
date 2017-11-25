@@ -22,6 +22,7 @@ namespace Lingua.Learning.Test
 
         [TestCase("I am running", "Jag springer", 1, 3)]
         [TestCase("He has been running", "Han har sprungit", 1, 2, 4)]
+        [TestCase("Are you painting", "Målar du?", 3, 2)]
         public void ExtractOrdering(string from, string to, params int[] expected)
         {
             var translationResult = TestHelper.Translator.Translate(from);

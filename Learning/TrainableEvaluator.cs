@@ -8,11 +8,37 @@ namespace Lingua.Learning
 
     public class TrainableEvaluator : Evaluator
     {
+        public int PatternCount => ScoringTree.ScoredNodeCount;
+
         public void UpdateScore(string pattern, sbyte addScore)
         {
             if (addScore == 0)
                 return;
             UpdateScore(ScoringTree, CreateCodeScore(pattern, addScore), 0);
+        }
+
+        public void Do(ScoredPattern scoredPattern)
+        {
+            UpdateScore(scoredPattern.Pattern, scoredPattern.Score);
+        }
+
+        public void Undo(ScoredPattern scoredPattern)
+        {
+            UpdateScore(scoredPattern.Pattern, (sbyte)-scoredPattern.Score);
+        }
+
+        public int ComputeScoreDeficit(TestCaseResult failedCase)
+        {
+            var expected = Encoder.Encode(failedCase.ExpectedTranslations).ToArray();
+            var actual = Encoder.Encode(failedCase.Translations).ToArray();
+            var expectedScore = Evaluate(expected).Score;
+            var actualScore = Evaluate(actual).Score;
+            return actualScore - expectedScore;
+        }
+
+        public void SavePatterns()
+        {
+            Repository.StoreScoredPatterns(ScoringTree.ToDictionary());
         }
 
         private static void UpdateScore(ScoreTreeNode node, (string, ushort[], sbyte) codedPattern, int index)
@@ -34,20 +60,15 @@ namespace Lingua.Learning
             }
         }
 
-        public int PatternCount => ScoringTree.ScoredNodeCount;
-
-        public int ComputeScoreDeficit(TestCaseResult failedCase)
+        private void AddRearrangement(Arranger arranger)
         {
-            var expected = Encoder.Encode(failedCase.ExpectedTranslations).ToArray();
-            var actual = Encoder.Encode(failedCase.Translations).ToArray();
-            var expectedScore = Evaluate(expected).Score;
-            var actualScore = Evaluate(actual).Score;
-            return actualScore - expectedScore;
+            if (arranger != null)
+                Arrangers.Add(arranger);
         }
 
-        public void SavePatterns()
+        private void RemoveRearrangement(Arranger arranger)
         {
-            Repository.StoreScoredPatterns(ScoringTree.ToDictionary());
+            Arrangers.Remove(arranger);
         }
     }
 }

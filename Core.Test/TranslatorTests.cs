@@ -21,7 +21,7 @@ namespace Lingua.Core.Test
             var reporter = new FakeReporter();
             var evaluator = new Evaluator();
             evaluator.Load();
-            var engine = new Engine(evaluator);
+            var engine = new GrammarEngine(evaluator);
             var tokenizer = new Tokenizer();
             var translator = new Translator(new Tokenizer(), new Thesaurus(), engine);
             var testRunner = new TestRunner(translator, tokenizer);

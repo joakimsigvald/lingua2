@@ -19,42 +19,43 @@ namespace Lingua.Learning
         {
             _evaluator = new TrainableEvaluator();
             _tokenizer = new Tokenizer();
-            _translator = new Translator(_tokenizer, new Thesaurus(), new Engine(_evaluator));
+            _translator = new Translator(_tokenizer, new Thesaurus(), new GrammarEngine(_evaluator));
             _patternGenerator = new PatternGenerator(new TranslationExtractor(), new PatternExtractor());
         }
 
         public TestSessionResult RunTrainingSession(params TestCase[] testCases)
         {
             _testRunner = new TestRunner(_translator, _tokenizer, _evaluator, true);
-            IEnumerator<(string, sbyte)> scoredPatterns = new List<(string, sbyte)>().GetEnumerator();
+            IEnumerator<ScoredPattern> evaluatorEnhancements = new List<ScoredPattern>().GetEnumerator();
             var bestResult = new TestSessionResult();
-            (string currentPattern, sbyte currentScore) = (null, 0);
+            ScoredPattern currentScoredPattern = null;
             TestSessionResult result;
             while (!(result = Evaluate(testCases)).Success)
             {
                 if (result > bestResult)
                 {
-                    (currentPattern, currentScore) = (null, 0);
+                    currentScoredPattern = null;
                     if (result.SuccessCount > bestResult.SuccessCount)
                     {
-                        scoredPatterns.Dispose();
-                        scoredPatterns = EnumerateMatchingPatterns(result.FailedCase);
+                        evaluatorEnhancements.Dispose();
+                        evaluatorEnhancements = EnumerateEvaluatorEnhancements(result.FailedCase);
                     }
-                    else scoredPatterns.Reset();
+                    else evaluatorEnhancements.Reset();
                     bestResult = result;
                 }
                 var lastFailedCase = result.FailedCase;
                 do
                 {
-                    _evaluator.UpdateScore(currentPattern, (sbyte)-currentScore);
-                    if (!scoredPatterns.MoveNext())
+                    if (currentScoredPattern != null)
+                        _evaluator.Undo(currentScoredPattern);
+                    if (!evaluatorEnhancements.MoveNext())
                         return bestResult;
-                    (currentPattern, currentScore) = scoredPatterns.Current;
-                    _evaluator.UpdateScore(currentPattern, currentScore);
+                    currentScoredPattern = evaluatorEnhancements.Current;
+                    _evaluator.Do(currentScoredPattern);
                     lastFailedCase = _testRunner.RunTestCase(lastFailedCase.TestCase);
                 } while (lastFailedCase.ScoreDeficit >= bestResult.FailedCase.ScoreDeficit);
             }
-            scoredPatterns.Dispose();
+            evaluatorEnhancements.Dispose();
             return result;
         }
 
@@ -71,7 +72,7 @@ namespace Lingua.Learning
             return result;
         }
 
-        private IEnumerator<(string, sbyte)> EnumerateMatchingPatterns(TestCaseResult result)
-            => _patternGenerator.GetMatchingPatterns(result).GetEnumerator();
+        private IEnumerator<ScoredPattern> EnumerateEvaluatorEnhancements(TestCaseResult result)
+            => _patternGenerator.GetEvaluatorEnhancements(result).ScoredPatterns.GetEnumerator();
     }
 }

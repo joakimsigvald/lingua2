@@ -20,7 +20,7 @@ namespace Lingua.Main
         {
             var evaluator = new Evaluator();
             evaluator.Load();
-            return new Translator(Tokenizer, new Thesaurus(), new Engine(evaluator));
+            return new Translator(Tokenizer, new Thesaurus(), new GrammarEngine(evaluator));
         }
 
         private static readonly TestBench TestBench

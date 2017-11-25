@@ -15,30 +15,28 @@ namespace Lingua.Learning
             _patternExtractor = patternExtractor;
         }
 
-        public IList<(string, sbyte)> GetMatchingPatterns(TestCaseResult result)
+        public EvaluatorEnhancement GetEvaluatorEnhancements(TestCaseResult result)
         {
             var wanted = _translationExtractor.GetWantedTranslations(result).ToList();
             var unwanted = _translationExtractor.GetUnwantedTranslations(result).ToList();
             var monopatterns = _patternExtractor
                 .GetMatchingMonoPatterns(wanted)
-                .Select(pattern => (pattern, (sbyte) 1))
+                .Select(pattern => new ScoredPattern(pattern, 1))
                 .Concat(_patternExtractor.GetMatchingMonoPatterns(unwanted)
-                    .Select(pattern => (pattern, (sbyte) -1)));
+                    .Select(pattern => new ScoredPattern(pattern, -1)));
             var multipatterns =
                         Enumerable.Range(2, 3)
                             .SelectMany(length => GetMultiPatterns(wanted, unwanted, length));
-            var allPAtterns = monopatterns.Concat(multipatterns).ToArray();
-            return allPAtterns.ToList();
+            return new EvaluatorEnhancement(monopatterns.Concat(multipatterns).ToArray());
         }
 
-        private IEnumerable<(string, sbyte)> GetMultiPatterns(
+        private IEnumerable<ScoredPattern> GetMultiPatterns(
             ICollection<Translation> wanted
             , ICollection<Translation> unwanted
-            , int length
-            , int score = 1)
+            , int length)
             => _patternExtractor.GetMatchingPatterns(wanted, length)
-                .Select(pattern => (pattern, (sbyte) score))
+                .Select(pattern => new ScoredPattern(pattern, 1))
                 .Concat(_patternExtractor.GetMatchingPatterns(unwanted, length)
-                    .Select(pattern => (pattern, (sbyte) -score)));
+                    .Select(pattern => new ScoredPattern(pattern, -1)));
     }
 }

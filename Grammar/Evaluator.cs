@@ -10,19 +10,28 @@ namespace Lingua.Grammar
 
     public class Evaluator : IEvaluator
     {
-        private static readonly IDictionary<string, sbyte> StoredPatterns 
-            = Repository.LoadScoredPatterns();
-
-        private static readonly Lazy<ScoreTreeNode> LoadedScoringTree = 
-            new Lazy<ScoreTreeNode>(() => BuildScoringTree(StoredPatterns));
-
         public ScoreTreeNode ScoringTree;
+        protected IList<Arranger> Arrangers;
 
-        public Evaluator(IDictionary<string, sbyte> patterns = null)
-            => ScoringTree = BuildScoringTree(patterns ?? new Dictionary<string, sbyte>());
+        private static readonly Lazy<ScoreTreeNode> LoadedScoringTree =
+            new Lazy<ScoreTreeNode>(() => BuildScoringTree(Repository.LoadScoredPatterns()));
+
+        private static readonly Lazy<IList<Arranger>> LoadedArrangers =
+            new Lazy<IList<Arranger>>(() => BuildArrangers(Repository.LoadRearrangements()));
+
+        public Evaluator(
+            IDictionary<string, sbyte> patterns = null
+            , IDictionary<string, byte[]> rearrangements = null)
+        {
+            ScoringTree = BuildScoringTree(patterns ?? new Dictionary<string, sbyte>());
+            Arrangers = LoadedArrangers.Value; //BuildArrangers(rearrangements ?? new Dictionary<string, byte[]>());
+        }
 
         public void Load()
-            => ScoringTree = LoadedScoringTree.Value;
+        {
+            ScoringTree = LoadedScoringTree.Value;
+            Arrangers = LoadedArrangers.Value;
+        }
 
         public Evaluation Evaluate(ushort[] code)
         {
@@ -33,6 +42,16 @@ namespace Lingua.Grammar
                 .ToArray();
             return new Evaluation(scorings);
         }
+
+        public Translation[] Arrange(IEnumerable<Translation> translations)
+            => Arrangers
+                .Aggregate(translations
+                    , (input, arranger) => arranger
+                        .Arrange(input.ToList()))
+                .ToArray();
+
+        private static IList<Arranger> BuildArrangers(IDictionary<string, byte[]> rearrangements)
+            => rearrangements.Select(sp => new Arranger(sp.Key, sp.Value)).ToList();
 
         private IEnumerable<ScoreTreeNode> GetMatchingScoreNodes(ushort[] code)
             => Enumerable.Range(0, code.Length)
