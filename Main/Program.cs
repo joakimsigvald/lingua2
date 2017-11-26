@@ -14,21 +14,6 @@ namespace Lingua.Main
         private static readonly ITokenizer Tokenizer
             = new Tokenizer();
 
-        private static readonly ITranslator Translator = CreateTranslator();
-
-        private static ITranslator CreateTranslator()
-        {
-            var evaluator = new Evaluator();
-            evaluator.Load();
-            return new Translator(Tokenizer, new Thesaurus(), new GrammarEngine(evaluator));
-        }
-
-        private static readonly TestBench TestBench
-            = new TestBench(new TestRunner(Translator, Tokenizer), new ConsoleReporter());
-
-        private static readonly Trainer Trainer
-            = new Trainer();
-
         static void Main(string[] args)
         {
             Console.WriteLine(string.Join(", ", args));
@@ -49,7 +34,8 @@ namespace Lingua.Main
         private static void RunTrainingSession()
         {
             var testCases = TestRunner.LoadTestCases();
-            var result = Trainer.RunTrainingSession(testCases);
+            var trainer = new Trainer();
+            var result = trainer.RunTrainingSession(testCases);
             if (!result.Success)
                 throw new Exception("Fail!!");
         }
@@ -63,7 +49,9 @@ namespace Lingua.Main
 
         private static void RunTestSuite()
         {
-            var success = TestBench.RunTestSuites();
+            var testBench =
+                new TestBench(new TestRunner(CreateTranslator(), Tokenizer), new ConsoleReporter());
+            var success = testBench.RunTestSuites();
             if (!success)
                 throw new Exception("Fail!!");
         }
@@ -76,12 +64,22 @@ namespace Lingua.Main
         }
 
         private static string Translate(string text)
-            => Translator.Translate(text).Translation;
+        {
+            var translator = CreateTranslator();
+            return translator.Translate(text).Translation;
+        }
 
         private static string Input()
         {
             Console.WriteLine("Write in english");
             return Console.ReadLine();
+        }
+
+        private static ITranslator CreateTranslator()
+        {
+            var evaluator = new Evaluator();
+            evaluator.Load();
+            return new Translator(Tokenizer, new Thesaurus(), new GrammarEngine(evaluator));
         }
     }
 }
