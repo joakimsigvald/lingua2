@@ -8,8 +8,9 @@ namespace Lingua.Learning
             Expected = expected;
         }
 
+        public TranslationTarget Target { get; set; }
         public string Suite { get; set; }
-        public string From { get; set; }
-        public string Expected { get; set; }
+        public string From { get; }
+        public string Expected { get; }
     }
 }

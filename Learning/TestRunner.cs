@@ -35,17 +35,23 @@ namespace Lingua.Learning
 
         public TestCaseResult RunTestCase(TestCase testCase)
         {
-            var expectedTokens = _tokenizer.Tokenize(testCase.Expected).ToArray();
             var translationResult = _translator.Translate(testCase.From);
-            var target = TargetSelector
-                .SelectTarget(translationResult.Possibilities, expectedTokens);
+            AssureTargetSet(testCase, translationResult);
             var result = new TestCaseResult(testCase
                 , translationResult
-                , target
                 , _settings.AllowReordered);
             if (_evaluator != null && !result.IsSuccess)
                 result.ScoreDeficit = _evaluator.ComputeScoreDeficit(result);
             return result;
+        }
+
+        private void AssureTargetSet(TestCase testCase, TranslationResult translationResult)
+        {
+            if (testCase.Target != null)
+                return;
+            var expectedTokens = _tokenizer.Tokenize(testCase.Expected).ToArray();
+            testCase.Target = testCase.Target ?? TargetSelector
+                                  .SelectTarget(translationResult.Possibilities, expectedTokens);
         }
 
         private IEnumerable<TestCaseResult> RunTestCases(

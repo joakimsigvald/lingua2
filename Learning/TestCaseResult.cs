@@ -8,17 +8,14 @@ namespace Lingua.Learning
     public class TestCaseResult
     {
         private readonly TranslationResult _translationResult;
-        public readonly TranslationTarget TranslationTarget;
         private readonly bool _allowReordered;
 
         public TestCaseResult(TestCase testCase
             , TranslationResult translationResult
-            , TranslationTarget translationTarget
             , bool allowReordered)
         {
             TestCase = testCase;
             _translationResult = translationResult;
-            TranslationTarget = translationTarget;
             _allowReordered = allowReordered;
         }
 
@@ -31,7 +28,7 @@ namespace Lingua.Learning
         private bool WordTranslationSuccess => Success 
             || ExpectedWords.Intersect(TranslatedWords).Count() == ExpectedTranslations.Count;
         public IReason Reason => _translationResult.Reason;
-        public IList<Translation> ExpectedTranslations => TranslationTarget.Translations;
+        public IList<Translation> ExpectedTranslations => TestCase.Target.Translations;
         public IEnumerable<Translation> Translations => _translationResult.Translations;
         public int ScoreDeficit { get; set; } = -1;
 
