@@ -40,7 +40,7 @@ namespace Lingua.Learning
             var target = TargetSelector
                 .SelectTarget(translationResult.Possibilities, expectedTokens);
             var result = new TestCaseResult(testCase
-                , _translator.Translate(testCase.From)
+                , translationResult
                 , target
                 , _settings.AllowReordered);
             if (_evaluator != null && !result.IsSuccess)
@@ -59,11 +59,5 @@ namespace Lingua.Learning
                     prevResult = result;
                     return again;
                 });
-    }
-
-    public class TestRunnerSettings
-    {
-        public bool AbortOnFail { get; set; }
-        public bool AllowReordered { get; set; }
     }
 }

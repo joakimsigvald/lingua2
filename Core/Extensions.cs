@@ -57,6 +57,13 @@ namespace Lingua.Core
             where TItem : class
             => items.Where(item => item != null);
 
+
+        public static void MoveToBeginning<TItem>(this IList<TItem> items, TItem item)
+        {
+            items.Remove(item);
+            items.Insert(0, item);
+        }
+
         public static void Deconstruct<TValue>(this IEnumerable<TValue> sequence, out TValue item1, out TValue item2, out TValue item3)
         {
             using (var enumerator = sequence.GetEnumerator())

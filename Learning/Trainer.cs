@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 
 namespace Lingua.Learning
 {
@@ -24,7 +25,8 @@ namespace Lingua.Learning
 
         public TestSessionResult RunTrainingSession(params TestCase[] testCases)
         {
-            var result = LearnPatterns(testCases);
+            var copyOfTestCases = testCases.ToList();
+            var result = LearnPatterns(copyOfTestCases);
             if (!result.Success)
                 return result;
             LearnRearrangements();
@@ -36,7 +38,7 @@ namespace Lingua.Learning
             _evaluator.LoadRearrangements();
         }
 
-        private TestSessionResult LearnPatterns(TestCase[] testCases)
+        private TestSessionResult LearnPatterns(IList<TestCase> testCases)
         {
             var settings = new TestRunnerSettings
             {
@@ -48,6 +50,7 @@ namespace Lingua.Learning
             TestSessionResult bestResult = null;
             ScoredPattern currentScoredPattern = null;
             TestSessionResult result;
+            TestCaseResult lastFailedCase = null;
             while (!(result = testRunner.RunTestCases(testCases)).Success)
             {
                 if (bestResult == null)
@@ -62,11 +65,14 @@ namespace Lingua.Learning
                     {
                         scoredPatterns.Dispose();
                         scoredPatterns = EnumerateScoredPatterns(result.FailedCase);
+                        testCases.MoveToBeginning(lastFailedCase.TestCase);
                     }
                     else scoredPatterns.Reset();
                     bestResult = result;
                 }
-                var lastFailedCase = result.FailedCase;
+                lastFailedCase = result.FailedCase;
+                if (result.SuccessCount < bestResult.SuccessCount)
+                    testCases.MoveToBeginning(lastFailedCase.TestCase);
                 do
                 {
                     if (currentScoredPattern != null)
@@ -78,7 +84,6 @@ namespace Lingua.Learning
                     lastFailedCase = testRunner.RunTestCase(lastFailedCase.TestCase);
                 } while (lastFailedCase.ScoreDeficit >= bestResult.FailedCase.ScoreDeficit);
             }
-            scoredPatterns.Dispose();
             return result;
         }
 

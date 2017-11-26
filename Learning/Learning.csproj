@@ -49,6 +49,7 @@
     <Compile Include="ITranslationExtractor.cs" />
     <Compile Include="IReporter.cs" />
     <Compile Include="ScoredPattern.cs" />
+    <Compile Include="TestRunnerSettings.cs" />
     <Compile Include="TestSessionResult.cs" />
     <Compile Include="TranslationExtractor.cs" />
     <Compile Include="PatternExtractor.cs" />

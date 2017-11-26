@@ -31,12 +31,13 @@ namespace Lingua.Main
 
         static void Main(string[] args)
         {
+            Console.WriteLine(string.Join(", ", args));
             switch (args.FirstOrDefault())
             {
                 case "Test":
                     RunTestSuite();
                     break;
-                case "Train":
+                case "Learn":
                     RunTrainingSession();
                     break;
                 default:
@@ -49,10 +50,8 @@ namespace Lingua.Main
         {
             var testCases = TestRunner.LoadTestCases();
             var result = Trainer.RunTrainingSession(testCases);
-            Console.WriteLine(result.FailedCase != null
-                ? $"Failed on test case {result.SuccessCount + 1}: Expected'{result.FailedCase.Expected}' but was '{result.FailedCase.Actual}'"
-                : $"Successfully completed training session with {result.SuccessCount} cases!");
-            Console.ReadKey();
+            if (!result.Success)
+                throw new Exception("Fail!!");
         }
 
         private static void TranslateManual()
