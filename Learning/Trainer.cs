@@ -80,13 +80,12 @@ namespace Lingua.Learning
                         return bestResult;
                     currentScoredPattern = scoredPatterns.Current;
                     _evaluator.Do(currentScoredPattern);
+                    testRunner.KnownResult = null;
                     lastFailedCase = testRunner.RunTestCase(lastFailedCase.TestCase);
                 } while (lastFailedCase.ScoreDeficit >= bestResult.FailedCase.ScoreDeficit);
                 if (lastFailedCase.IsSuccess)
-                {
                     testCases.MoveToBeginning(lastFailedCase.TestCase);
-                    testRunner.KnownResult = lastFailedCase;
-                }
+                testRunner.KnownResult = lastFailedCase;
             }
             return result;
         }
