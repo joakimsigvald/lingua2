@@ -66,13 +66,12 @@ namespace Lingua.Learning
                         scoredPatterns.Dispose();
                         scoredPatterns = EnumerateScoredPatterns(result.FailedCase);
                         testCases.MoveToBeginning(lastFailedCase.TestCase);
+                        testRunner.FirstResult = null;
                     }
                     else scoredPatterns.Reset();
                     bestResult = result;
                 }
                 lastFailedCase = result.FailedCase;
-                if (result.SuccessCount < bestResult.SuccessCount)
-                    testCases.MoveToBeginning(lastFailedCase.TestCase);
                 do
                 {
                     if (currentScoredPattern != null)
@@ -83,6 +82,11 @@ namespace Lingua.Learning
                     _evaluator.Do(currentScoredPattern);
                     lastFailedCase = testRunner.RunTestCase(lastFailedCase.TestCase);
                 } while (lastFailedCase.ScoreDeficit >= bestResult.FailedCase.ScoreDeficit);
+                if (lastFailedCase.IsSuccess)
+                {
+                    testCases.MoveToBeginning(lastFailedCase.TestCase);
+                    testRunner.FirstResult = lastFailedCase;
+                }
             }
             return result;
         }

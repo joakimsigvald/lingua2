@@ -22,6 +22,8 @@ namespace Lingua.Learning
             _evaluator = evaluator;
         }
 
+        public TestCaseResult FirstResult { get; set; }
+
         public static TestCase[] LoadTestCases()
             => Loader.LoadTestSuites()
                 .SelectMany(kvp => kvp.Value.Select(v => new TestCase(v.Key, v.Value)
@@ -56,8 +58,10 @@ namespace Lingua.Learning
 
         private IEnumerable<TestCaseResult> RunTestCases(
             IEnumerable<TestCase> testCases
-            , TestCaseResult prevResult) 
-            => testCases
+            , TestCaseResult prevResult)
+        {
+            var testsToRun = FirstResult == null ? testCases : testCases.Skip(1);
+            var newResults = testsToRun
                 .Select(RunTestCase)
                 .TakeWhile(result =>
                 {
@@ -65,5 +69,7 @@ namespace Lingua.Learning
                     prevResult = result;
                     return again;
                 });
+            return FirstResult == null ? newResults : newResults.Prepend(FirstResult);
+        }
     }
 }
