@@ -22,7 +22,7 @@ namespace Lingua.Learning
             _evaluator = evaluator;
         }
 
-        public TestCaseResult FirstResult { get; set; }
+        public TestCaseResult KnownResult { get; set; }
 
         public static TestCase[] LoadTestCases()
             => Loader.LoadTestSuites()
@@ -32,11 +32,13 @@ namespace Lingua.Learning
                 }))
                 .ToArray();
 
-        public TestSessionResult RunTestCases(IEnumerable<TestCase> testCases)
-            => new TestSessionResult(RunTestCases(testCases, null).ToArray());
+        public TestSessionResult RunTestSession(IEnumerable<TestCase> testCases)
+            => new TestSessionResult(RunTestCases(testCases).ToArray());
 
         public TestCaseResult RunTestCase(TestCase testCase)
         {
+            if (testCase == KnownResult?.TestCase)
+                return KnownResult;
             var translationResult = _translator.Translate(testCase.From);
             AssureTargetSet(testCase, translationResult);
             var result = new TestCaseResult(testCase
@@ -57,19 +59,16 @@ namespace Lingua.Learning
         }
 
         private IEnumerable<TestCaseResult> RunTestCases(
-            IEnumerable<TestCase> testCases
-            , TestCaseResult prevResult)
+            IEnumerable<TestCase> testCases)
         {
-            var testsToRun = FirstResult == null ? testCases : testCases.Skip(1);
-            var newResults = testsToRun
+            TestCaseResult lastResult = null;
+            var results = testCases
                 .Select(RunTestCase)
-                .TakeWhile(result =>
-                {
-                    var again = !_settings.AbortOnFail || (prevResult?.IsSuccess ?? true);
-                    prevResult = result;
-                    return again;
-                });
-            return FirstResult == null ? newResults : newResults.Prepend(FirstResult);
+                .TakeWhile(result => (lastResult = result).IsSuccess)
+                .ToList();
+            if (lastResult != results.LastOrDefault())
+                results.Add(lastResult);
+            return results;
         }
     }
 }

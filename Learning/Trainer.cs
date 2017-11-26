@@ -51,7 +51,7 @@ namespace Lingua.Learning
             ScoredPattern currentScoredPattern = null;
             TestSessionResult result;
             TestCaseResult lastFailedCase = null;
-            while (!(result = testRunner.RunTestCases(testCases)).Success)
+            while (!(result = testRunner.RunTestSession(testCases)).Success)
             {
                 if (bestResult == null)
                 {
@@ -66,7 +66,7 @@ namespace Lingua.Learning
                         scoredPatterns.Dispose();
                         scoredPatterns = EnumerateScoredPatterns(result.FailedCase);
                         testCases.MoveToBeginning(lastFailedCase.TestCase);
-                        testRunner.FirstResult = null;
+                        testRunner.KnownResult = null;
                     }
                     else scoredPatterns.Reset();
                     bestResult = result;
@@ -85,7 +85,7 @@ namespace Lingua.Learning
                 if (lastFailedCase.IsSuccess)
                 {
                     testCases.MoveToBeginning(lastFailedCase.TestCase);
-                    testRunner.FirstResult = lastFailedCase;
+                    testRunner.KnownResult = lastFailedCase;
                 }
             }
             return result;
@@ -99,7 +99,7 @@ namespace Lingua.Learning
                 AllowReordered = false
             };
             var testRunner = new TestRunner(_translator, _tokenizer, _evaluator, settings);
-            return testRunner.RunTestCases(testCases);
+            return testRunner.RunTestSession(testCases);
         }
 
         public void SavePatterns()

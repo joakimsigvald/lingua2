@@ -14,7 +14,7 @@
         public bool RunTestSuites()
         {
             var testCases = TestRunner.LoadTestCases();
-            var result = _testRunner.RunTestCases(testCases);
+            var result = _testRunner.RunTestSession(testCases);
             _reporter.Report(result);
             return result.Success;
         }
