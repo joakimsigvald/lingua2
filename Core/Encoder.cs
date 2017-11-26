@@ -42,14 +42,14 @@ namespace Lingua.Core
             var primary = serial[0];
             foreach (var c in serial.Skip(1))
             {
-                if (IsWordClass(c))
+                if (IsModifier(c))
+                    modifiers += c;
+                else
                 {
                     yield return CreateToken(primary, modifiers);
                     primary = c;
                     modifiers = "";
                 }
-                else
-                    modifiers += c;
             }
             yield return CreateToken(primary, modifiers);
         }
@@ -134,8 +134,8 @@ namespace Lingua.Core
                     .Select(shift => element.DecodeModifier((ushort)(code & (1 << shift))))
                     .Aggregate(Modifier.None, (a, b) => a | b);
 
-        private static bool IsWordClass(char c)
-            => char.IsUpper(c);
+        private static bool IsModifier(char c)
+            => char.IsLower(c) || char.IsDigit(c) || c == '*';
 
         private static string SerializeClass(Token token)
         {

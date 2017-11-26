@@ -7,14 +7,16 @@ namespace Lingua.Learning
 
     public class TestRunner
     {
-        private readonly bool _abortOnFail;
         private readonly ITranslator _translator;
         private readonly ITokenizer _tokenizer;
         private readonly TrainableEvaluator _evaluator;
+        private readonly TestRunnerSettings _settings;
 
-        public TestRunner(ITranslator translator, ITokenizer tokenizer, TrainableEvaluator evaluator = null, bool abortOnFail = false)
+        public TestRunner(ITranslator translator, ITokenizer tokenizer
+            , TrainableEvaluator evaluator = null
+            , TestRunnerSettings settings = null)
         {
-            _abortOnFail = abortOnFail;
+            _settings = settings ?? new TestRunnerSettings();
             _translator = translator;
             _tokenizer = tokenizer;
             _evaluator = evaluator;
@@ -39,8 +41,9 @@ namespace Lingua.Learning
                 .SelectTarget(translationResult.Possibilities, expectedTokens);
             var result = new TestCaseResult(testCase
                 , _translator.Translate(testCase.From)
-                , target);
-            if (_evaluator != null && !result.Success)
+                , target
+                , _settings.AllowReordered);
+            if (_evaluator != null && !result.IsSuccess)
                 result.ScoreDeficit = _evaluator.ComputeScoreDeficit(result);
             return result;
         }
@@ -52,9 +55,15 @@ namespace Lingua.Learning
                 .Select(RunTestCase)
                 .TakeWhile(result =>
                 {
-                    var abort = !_abortOnFail || (prevResult?.Success ?? true);
+                    var again = !_settings.AbortOnFail || (prevResult?.IsSuccess ?? true);
                     prevResult = result;
-                    return abort;
+                    return again;
                 });
+    }
+
+    public class TestRunnerSettings
+    {
+        public bool AbortOnFail { get; set; }
+        public bool AllowReordered { get; set; }
     }
 }

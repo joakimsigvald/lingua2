@@ -10,7 +10,7 @@ namespace Lingua.Learning.Test
         {
             var trainer = new Trainer();
             var res = GeneratePatterns(trainer);
-            Assert.That(res.FailedCase?.Success ?? true, $"Failed on {res.SuccessCount + 1}th case");
+            Assert.That(res.FailedCase?.IsSuccess ?? true, $"Failed on {res.SuccessCount + 1}th case");
         }
 
         [Test, Explicit("Saves generated patterns to file on success")]
@@ -31,10 +31,10 @@ namespace Lingua.Learning.Test
             var trainer = new Trainer();
             var testCase = new TestCase(from, expected);
             var res = trainer.RunTrainingSession(testCase);
-            Assert.That(res.FailedCase?.Success ?? true, $"Failed on {res.SuccessCount + 1}th case");
+            Assert.That(res.FailedCase?.IsSuccess ?? true, $"Failed on {res.SuccessCount + 1}th case");
         }
 
-        private TestSessionResult GeneratePatterns(Trainer trainer)
+        private static TestSessionResult GeneratePatterns(Trainer trainer)
         {
             var testCases = TestRunner.LoadTestCases();
             return trainer.RunTrainingSession(testCases);

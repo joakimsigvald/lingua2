@@ -13,7 +13,6 @@ namespace Lingua.Learning
         private readonly ITranslator _translator;
         private readonly ITokenizer _tokenizer;
         private readonly PatternGenerator _patternGenerator;
-        private TestRunner _testRunner;
 
         public Trainer()
         {
@@ -25,14 +24,38 @@ namespace Lingua.Learning
 
         public TestSessionResult RunTrainingSession(params TestCase[] testCases)
         {
-            _testRunner = new TestRunner(_translator, _tokenizer, _evaluator, true);
-            IEnumerator<ScoredPattern> scoredPatterns = new List<ScoredPattern>().GetEnumerator();
-            var bestResult = new TestSessionResult();
+            var result = LearnPatterns(testCases);
+            if (!result.Success)
+                return result;
+            LearnRearrangements();
+            return VerifyPatterns(testCases);
+        }
+
+        private void LearnRearrangements()
+        {
+            _evaluator.LoadRearrangements();
+        }
+
+        private TestSessionResult LearnPatterns(TestCase[] testCases)
+        {
+            var settings = new TestRunnerSettings
+            {
+                AbortOnFail = true,
+                AllowReordered = true
+            };
+            var testRunner = new TestRunner(_translator, _tokenizer, _evaluator, settings);
+            IEnumerator<ScoredPattern> scoredPatterns = null;
+            TestSessionResult bestResult = null;
             ScoredPattern currentScoredPattern = null;
             TestSessionResult result;
-            while (!(result = Evaluate(testCases)).Success)
+            while (!(result = testRunner.RunTestCases(testCases)).Success)
             {
-                if (result > bestResult)
+                if (bestResult == null)
+                {
+                    bestResult = result;
+                    scoredPatterns = EnumerateScoredPatterns(result.FailedCase);
+                }
+                else if (result > bestResult)
                 {
                     currentScoredPattern = null;
                     if (result.SuccessCount > bestResult.SuccessCount)
@@ -52,24 +75,27 @@ namespace Lingua.Learning
                         return bestResult;
                     currentScoredPattern = scoredPatterns.Current;
                     _evaluator.Do(currentScoredPattern);
-                    lastFailedCase = _testRunner.RunTestCase(lastFailedCase.TestCase);
+                    lastFailedCase = testRunner.RunTestCase(lastFailedCase.TestCase);
                 } while (lastFailedCase.ScoreDeficit >= bestResult.FailedCase.ScoreDeficit);
             }
             scoredPatterns.Dispose();
             return result;
         }
 
+        private TestSessionResult VerifyPatterns(IEnumerable<TestCase> testCases)
+        {
+            var settings = new TestRunnerSettings
+            {
+                AbortOnFail = true,
+                AllowReordered = false
+            };
+            var testRunner = new TestRunner(_translator, _tokenizer, _evaluator, settings);
+            return testRunner.RunTestCases(testCases);
+        }
+
         public void SavePatterns()
         {
             _evaluator.SavePatterns();
-        }
-
-        private TestSessionResult Evaluate(IEnumerable<TestCase> testCases)
-        {
-            var result = _testRunner.RunTestCases(testCases);
-            if (result.FailedCase != null)
-                result.PatternCount = _evaluator.PatternCount;
-            return result;
         }
 
         private IEnumerator<ScoredPattern> EnumerateScoredPatterns(TestCaseResult result)

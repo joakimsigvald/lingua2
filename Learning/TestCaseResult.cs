@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Lingua.Learning
 {
@@ -8,21 +9,27 @@ namespace Lingua.Learning
     {
         private readonly TranslationResult _translationResult;
         public readonly TranslationTarget TranslationTarget;
+        private readonly bool _allowReordered;
 
         public TestCaseResult(TestCase testCase
             , TranslationResult translationResult
-            , TranslationTarget translationTarget)
+            , TranslationTarget translationTarget
+            , bool allowReordered)
         {
             TestCase = testCase;
             _translationResult = translationResult;
             TranslationTarget = translationTarget;
+            _allowReordered = allowReordered;
         }
 
         public TestCase TestCase { get; }
         public string From => TestCase.From;
         public string Expected => TestCase.Expected;
         public string Actual => _translationResult.Translation;
-        public bool Success => Actual == TestCase.Expected;
+        public bool IsSuccess => _allowReordered && WordTranslationSuccess || Success;
+        private bool Success => Actual == TestCase.Expected;
+        private bool WordTranslationSuccess => Success 
+            || ExpectedWords.Intersect(TranslatedWords).Count() == ExpectedTranslations.Count;
         public IReason Reason => _translationResult.Reason;
         public IList<Translation> ExpectedTranslations => TranslationTarget.Translations;
         public IEnumerable<Translation> Translations => _translationResult.Translations;
@@ -30,5 +37,14 @@ namespace Lingua.Learning
 
         public override string ToString()
             => $"{From}=>{Expected}/{Actual}:{Success}";
+
+        private IEnumerable<string> ExpectedWords
+            => GetWords(ExpectedTranslations);
+
+        private IEnumerable<string> TranslatedWords
+            => GetWords(Translations);
+
+        private IEnumerable<string> GetWords(IEnumerable<Translation> translations)
+            => translations.Select(t => t.Output.ToLower());
     }
 }

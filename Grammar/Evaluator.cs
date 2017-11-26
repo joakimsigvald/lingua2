@@ -24,13 +24,17 @@ namespace Lingua.Grammar
             , IDictionary<string, byte[]> rearrangements = null)
         {
             ScoringTree = BuildScoringTree(patterns ?? new Dictionary<string, sbyte>());
-            //Arrangers = BuildArrangers(rearrangements ?? new Dictionary<string, byte[]>());
-            Arrangers = LoadedArrangers.Value;
+            Arrangers = BuildArrangers(rearrangements ?? new Dictionary<string, byte[]>());
         }
 
         public void Load()
         {
             ScoringTree = LoadedScoringTree.Value;
+            LoadRearrangements();
+        }
+
+        public void LoadRearrangements()
+        {
             Arrangers = LoadedArrangers.Value;
         }
 
