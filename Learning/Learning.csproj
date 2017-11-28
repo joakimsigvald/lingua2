@@ -45,7 +45,10 @@
   <ItemGroup>
     <Compile Include="CodeEqualityComparer.cs" />
     <Compile Include="ConsoleReporter.cs" />
+    <Compile Include="Constructor.cs" />
     <Compile Include="EvaluatorEnhancement.cs" />
+    <Compile Include="FullTextTranslator.cs" />
+    <Compile Include="ITestCaseTranslator.cs" />
     <Compile Include="ITranslationExtractor.cs" />
     <Compile Include="IReporter.cs" />
     <Compile Include="ScoredPattern.cs" />
@@ -65,6 +68,7 @@
     <Compile Include="TestCaseResult.cs" />
     <Compile Include="TestSuiteResult.cs" />
     <Compile Include="TranslationTarget.cs" />
+    <Compile Include="WordByWordTranslator.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Core\Core.csproj">

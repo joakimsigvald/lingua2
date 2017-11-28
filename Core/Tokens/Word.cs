@@ -1,4 +1,6 @@
-﻿namespace Lingua.Core.Tokens
+﻿using Lingua.Core.Extensions;
+
+namespace Lingua.Core.Tokens
 {
     public abstract class Word : Element
     {

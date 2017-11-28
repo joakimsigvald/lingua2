@@ -1,11 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 using NUnit.Framework;
 
 namespace Lingua.Core.Test
 {
+    using Extensions;
     using Grammar;
     using Learning;
     using Tokenization;
@@ -14,18 +14,21 @@ namespace Lingua.Core.Test
     [TestFixture]
     public class TranslatorTests
     {
+        private static readonly Evaluator Evaluator = GetEvaluator();
+        private static readonly Translator Translator = CreateTranslator();
         private static readonly TestBench TestBench = CreateTestBench();
 
-        private static TestBench CreateTestBench()
+        private static TestBench CreateTestBench() 
+            => new TestBench(new TestRunner(new FullTextTranslator(Translator)), new FakeReporter());
+
+        private static Translator CreateTranslator() 
+            => new Translator(new Tokenizer(), new Thesaurus(), new GrammarEngine(Evaluator));
+
+        private static Evaluator GetEvaluator()
         {
-            var reporter = new FakeReporter();
             var evaluator = new Evaluator();
             evaluator.Load();
-            var engine = new GrammarEngine(evaluator);
-            var tokenizer = new Tokenizer();
-            var translator = new Translator(new Tokenizer(), new Thesaurus(), engine);
-            var testRunner = new TestRunner(translator, tokenizer);
-            return new TestBench(testRunner, reporter);
+            return evaluator;
         }
 
         [Test]
@@ -50,6 +53,14 @@ namespace Lingua.Core.Test
         {
             var success = TestBench.RunTestSuites();
             Assert.That(success);
+        }
+
+        [TestCase(null, "")]
+        [TestCase(".", ".")]
+        public void Translate(string original, string expected)
+        {
+            var actual = Translator.Translate(original);
+            Assert.That(actual.Translation, Is.EqualTo(expected));
         }
 
         private static void TestCase(string from, string to)

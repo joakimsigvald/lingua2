@@ -1,3 +1,5 @@
+using Lingua.Core;
+
 namespace Lingua.Learning
 {
     public class TestCase
@@ -8,6 +10,7 @@ namespace Lingua.Learning
             Expected = expected;
         }
 
+        public TranslationTreeNode Possibilities { get; set; }
         public TranslationTarget Target { get; set; }
         public string Suite { get; set; }
         public string From { get; }

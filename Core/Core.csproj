@@ -44,6 +44,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Encoder.cs" />
+    <Compile Include="Extensions\EnumerableExtensions.cs" />
+    <Compile Include="Extensions\StringExtensions.cs" />
     <Compile Include="IEvaluation.cs" />
     <Compile Include="IGrammar.cs" />
     <Compile Include="ILogger.cs" />
@@ -76,7 +78,6 @@
     <Compile Include="WordClasses\Noun.cs" />
     <Compile Include="Translation.cs" />
     <Compile Include="Translator.cs" />
-    <Compile Include="Extensions.cs" />
     <Compile Include="ITranslator.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Tokens\Word.cs" />

@@ -11,9 +11,6 @@ namespace Lingua.Main
 
     class Program
     {
-        private static readonly ITokenizer Tokenizer
-            = new Tokenizer();
-
         static void Main(string[] args)
         {
             Console.WriteLine(string.Join(", ", args));
@@ -49,8 +46,9 @@ namespace Lingua.Main
 
         private static void RunTestSuite()
         {
+            var translator = new FullTextTranslator(CreateTranslator());
             var testBench =
-                new TestBench(new TestRunner(CreateTranslator(), Tokenizer), new ConsoleReporter());
+                new TestBench(new TestRunner(translator), new ConsoleReporter());
             var success = testBench.RunTestSuites();
             if (!success)
                 throw new Exception("Fail!!");
@@ -79,7 +77,7 @@ namespace Lingua.Main
         {
             var evaluator = new Evaluator();
             evaluator.Load();
-            return new Translator(Tokenizer, new Thesaurus(), new GrammarEngine(evaluator));
+            return new Translator(new Tokenizer(), new Thesaurus(), new GrammarEngine(evaluator));
         }
     }
 }

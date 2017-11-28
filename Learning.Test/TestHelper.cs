@@ -31,6 +31,6 @@ namespace Lingua.Learning.Test
         }
 
         private static TestRunner CreateTestRunner()
-            => new TestRunner(Translator, Tokenizer);
+            => new TestRunner(new FullTextTranslator(Translator));
     }
 }

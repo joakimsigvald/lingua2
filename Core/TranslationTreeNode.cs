@@ -4,6 +4,7 @@ using System.Linq;
 
 namespace Lingua.Core
 {
+    using Extensions;
     using Tokens;
 
     public class TranslationTreeNode
@@ -25,7 +26,7 @@ namespace Lingua.Core
         public IEnumerable<IList<TranslationTreeNode>> Expand(int depth)
             => ExpandChildren(depth).Select(seq => seq.Prepend(this).ToList());
 
-        public IEnumerable<IList<TranslationTreeNode>> ExpandChildren(int depth)
+        private IEnumerable<IList<TranslationTreeNode>> ExpandChildren(int depth)
             => depth > 0 && Children.Any()
                 ? Children
                     .SelectMany(child => child.Expand(depth - 1))

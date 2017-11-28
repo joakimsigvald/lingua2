@@ -1,11 +1,13 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using Lingua.Core;
-using Lingua.Core.Tokens;
-using Lingua.Core.WordClasses;
 
 namespace Lingua.Vocabulary
 {
+    using Core;
+    using Core.Extensions;
+    using Core.Tokens;
+    using Core.WordClasses;
+
     public class Thesaurus : IThesaurus
     {
         private static readonly IDictionary<string, string> Expanders = Loader.LoadExpanders();

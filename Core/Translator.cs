@@ -4,6 +4,7 @@ using System.Text.RegularExpressions;
 
 namespace Lingua.Core
 {
+    using Extensions;
     using Tokens;
     using WordClasses;
 
@@ -27,17 +28,28 @@ namespace Lingua.Core
                 {
                     Translation = string.Empty
                 };
+            var possibilities = Destruct(original);
+            return Construct(possibilities);
+        }
+
+        public TranslationTreeNode Destruct(string original)
+        {
             var tokens = Expand(Tokenize(original)).ToArray();
             var candidates = Translate(tokens).ToList();
-            var possibilities = new TranslationTreeNode(null, candidates, true);
+            return new TranslationTreeNode(null, candidates, true);
+        }
+
+        public TranslationResult Construct(TranslationTreeNode possibilities)
+        {
             (var translations, var reason) = _grammar.Reduce(possibilities);
             var arrangedTranslations = _grammar.Arrange(translations);
             var adjustedResult = Adjust(arrangedTranslations).ToArray();
             var respacedResult = Respace(adjustedResult).ToArray();
+            var translation = Output(respacedResult);
             return new TranslationResult
             {
                 Translations = translations,
-                Translation = Output(respacedResult),
+                Translation = translation,
                 Reason = reason,
                 Possibilities = possibilities
             };

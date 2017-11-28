@@ -17,6 +17,13 @@ namespace Lingua.Learning
             TestCase = testCase;
             _translationResult = translationResult;
             _allowReordered = allowReordered;
+            WordTranslationSuccess = allowReordered && ComputeWordTranslationSuccess();
+        }
+
+        private bool ComputeWordTranslationSuccess()
+        {
+            var translatedWords = GetWords(Translations).ToList();
+            return GetWords(ExpectedTranslations).All(translatedWords.Remove);
         }
 
         public TestCase TestCase { get; }
@@ -25,8 +32,7 @@ namespace Lingua.Learning
         public string Actual => _translationResult.Translation;
         public bool IsSuccess => _allowReordered && WordTranslationSuccess || Success;
         private bool Success => Actual == TestCase.Expected;
-        private bool WordTranslationSuccess => Success 
-            || ExpectedWords.Intersect(TranslatedWords).Count() == ExpectedTranslations.Count;
+        private bool WordTranslationSuccess { get; }
         public IReason Reason => _translationResult.Reason;
         public IList<Translation> ExpectedTranslations => TestCase.Target.Translations;
         public IEnumerable<Translation> Translations => _translationResult.Translations;
@@ -34,12 +40,6 @@ namespace Lingua.Learning
 
         public override string ToString()
             => $"{From}=>{Expected}/{Actual}:{Success}";
-
-        private IEnumerable<string> ExpectedWords
-            => GetWords(ExpectedTranslations);
-
-        private IEnumerable<string> TranslatedWords
-            => GetWords(Translations);
 
         private IEnumerable<string> GetWords(IEnumerable<Translation> translations)
             => translations.Select(t => t.Output.ToLower());

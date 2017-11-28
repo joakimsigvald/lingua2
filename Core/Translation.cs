@@ -1,10 +1,12 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using Lingua.Core.Tokens;
-using Lingua.Core.WordClasses;
 
 namespace Lingua.Core
 {
+    using Extensions;
+    using Tokens;
+    using WordClasses;
+
     public class Translation
     {
         public static Translation Create(Token from, string to = null)

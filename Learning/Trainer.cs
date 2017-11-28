@@ -1,5 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
+using Lingua.Core.Extensions;
 
 namespace Lingua.Learning
 {
@@ -11,26 +13,45 @@ namespace Lingua.Learning
     public class Trainer
     {
         private readonly TrainableEvaluator _evaluator;
-        private readonly ITranslator _translator;
+        private readonly Translator _translator;
         private readonly ITokenizer _tokenizer;
+        private readonly IGrammar _grammar;
         private readonly PatternGenerator _patternGenerator;
 
         public Trainer()
         {
             _evaluator = new TrainableEvaluator();
             _tokenizer = new Tokenizer();
-            _translator = new Translator(_tokenizer, new Thesaurus(), new GrammarEngine(_evaluator));
+            _grammar = new GrammarEngine(_evaluator);
+            _translator = new Translator(_tokenizer, new Thesaurus(), _grammar);
             _patternGenerator = new PatternGenerator(new TranslationExtractor(), new PatternExtractor());
         }
 
         public TestSessionResult RunTrainingSession(params TestCase[] testCases)
         {
-            var copyOfTestCases = testCases.ToList();
-            var result = LearnPatterns(copyOfTestCases);
+            var preparedTestCases = PrepareForLearning(testCases);
+            var result = LearnPatterns(preparedTestCases);
             if (!result.Success)
                 return result;
             LearnRearrangements();
             return VerifyPatterns(testCases);
+        }
+
+        private IList<TestCase> PrepareForLearning(TestCase[] testCases)
+        {
+            var preparedTestCases = testCases
+                .Where(tc => !string.IsNullOrWhiteSpace(tc.From))
+                .ToList();
+            preparedTestCases.ForEach(PrepareForLearning);
+            return preparedTestCases;
+        }
+
+        private void PrepareForLearning(TestCase testCase)
+        {
+            testCase.Possibilities = _translator.Destruct(testCase.From);
+            testCase.Target = TargetSelector.SelectTarget(testCase.Possibilities, testCase.Expected);
+            if (testCase.Target.Translations == null)
+                throw new Exception();
         }
 
         private void LearnRearrangements()
@@ -45,7 +66,7 @@ namespace Lingua.Learning
                 AbortOnFail = true,
                 AllowReordered = true
             };
-            var testRunner = new TestRunner(_translator, _tokenizer, _evaluator, settings);
+            var testRunner = new TestRunner(new WordByWordTranslator(_grammar), _evaluator, settings);
             IEnumerator<ScoredPattern> scoredPatterns = null;
             TestSessionResult bestResult = null;
             ScoredPattern currentScoredPattern = null;
@@ -97,7 +118,7 @@ namespace Lingua.Learning
                 AbortOnFail = true,
                 AllowReordered = false
             };
-            var testRunner = new TestRunner(_translator, _tokenizer, _evaluator, settings);
+            var testRunner = new TestRunner(new FullTextTranslator(_translator), _evaluator, settings);
             return testRunner.RunTestSession(testCases);
         }
 

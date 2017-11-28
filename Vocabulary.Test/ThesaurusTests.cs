@@ -15,8 +15,11 @@ namespace Lingua.Vocabulary.Test
         [TestCase("")]
         [TestCase("  ")]
         [TestCase("Joakim")]
+        [TestCase(".")]
+        [TestCase(",")]
+        [TestCase(":")]
         public void Untranslatable(string from)
-            => Assert.That(Thesaurus.Translate(new Unclassified {Value = from}).Single().To, Is.Null);
+            => Assert.That(Thesaurus.Translate(new Unclassified { Value = from }).Single().To, Is.Null);
 
         [TestCase("ball", "boll")]
         [TestCase("foot", "fot")]

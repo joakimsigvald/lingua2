@@ -3,26 +3,22 @@ using System.Linq;
 
 namespace Lingua.Learning
 {
-    using Core;
-
     public class TestRunner
     {
-        private readonly ITranslator _translator;
-        private readonly ITokenizer _tokenizer;
+        private readonly ITestCaseTranslator _translator;
         private readonly TrainableEvaluator _evaluator;
         private readonly TestRunnerSettings _settings;
 
-        public TestRunner(ITranslator translator, ITokenizer tokenizer
+        public TestRunner(ITestCaseTranslator translator
             , TrainableEvaluator evaluator = null
             , TestRunnerSettings settings = null)
         {
             _settings = settings ?? new TestRunnerSettings();
             _translator = translator;
-            _tokenizer = tokenizer;
             _evaluator = evaluator;
         }
 
-        public TestCaseResult KnownResult { get; set; }
+        public TestCaseResult KnownResult { private get; set; }
 
         public static TestCase[] LoadTestCases()
             => Loader.LoadTestSuites()
@@ -39,23 +35,13 @@ namespace Lingua.Learning
         {
             if (testCase == KnownResult?.TestCase)
                 return KnownResult;
-            var translationResult = _translator.Translate(testCase.From);
-            AssureTargetSet(testCase, translationResult);
+            var translationResult = _translator.Translate(testCase);
             var result = new TestCaseResult(testCase
                 , translationResult
                 , _settings.AllowReordered);
             if (_evaluator != null && !result.IsSuccess)
                 result.ScoreDeficit = _evaluator.ComputeScoreDeficit(result);
             return result;
-        }
-
-        private void AssureTargetSet(TestCase testCase, TranslationResult translationResult)
-        {
-            if (testCase.Target != null)
-                return;
-            var expectedTokens = _tokenizer.Tokenize(testCase.Expected).ToArray();
-            testCase.Target = testCase.Target ?? TargetSelector
-                                  .SelectTarget(translationResult.Possibilities, expectedTokens);
         }
 
         private IEnumerable<TestCaseResult> RunTestCases(

@@ -13,9 +13,8 @@ namespace Lingua.Learning.Test
         public void SelectTranslations(string from, string to, params string[] expectedTranslations)
         {
             var translationResult = TestHelper.Translator.Translate(from);
-            var toTokens = TestHelper.Tokenizer.Tokenize(to).ToArray();
             var filteredCandidates = TargetSelector
-                .SelectTarget(translationResult.Possibilities, toTokens)
+                .SelectTarget(translationResult.Possibilities, to)
                 .Translations.Select(t => t.From.Value);
             Assert.That(filteredCandidates, Is.EquivalentTo(expectedTranslations));
         }
@@ -26,8 +25,7 @@ namespace Lingua.Learning.Test
         public void ExtractOrdering(string from, string to, params int[] expected)
         {
             var translationResult = TestHelper.Translator.Translate(from);
-            var toTokens = TestHelper.Tokenizer.Tokenize(to).ToArray();
-            var target = TargetSelector.SelectTarget(translationResult.Possibilities, toTokens);
+            var target = TargetSelector.SelectTarget(translationResult.Possibilities, to);
             Assert.That(target.Order, Is.EquivalentTo(expected));
         }
     }

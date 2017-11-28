@@ -1,8 +1,10 @@
 ﻿using System.Collections.Generic;
-using Lingua.Core;
 
 namespace Lingua.Vocabulary
 {
+    using Core;
+    using Core.Extensions;
+
     public class Lexicon : ILexicon
     {
         private readonly IDictionary<string, IList<Translation>> _translations = new Dictionary<string, IList<Translation>>();

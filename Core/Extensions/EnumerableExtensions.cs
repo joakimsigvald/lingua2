@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Lingua.Core
+namespace Lingua.Core.Extensions
 {
-    public static class Extensions
+    public static class EnumerableExtensions
     {
         public static IEnumerable<TItem> Append<TItem>(this IEnumerable<TItem> items, TItem item)
             => items.Concat(new[] {item});
@@ -17,20 +17,6 @@ namespace Lingua.Core
 
         public static TValue SafeGetValue<TKey, TValue>(this IDictionary<TKey, TValue> map, TKey key)
             => key != null && map.TryGetValue(key, out TValue value) ? value : default(TValue);
-
-        public static string Start(this string text, int count)
-            => count >= 0
-                ? text.Substring(0, count)
-                : text.Substring(0, text.Length + count);
-
-        public static string Capitalize(this string word)
-            => AlterInitial(word, char.ToUpper);
-
-        public static string Decapitalize(this string word)
-            => AlterInitial(word, char.ToLower);
-
-        private static string AlterInitial(string word, Func<char, char> alter)
-            => string.IsNullOrEmpty(word) ? word : alter(word[0]) + word.Substring(1);
 
         public static IEnumerable<TItem> Prepend<TItem>(this IEnumerable<TItem> items, TItem item)
             => new []{item}.Concat(items);
@@ -74,17 +60,6 @@ namespace Lingua.Core
                 item2 = enumerator.Current;
                 enumerator.MoveNext();
                 item3 = enumerator.Current;
-            }
-        }
-
-        public static void Deconstruct<TValue>(this IEnumerable<TValue> sequence, out TValue item1, out TValue item2)
-        {
-            using (var enumerator = sequence.GetEnumerator())
-            {
-                enumerator.MoveNext();
-                item1 = enumerator.Current;
-                enumerator.MoveNext();
-                item2 = enumerator.Current;
             }
         }
     }

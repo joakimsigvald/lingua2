@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using Lingua.Core.Extensions;
 
 namespace Lingua.Learning
 {
@@ -8,8 +9,6 @@ namespace Lingua.Learning
 
     public class TrainableEvaluator : Evaluator
     {
-        public int PatternCount => ScoringTree.ScoredNodeCount;
-
         public void UpdateScore(string pattern, sbyte addScore)
         {
             if (addScore == 0)

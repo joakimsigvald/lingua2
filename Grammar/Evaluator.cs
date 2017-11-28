@@ -4,6 +4,7 @@ using System.Linq;
 
 namespace Lingua.Grammar
 {
+    using Core.Extensions;
     using Core;
     using Core.Tokens;
     using Core.WordClasses;

@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Linq;
-using Lingua.Core.WordClasses;
 
 namespace Lingua.Tokenization
 {
-    using Core;
+    using Core.Extensions;
+    using Core.WordClasses;
     using Core.Tokens;
     using Symbols;
 

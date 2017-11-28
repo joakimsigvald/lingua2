@@ -2,11 +2,13 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.Serialization;
-using Lingua.Core;
-using Lingua.Core.Tokens;
 
 namespace Lingua.Vocabulary
 {
+    using Core;
+    using Core.Extensions;
+    using Core.Tokens;
+
     public interface IWordMap
     {
         IEnumerable<Translation> Translations { get; }

@@ -5,7 +5,7 @@ using NUnit.Framework;
 
 namespace Lingua.Tokenization.Test
 {
-    using Core;
+    using Core.Extensions;
     using Core.Tokens;
 
     [TestFixture]
