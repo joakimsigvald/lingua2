@@ -14,16 +14,14 @@ namespace Lingua.Learning
     {
         private readonly TrainableEvaluator _evaluator;
         private readonly Translator _translator;
-        private readonly ITokenizer _tokenizer;
         private readonly IGrammar _grammar;
         private readonly PatternGenerator _patternGenerator;
 
         public Trainer()
         {
             _evaluator = new TrainableEvaluator();
-            _tokenizer = new Tokenizer();
             _grammar = new GrammarEngine(_evaluator);
-            _translator = new Translator(_tokenizer, new Thesaurus(), _grammar);
+            _translator = new Translator(new Tokenizer(), new Thesaurus(), _grammar);
             _patternGenerator = new PatternGenerator(new TranslationExtractor(), new PatternExtractor());
         }
 
@@ -33,11 +31,11 @@ namespace Lingua.Learning
             var result = LearnPatterns(preparedTestCases);
             if (!result.Success)
                 return result;
-            LearnRearrangements();
+            LearnRearrangements(result);
             return VerifyPatterns(testCases);
         }
 
-        private IList<TestCase> PrepareForLearning(TestCase[] testCases)
+        private IList<TestCase> PrepareForLearning(IEnumerable<TestCase> testCases)
         {
             var preparedTestCases = testCases
                 .Where(tc => !string.IsNullOrWhiteSpace(tc.From))
@@ -54,10 +52,19 @@ namespace Lingua.Learning
                 throw new Exception();
         }
 
-        private void LearnRearrangements()
+        private void LearnRearrangements(TestSessionResult result)
         {
-            _evaluator.LoadRearrangements();
+            var rearrangedTargets = result.Results
+                .Select(tcr => tcr.TestCase.Target)
+                .Where(target => !target.IsInOrder)
+                .Select(target => (code: GetTranslatedCode(target), order: target.Order))
+                .ToArray();
+            var arrangerCandidates = ArrangerGenerator.GetArrangerCandidates(rearrangedTargets);
         }
+
+        private ushort[] GetTranslatedCode(TranslationTarget target)
+            => Encoder.Encode(target.Translations.Where(t => !string.IsNullOrEmpty(t.Output)))
+            .ToArray();
 
         private TestSessionResult LearnPatterns(IList<TestCase> testCases)
         {
