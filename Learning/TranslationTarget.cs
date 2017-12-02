@@ -7,6 +7,5 @@ namespace Lingua.Learning
     {
         public Translation[] Translations { get; set; }
         public byte[] Order { get; set; }
-        public bool IsInOrder => Order.Select((n, i) => n - i - 1).All(dif => dif == 0);
     }
 }

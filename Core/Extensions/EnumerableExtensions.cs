@@ -21,24 +21,6 @@ namespace Lingua.Core.Extensions
         public static IEnumerable<TItem> Prepend<TItem>(this IEnumerable<TItem> items, TItem item)
             => new []{item}.Concat(items);
 
-        public static IEnumerable<TItem> Interleave<TItem>(this IList<TItem> primary, IList<TItem> secondary, bool modulate = false) 
-            => primary.Count > 1 && secondary.Any() 
-            ? DoInterleave(primary, secondary, modulate)
-            : primary;
-
-        private static IEnumerable<TItem> DoInterleave<TItem>(this IList<TItem> primary, IList<TItem> secondary, bool modulate = false)
-        {
-            var index = 0;
-            yield return primary.First();
-            foreach (var item in primary.Skip(1))
-            {
-                if (index < secondary.Count || modulate)
-                    yield return secondary[index % secondary.Count];
-                yield return item;
-                index++;
-            }
-        }
-
         public static IEnumerable<TItem> NotNull<TItem>(this IEnumerable<TItem> items)
             where TItem : class
             => items.Where(item => item != null);
@@ -50,17 +32,8 @@ namespace Lingua.Core.Extensions
             items.Insert(0, item);
         }
 
-        public static void Deconstruct<TValue>(this IEnumerable<TValue> sequence, out TValue item1, out TValue item2, out TValue item3)
-        {
-            using (var enumerator = sequence.GetEnumerator())
-            {
-                enumerator.MoveNext();
-                item1 = enumerator.Current;
-                enumerator.MoveNext();
-                item2 = enumerator.Current;
-                enumerator.MoveNext();
-                item3 = enumerator.Current;
-            }
-        }
+        public static bool IsSegmentOf<TItem>(this IList<TItem> a, IList<TItem> b)
+            => a.Count <= b.Count && Enumerable.Range(0, b.Count - a.Count + 1)
+                   .Any(offset => b.Skip(offset).Take(a.Count).SequenceEqual(a));
     }
 }

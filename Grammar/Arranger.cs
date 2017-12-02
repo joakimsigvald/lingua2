@@ -26,12 +26,22 @@ namespace Lingua.Grammar
         }
 
         private string Pattern { get; }
-        private ushort[] Code { get; }
-        private byte[] Order { get; }
+        public ushort[] Code { get; }
+        public byte[] Order { get; }
         public int Length => Code.Length;
+        public bool IsInOrder => Order.Select((n, i) => n - i - 1).All(dif => dif == 0);
 
         public IEnumerable<Translation> Arrange(IList<Translation> input)
             => ArrangeSegments(input).SelectMany(x => x.Select(y => y));
+
+        public string Serialize()
+            => $"{Pattern}|{string.Join("", Order)}";
+
+        public static Arranger Deserialize(string serial)
+        {
+            var parts = serial.Split('|');
+            return new Arranger(parts[0], parts[1].Select(c => (byte)(c - 48)).ToArray());
+        }
 
         private IEnumerable<IEnumerable<Translation>> ArrangeSegments(ICollection<Translation> input)
         {
@@ -64,7 +74,7 @@ namespace Lingua.Grammar
             => Order.Select(i => segment[i]);
 
         public bool Equals(Arranger other)
-            => other != null && other.Pattern == Pattern;
+            => other?.Pattern == Pattern;
 
         public override bool Equals(object obj)
             => Equals(obj as Arranger);

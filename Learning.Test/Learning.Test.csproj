@@ -56,6 +56,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ArrangerGeneratorTests.cs" />
     <Compile Include="PatternGeneratorTests.cs" />
     <Compile Include="TestHelper.cs" />
     <Compile Include="TargetSelectorTests.cs" />

@@ -52,17 +52,21 @@ namespace Lingua.Learning
                 throw new Exception();
         }
 
-        private void LearnRearrangements(TestSessionResult result)
+        private static void LearnRearrangements(TestSessionResult result)
         {
-            var rearrangedTargets = result.Results
+            var targetArrangers = result.Results
                 .Select(tcr => tcr.TestCase.Target)
+                .Select(target => new Arranger(GetTranslatedCode(target), target.Order))
+                .Distinct()
                 .Where(target => !target.IsInOrder)
-                .Select(target => (code: GetTranslatedCode(target), order: target.Order))
                 .ToArray();
-            var arrangerCandidates = ArrangerGenerator.GetArrangerCandidates(rearrangedTargets);
+            var arrangerCandidates = ArrangerGenerator
+                .GetArrangerCandidates(targetArrangers)
+                .GetEnumerator();
+            arrangerCandidates.Dispose();
         }
 
-        private ushort[] GetTranslatedCode(TranslationTarget target)
+        private static ushort[] GetTranslatedCode(TranslationTarget target)
             => Encoder.Encode(target.Translations.Where(t => !string.IsNullOrEmpty(t.Output)))
             .ToArray();
 
