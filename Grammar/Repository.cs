@@ -32,9 +32,8 @@ namespace Lingua.Grammar
         private static string ToLine(KeyValuePair<string, sbyte> scoredPattern)
             => $"{scoredPattern.Key}:{scoredPattern.Value}";
 
-        public static Dictionary<string, byte[]> LoadRearrangements()
-            => ReadLines("Rearrangements.txt")
-            .ToDictionary(v => v.Select(c => (byte)(c - 49)).ToArray());
+        public static IEnumerable<Arrangement> LoadArrangements()
+            => ReadLines("Rearrangements.txt").Select(Arrangement.Deserialize);
 
         private static Dictionary<string, T> ToDictionary<T>(
             this IEnumerable<string> lines, Func<string, T> convert)

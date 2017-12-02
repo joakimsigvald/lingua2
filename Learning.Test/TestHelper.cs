@@ -2,6 +2,7 @@
 
 namespace Lingua.Learning.Test
 {
+    using TestCaseTranslators;
     using Tokenization;
     using Core;
     using Grammar;
@@ -9,8 +10,9 @@ namespace Lingua.Learning.Test
 
     public static class TestHelper
     {
-        public static ITokenizer Tokenizer => LazyTokenizer.Value;
         public static Translator Translator => LazyTranslator.Value;
+
+        private static ITokenizer Tokenizer => LazyTokenizer.Value;
         private static TestRunner TestRunner => LazyTestRunner.Value;
 
         public static TestCaseResult GetTestCaseResult(string from, string expected)

@@ -32,6 +32,11 @@ namespace Lingua.Learning
                 Arrangers.Add(arranger);
         }
 
+        public void Remove(Arranger arranger)
+        {
+            Arrangers.Remove(arranger);
+        }
+
         public int ComputeScoreDeficit(TestCaseResult failedCase)
         {
             var expected = Encoder.Encode(failedCase.ExpectedTranslations).ToArray();

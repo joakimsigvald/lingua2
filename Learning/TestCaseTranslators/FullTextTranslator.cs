@@ -1,7 +1,7 @@
-﻿using Lingua.Core;
-
-namespace Lingua.Learning
+﻿namespace Lingua.Learning.TestCaseTranslators
 {
+    using Core;
+
     public class FullTextTranslator : ITestCaseTranslator
     {
         private readonly ITranslator _translator;

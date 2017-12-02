@@ -1,12 +1,12 @@
-﻿using Lingua.Core;
-
-namespace Lingua.Learning
+﻿namespace Lingua.Learning.TestCaseTranslators
 {
-    public class Constructor : ITestCaseTranslator
+    using Core;
+
+    public class TestCaseConstructor : ITestCaseTranslator
     {
         private readonly Translator _translator;
 
-        public Constructor(Translator translator)
+        public TestCaseConstructor(Translator translator)
             => _translator = translator;
 
         public TranslationResult Translate(TestCase testCase)

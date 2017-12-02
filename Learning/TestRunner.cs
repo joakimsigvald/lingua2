@@ -3,6 +3,8 @@ using System.Linq;
 
 namespace Lingua.Learning
 {
+    using TestCaseTranslators;
+
     public class TestRunner
     {
         private readonly ITestCaseTranslator _translator;

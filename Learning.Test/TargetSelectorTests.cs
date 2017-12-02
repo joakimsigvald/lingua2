@@ -19,15 +19,17 @@ namespace Lingua.Learning.Test
             Assert.That(filteredCandidates, Is.EquivalentTo(expectedTranslations));
         }
 
-        [TestCase("I am running", "Jag springer", 1, 3)]
-        [TestCase("He has been running", "Han har sprungit", 1, 2, 4)]
-        [TestCase("Are you painting", "Målar du?", 3, 2)]
-        [TestCase("I am painting the wall", "jag målar väggen", 1, 3, 4)] // the har ingen översättning
+        [TestCase("I am running", "Jag springer", 0, 2)]
+        [TestCase("He has been running", "Han har sprungit", 0, 1, 3)]
+        [TestCase("Are you painting", "Målar du", 2, 1)]
+        [TestCase("Are you painting.", "Målar du.", 2, 1, 3)]
+        [TestCase("Are you painting?", "Målar du?", 2, 1, 3)]
+        [TestCase("I am painting the wall", "jag målar väggen", 0, 2, 3)] // the har ingen översättning
         public void ExtractOrdering(string from, string to, params int[] expected)
         {
             var translationResult = TestHelper.Translator.Translate(from);
             var target = TargetSelector.SelectTarget(translationResult.Possibilities, to);
-            Assert.That(target.Order, Is.EquivalentTo(expected));
+            Assert.That(target.Arrangement.Order, Is.EquivalentTo(expected));
         }
     }
 }

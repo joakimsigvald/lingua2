@@ -1,10 +1,11 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Lingua.Core.Extensions;
 
 namespace Lingua.Learning
 {
+    using Core.Extensions;
+    using Grammar;
     using Core;
 
     public class TargetSelector
@@ -25,18 +26,20 @@ namespace Lingua.Learning
 
         private TranslationTarget SelectTarget(TranslationTreeNode possibilities)
         {
-            var translations = SelectTranslations(possibilities.Children);
+            var translations = SelectTranslations(possibilities.Children)?.ToArray();
             return new TranslationTarget
             {
-                Translations = translations?.ToArray(),
-                Order = GetOrder()
+                Translations = translations,
+                Arrangement = translations == null 
+                ? null 
+                : new Arrangement(Encoder.Encode(translations.Where(t => t.HasOutput)).ToArray(), GetOrder())
             };
         }
 
         private byte[] GetOrder()
             => _translated
                 .Where(c => c < Space)
-                .Select(c => (byte) c)
+                .Select(c => (byte) (c - 1))
                 .ToArray();
 
         private IEnumerable<Translation> SelectTranslations(

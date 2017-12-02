@@ -5,6 +5,7 @@ using NUnit.Framework;
 
 namespace Lingua.Core.Test
 {
+    using Learning.TestCaseTranslators;
     using Extensions;
     using Grammar;
     using Learning;

@@ -3,6 +3,7 @@ using System.Linq;
 
 namespace Lingua.Main
 {
+    using Learning.TestCaseTranslators;
     using Core;
     using Grammar;
     using Learning;

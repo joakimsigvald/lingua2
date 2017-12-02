@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -6,54 +5,30 @@ namespace Lingua.Grammar
 {
     using Core;
 
-    public class Arranger : IEquatable<Arranger>
+    public class Arranger
     {
-        public Arranger(string pattern, byte[] order)
-            : this(pattern, Encoder.Encode(Encoder.Deserialize(pattern)).ToArray(), order)
-        {
-        }
+        public Arranger(Arrangement arrangement)
+            => Arrangement = arrangement;
 
-        public Arranger(ushort[] code, byte[] order)
-            : this(Encoder.Serialize(code), code, order)
-        {
-        }
-
-        private Arranger(string pattern, ushort[] code, byte[] order)
-        {
-            Pattern = pattern;
-            Code = code;
-            Order = order;
-        }
-
-        private string Pattern { get; }
-        public ushort[] Code { get; }
-        public byte[] Order { get; }
-        public int Length => Code.Length;
-        public bool IsInOrder => Order.Select((n, i) => n - i - 1).All(dif => dif == 0);
+        private Arrangement Arrangement { get; }
 
         public IEnumerable<Translation> Arrange(IList<Translation> input)
             => ArrangeSegments(input).SelectMany(x => x.Select(y => y));
 
-        public string Serialize()
-            => $"{Pattern}|{string.Join("", Order)}";
-
-        public static Arranger Deserialize(string serial)
-        {
-            var parts = serial.Split('|');
-            return new Arranger(parts[0], parts[1].Select(c => (byte)(c - 48)).ToArray());
-        }
+        public override string ToString()
+            => Arrangement.ToString();
 
         private IEnumerable<IEnumerable<Translation>> ArrangeSegments(ICollection<Translation> input)
         {
             for (var i = 0; i < input.Count; i++)
             {
                 var segment = input
-                    .Skip(i).Take(Code.Length)
+                    .Skip(i).Take(Arrangement.Code.Length)
                     .ToArray();
                 var arrangedSegment = Arrange(segment);
                 if (arrangedSegment != null)
                 {
-                    i += Code.Length - 1;
+                    i += Arrangement.Code.Length - 1;
                     yield return arrangedSegment;
                 }
                 else yield return segment.Take(1);
@@ -64,22 +39,13 @@ namespace Lingua.Grammar
         {
             var tokens = segment.Select(t => t.From).ToArray();
             var codedSegment = Encoder.Encode(tokens).ToArray();
-            if (!Encoder.Matches(codedSegment, Code))
+            if (!Encoder.Matches(codedSegment, Arrangement.Code))
                 return null;
             var rearrangedSegment = Rearrange(segment).ToList();
             return rearrangedSegment;
         }
 
         private IEnumerable<Translation> Rearrange(IList<Translation> segment)
-            => Order.Select(i => segment[i]);
-
-        public bool Equals(Arranger other)
-            => other?.Pattern == Pattern;
-
-        public override bool Equals(object obj)
-            => Equals(obj as Arranger);
-
-        public override int GetHashCode()
-            => Pattern.GetHashCode();
+            => Arrangement.Order.Select(i => segment[i]);
     }
 }

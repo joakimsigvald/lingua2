@@ -1,10 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Lingua.Core.Extensions;
 
 namespace Lingua.Learning
 {
+    using Core.Extensions;
+    using TestCaseTranslators;
     using Core;
     using Grammar;
     using Tokenization;
@@ -52,23 +53,56 @@ namespace Lingua.Learning
                 throw new Exception();
         }
 
-        private static void LearnRearrangements(TestSessionResult result)
+        private void LearnRearrangements(TestSessionResult result)
         {
-            var targetArrangers = result.Results
-                .Select(tcr => tcr.TestCase.Target)
-                .Select(target => new Arranger(GetTranslatedCode(target), target.Order))
-                .Distinct()
-                .Where(target => !target.IsInOrder)
+            var outOfOrderCases = result.Results
+                .Where(tcr => !tcr.TestCase.Target.Arrangement.IsInOrder)
+                .Select(tcr => tcr.TestCase)
                 .ToArray();
-            var arrangerCandidates = ArrangerGenerator
-                .GetArrangerCandidates(targetArrangers)
-                .GetEnumerator();
-            arrangerCandidates.Dispose();
+            if (outOfOrderCases.Any())
+                LearnRearrangements(outOfOrderCases);
         }
 
-        private static ushort[] GetTranslatedCode(TranslationTarget target)
-            => Encoder.Encode(target.Translations.Where(t => !string.IsNullOrEmpty(t.Output)))
+        private void LearnRearrangements(ICollection<TestCase> outOfOrderCases)
+        {
+            var arrangerCandidates = GetArrangementCandidates(outOfOrderCases);
+            LearnRearrangements(outOfOrderCases, arrangerCandidates);
+        }
+
+        private static IEnumerable<Arranger> GetArrangementCandidates(IEnumerable<TestCase> outOfOrderCases) 
+            => ArrangerGenerator
+            .GetArrangerCandidates(GetTargetArrangers(outOfOrderCases))
+            .Select(arr => new Arranger(arr));
+
+        private static IEnumerable<Arrangement> GetTargetArrangers(IEnumerable<TestCase> outOfOrderCases) 
+            => outOfOrderCases
+            .Select(tc => tc.Target.Arrangement)
+            .Distinct()
+            .Where(arr => !arr.IsInOrder)
             .ToArray();
+
+        private void LearnRearrangements(ICollection<TestCase> testCases, IEnumerable<Arranger> arrangerCandidates)
+        {
+            var bestResult = 0;
+            foreach (var arranger in arrangerCandidates)
+            {
+                _evaluator.Add(arranger);
+                var result = testCases.Count(IsCorrectlyArranged);
+                if (result <= bestResult)
+                    _evaluator.Remove(arranger);
+                else if (result == testCases.Count)
+                    return;
+                bestResult = result;
+            }
+            throw new Exception("Failed to learn arrangements. Improve algorithm");
+        }
+
+        private bool IsCorrectlyArranged(TestCase testCase)
+        {
+            var actual = _evaluator.Arrange(testCase.Target.Translations);
+            var expected = testCase.Target.ArrangedTranslations;
+            return actual.SequenceEqual(expected);
+        }
 
         private TestSessionResult LearnPatterns(IList<TestCase> testCases)
         {

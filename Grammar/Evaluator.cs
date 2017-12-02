@@ -12,30 +12,22 @@ namespace Lingua.Grammar
     public class Evaluator : IEvaluator
     {
         public ScoreTreeNode ScoringTree;
-        protected IList<Arranger> Arrangers;
+        protected IList<Arranger> Arrangers = new List<Arranger>();
 
         private static readonly Lazy<ScoreTreeNode> LoadedScoringTree =
             new Lazy<ScoreTreeNode>(() => BuildScoringTree(Repository.LoadScoredPatterns()));
 
         private static readonly Lazy<IList<Arranger>> LoadedArrangers =
-            new Lazy<IList<Arranger>>(() => BuildArrangers(Repository.LoadRearrangements()));
+            new Lazy<IList<Arranger>>(() => BuildArrangers(Repository.LoadArrangements()));
 
-        public Evaluator(
-            IDictionary<string, sbyte> patterns = null
-            , IDictionary<string, byte[]> rearrangements = null)
+        public Evaluator(IDictionary<string, sbyte> patterns = null)
         {
             ScoringTree = BuildScoringTree(patterns ?? new Dictionary<string, sbyte>());
-            Arrangers = BuildArrangers(rearrangements ?? new Dictionary<string, byte[]>());
         }
 
         public void Load()
         {
             ScoringTree = LoadedScoringTree.Value;
-            LoadRearrangements();
-        }
-
-        public void LoadRearrangements()
-        {
             Arrangers = LoadedArrangers.Value;
         }
 
@@ -51,13 +43,13 @@ namespace Lingua.Grammar
 
         public Translation[] Arrange(IEnumerable<Translation> translations)
             => Arrangers
-                .Aggregate(translations
+                .Aggregate(translations.Where(t => !string.IsNullOrEmpty(t.Output))
                     , (input, arranger) => arranger
                         .Arrange(input.ToList()))
                 .ToArray();
 
-        private static IList<Arranger> BuildArrangers(IDictionary<string, byte[]> rearrangements)
-            => rearrangements.Select(sp => new Arranger(sp.Key, sp.Value)).ToList();
+        private static IList<Arranger> BuildArrangers(IEnumerable<Arrangement> arrangements)
+            => arrangements.Select(arr => new Arranger(arr)).ToList();
 
         private IEnumerable<ScoreTreeNode> GetMatchingScoreNodes(ushort[] code)
             => Enumerable.Range(0, code.Length)
