@@ -4,6 +4,7 @@ using System.Linq;
 
 namespace Lingua.Learning
 {
+    using Core.Tokens;
     using Core.Extensions;
     using Grammar;
     using Core;
@@ -15,6 +16,7 @@ namespace Lingua.Learning
         private string _translated;
         private string _nextReplacement = "";
         private int _nextPosition = 1;
+        private bool _previousIsAbbreviation = false;
 
         public static TranslationTarget SelectTarget(
             TranslationTreeNode possibilities
@@ -59,14 +61,18 @@ namespace Lingua.Learning
 
         private IEnumerable<Translation> FilterPossibilities(TranslationTreeNode possibilities)
         {
-            TryReplaceWithNextPosition(possibilities.Translation.Output);
-            return SelectTranslations(possibilities.Children)?.Prepend(possibilities.Translation);
+            var translation = possibilities.Translation;
+            TryReplaceWithNextPosition(translation.Output);
+            _previousIsAbbreviation = translation.From is Abbreviation;
+            return SelectTranslations(possibilities.Children)?.Prepend(translation);
         }
 
         private void TryReplaceWithNextPosition(string output)
         {
             if (_nextPosition >= Space - 1)
                 throw new Exception("Testcase too long, ran out of positions to assign");
+            if (_previousIsAbbreviation && output == ".")
+                return;
             _nextReplacement += (char) _nextPosition++;
             if (string.IsNullOrEmpty(output))
                 return;
