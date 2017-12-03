@@ -20,7 +20,7 @@ namespace Lingua.Core.Test
         private static readonly TestBench TestBench = CreateTestBench();
 
         private static TestBench CreateTestBench() 
-            => new TestBench(new TestRunner(new FullTextTranslator(Translator)), new FakeReporter());
+            => new TestBench(new TestRunner(new FullTextTranslator(Translator)), new TestReporter());
 
         private static Translator CreateTranslator() 
             => new Translator(new Tokenizer(), new Thesaurus(), new GrammarEngine(Evaluator));
@@ -84,11 +84,13 @@ namespace Lingua.Core.Test
         }
     }
 
-    internal class FakeReporter : IReporter
+    internal class TestReporter : IReporter
     {
         public void Report(TestSessionResult result)
         {
-            // Nope
+            Console.WriteLine($"Success: {result.Success}");
+            Console.WriteLine($"Success count: {result.SuccessCount}");
+            Console.WriteLine($"Failed case: {result.FailedCase}");
         }
     }
 }

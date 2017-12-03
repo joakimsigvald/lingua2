@@ -13,6 +13,7 @@ namespace Lingua.Learning
         private const char FirstSymbol = '!';
         private const char Space = (char) 32;
         private string _translated;
+        private string _nextReplacement = "";
         private int _nextPosition = 1;
 
         public static TranslationTarget SelectTarget(
@@ -32,7 +33,7 @@ namespace Lingua.Learning
                 Translations = translations,
                 Arrangement = translations == null 
                 ? null 
-                : new Arrangement(Encoder.Encode(translations.Where(t => t.HasOutput)).ToArray(), GetOrder())
+                : new Arrangement(Encoder.Encode(translations).ToArray(), GetOrder())
             };
         }
 
@@ -65,13 +66,16 @@ namespace Lingua.Learning
         private void TryReplaceWithNextPosition(string output)
         {
             if (_nextPosition >= Space - 1)
-                throw new Exception("Testcase too long, ran out of positinos to assign");
-            if (!string.IsNullOrEmpty(output))
-                _translated = ReplaceWithNextPosition(ShortenEllipsisToFit(output));
+                throw new Exception("Testcase too long, ran out of positions to assign");
+            _nextReplacement += (char) _nextPosition++;
+            if (string.IsNullOrEmpty(output))
+                return;
+            _translated = ReplaceWithNextPosition(ShortenEllipsisToFit(output));
+            _nextReplacement = "";
         }
 
         private string ReplaceWithNextPosition(string output) 
-            => _translated.ReplaceFirst(output.ToLower(), $"{(char) _nextPosition++}");
+            => _translated.ReplaceFirst(output.ToLower(), _nextReplacement);
 
         private string ShortenEllipsisToFit(string output)
             => output == "..." && !_translated.Contains(output) ? ".." : output;

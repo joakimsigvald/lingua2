@@ -29,6 +29,7 @@ namespace Lingua.Learning.Test
             var thesaurus = new Thesaurus();
             var evaluator = new Evaluator();
             var grammar = new GrammarEngine(evaluator);
+            evaluator.Load();
             return new Translator(Tokenizer, thesaurus, grammar);
         }
 

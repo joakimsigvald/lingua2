@@ -22,7 +22,7 @@ namespace Lingua.Learning.Test
             Assert.That(positivePatterns.Intersect(expectedPatterns), Is.EquivalentTo(expectedPatterns));
         }
 
-        [TestCase("search result", "sökresultat", "NN")]
+        [TestCase("search result", "sökresultat", "N", "N*")]
         public void MatchesNegativePatterns(string from, string expected, params string[] expectedPatterns)
         {
             var result = TestHelper.GetTestCaseResult(from, expected);

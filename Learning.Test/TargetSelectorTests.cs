@@ -24,12 +24,14 @@ namespace Lingua.Learning.Test
         [TestCase("Are you painting", "Målar du", 2, 1)]
         [TestCase("Are you painting.", "Målar du.", 2, 1, 3)]
         [TestCase("Are you painting?", "Målar du?", 2, 1, 3)]
-        [TestCase("I am painting the wall", "jag målar väggen", 0, 2, 3)] // the har ingen översättning
+        [TestCase("I am painting the wall", "jag målar väggen", 0, 2, 3, 4)]
+        [TestCase("The wall", "Väggen", 0, 1)]
+        [TestCase("He runs i.e. I run.", "Han springer dvs. jag springer.", 0, 1, 2, 3, 4, 5)]
         public void ExtractOrdering(string from, string to, params int[] expected)
         {
             var translationResult = TestHelper.Translator.Translate(from);
             var target = TargetSelector.SelectTarget(translationResult.Possibilities, to);
-            Assert.That(target.Arrangement.Order, Is.EquivalentTo(expected));
+            Assert.That(target.Arrangement.Order, Is.EqualTo(expected));
         }
     }
 }

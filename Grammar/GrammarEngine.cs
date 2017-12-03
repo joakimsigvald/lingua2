@@ -12,7 +12,7 @@ namespace Lingua.Grammar
             TranslationTreeNode possibilities)
             => Process.Execute(_evaluator, possibilities);
 
-        public Translation[] Arrange(IEnumerable<Translation> translations)
+        public IEnumerable<Translation> Arrange(IEnumerable<Translation> translations)
             => _evaluator.Arrange(translations);
     }
 }

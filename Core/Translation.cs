@@ -45,13 +45,11 @@ namespace Lingua.Core
                 IsCapitalized = true
             };
 
-        public bool IsInvisibleCapitalized => IsCapitalized && IsInvisible;
+        public bool IsInvisibleCapitalized => IsCapitalized && !string.IsNullOrEmpty(Output);
 
         public bool IsCapitalized { get; private set; }
-        private bool IsInvisible => string.IsNullOrEmpty(Output);
         public string Output => To ?? From.Value;
         public bool IsIncompleteCompound { get; set; }
-        public bool HasOutput => !string.IsNullOrEmpty(Output);
 
         public override string ToString() => $"{From}->{To}{(Continuation.Any() ? "..." : "")}";
 

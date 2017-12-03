@@ -43,7 +43,7 @@ namespace Lingua.Grammar
 
         public Translation[] Arrange(IEnumerable<Translation> translations)
             => Arrangers
-                .Aggregate(translations.Where(t => !string.IsNullOrEmpty(t.Output))
+                .Aggregate(translations
                     , (input, arranger) => arranger
                         .Arrange(input.ToList()))
                 .ToArray();

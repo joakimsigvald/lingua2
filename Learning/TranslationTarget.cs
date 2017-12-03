@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace Lingua.Learning
 {
@@ -19,6 +18,6 @@ namespace Lingua.Learning
             => new Lazy<IEnumerable<Translation>>(ComputeArrangedTranslations);
 
         private IEnumerable<Translation> ComputeArrangedTranslations()
-            => new Arranger(Arrangement).Arrange(Translations.Where(t => !string.IsNullOrEmpty(t.Output)).ToArray());
+            => new Arranger(Arrangement).Arrange(Translations);
     }
 }

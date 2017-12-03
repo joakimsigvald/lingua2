@@ -19,7 +19,7 @@ namespace Lingua.Learning
             ReportPassed(testSuiteResults.ToList());
         }
 
-        private IEnumerable<TestSuiteResult> GetTestSuiteResults(TestSessionResult result)
+        private static IEnumerable<TestSuiteResult> GetTestSuiteResults(TestSessionResult result)
             => result.Results
                 .GroupBy(r => r.TestCase.Suite)
                 .Select(g => new TestSuiteResult
