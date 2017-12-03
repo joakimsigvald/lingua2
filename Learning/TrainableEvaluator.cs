@@ -49,6 +49,7 @@ namespace Lingua.Learning
         public void SavePatterns()
         {
             Repository.StoreScoredPatterns(ScoringTree.ToDictionary());
+            Repository.StoreRearrangements(Arrangers);
         }
 
         private static void UpdateScore(ScoreTreeNode node, (string, ushort[], sbyte) codedPattern, int index)

@@ -24,7 +24,7 @@ namespace Lingua.Grammar
             Order = order;
         }
 
-        private string Pattern { get; }
+        public string Pattern { get; }
         public ushort[] Code { get; }
         public byte[] Order { get; }
         public int Length => Code.Length;

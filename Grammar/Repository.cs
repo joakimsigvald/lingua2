@@ -15,13 +15,21 @@ namespace Lingua.Grammar
             => WriteLines(GetUniqueName("Patterns.txt")
                 , GetPatternLines(patterns));
 
-        private static string[] GetPatternLines(IDictionary<string, sbyte> patterns)
-        {
-            return patterns
-                .OrderByDescending(sp => sp.Value)
-                .ThenBy(sp => sp.Key)
-                .Select(ToLine).ToArray();
-        }
+        public static void StoreRearrangements(IList<Arranger> arrangers)
+            => WriteLines(GetUniqueName("Rearrangements.txt")
+                , GetRearrangementLines(arrangers.Select(arr => arr.Arrangement)));
+
+        private static string[] GetPatternLines(IDictionary<string, sbyte> patterns) 
+            => patterns
+            .OrderByDescending(sp => sp.Value)
+            .ThenBy(sp => sp.Key)
+            .Select(ToLine).ToArray();
+
+        private static string[] GetRearrangementLines(IEnumerable<Arrangement> arrangements)
+            => arrangements
+                .OrderBy(arr => arr.Length)
+                .ThenBy(arr => arr.Pattern)
+                .Select(arr => arr.Serialize()).ToArray();
 
         private static void WriteLines(string filename, string[] lines)
             => LoaderBase.WriteToFile(filename, lines);

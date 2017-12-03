@@ -10,7 +10,7 @@ namespace Lingua.Grammar
         public Arranger(Arrangement arrangement)
             => Arrangement = arrangement;
 
-        private Arrangement Arrangement { get; }
+        public Arrangement Arrangement { get; }
 
         public IEnumerable<Translation> Arrange(IList<Translation> input)
             => ArrangeSegments(input).SelectMany(x => x.Select(y => y));
