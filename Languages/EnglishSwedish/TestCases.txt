@@ -161,3 +161,6 @@
 //Greetings
 "hello", "hej"
 "hi", "hej"
+
+//Adjective references
+//"the red cat ate a blue mouse", "den röda katten åt en blå mus"

@@ -47,7 +47,7 @@ namespace Lingua.Learning.Test
         [TestCase(4, "it is my pen", "det är min penna", "R3tX*R*N*")]
         public void TestMultiPatterns(int count, string from, string to, params string[] expectedPatterns)
         {
-            var testCaseResult = TestHelper.GetTestCaseResult(from, to);
+            var testCaseResult = TestHelper.GetTestCaseResultForAnalysis(from, to);
             var candidates = testCaseResult.ExpectedTranslations;
             var patterns = PatternExtractor.GetMatchingPatterns(candidates, count);
             Assert.That(patterns.Intersect(expectedPatterns), Is.EquivalentTo(expectedPatterns));
@@ -56,7 +56,7 @@ namespace Lingua.Learning.Test
         [TestCase("it", "det", "R3t")]
         public void TestMonoPatterns(string from, string to, params string[] expectedPatterns)
         {
-            var testCaseResult = TestHelper.GetTestCaseResult(from, to);
+            var testCaseResult = TestHelper.GetTestCaseResultForAnalysis(from, to);
             var candidates = testCaseResult.ExpectedTranslations;
             var patterns = PatternExtractor.GetMatchingMonoPatterns(candidates);
             Assert.That(patterns.Intersect(expectedPatterns), Is.EquivalentTo(expectedPatterns));

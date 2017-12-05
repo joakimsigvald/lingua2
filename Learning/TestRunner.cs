@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using Lingua.Core;
 
 namespace Lingua.Learning
 {
@@ -38,12 +39,22 @@ namespace Lingua.Learning
             if (testCase == KnownResult?.TestCase)
                 return KnownResult;
             var translationResult = _translator.Translate(testCase);
+            if (_settings.PrepareTestCaseForAnalysis)
+                AssureTargetSet(testCase, translationResult);
             var result = new TestCaseResult(testCase
                 , translationResult
                 , _settings.AllowReordered);
             if (_evaluator != null && !result.IsSuccess)
                 result.ScoreDeficit = _evaluator.ComputeScoreDeficit(result);
             return result;
+        }
+
+        private static void AssureTargetSet(TestCase testCase, TranslationResult translationResult)
+        {
+            if (testCase.Target != null)
+                return;
+            testCase.Target = testCase.Target ?? TargetSelector
+                                  .SelectTarget(translationResult.Possibilities, testCase.Expected);
         }
 
         private IEnumerable<TestCaseResult> RunTestCases(

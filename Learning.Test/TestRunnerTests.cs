@@ -15,7 +15,7 @@ namespace Lingua.Learning.Test
         [TestCase("2 [[ball]]", "2 bollar", "QnNn")]
         public void MatchesPositivePatterns(string from, string expected, params string[] expectedPatterns)
         {
-            var result = TestHelper.GetTestCaseResult(from, expected);
+            var result = TestHelper.GetTestCaseResultForAnalysis(from, expected);
             var positivePatterns = PatternGenerator.GetScoredPatterns(result)
                 .Where(sp => sp.Score > 0)
                 .Select(sp => sp.Pattern);
@@ -25,7 +25,7 @@ namespace Lingua.Learning.Test
         [TestCase("search result", "sökresultat", "N", "N*")]
         public void MatchesNegativePatterns(string from, string expected, params string[] expectedPatterns)
         {
-            var result = TestHelper.GetTestCaseResult(from, expected);
+            var result = TestHelper.GetTestCaseResultForAnalysis(from, expected);
             var positivePatterns = PatternGenerator.GetScoredPatterns(result)
                 .Where(sp => sp.Score < 0)
                 .Select(sp => sp.Pattern);
