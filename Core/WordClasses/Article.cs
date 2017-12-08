@@ -13,8 +13,10 @@ namespace Lingua.Core.WordClasses
                 case 1:
                     return Modifier.Qualified;
                 case 2:
-                    return Modifier.Plural;
+                    return Modifier.Qualified | Modifier.Neuter;
                 case 3:
+                    return Modifier.Plural;
+                case 4:
                     return Modifier.Qualified | Modifier.Plural;
                 default: return Modifier.None;
             }

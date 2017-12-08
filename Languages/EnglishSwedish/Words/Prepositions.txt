@@ -1,6 +1,7 @@
-to = till
-on = på
-with = med
-here = här
-by = vid
 at = vid
+by = vid
+here = här
+in = i
+on = på
+to = till
+with = med

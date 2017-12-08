@@ -53,6 +53,7 @@ namespace Lingua.Core.Tokens
                     switch (this)
                     {
                         case Pronoun _:
+                        case Article _:
                         case Adjective _: return Modifier.Neuter;
                         case Verb _: return Modifier.Imperitive;
                         default: throw new NotImplementedException();

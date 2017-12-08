@@ -1,12 +1,16 @@
 /// Imperative|Infinitive|Participle|First|Second|Third|ThirdPlural|Past|Perfect|PastContinuous|FutureContinuous
 
+build::ing:::s::_t|:ing| = bygg:a:er||||:de:t|:
+catch::ing:::es::_3ught|:ing| = fånga::r||||:de:t|:
 come::ing:::s::_3ame|:ing| = kom:ma:mer||||::::ma
 eat::ing:::s::_3ate|:ing| = ät:a:er||||:_2åt:it|:a
 give::_ing:::s::d|:_ing| = ge::r||||:_2v:tt|:
 help::ing:::s::ed|:ing| = hjälp:a:er||||:te:::a
+make::ing:::s::_2de|:ing| = bygg:a:er||||:de:t|:
 paint::ing:::s::ed|:ing| = måla::r||||:de:t|:
 play::ing:::s::ed|:ing| = lek:a:er||||:te:t|:a
 run::ning:::s::_2an|:ning| = spring:a:er||||:_3ang:_3ungit|:a
+sleep::ing:::s::_2pt|:ing| = sov:a:er||||::it|:a
 
 //Settings
 BaseForm = 1
