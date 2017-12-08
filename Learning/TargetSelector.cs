@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
+using Lingua.Core.WordClasses;
 
 namespace Lingua.Learning
 {
@@ -16,7 +18,8 @@ namespace Lingua.Learning
         private string _translated;
         private string _nextReplacement = "";
         private int _nextPosition = 1;
-        private bool _previousIsAbbreviation = false;
+        private bool _previousIsAbbreviation;
+        private List<Translation> _untranslated = new List<Translation>();
 
         public static TranslationTarget SelectTarget(
             TranslationTreeNode possibilities
@@ -33,9 +36,9 @@ namespace Lingua.Learning
             return new TranslationTarget
             {
                 Translations = translations,
-                Arrangement = translations == null 
-                ? null 
-                : new Arrangement(Encoder.Encode(translations).ToArray(), GetOrder())
+                Arrangement = translations == null
+                    ? null
+                    : new Arrangement(Encoder.Encode(translations).ToArray(), GetOrder())
             };
         }
 
@@ -49,26 +52,28 @@ namespace Lingua.Learning
             ICollection<TranslationTreeNode> candidates)
         {
             if (!candidates.Any())
-                return _translated.All(c => c < FirstSymbol) ? new Translation[0] : null;
+                return _translated.All(c => c < FirstSymbol)
+                    ? new Translation[0]
+                    : throw new MissingTranslations(_translated, _untranslated);
             var matchingCandidates = candidates.Where(tn => _translated.Contains(tn.Translation.Output.ToLower()))
                 .OrderByDescending(tn => tn.Translation.Output.Length)
                 .ToArray();
             return matchingCandidates.Append(candidates.First())
                 .Select(FilterPossibilities)
-                .NotNull()
                 .FirstOrDefault();
         }
 
         private IEnumerable<Translation> FilterPossibilities(TranslationTreeNode possibilities)
         {
             var translation = possibilities.Translation;
-            TryReplaceWithNextPosition(translation.Output);
+            TryReplaceWithNextPosition(translation);
             _previousIsAbbreviation = translation.From is Abbreviation;
             return SelectTranslations(possibilities.Children)?.Prepend(translation);
         }
 
-        private void TryReplaceWithNextPosition(string output)
+        private void TryReplaceWithNextPosition(Translation translation)
         {
+            var output = translation.Output;
             if (_nextPosition >= Space - 1)
                 throw new Exception("Testcase too long, ran out of positions to assign");
             if (_previousIsAbbreviation && output == ".")
@@ -76,12 +81,20 @@ namespace Lingua.Learning
             _nextReplacement += (char) _nextPosition++;
             if (string.IsNullOrEmpty(output))
                 return;
-            _translated = ReplaceWithNextPosition(ShortenEllipsisToFit(output));
+            var foundMatch = ReplaceWithNextPosition(ShortenEllipsisToFit(output), out _translated);
+            if (!foundMatch && !string.IsNullOrEmpty(output) && translation.From is Unclassified)
+                _untranslated.Add(translation);
             _nextReplacement = "";
         }
 
-        private string ReplaceWithNextPosition(string output) 
-            => _translated.ReplaceFirst(output.ToLower(), _nextReplacement);
+        private bool ReplaceWithNextPosition(string output, out string updated)
+            => Replace($" {output} ", $" {_nextReplacement} ", out updated)
+               || Replace($"{output} ", $"{_nextReplacement} ", out updated)
+               || Replace($" {output} ", $" {_nextReplacement}", out updated)
+               || Replace($"{output}", $"{_nextReplacement}", out updated);
+
+        private bool Replace(string output, string replacement, out string updated) 
+            => _translated.ReplaceFirst(output.ToLower(), replacement, out updated);
 
         private string ShortenEllipsisToFit(string output)
             => output == "..." && !_translated.Contains(output) ? ".." : output;

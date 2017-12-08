@@ -4,8 +4,15 @@ namespace Lingua.Core.Extensions
 {
     public static class StringExtensions
     {
-        public static string ReplaceFirst(this string text, string old, string replacement) 
-            => Splice(text, replacement, text.IndexOf(old, StringComparison.Ordinal), old.Length);
+        public static bool ReplaceFirst(this string text, string old, string replacement, out string updatedText)
+        {
+            updatedText = text;
+            var index = text.IndexOf(old, StringComparison.Ordinal);
+            if (index < 0)
+                return false;
+            updatedText = Splice(text, replacement, index, old.Length);
+            return true;
+        }
 
         private static string Splice(string text, string replacement, int index, int deleteCount) 
             => index < 0

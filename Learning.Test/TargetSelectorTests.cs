@@ -27,6 +27,7 @@ namespace Lingua.Learning.Test
         [TestCase("I am painting the wall", "jag målar väggen", 0, 2, 3, 4)]
         [TestCase("The wall", "Väggen", 0, 1)]
         [TestCase("He runs i.e. I run.", "Han springer dvs. jag springer.", 0, 1, 2, 3, 4, 5)]
+        [TestCase("the red cat ate a blue mouse", "den röda katten åt en blå mus", 0, 1, 2, 3, 4, 5, 6)]
         public void ExtractOrdering(string from, string to, params int[] expected)
         {
             var translationResult = TestHelper.Translator.Translate(from);

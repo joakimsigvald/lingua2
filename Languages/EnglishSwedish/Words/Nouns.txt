@@ -1,19 +1,21 @@
+address::es| = adress:en:er|na
 apple::s| = äpple:t:n:na
-banana::s| = banan:en:er|na
-sea::s| = hav:et::en
-lake::s| = sjö:n:ar|na
-chair::s| = stol:en:ar|na
-pen::s| = penna:n:_or|na
 ball::s| = boll:en:ar|na
-wall::s| = vägg:en:ar|na
-car::s| = bil:en:ar|na
-foot::___eet| = fot:en:__ötter|_na
+banana::s| = banan:en:er|na
 bouncing ball::s| = studsboll:en:ar|na
+car::s| = bil:en:ar|na
+cat::s| = katt:en:er|na
+chair::s| = stol:en:ar|na
 colour::s| = färg:en:er|na
-search = sök/
+foot::_3eet| = fot:en:__ötter|na
+lake::s| = sjö:n:ar|na
+mouse:_4ice| = mus:en:__öss|en
+pen::s| = penna:n:_or|na
 result::s| = resultat:et::en
+sea::s| = hav:et::en
+search = sök/
 street::s| = gata:n:_or|na/_u
-address::es| = adress:en:er|_na
+wall::s| = vägg:en:ar|na
 
 //Rules
 For:Genitive
