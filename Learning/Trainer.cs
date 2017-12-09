@@ -173,6 +173,15 @@ namespace Lingua.Learning
         }
 
         private IEnumerator<ScoredPattern> EnumerateScoredPatterns(TestCaseResult result)
-            => _patternGenerator.GetScoredPatterns(result).GetEnumerator();
+            => _patternGenerator
+            .GetScoredPatterns(result)
+            .Select(sp => (pattern: sp, priority: ComputePriority(sp)))
+            .OrderBy(tuple => tuple.priority)
+            .Select(tuple => tuple.pattern)
+            .ToList()
+            .GetEnumerator();
+
+        private int ComputePriority(ScoredPattern sp)
+            => sp.Size * Math.Abs(_evaluator.GetScore(sp.Code));
     }
 }

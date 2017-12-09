@@ -1,4 +1,5 @@
 ﻿using System.Linq;
+using Lingua.Core;
 using NUnit.Framework;
 
 namespace Lingua.Learning.Test

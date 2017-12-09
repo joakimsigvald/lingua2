@@ -19,24 +19,24 @@ namespace Lingua.Learning
         {
             var wanted = _translationExtractor.GetWantedTranslations(result).ToList();
             var unwanted = _translationExtractor.GetUnwantedTranslations(result).ToList();
-            var monopatterns = _patternExtractor
-                .GetMatchingMonoPatterns(wanted)
-                .Select(pattern => new ScoredPattern(pattern, 1))
-                .Concat(_patternExtractor.GetMatchingMonoPatterns(unwanted)
-                    .Select(pattern => new ScoredPattern(pattern, -1)));
-            var multipatterns =
+            var monoCodes= _patternExtractor
+                .GetMatchingMonoCodes(wanted)
+                .Select(code => new ScoredPattern(code, 1, 1))
+                .Concat(_patternExtractor.GetMatchingMonoCodes(unwanted)
+                    .Select(code => new ScoredPattern(code, 1, -1)));
+            var multiCodes =
                         Enumerable.Range(2, 3)
-                            .SelectMany(length => GetMultiPatterns(wanted, unwanted, length));
-            return monopatterns.Concat(multipatterns).ToArray();
+                            .SelectMany(length => GetMultiCodes(wanted, unwanted, (byte)length));
+            return monoCodes.Concat(multiCodes).ToArray();
         }
 
-        private IEnumerable<ScoredPattern> GetMultiPatterns(
+        private IEnumerable<ScoredPattern> GetMultiCodes(
             ICollection<Translation> wanted
             , ICollection<Translation> unwanted
-            , int length)
-            => _patternExtractor.GetMatchingPatterns(wanted, length)
-                .Select(pattern => new ScoredPattern(pattern, 1))
-                .Concat(_patternExtractor.GetMatchingPatterns(unwanted, length)
-                    .Select(pattern => new ScoredPattern(pattern, -1)));
+            , byte length)
+            => _patternExtractor.GetMatchingCodes(wanted, length)
+                .Select(code => new ScoredPattern(code, length, 1))
+                .Concat(_patternExtractor.GetMatchingCodes(unwanted, length)
+                    .Select(code => new ScoredPattern(code, length, -1)));
     }
 }

@@ -1,14 +1,19 @@
+using Lingua.Core;
+
 namespace Lingua.Learning
 {
     public class ScoredPattern
     {
-        public ScoredPattern(string pattern, sbyte score)
+        public ScoredPattern(ushort[] code, byte size, sbyte score)
         {
-            Pattern = pattern;
+            Code = code;
+            Size = size;
             Score = score;
         }
 
-        public string Pattern { get; }
+        public ushort[] Code{ get; }
+        public string Pattern => Encoder.Serialize(Code);
         public sbyte Score { get; }
+        public byte Size { get; }
     }
 }

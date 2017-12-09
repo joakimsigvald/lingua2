@@ -17,7 +17,7 @@ namespace Lingua.Learning.Test
         public void ExtractMonoPatterns(string from, params string[] expected)
         {
             var atoms = Decode(from);
-            var patterns = PatternExtractor.GetMatchingMonoPatterns(atoms);
+            var patterns = PatternExtractor.GetMatchingMonoCodes(atoms).Select(Encoder.Serialize);
             Assert.That(patterns, Is.EquivalentTo(expected));
         }
 
@@ -26,7 +26,7 @@ namespace Lingua.Learning.Test
         public void ExtracTwinPatterns(string from, params string[] expected)
         {
             var candidates = Decode(from);
-            var patterns = PatternExtractor.GetMatchingPatterns(candidates, 2);
+            var patterns = PatternExtractor.GetMatchingCodes(candidates, 2).Select(Encoder.Serialize);
             Assert.That(patterns, Is.EquivalentTo(expected));
         }
 
@@ -36,7 +36,7 @@ namespace Lingua.Learning.Test
         public void ExtracTripplePatterns(string from, params string[] expected)
         {
             var candidates = Decode(from);
-            var patterns = PatternExtractor.GetMatchingPatterns(candidates, 3);
+            var patterns = PatternExtractor.GetMatchingCodes(candidates, 3).Select(Encoder.Serialize);
             Assert.That(patterns, Is.EquivalentTo(expected));
         }
 
@@ -49,7 +49,7 @@ namespace Lingua.Learning.Test
         {
             var testCaseResult = TestHelper.GetTestCaseResultForAnalysis(from, to);
             var candidates = testCaseResult.ExpectedTranslations;
-            var patterns = PatternExtractor.GetMatchingPatterns(candidates, count);
+            var patterns = PatternExtractor.GetMatchingCodes(candidates, count).Select(Encoder.Serialize); 
             Assert.That(patterns.Intersect(expectedPatterns), Is.EquivalentTo(expectedPatterns));
         }
 
@@ -58,7 +58,7 @@ namespace Lingua.Learning.Test
         {
             var testCaseResult = TestHelper.GetTestCaseResultForAnalysis(from, to);
             var candidates = testCaseResult.ExpectedTranslations;
-            var patterns = PatternExtractor.GetMatchingMonoPatterns(candidates);
+            var patterns = PatternExtractor.GetMatchingMonoCodes(candidates).Select(Encoder.Serialize);
             Assert.That(patterns.Intersect(expectedPatterns), Is.EquivalentTo(expectedPatterns));
         }
 

@@ -9,23 +9,15 @@ namespace Lingua.Learning
 
     public interface IPatternExtractor
     {
-        IEnumerable<string> GetMatchingMonoPatterns(IEnumerable<Translation> translations);
-        IEnumerable<string> GetMatchingPatterns(ICollection<Translation> sequence, int length);
+        IEnumerable<ushort[]> GetMatchingMonoCodes(IEnumerable<Translation> translations);
+        IEnumerable<ushort[]> GetMatchingCodes(ICollection<Translation> sequence, int length);
     }
 
     public class PatternExtractor : IPatternExtractor
     {
         private static readonly List<IList<ushort[]>> Masks = new List<IList<ushort[]>>();
 
-        public IEnumerable<string> GetMatchingMonoPatterns(IEnumerable<Translation> translations)
-            => GetMatchingMonoCodes(translations)
-                .Select(Encoder.Serialize);
-
-        public IEnumerable<string> GetMatchingPatterns(ICollection<Translation> sequence, int length)
-            => GetMatchingSnippets(sequence, length)
-                .Select(Encoder.Serialize);
-
-        private static IEnumerable<ushort[]> GetMatchingMonoCodes(IEnumerable<Translation> translations)
+        public IEnumerable<ushort[]> GetMatchingMonoCodes(IEnumerable<Translation> translations)
         {
             var codes = Encoder.Encode(translations.Select(t => t.From)).ToArray();
             var generalizedCodes = codes.Select(code => Mask(Encoder.ModifiersMask, code)).Distinct().ToArray();
@@ -34,7 +26,8 @@ namespace Lingua.Learning
                 .Distinct()
                 .Select(code => new[] { code });
         }
-        private static IEnumerable<ushort[]> GetMatchingSnippets(ICollection<Translation> sequence, int length)
+
+        public IEnumerable<ushort[]> GetMatchingCodes(ICollection<Translation> sequence, int length)
         {
             if (sequence.Count < length - 1)
                 return new ushort[0][];

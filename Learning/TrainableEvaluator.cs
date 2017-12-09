@@ -9,21 +9,21 @@ namespace Lingua.Learning
 
     public class TrainableEvaluator : Evaluator
     {
-        public void UpdateScore(string pattern, sbyte addScore)
+        public void UpdateScore(ushort[] code, sbyte addScore)
         {
             if (addScore == 0)
                 return;
-            UpdateScore(ScoringTree, CreateCodeScore(pattern, addScore), 0);
+            UpdateScore(ScoringTree, (code, addScore), 0);
         }
 
         public void Do(ScoredPattern scoredPattern)
         {
-            UpdateScore(scoredPattern.Pattern, scoredPattern.Score);
+            UpdateScore(scoredPattern.Code, scoredPattern.Score);
         }
 
         public void Undo(ScoredPattern scoredPattern)
         {
-            UpdateScore(scoredPattern.Pattern, (sbyte)-scoredPattern.Score);
+            UpdateScore(scoredPattern.Code, (sbyte)-scoredPattern.Score);
         }
 
         public void Add(Arranger arranger)
@@ -52,13 +52,13 @@ namespace Lingua.Learning
             Repository.StoreRearrangements(Arrangers);
         }
 
-        private static void UpdateScore(ScoreTreeNode node, (string, ushort[], sbyte) codedPattern, int index)
+        private static void UpdateScore(ScoreTreeNode node, (ushort[], sbyte) codedPattern, int index)
         {
-            if (codedPattern.Item2.Length == index)
-                node.Score += codedPattern.Item3;
+            if (codedPattern.Item1.Length == index)
+                node.Score += codedPattern.Item2;
             else
             {
-                var next = codedPattern.Item2[index];
+                var next = codedPattern.Item1[index];
                 var child = node.Children.FirstOrDefault(c => c.Code == next);
                 if (child == null)
                 {
@@ -69,6 +69,18 @@ namespace Lingua.Learning
                 if (child.Score == 0 && !child.Children.Any())
                     node.Children.Remove(child);
             }
+        }
+
+        public sbyte GetScore(ushort[] code)
+            => GetScoreNode(ScoringTree, code, 0)?.Score ?? 0;
+
+        private static ScoreTreeNode GetScoreNode(ScoreTreeNode node, ushort[] code, int index)
+        {
+            if (code.Length == index)
+                return node;
+            var next = code[index];
+            var child = node.Children.FirstOrDefault(c => c.Code == next);
+            return child == null ? null : GetScoreNode(child, code, index + 1);
         }
     }
 }

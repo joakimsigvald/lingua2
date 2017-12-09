@@ -21,7 +21,7 @@ namespace Lingua.Learning.Test
         }
 
         [TestCase("A")]
-        [TestCase("A", "B")]
+        [TestCase("A", "C")]
         public void GivenWantedMonoPatterns_GenerateThosePatternsWithScore_1(params string[] wantedMonoPatterns)
         {
             var scoredPatterns = GetScoredPatterns(wantedMonoPatterns);
@@ -30,7 +30,7 @@ namespace Lingua.Learning.Test
         }
 
         [TestCase("A")]
-        [TestCase("A", "B")]
+        [TestCase("A", "C")]
         public void GivenUnwantedMonoPatterns_GenerateThosePatternsWithScore_Minus_1(params string[] unwantedMonoPatterns)
         {
             var scoredPatterns = GetScoredPatterns(unwantedPatterns: unwantedMonoPatterns);
@@ -38,11 +38,11 @@ namespace Lingua.Learning.Test
             Assert.That(scoredPatterns.All(sp => sp.Score == -1));
         }
 
-        [TestCase(new[] { "A" }, new[] { "B" })]
-        [TestCase(new[] { "A", "B" }, new[] { "C" })]
-        [TestCase(new[] { "A" }, new[] { "B", "C" })]
+        [TestCase(new[] { "A" }, new[] { "C" })]
+        [TestCase(new[] { "A", "C" }, new[] { "N" })]
+        [TestCase(new[] { "A" }, new[] { "C", "N" })]
         [TestCase(new[] { "A" }, new[] { "A" })]
-        [TestCase(new[] { "A", "B" }, new[] { "A", "C" })]
+        [TestCase(new[] { "A", "C" }, new[] { "A", "N" })]
         public void GivenWantedAndUnwantedMonoPatterns_GenerateThosePatternsWithScore_PlusOrMinus_1(
             string[] wantedMonoPatterns
             , string[] unwantedMonoPatterns)
@@ -59,7 +59,7 @@ namespace Lingua.Learning.Test
         [TestCase("^A", "A")]
         [TestCase("^AA", "AA")]
         [TestCase("^A", "A", "^AA", "AA")]
-        [TestCase("A", "AB", "ABC", "^ABC")]
+        [TestCase("A", "AC", "ACN", "^ACN")]
         public void GivenMixedWantedPatterns_GenerateThosePatternsWithScore_1(params string[] patterns)
         {
             var scoredPatterns = GetScoredPatterns(patterns);
@@ -71,7 +71,7 @@ namespace Lingua.Learning.Test
         [TestCase("^A", "A")]
         [TestCase("^AA", "AA")]
         [TestCase("^A", "A", "^AA", "AA")]
-        [TestCase("A", "AB", "ABC", "^ABC")]
+        [TestCase("A", "AC", "ACN", "^ACN")]
         public void GivenMixedUnwantedPatterns_GenerateThosePatternsWithScore_Minus_1(params string[] patterns)
         {
             var scoredPatterns = GetScoredPatterns(unwantedPatterns: patterns);
@@ -128,9 +128,9 @@ namespace Lingua.Learning.Test
             , Translation translation
             , IEnumerable<string> patterns)
         {
-            patternExtractorMock.Setup(extractor => extractor.GetMatchingMonoPatterns(
+            patternExtractorMock.Setup(extractor => extractor.GetMatchingMonoCodes(
                     It.Is<IEnumerable<Translation>>(v => v.Contains(translation))))
-                .Returns(patterns);
+                .Returns(patterns.Select(Encoder.Encode));
         }
 
         private static void MockWantedMultipatterns(
@@ -138,9 +138,9 @@ namespace Lingua.Learning.Test
             , IEnumerable<string> patterns
             , int length)
         {
-            patternExtractorMock.Setup(extractor => extractor.GetMatchingPatterns(
+            patternExtractorMock.Setup(extractor => extractor.GetMatchingCodes(
                     It.Is<ICollection<Translation>>(v => v.Single() == WantedTranslation), length))
-                .Returns(patterns);
+                .Returns(patterns.Select(Encoder.Encode));
         }
 
         private static void MockUnwantedMultipatterns(
@@ -148,9 +148,9 @@ namespace Lingua.Learning.Test
             , IEnumerable<string> patterns
             , int length)
         {
-            patternExtractorMock.Setup(extractor => extractor.GetMatchingPatterns(
+            patternExtractorMock.Setup(extractor => extractor.GetMatchingCodes(
                     It.Is<ICollection<Translation>>(v => v.Single() == UnwantedTranslation), length))
-                .Returns(patterns);
+                .Returns(patterns.Select(Encoder.Encode));
         }
 
         private static ITranslationExtractor MockTranslationExtractor()
