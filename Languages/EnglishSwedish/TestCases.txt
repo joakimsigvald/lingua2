@@ -162,7 +162,7 @@
 "hello", "hej"
 "hi", "hej"
 
-//Adjective references
+//references
 "the red cat ate a blue mouse", "den röda katten åt en blå mus"
-//"The cat caught a rat and ate it", "Katten fångade en råtta och åt den"
+"The cat caught a rat and ate it", "Katten fångade en råtta och åt den"
 //"The rat made a nest and slept in it.", "Råttan byggde ett bo och sov i det."

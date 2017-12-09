@@ -31,7 +31,7 @@ namespace Lingua.Learning
         public string Expected => TestCase.Expected;
         public string Actual => _translationResult.Translation;
         public bool IsSuccess => _allowReordered && WordTranslationSuccess || Success;
-        private bool Success => Actual == TestCase.Expected;
+        public bool Success => Actual == TestCase.Expected;
         private bool WordTranslationSuccess { get; }
         public IReason Reason => _translationResult.Reason;
         public IList<Translation> ExpectedTranslations => TestCase.Target.Translations;

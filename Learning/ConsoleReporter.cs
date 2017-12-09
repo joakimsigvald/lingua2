@@ -25,8 +25,8 @@ namespace Lingua.Learning
                 .Select(g => new TestSuiteResult
                 {
                     Caption = g.Key,
-                    Succeeded = g.Where(tcr => result.Success).ToList(),
-                    Failed = g.Where(tcr => !result.Success).ToList()
+                    Succeeded = g.Where(tcr => tcr.Success).ToList(),
+                    Failed = g.Where(tcr => !tcr.Success).ToList()
                 });
 
         private static void ReportFailed(List<TestSuiteResult> failedSuites)

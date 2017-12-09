@@ -10,7 +10,9 @@ namespace Lingua.Learning.Test
         {
             var trainer = new Trainer();
             var res = GeneratePatterns(trainer);
-            Assert.That(res.FailedCase?.IsSuccess ?? true, $"Failed on {res.SuccessCount + 1}th case");
+            var reporter = new ConsoleReporter();
+            reporter.Report(res);
+            Assert.That(res.Success, $"Failed on {res.SuccessCount + 1}th case");
         }
 
         [Test, Explicit("Saves generated patterns to file on success")]
