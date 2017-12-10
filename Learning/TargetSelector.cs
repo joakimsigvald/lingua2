@@ -1,15 +1,14 @@
+using Lingua.Core.WordClasses;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading;
-using Lingua.Core.WordClasses;
 
 namespace Lingua.Learning
 {
-    using Core.Tokens;
-    using Core.Extensions;
-    using Grammar;
     using Core;
+    using Core.Extensions;
+    using Core.Tokens;
+    using Grammar;
 
     public class TargetSelector
     {
@@ -17,30 +16,89 @@ namespace Lingua.Learning
         private const char Space = (char) 32;
         private string _translated;
         private string _nextReplacement = "";
+        private string _unmatched = "";
         private int _nextPosition = 1;
         private bool _previousIsAbbreviation;
-        private List<Translation> _untranslated = new List<Translation>();
 
         public static TranslationTarget SelectTarget(
             TranslationTreeNode possibilities
             , string translated)
-            => possibilities == null
-                ? null
-                : new TargetSelector(translated).SelectTarget(possibilities);
+        {
+            translated = translated.ToLower();
+            if (possibilities == null)
+                return null;
+            var target = new TargetSelector(translated).SelectFirstTarget(possibilities);
+            return target.IsFullyTranslated && target.Arrangement.IsInOrder
+                ? target
+                : SelectBestTarget(possibilities, translated)
+                  ?? throw new MissingTranslations(translated, GetUntranslated(possibilities).ToList());
+        }
 
-        private TargetSelector(string translated) => _translated = translated.ToLower();
+        private static IEnumerable<Translation> GetUntranslated(TranslationTreeNode possibilities)
+        {
+            while (possibilities.Children.Any())
+            {
+                if (possibilities.Translation.From is Unclassified)
+                    yield return possibilities.Translation;
+                possibilities = possibilities.Children.First();
+            }
+        }
 
-        private TranslationTarget SelectTarget(TranslationTreeNode possibilities)
+        private static TranslationTarget SelectBestTarget(TranslationTreeNode possibilities, string translated)
+        {
+            var candidateSequences = GetCandidateSequences(possibilities.Children, translated).ToArray();
+            var targetCandidates = candidateSequences
+                .Select(sequence => GenerateTarget(sequence, translated))
+                .Where(tt => tt.IsFullyTranslated)
+                .OrderBy(target => target.Unmatched.Length)
+                .ThenBy(target => target.Arrangement.Deviation)
+                .ToArray();
+            return targetCandidates.First();
+        }
+
+        private static TranslationTarget GenerateTarget(IEnumerable<Translation> sequence, string translated)
+            => new TargetSelector(translated).GenerateTarget(sequence.ToArray());
+
+        private static IEnumerable<IEnumerable<Translation>> GetCandidateSequences(
+            IList<TranslationTreeNode> candidates, string translated)
+        {
+            if (!candidates.Any())
+                return new[] {new Translation[0]};
+            var orderedCandidates = candidates.OrderBy(cand => cand.Translation.Output.Length).ToList();
+            var firstCandidates = orderedCandidates.Where(tn => MatchesTranslated(translated, tn.Translation.Output))
+                .OrderByDescending(tn => tn.Translation.Output.Length)
+                .ToList();
+            if (!firstCandidates.Any())
+                firstCandidates.Add(orderedCandidates.First());
+            return firstCandidates
+                .SelectMany(fc => GetCandidateSequences(fc.Children, translated)
+                    .Select(sequence => sequence.Prepend(fc.Translation)));
+        }
+
+        private TargetSelector(string translated) => _translated = translated;
+
+        private TranslationTarget SelectFirstTarget(TranslationTreeNode possibilities)
         {
             var translations = SelectTranslations(possibilities.Children)?.ToArray();
-            return new TranslationTarget
+            return CreateTarget(translations);
+        }
+
+        private TranslationTarget GenerateTarget(Translation[] translations)
+        {
+            translations.ForEach(TryReplaceWithNextPosition);
+            return CreateTarget(translations);
+        }
+
+        private TranslationTarget CreateTarget(Translation[] translations)
+            => new TranslationTarget
             {
                 Translations = translations,
+                IsFullyTranslated = IsFullyTranslated,
+                Unmatched = _unmatched,
                 Arrangement = translations == null
                     ? null
                     : new Arrangement(Encoder.Encode(translations).ToArray(), GetOrder())
             };
-        }
 
         private byte[] GetOrder()
             => _translated
@@ -52,16 +110,20 @@ namespace Lingua.Learning
             ICollection<TranslationTreeNode> candidates)
         {
             if (!candidates.Any())
-                return _translated.All(c => c < FirstSymbol)
+                return IsFullyTranslated
                     ? new Translation[0]
-                    : throw new MissingTranslations(_translated, _untranslated);
-            var matchingCandidates = candidates.Where(tn => _translated.Contains(tn.Translation.Output.ToLower()))
-                .OrderByDescending(tn => tn.Translation.Output.Length)
-                .ToArray();
-            return matchingCandidates.Append(candidates.First())
+                    : null;
+            var matchingCandidates = candidates.Where(tn => MatchesTranslated(_translated, tn.Translation.Output))
+                .OrderByDescending(tn => tn.Translation.Output.Length);
+            return matchingCandidates.Concat(candidates)
                 .Select(FilterPossibilities)
                 .FirstOrDefault();
         }
+
+        private bool IsFullyTranslated => _translated.All(c => c < FirstSymbol);
+
+        private static bool MatchesTranslated(string translated, string output)
+            => string.IsNullOrEmpty(output) || translated.Contains(output.ToLower());
 
         private IEnumerable<Translation> FilterPossibilities(TranslationTreeNode possibilities)
         {
@@ -81,10 +143,10 @@ namespace Lingua.Learning
             _nextReplacement += (char) _nextPosition++;
             if (string.IsNullOrEmpty(output))
                 return;
-            var foundMatch = ReplaceWithNextPosition(ShortenEllipsisToFit(output), out _translated);
-            if (!foundMatch && !string.IsNullOrEmpty(output) && translation.From is Unclassified)
-                _untranslated.Add(translation);
-            _nextReplacement = "";
+            var replaced = ReplaceWithNextPosition(ShortenEllipsisToFit(output), out _translated);
+            if (replaced)
+                _unmatched += output;
+                _nextReplacement = "";
         }
 
         private bool ReplaceWithNextPosition(string output, out string updated)
@@ -93,7 +155,7 @@ namespace Lingua.Learning
                || Replace($" {output} ", $" {_nextReplacement}", out updated)
                || Replace($"{output}", $"{_nextReplacement}", out updated);
 
-        private bool Replace(string output, string replacement, out string updated) 
+        private bool Replace(string output, string replacement, out string updated)
             => _translated.ReplaceFirst(output.ToLower(), replacement, out updated);
 
         private string ShortenEllipsisToFit(string output)

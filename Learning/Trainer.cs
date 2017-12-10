@@ -56,7 +56,7 @@ namespace Lingua.Learning
         private void LearnRearrangements(TestSessionResult result)
         {
             var outOfOrderCases = result.Results
-                .Where(tcr => !tcr.TestCase.Target.Arrangement.IsInOrder)
+                .Where(tcr => !tcr.TestCase.Target.Arrangement.IsInPerfectOrder)
                 .Select(tcr => tcr.TestCase)
                 .ToArray();
             if (outOfOrderCases.Any())
@@ -78,7 +78,7 @@ namespace Lingua.Learning
             => outOfOrderCases
             .Select(tc => tc.Target.Arrangement)
             .Distinct()
-            .Where(arr => !arr.IsInOrder)
+            .Where(arr => !arr.IsInPerfectOrder)
             .ToArray();
 
         private void LearnRearrangements(ICollection<TestCase> testCases, IEnumerable<Arranger> arrangerCandidates)

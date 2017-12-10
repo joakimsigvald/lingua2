@@ -12,7 +12,7 @@ namespace Lingua.Learning
             => targetArrangements.SelectMany(arranger => GetArrangerCandidates(arranger.Code, arranger.Order))
                 .NotNull()
                 .Distinct()
-                .Where(arr => !arr.IsInOrder)
+                .Where(arr => !arr.IsInPerfectOrder)
                 .OrderBy(arr => arr.Length);
 
         private static IEnumerable<Arrangement> GetArrangerCandidates(ushort[] code, byte[] order)

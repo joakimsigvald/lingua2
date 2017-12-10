@@ -44,7 +44,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ArrangerGenerator.cs" />
-    <Compile Include="CodeEqualityComparer.cs" />
     <Compile Include="ConsoleReporter.cs" />
     <Compile Include="MissingTranslations.cs" />
     <Compile Include="TestCaseTranslators\TestCaseConstructor.cs" />

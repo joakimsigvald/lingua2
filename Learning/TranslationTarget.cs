@@ -17,6 +17,9 @@ namespace Lingua.Learning
         private Lazy<IEnumerable<Translation>> LazyArrangedTranslations
             => new Lazy<IEnumerable<Translation>>(ComputeArrangedTranslations);
 
+        public bool IsFullyTranslated { get; set; }
+        public string Unmatched { get; set; }
+
         private IEnumerable<Translation> ComputeArrangedTranslations()
             => new Arranger(Arrangement).Arrange(Translations);
     }
