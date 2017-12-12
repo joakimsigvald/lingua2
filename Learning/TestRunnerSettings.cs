@@ -4,6 +4,6 @@ namespace Lingua.Learning
     {
         public bool AbortOnFail { get; set; }
         public bool AllowReordered { get; set; }
-        public bool PrepareTestCaseForAnalysis { get; set; } = false;
+        public bool PrepareTestCaseForAnalysis { get; set; }
     }
 }

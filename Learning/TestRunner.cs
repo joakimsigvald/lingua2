@@ -49,14 +49,6 @@ namespace Lingua.Learning
             return result;
         }
 
-        private static void AssureTargetSet(TestCase testCase, TranslationResult translationResult)
-        {
-            if (testCase.Target != null)
-                return;
-            testCase.Target = testCase.Target ?? TargetSelector
-                                  .SelectTarget(translationResult.Possibilities, testCase.Expected);
-        }
-
         private IEnumerable<TestCaseResult> RunTestCases(
             IEnumerable<TestCase> testCases)
         {
@@ -68,6 +60,14 @@ namespace Lingua.Learning
             if (lastResult != results.LastOrDefault())
                 results.Add(lastResult);
             return results;
+        }
+
+        private static void AssureTargetSet(TestCase testCase, TranslationResult translationResult)
+        {
+            if (testCase.Target != null)
+                return;
+            testCase.Target = testCase.Target ?? TargetSelector
+                                  .SelectTarget(translationResult.Possibilities, testCase.Expected);
         }
     }
 }

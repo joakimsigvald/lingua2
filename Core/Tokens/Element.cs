@@ -13,7 +13,7 @@ namespace Lingua.Core.Tokens
         Definite = 1 << 1,
         //Noun
         Genitive = 1 << 2,
-        //Adjective+Pronoun
+        //Adjective+Pronoun+Noun
         Neuter = 1 << 3,
         //Adjective
         Comparative = 1 << 4,
@@ -52,11 +52,8 @@ namespace Lingua.Core.Tokens
                 case 1 << 3:
                     switch (this)
                     {
-                        case Pronoun _:
-                        case Article _:
-                        case Adjective _: return Modifier.Neuter;
                         case Verb _: return Modifier.Imperitive;
-                        default: throw new NotImplementedException();
+                        default: return Modifier.Neuter;
                     }
                 case 1 << 4:
                     switch (this)

@@ -61,7 +61,6 @@
     <Compile Include="TestHelper.cs" />
     <Compile Include="TargetSelectorTests.cs" />
     <Compile Include="PatternExtractorTests.cs" />
-    <Compile Include="TestRunnerTests.cs" />
     <Compile Include="TrainableEvaluatorTests.cs" />
     <Compile Include="TrainerTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

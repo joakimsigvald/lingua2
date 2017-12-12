@@ -67,6 +67,7 @@ namespace Lingua.Core.Test
         [TestCase("Rt")]
         [TestCase("V*.")]
         [TestCase("V,")]
+        [TestCase("Nt")]
         public void EncodeDecode(string fromSymbols)
         {
             var fromTokens = Encoder.Deserialize(fromSymbols).ToArray();

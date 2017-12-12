@@ -25,7 +25,7 @@ namespace Lingua.Learning
                 .Concat(_patternExtractor.GetMatchingMonoCodes(unwanted)
                     .Select(code => new ScoredPattern(code, 1, -1)));
             var multiCodes =
-                        Enumerable.Range(2, 3)
+                        Enumerable.Range(2, 5)
                             .SelectMany(length => GetMultiCodes(wanted, unwanted, (byte)length));
             return monoCodes.Concat(multiCodes).ToArray();
         }

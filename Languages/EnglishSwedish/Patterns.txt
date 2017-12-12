@@ -2,6 +2,7 @@
 ^Adn:1
 ^Vi:1
 I*:1
+NtC*:1
 Q*Adn:1
 Q*Ngn:1
 QnNn:1
@@ -10,13 +11,17 @@ R*V1:1
 R3tX*A*:1
 R3tX*R1m:1
 T*Ndn:1
+T*Ndnt:1
+T*Ndt:1
 TdNd:1
 TdnqAdnNdn:1
 TdnqAdsNdn:1
 TdnqQ*A*Ndn:1
 TdqAdnNd:1
 TdqAdsNd:1
+TN:1
 TNg:1
+TqtN*C*V*P*R3t:1
 V*At:1
 V*P*:1
 X*Vr:1

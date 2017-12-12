@@ -209,7 +209,7 @@ namespace Lingua.Core
                 yield return 'd';
             if (modifiers.HasFlag(Modifier.Genitive))
                 yield return 'g';
-            if (modifiers.HasFlag(Modifier.Neuter) && (element is Adjective || element is Pronoun))
+            if (modifiers.HasFlag(Modifier.Neuter) && !(element is Verb))
                 yield return 't';
             if (modifiers.HasFlag(Modifier.Imperitive) && element is Verb)
                 yield return 'i';

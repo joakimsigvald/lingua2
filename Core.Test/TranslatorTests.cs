@@ -41,6 +41,7 @@ namespace Lingua.Core.Test
         [TestCase("|I am painting the wall| /=> |jag målar väggen|")]
         [TestCase("|search results| /=> |sökresultat|")]
         [TestCase("|I have been running| /=> |jag har sprungit|")]
+        [TestCase("|The rat made a nest and slept in it.| /=> |Råttan byggde ett bo och sov i det.|")]
         public void RunTestCase(string testCase)
         {
             var parts = Regex.Split(testCase, @"\s+/=>\s+");
