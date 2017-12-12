@@ -207,38 +207,38 @@ namespace Lingua.Core
                 yield return 'n';
             if (modifiers.HasFlag(Modifier.Definite))
                 yield return 'd';
-            if (modifiers.HasFlag(Modifier.Genitive))
+            if (modifiers.HasFlag(Modifier.Genitive) && !(element is Verb))
                 yield return 'g';
             if (modifiers.HasFlag(Modifier.Neuter) && !(element is Verb))
                 yield return 't';
             if (modifiers.HasFlag(Modifier.Imperitive) && element is Verb)
                 yield return 'i';
-            if (modifiers.HasFlag(Modifier.Comparative) && element is Adjective)
-                yield return 'c';
             if (modifiers.HasFlag(Modifier.Participle) && element is Verb)
                 yield return 'l';
+            if (modifiers.HasFlag(Modifier.Comparative) && element is Adjective)
+                yield return 'c';
             if (modifiers.HasFlag(Modifier.Superlative) && element is Adjective)
                 yield return 's';
-            if (modifiers.HasFlag(Modifier.FirstPerson) && (element is Verb || element is Pronoun))
-                yield return '1';
             if (modifiers.HasFlag(Modifier.Adverb) && element is Adjective)
                 yield return 'a';
-            if (modifiers.HasFlag(Modifier.SecondPerson) && (element is Verb || element is Pronoun))
+            if (modifiers.HasFlag(Modifier.FirstPerson) && !(element is Adjective))
+                yield return '1';
+            if (modifiers.HasFlag(Modifier.SecondPerson) && !(element is Adjective))
                 yield return '2';
-            if (modifiers.HasFlag(Modifier.ThirdPerson))
+            if (modifiers.HasFlag(Modifier.ThirdPerson) && !(element is Adjective))
                 yield return '3';
             if (modifiers.HasFlag(Modifier.Past) && element is Verb)
                 yield return 'p';
-            if (modifiers.HasFlag(Modifier.Qualified) && element is Article)
-                yield return 'q';
             if (modifiers.HasFlag(Modifier.Perfect) && element is Verb)
                 yield return 'r';
-            if (modifiers.HasFlag(Modifier.Object) && element is Pronoun)
-                yield return 'o';
             if (modifiers.HasFlag(Modifier.Future) && element is Verb)
                 yield return 'f';
+            if (modifiers.HasFlag(Modifier.Object) && element is Pronoun)
+                yield return 'o';
             if (modifiers.HasFlag(Modifier.Possessive) && element is Pronoun)
                 yield return 'm';
+            if (modifiers.HasFlag(Modifier.Qualified) && element is Article)
+                yield return 'q';
         }
 
         private static Modifier ToModifier(char c)
