@@ -2,7 +2,7 @@
 {
     public class Number : Element
     {
-        public const ushort Code = 3 << Encoder.ModifierBits;
+        public const ushort Code = 3 << Encoder.ModifierCount;
 
         private string _value;
 

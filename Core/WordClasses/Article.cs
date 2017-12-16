@@ -4,7 +4,7 @@ namespace Lingua.Core.WordClasses
 {
     public class Article : Word
     {
-        public const ushort Code = 5 << Encoder.ModifierBits;
+        public const ushort Code = 5 << Encoder.ModifierCount;
 
         protected override Modifier GetVariationModifier(int variationIndex)
         {

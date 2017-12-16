@@ -64,7 +64,7 @@ namespace Lingua.Vocabulary
         }
 
         private IEnumerable<Translation> ApplyRules(IEnumerable<Translation> translations)
-            => translations.SelectMany(ApplyRules).NotNull();
+            => translations.SelectMany(ApplyRules).ExceptNull();
 
         private IEnumerable<Translation> ApplyRules(Translation translation)
             => _rules.Select(rule => rule.Apply(translation));

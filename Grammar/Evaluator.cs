@@ -6,7 +6,6 @@ namespace Lingua.Grammar
 {
     using Core.Extensions;
     using Core;
-    using Core.Tokens;
     using Core.WordClasses;
 
     public class Evaluator : IEvaluator
@@ -59,13 +58,10 @@ namespace Lingua.Grammar
         {
             if (subtree.Score != 0) yield return subtree;
             if (index >= code.Length) yield break;
-            var matchingChildren = subtree.Children.Where(child => Matches(code[index], child.Code));
+            var matchingChildren = subtree.Children.Where(child => Encoder.Matches(code[index], child.Code));
             foreach (var node in GetMatchingScorers(matchingChildren, code, index + 1))
                 yield return node;
         }
-
-        private static bool Matches(ushort code, ushort pattern)
-            => code == pattern || (code | (ushort)Modifier.Any) == pattern;
 
         private static IEnumerable<ScoreTreeNode> GetMatchingScorers(IEnumerable<ScoreTreeNode> matchingChildren, ushort[] code, int index)
             => matchingChildren

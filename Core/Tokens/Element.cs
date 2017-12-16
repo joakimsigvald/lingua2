@@ -31,7 +31,7 @@ namespace Lingua.Core.Tokens
         Possessive = 1 << 8,
         //Article
         Qualified = 1 << 9,
-        Any = Encoder.ModifiersMask
+        Wildcard = 1 << 10
     }
 
     public abstract class Element : Token
@@ -96,7 +96,8 @@ namespace Lingua.Core.Tokens
                         case Article _: return Modifier.Qualified;
                         default: throw new NotImplementedException();
                     }
-                case 0x03ff: return Modifier.Any;
+                case 1 << 10:
+                    return Modifier.Wildcard;
                 default: throw new NotImplementedException();
             }
         }

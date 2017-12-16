@@ -11,22 +11,25 @@ namespace Lingua.Learning.Test
         private static readonly PatternExtractor PatternExtractor = new PatternExtractor();
 
         [TestCase("N", "N*", "N")]
-        [TestCase("Nn", "N*", "Nn")]
+        [TestCase("Nn", "N*", "Nn*", "Nn")]
         [TestCase("NN", "N*", "N")]
         [TestCase("AAA", "A*", "A")]
         public void ExtractMonoPatterns(string from, params string[] expected)
         {
-            var atoms = Decode(from);
-            var patterns = PatternExtractor.GetMatchingMonoCodes(atoms).Select(Encoder.Serialize);
+            var sequence = Encoder.Encode(from);
+            var patterns = PatternExtractor.GetMatchingMonoCodes(sequence).Select(Encoder.Serialize);
             Assert.That(patterns, Is.EquivalentTo(expected));
         }
 
         [TestCase("N", "^N*", "^N")]
+        [TestCase("Nd", "^N*", "^Nd*", "^Nd")]
+        [TestCase("Ndt", "^N*", "^Nd*", "^Nt*", "^Ndt*", "^Ndt")]
         [TestCase("NV", "^N*", "^N", "N*V", "NV", "N*V*", "NV*")]
+        [TestCase("NdV", "^N*", "^Nd*", "^Nd", "N*V", "Nd*V", "NdV", "N*V*", "Nd*V*", "NdV*")]
         public void ExtracTwinPatterns(string from, params string[] expected)
         {
-            var candidates = Decode(from);
-            var patterns = PatternExtractor.GetMatchingCodes(candidates, 2).Select(Encoder.Serialize);
+            var sequence = Encoder.Encode(from);
+            var patterns = PatternExtractor.GetMatchingCodes(sequence, 2).Select(Encoder.Serialize);
             Assert.That(patterns, Is.EquivalentTo(expected));
         }
 
@@ -35,34 +38,19 @@ namespace Lingua.Learning.Test
         [TestCase("ANV", "^A*N", "^AN", "^A*N*", "^AN*", "A*N*V*", "AN*V*", "A*NV*", "A*N*V", "A*NV", "AN*V", "ANV*", "ANV")]
         public void ExtracTripplePatterns(string from, params string[] expected)
         {
-            var candidates = Decode(from);
-            var patterns = PatternExtractor.GetMatchingCodes(candidates, 3).Select(Encoder.Serialize);
+            var sequence = Encoder.Encode(from);
+            var patterns = PatternExtractor.GetMatchingCodes(sequence, 3).Select(Encoder.Serialize);
             Assert.That(patterns, Is.EquivalentTo(expected));
         }
 
-        [TestCase(3, "I have been running", "jag har sprungit", "R1X1Xp", "X1XpVlr")]
-        [TestCase(3, "I will be running", "jag kommer att springa", "R1XfVf")]
-        [TestCase(2, "it is", "det är", "R3tX*")]
-        [TestCase(3, "it is my", "det är min", "R3tX*R*")]
-        [TestCase(4, "it is my pen", "det är min penna", "R3tX*R*N*")]
-        public void TestMultiPatterns(int count, string from, string to, params string[] expectedPatterns)
-        {
-            var testCaseResult = TestHelper.GetTestCaseResultForAnalysis(from, to);
-            var candidates = testCaseResult.ExpectedTranslations;
-            var patterns = PatternExtractor.GetMatchingCodes(candidates, count).Select(Encoder.Serialize); 
-            Assert.That(patterns.Intersect(expectedPatterns), Is.EquivalentTo(expectedPatterns));
-        }
-
-        [TestCase("it", "det", "R3t")]
+        [TestCase("it", "det", "Rt3")]
         public void TestMonoPatterns(string from, string to, params string[] expectedPatterns)
         {
             var testCaseResult = TestHelper.GetTestCaseResultForAnalysis(from, to);
             var candidates = testCaseResult.ExpectedTranslations;
-            var patterns = PatternExtractor.GetMatchingMonoCodes(candidates).Select(Encoder.Serialize);
+            var sequence = Encoder.Encode(candidates);
+            var patterns = PatternExtractor.GetMatchingMonoCodes(sequence).Select(Encoder.Serialize);
             Assert.That(patterns.Intersect(expectedPatterns), Is.EquivalentTo(expectedPatterns));
         }
-
-        private static Translation[] Decode(string pattern)
-            => Encoder.Deserialize(pattern).Select(token => new Translation { From = token }).ToArray();
     }
 }

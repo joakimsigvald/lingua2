@@ -4,7 +4,7 @@ namespace Lingua.Core.WordClasses
 {
     public class Adjective : Word
     {
-        public const ushort Code = 8 << Encoder.ModifierBits;
+        public const ushort Code = 8 << Encoder.ModifierCount;
 
         protected override Modifier GetVariationModifier(int variationIndex)
         {

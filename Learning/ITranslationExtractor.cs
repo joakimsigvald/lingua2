@@ -1,12 +1,8 @@
-﻿using System.Collections.Generic;
-
-namespace Lingua.Learning
+﻿namespace Lingua.Learning
 {
-    using Core;
-
     public interface ITranslationExtractor
     {
-        IEnumerable<Translation> GetWantedTranslations(TestCaseResult result);
-        IEnumerable<Translation> GetUnwantedTranslations(TestCaseResult result);
+        ushort[] GetWantedSequence(TestCaseResult result);
+        ushort[] GetUnwantedSequence(TestCaseResult result);
     }
 }

@@ -1,25 +1,28 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Lingua.Core.Tokens;
-using Lingua.Core.WordClasses;
 
 namespace Lingua.Core
 {
+    using Extensions;
+    using Tokens;
+    using WordClasses;
+
     public static class Encoder
     {
-        public const byte ModifierBits = 11;
+        public const ushort Wildcard = 1 << 10;
+        public const byte ModifierCount = 11;
         private const ushort ClassMask = 0xf800;
-        public const ushort ModifiersMask = 0x07ff;
+        private const ushort ModifiersMask = 0x07ff;
 
         public static ushort[] Encode(string serial)
             => Encode(Deserialize(serial)).ToArray();
 
-        public static IEnumerable<ushort> Encode(IEnumerable<Translation> translations)
+        public static ushort[] Encode(IEnumerable<Translation> translations)
             => Encode(translations.Select(t => t.From));
 
-        public static IEnumerable<ushort> Encode(IEnumerable<Token> tokens)
-            => tokens.Select(Encode);
+        public static ushort[] Encode(IEnumerable<Token> tokens)
+            => tokens.Select(Encode).ToArray();
 
         public static ushort Encode(Token token)
             => (ushort)(ClassCode(token) + ModifierCode(token as Element));
@@ -64,8 +67,14 @@ namespace Lingua.Core
             => codes.Length == pattern.Length
                && codes.Select((d, i) => Matches(d, pattern[i])).All(b => b);
 
-        private static bool Matches(ushort code, ushort pattern)
-            => code == pattern || (code | (ushort)Modifier.Any) == pattern;
+        public static bool Matches(ushort code, ushort pattern)
+            => MatchesExact(code, pattern) || MatchesWithWildcard(code, pattern);
+
+        private static bool MatchesExact(ushort code, ushort pattern)
+            => code == pattern;
+
+        private static bool MatchesWithWildcard(ushort code, ushort pattern)
+            => (pattern ^ Wildcard) == (pattern & code);
 
         private static Token Decode(ushort code)
         {
@@ -125,14 +134,12 @@ namespace Lingua.Core
         }
 
         private static Modifier DecodeModifiers(Element element, ushort code)
-            => code == ModifiersMask
-                ? Modifier.Any
-                : DecodeAggregatedModifiers(element, code);
+            => ModifierBits
+                .Select(modifier => element.DecodeModifier((ushort)(code & modifier)))
+                .Aggregate(Modifier.None, (a, b) => a | b);
 
-        private static Modifier DecodeAggregatedModifiers(Element element, ushort code)
-            => Enumerable.Range(0, ModifierBits)
-                    .Select(shift => element.DecodeModifier((ushort)(code & (1 << shift))))
-                    .Aggregate(Modifier.None, (a, b) => a | b);
+        private static readonly ushort[] ModifierBits
+            = Enumerable.Range(0, ModifierCount).Select(shift => (ushort)(1 << shift)).ToArray();
 
         private static bool IsModifier(char c)
             => char.IsLower(c) || char.IsDigit(c) || c == '*';
@@ -197,9 +204,7 @@ namespace Lingua.Core
             => Serialize(element, element?.Modifiers ?? Modifier.None);
 
         private static string Serialize(Element element, Modifier modifier)
-            => modifier == Modifier.Any
-                ? "*"
-                : new string(SerializeModifiers(element, modifier).OrderBy(c => c).ToArray());
+            => new string(SerializeModifiers(element, modifier).ToArray());
 
         private static IEnumerable<char> SerializeModifiers(Element element, Modifier modifiers)
         {
@@ -239,6 +244,8 @@ namespace Lingua.Core
                 yield return 'm';
             if (modifiers.HasFlag(Modifier.Qualified) && element is Article)
                 yield return 'q';
+            if (modifiers.HasFlag(Modifier.Wildcard))
+                yield return '*';
         }
 
         private static Modifier ToModifier(char c)
@@ -263,12 +270,21 @@ namespace Lingua.Core
                 case 'r': return Modifier.Perfect;
                 case 's': return Modifier.Superlative;
                 case 't': return Modifier.Neuter;
-                case '*': return Modifier.Any;
+                case '*': return Modifier.Wildcard;
                 default: throw new NotImplementedException();
             }
         }
 
         private static ushort ModifierCode(Element element)
             => (ushort) (element?.Modifiers ?? Modifier.None);
+
+        public static IEnumerable<ushort> Generalize(ushort code)
+            => Reduce(code).Distinct().Append(code).Select(rc => (ushort)(rc | Wildcard));
+
+        private static IEnumerable<ushort> Reduce(ushort code)
+            => ModifierBits
+                .Select(modifier => (ushort) (modifier ^ code))
+                .Where(altered => altered < code)
+                .SelectMany(reduced => Reduce(reduced).Append(reduced));
     }
 }

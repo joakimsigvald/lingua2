@@ -19,9 +19,9 @@ namespace Lingua.Core.Extensions
             => key != null && map.TryGetValue(key, out TValue value) ? value : default(TValue);
 
         public static IEnumerable<TItem> Prepend<TItem>(this IEnumerable<TItem> items, TItem item)
-            => new []{item}.Concat(items);
+            => new[] {item}.Concat(items);
 
-        public static IEnumerable<TItem> NotNull<TItem>(this IEnumerable<TItem> items)
+        public static IEnumerable<TItem> ExceptNull<TItem>(this IEnumerable<TItem> items)
             where TItem : class
             => items.Where(item => item != null);
 
@@ -35,5 +35,21 @@ namespace Lingua.Core.Extensions
         public static bool IsSegmentOf<TItem>(this IList<TItem> a, IList<TItem> b)
             => a.Count <= b.Count && Enumerable.Range(0, b.Count - a.Count + 1)
                    .Any(offset => b.Skip(offset).Take(a.Count).SequenceEqual(a));
+
+        /// <summary>
+        /// Takes a number of sets of values and produce all possible different sequences by taking one value from each set
+        /// </summary>
+        /// <typeparam name="TValue"></typeparam>
+        /// <param name="sets"></param>
+        /// <returns></returns>
+        public static IEnumerable<TValue[]> Combine<TValue>(this IEnumerable<IEnumerable<TValue>> sets)
+            => sets.ToList().Combine(0).Select(seq => seq.ToArray());
+
+        private static IEnumerable<IEnumerable<TValue>> Combine<TValue>(
+            this IList<IEnumerable<TValue>> sets, int offset)
+            => sets.Count > offset
+                ? sets[offset].SelectMany(first => sets.Combine(offset + 1)
+                    .Select(rest => rest.Prepend(first)))
+                : new[] {new TValue[0]};
     }
 }

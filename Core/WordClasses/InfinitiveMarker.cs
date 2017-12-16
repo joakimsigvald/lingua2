@@ -4,6 +4,6 @@ namespace Lingua.Core.WordClasses
 {
     public class InfinitiveMarker : Word
     {
-        public const ushort Code = 11 << Encoder.ModifierBits;
+        public const ushort Code = 11 << Encoder.ModifierCount;
     }
 }

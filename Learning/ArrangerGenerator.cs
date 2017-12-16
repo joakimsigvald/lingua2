@@ -10,7 +10,7 @@ namespace Lingua.Learning
     {
         public static IEnumerable<Arrangement> GetArrangerCandidates(IEnumerable<Arrangement> targetArrangements)
             => targetArrangements.SelectMany(arranger => GetArrangerCandidates(arranger.Code, arranger.Order))
-                .NotNull()
+                .ExceptNull()
                 .Distinct()
                 .Where(arr => !arr.IsInPerfectOrder)
                 .OrderBy(arr => arr.Length);

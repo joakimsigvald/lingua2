@@ -11,8 +11,8 @@ namespace Lingua.Learning.Test
     [TestFixture]
     public class PatternGeneratorTests
     {
-        private static readonly Translation WantedTranslation = new Translation();
-        private static readonly Translation UnwantedTranslation = new Translation();
+        private static readonly ushort[] WantedSequence = { 1 };
+        private static readonly ushort[] UnwantedSequence = { 2 };
 
         [Test]
         public void GivenNoPatterns_GenerateNoScoredPatterns()
@@ -99,19 +99,19 @@ namespace Lingua.Learning.Test
         {
             var patternExtractorMock = new Mock<IPatternExtractor>();
             patternExtractorMock.SetReturnsDefault(new string[0]);
-            MockPatterns(patternExtractorMock, WantedTranslation, MockWantedMultipatterns, wantedPatterns);
-            MockPatterns(patternExtractorMock, UnwantedTranslation, MockUnwantedMultipatterns, unwantedPatterns);
+            MockPatterns(patternExtractorMock, WantedSequence, MockWantedMultipatterns, wantedPatterns);
+            MockPatterns(patternExtractorMock, UnwantedSequence, MockUnwantedMultipatterns, unwantedPatterns);
             return patternExtractorMock.Object;
         }
 
         private static void MockPatterns(
             Mock<IPatternExtractor> patternExtractorMock
-            , Translation translation
+            , ushort[] sequence
             , Action<Mock<IPatternExtractor>, IReadOnlyCollection<string>, int> mockMultiPatterns
             , IReadOnlyCollection<string> patterns)
         {
             var monopatterns = patterns.Where(p => p.Length == 1).ToArray();
-            MockMonoPatterns(patternExtractorMock, translation, monopatterns);
+            MockMonoPatterns(patternExtractorMock, sequence, monopatterns);
             var multipatterns = patterns.Except(monopatterns).ToArray();
             var length = 1;
             while (multipatterns.Any())
@@ -125,11 +125,10 @@ namespace Lingua.Learning.Test
 
         private static void MockMonoPatterns(
             Mock<IPatternExtractor> patternExtractorMock
-            , Translation translation
+            , ushort[] sequence
             , IEnumerable<string> patterns)
         {
-            patternExtractorMock.Setup(extractor => extractor.GetMatchingMonoCodes(
-                    It.Is<IEnumerable<Translation>>(v => v.Contains(translation))))
+            patternExtractorMock.Setup(extractor => extractor.GetMatchingMonoCodes(sequence))
                 .Returns(patterns.Select(Encoder.Encode));
         }
 
@@ -139,7 +138,7 @@ namespace Lingua.Learning.Test
             , int length)
         {
             patternExtractorMock.Setup(extractor => extractor.GetMatchingCodes(
-                    It.Is<ICollection<Translation>>(v => v.Single() == WantedTranslation), length))
+                WantedSequence, length))
                 .Returns(patterns.Select(Encoder.Encode));
         }
 
@@ -149,17 +148,17 @@ namespace Lingua.Learning.Test
             , int length)
         {
             patternExtractorMock.Setup(extractor => extractor.GetMatchingCodes(
-                    It.Is<ICollection<Translation>>(v => v.Single() == UnwantedTranslation), length))
+                UnwantedSequence, length))
                 .Returns(patterns.Select(Encoder.Encode));
         }
 
         private static ITranslationExtractor MockTranslationExtractor()
         {
             var translationExtractorMock = new Mock<ITranslationExtractor>();
-            translationExtractorMock.Setup(extractor => extractor.GetWantedTranslations(null))
-                .Returns(new[] { WantedTranslation });
-            translationExtractorMock.Setup(extractor => extractor.GetUnwantedTranslations(null))
-                .Returns(new[] { UnwantedTranslation });
+            translationExtractorMock.Setup(extractor => extractor.GetWantedSequence(null))
+                .Returns(WantedSequence);
+            translationExtractorMock.Setup(extractor => extractor.GetUnwantedSequence(null))
+                .Returns(UnwantedSequence);
             return translationExtractorMock.Object;
         }
     }

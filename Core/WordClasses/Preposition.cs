@@ -4,6 +4,6 @@ namespace Lingua.Core.WordClasses
 {
     public class Preposition : Word
     {
-        public const ushort Code = 6 << Encoder.ModifierBits;
+        public const ushort Code = 6 << Encoder.ModifierCount;
     }
 }

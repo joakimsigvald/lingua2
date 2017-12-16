@@ -7,10 +7,16 @@ namespace Lingua.Learning
 
     public class TranslationExtractor : ITranslationExtractor
     {
-        public IEnumerable<Translation> GetWantedTranslations(TestCaseResult result)
+        public ushort[] GetWantedSequence(TestCaseResult result)
+            => Encoder.Encode(GetWantedTranslations(result));
+
+        public ushort[] GetUnwantedSequence(TestCaseResult result)
+            => Encoder.Encode(GetUnwantedTranslations(result));
+
+        private static IEnumerable<Translation> GetWantedTranslations(TestCaseResult result)
             => result?.ExpectedTranslations?? Enumerable.Empty<Translation>();
 
-        public IEnumerable<Translation> GetUnwantedTranslations(TestCaseResult result)
+        private static IEnumerable<Translation> GetUnwantedTranslations(TestCaseResult result)
             => result?.Translations ?? Enumerable.Empty<Translation>();
     }
 }

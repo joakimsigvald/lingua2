@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using Lingua.Core;
 
 namespace Lingua.Learning
 {
@@ -17,26 +16,42 @@ namespace Lingua.Learning
 
         public IList<ScoredPattern> GetScoredPatterns(TestCaseResult result)
         {
-            var wanted = _translationExtractor.GetWantedTranslations(result).ToList();
-            var unwanted = _translationExtractor.GetUnwantedTranslations(result).ToList();
-            var monoCodes= _patternExtractor
+            var wantedCode = _translationExtractor.GetWantedSequence(result);
+            var unwantedCode = _translationExtractor.GetUnwantedSequence(result);
+            var scoredMonoPatterns = GetScoredMonoPatterns(wantedCode, unwantedCode);
+            var scoredultiPatterns = GetScoredMultiPatterns(wantedCode, unwantedCode);
+            return scoredMonoPatterns.Concat(scoredultiPatterns).ToArray();
+        }
+
+        private IEnumerable<ScoredPattern> GetScoredMonoPatterns(
+            ushort[] wanted
+            , ushort[] unwanted)
+            => _patternExtractor
                 .GetMatchingMonoCodes(wanted)
                 .Select(code => new ScoredPattern(code, 1, 1))
                 .Concat(_patternExtractor.GetMatchingMonoCodes(unwanted)
                     .Select(code => new ScoredPattern(code, 1, -1)));
-            var multiCodes =
-                        Enumerable.Range(2, 5)
-                            .SelectMany(length => GetMultiCodes(wanted, unwanted, (byte)length));
-            return monoCodes.Concat(multiCodes).ToArray();
-        }
 
-        private IEnumerable<ScoredPattern> GetMultiCodes(
-            ICollection<Translation> wanted
-            , ICollection<Translation> unwanted
+        private IEnumerable<ScoredPattern> GetScoredMultiPatterns(
+            ushort[] wanted
+            , ushort[] unwanted)
+            => MultiPatternLengths
+                .SelectMany(length => GetScoredMultiPatterns(wanted, unwanted, length));
+
+        private static IEnumerable<byte> MultiPatternLengths 
+            => Enumerable.Range(2, 5).Select(n => (byte)n);
+
+        private IEnumerable<ScoredPattern> GetScoredMultiPatterns(
+            ushort[] wanted
+            , ushort[] unwanted
             , byte length)
-            => _patternExtractor.GetMatchingCodes(wanted, length)
-                .Select(code => new ScoredPattern(code, length, 1))
-                .Concat(_patternExtractor.GetMatchingCodes(unwanted, length)
-                    .Select(code => new ScoredPattern(code, length, -1)));
+            => GetScoredMultiPatterns(wanted, length, 1)
+                .Concat(GetScoredMultiPatterns(unwanted, length, -1));
+
+        private IEnumerable<ScoredPattern> GetScoredMultiPatterns(
+            ushort[] code
+            , byte length, sbyte score)
+            => _patternExtractor.GetMatchingCodes(code, length)
+                .Select(snippet => new ScoredPattern(snippet, length, score));
     }
 }

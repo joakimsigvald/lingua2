@@ -2,7 +2,7 @@
 {
     public class Terminator : Punctuation
     {
-        public const ushort Code = 1 << Encoder.ModifierBits;
+        public const ushort Code = 1 << Encoder.ModifierCount;
 
         public Terminator(char character) : base(character)
         {

@@ -4,7 +4,7 @@ namespace Lingua.Core.WordClasses
 {
     public class Noun : Word
     {
-        public const ushort Code = 4 << Encoder.ModifierBits;
+        public const ushort Code = 4 << Encoder.ModifierCount;
 
         protected override Modifier GetVariationModifier(int variationIndex)
         {
