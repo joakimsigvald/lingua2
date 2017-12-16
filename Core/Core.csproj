@@ -45,6 +45,7 @@
   <ItemGroup>
     <Compile Include="Encoder.cs" />
     <Compile Include="Extensions\EnumerableExtensions.cs" />
+    <Compile Include="Extensions\IntExtensions.cs" />
     <Compile Include="Extensions\StringExtensions.cs" />
     <Compile Include="IEvaluation.cs" />
     <Compile Include="IGrammar.cs" />

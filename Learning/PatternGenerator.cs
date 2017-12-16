@@ -28,9 +28,9 @@ namespace Lingua.Learning
             , ushort[] unwanted)
             => _patternExtractor
                 .GetMatchingMonoCodes(wanted)
-                .Select(code => new ScoredPattern(code, 1, 1))
+                .Select(code => new ScoredPattern(code, 1))
                 .Concat(_patternExtractor.GetMatchingMonoCodes(unwanted)
-                    .Select(code => new ScoredPattern(code, 1, -1)));
+                    .Select(code => new ScoredPattern(code, -1)));
 
         private IEnumerable<ScoredPattern> GetScoredMultiPatterns(
             ushort[] wanted
@@ -52,6 +52,6 @@ namespace Lingua.Learning
             ushort[] code
             , byte length, sbyte score)
             => _patternExtractor.GetMatchingCodes(code, length)
-                .Select(snippet => new ScoredPattern(snippet, length, score));
+                .Select(snippet => new ScoredPattern(snippet, score));
     }
 }

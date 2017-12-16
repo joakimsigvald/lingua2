@@ -57,6 +57,7 @@
   <ItemGroup>
     <Compile Include="EncoderTests.cs" />
     <Compile Include="EnumerableExtensionsTests.cs" />
+    <Compile Include="IntExtensionsTests.cs" />
     <Compile Include="TranslatorTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

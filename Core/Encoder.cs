@@ -13,7 +13,7 @@ namespace Lingua.Core
         public const ushort Wildcard = 1 << 10;
         public const byte ModifierCount = 11;
         private const ushort ClassMask = 0xf800;
-        private const ushort ModifiersMask = 0x07ff;
+        public const ushort ModifiersMask = 0x07ff;
 
         public static ushort[] Encode(string serial)
             => Encode(Deserialize(serial)).ToArray();
