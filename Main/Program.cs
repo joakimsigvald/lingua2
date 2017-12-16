@@ -49,7 +49,8 @@ namespace Lingua.Main
         {
             var translator = new FullTextTranslator(CreateTranslator());
             var testBench =
-                new TestBench(new TestRunner(translator), new ConsoleReporter());
+                //new TestBench(new TestRunner(translator), new ConsoleReporter());
+            new TestBench(new TestRunner(translator), new NoReporter());
             var success = testBench.RunTestSuites();
             if (!success)
                 throw new Exception("Fail!!");
@@ -79,6 +80,14 @@ namespace Lingua.Main
             var evaluator = new Evaluator();
             evaluator.Load();
             return new Translator(new Tokenizer(), new Thesaurus(), new GrammarEngine(evaluator));
+        }
+    }
+
+    public class NoReporter : IReporter
+    {
+        public void Report(TestSessionResult result)
+        {
+            //nope
         }
     }
 }

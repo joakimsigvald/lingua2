@@ -68,13 +68,10 @@ namespace Lingua.Core
                && codes.Select((d, i) => Matches(d, pattern[i])).All(b => b);
 
         public static bool Matches(ushort code, ushort pattern)
-            => MatchesExact(code, pattern) || MatchesWithWildcard(code, pattern);
-
-        private static bool MatchesExact(ushort code, ushort pattern)
-            => code == pattern;
+            => code == pattern || MatchesWithWildcard(code, pattern);
 
         private static bool MatchesWithWildcard(ushort code, ushort pattern)
-            => (pattern ^ Wildcard) == (pattern & code);
+            => (pattern ^ Wildcard) == ((pattern | ClassMask) & code);
 
         private static Token Decode(ushort code)
         {
@@ -286,5 +283,8 @@ namespace Lingua.Core
                 .Select(modifier => (ushort) (modifier ^ code))
                 .Where(altered => altered < code)
                 .SelectMany(reduced => Reduce(reduced).Append(reduced));
+
+        public static ushort GetClassCode(ushort code)
+            => (ushort)(code >> ModifierCount);
     }
 }

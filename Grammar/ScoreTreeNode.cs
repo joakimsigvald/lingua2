@@ -11,6 +11,7 @@ namespace Lingua.Grammar
         public ScoreTreeNode(ushort code, ushort[] path, sbyte score, List<ScoreTreeNode> children)
         {
             Code = code;
+            ClassCode = Encoder.GetClassCode(code);
             Path = path;
             Score = score;
             Children = children;
@@ -18,6 +19,7 @@ namespace Lingua.Grammar
 
         public readonly List<ScoreTreeNode> Children;
         public readonly ushort Code;
+        public readonly ushort ClassCode;
         public readonly ushort[] Path;
         public sbyte Score { get; set; }
 

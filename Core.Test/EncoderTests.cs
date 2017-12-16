@@ -86,18 +86,20 @@ namespace Lingua.Core.Test
             Assert.That(toSymbols, Is.EqualTo(fromSymbols));
         }
 
-        [TestCase("Rm", "R*")]
-        [TestCase("V1", "V1*")]
-        [TestCase("V1t", "V1*")]
-        [TestCase("V1t", "Vt*")]
-        [TestCase("R1m", "R*")]
-        [TestCase("R3tX3R1mN", "R3tX3R*N")]
-        public void MatchPatterns(string example, string pattern)
+        [TestCase("N", "P*", false)]
+        [TestCase("P", "N*", false)]
+        [TestCase("Rm", "R*", true)]
+        [TestCase("V1", "V1*", true)]
+        [TestCase("V1t", "V1*", true)]
+        [TestCase("V1t", "Vt*", true)]
+        [TestCase("R1m", "R*", true)]
+        [TestCase("R3tX3R1mN", "R3tX3R*N", true)]
+        public void MatchPatterns(string example, string pattern, bool expected)
         {
             var exampleCode = Encoder.Encode(example);
             var patternCode = Encoder.Encode(pattern);
             var matches = Encoder.Matches(exampleCode, patternCode);
-            Assert.That(matches);
+            Assert.That(matches, Is.EqualTo(expected));
         }
     }
 }
