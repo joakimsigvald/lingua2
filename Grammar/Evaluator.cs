@@ -51,27 +51,7 @@ namespace Lingua.Grammar
             => arrangements.Select(arr => new Arranger(arr)).ToList();
 
         private IEnumerable<ScoreTreeNode> GetMatchingScoreNodes(ushort[] sequence)
-        {
-            var classCodes = sequence.Select(Encoder.GetClassCode).ToArray();
-            return Enumerable.Range(0, sequence.Length)
-                .SelectMany(i => GetMatchingScorers(ScoringTree, classCodes, sequence, i));
-        }
-
-        private static IEnumerable<ScoreTreeNode> GetMatchingScorers(ScoreTreeNode subtree, ushort[] classCodes, ushort[] sequence, int index)
-        {
-            if (subtree.Score != 0) yield return subtree;
-            if (index >= sequence.Length) yield break;
-            var code = sequence[index];
-            var classCode = classCodes[index];
-            var matchingChildren = subtree.Children
-                .Where(child => classCode == child.ClassCode && Encoder.Matches(code, child.Code));
-            foreach (var node in GetMatchingScorers(matchingChildren, classCodes, sequence, index + 1))
-                yield return node;
-        }
-
-        private static IEnumerable<ScoreTreeNode> GetMatchingScorers(IEnumerable<ScoreTreeNode> matchingChildren, ushort[] classCodes, ushort[] code, int index)
-            => matchingChildren
-                .SelectMany(child => GetMatchingScorers(child, classCodes, code, index));
+            => new EvaluationProcess(sequence).GetMatchingScoreNodes(ScoringTree);
 
         private static ushort[] MergeConjunctions(ushort[] code)
         {
