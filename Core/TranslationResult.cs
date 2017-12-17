@@ -1,10 +1,12 @@
-﻿namespace Lingua.Core
+﻿using System.Collections.Generic;
+
+namespace Lingua.Core
 {
     public class TranslationResult
     {
         public string Translation { get; set; }
         public IReason Reason { get; set; }
         public Translation[] Translations { get; set; }
-        public TranslationTreeNode Possibilities { get; set; }
+        public IList<Translation[]> Possibilities { get; set; }
     }
 }

@@ -50,7 +50,7 @@ namespace Lingua.Core.Test
             TestCase(from, to);
         }
 
-        [Test, Category("Longrunning")]
+        [Test]
         public void RunTestSuites()
         {
             var success = TestBench.RunTestSuites();

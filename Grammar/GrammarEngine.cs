@@ -9,7 +9,7 @@ namespace Lingua.Grammar
         public GrammarEngine(IEvaluator evaluator) => _evaluator = evaluator;
 
         public (Translation[] Translations, IReason Reason) Reduce(
-            TranslationTreeNode possibilities)
+            IList<Translation[]> possibilities)
             => Process.Execute(_evaluator, possibilities);
 
         public IEnumerable<Translation> Arrange(IEnumerable<Translation> translations)

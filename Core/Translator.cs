@@ -32,15 +32,22 @@ namespace Lingua.Core
             return Construct(possibilities);
         }
 
-        public TranslationTreeNode Destruct(string original)
+        public IList<Translation[]> Destruct(string original)
         {
             var tokens = Expand(Tokenize(original)).ToArray();
-            var candidates = Translate(tokens).ToList();
-            var completedCandidates = CompoundCombiner.Combine(candidates).ToList();
-            return new TranslationTreeNode(null, completedCandidates);
+            var possibilities = CompoundCombiner.Combine(Translate(tokens).ToList()).ToList();
+            SetCodes(possibilities);
+            return possibilities;
         }
 
-        public TranslationResult Construct(TranslationTreeNode possibilities)
+        private void SetCodes(List<Translation[]> possibilities)
+        {
+            foreach (var alternatives in possibilities)
+                foreach (var translation in alternatives)
+                    translation.Code = Encoder.Encode(translation.From);
+        }
+
+        public TranslationResult Construct(IList<Translation[]> possibilities)
         {
             (var translations, var reason) = _grammar.Reduce(possibilities);
             var arrangedTranslations = _grammar.Arrange(translations);

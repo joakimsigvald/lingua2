@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using Lingua.Core;
 
 namespace Lingua.Learning
@@ -10,7 +11,7 @@ namespace Lingua.Learning
             Expected = expected;
         }
 
-        public TranslationTreeNode Possibilities { get; set; }
+        public IList<Translation[]> Possibilities { get; set; }
         public TranslationTarget Target { get; set; }
         public string Suite { get; set; }
         public string From { get; }

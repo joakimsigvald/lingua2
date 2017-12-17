@@ -64,7 +64,6 @@
     <Compile Include="Tokens\Abbreviation.cs" />
     <Compile Include="Tokens\Element.cs" />
     <Compile Include="CompoundCombiner.cs" />
-    <Compile Include="TranslationTreeNode.cs" />
     <Compile Include="TranslationResult.cs" />
     <Compile Include="WordClasses\InfinitiveMarker.cs" />
     <Compile Include="WordClasses\Conjunction.cs" />

@@ -51,6 +51,7 @@ namespace Lingua.Core
         public string Output => To ?? From.Value;
         public bool IsIncompleteCompound { get; set; }
         public bool IsInvisible => string.IsNullOrEmpty(Output);
+        public ushort Code { get; set; }
 
         public override string ToString() => $"{From}->{To}{(Continuation.Any() ? "..." : "")}";
 

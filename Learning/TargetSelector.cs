@@ -21,7 +21,7 @@ namespace Lingua.Learning
         private bool _previousIsAbbreviation;
 
         public static TranslationTarget SelectTarget(
-            TranslationTreeNode possibilities
+            IList<Translation[]> possibilities
             , string translated)
         {
             translated = translated.ToLower();
@@ -34,19 +34,13 @@ namespace Lingua.Learning
                   ?? throw new MissingTranslations(translated, GetUntranslated(possibilities).ToList());
         }
 
-        private static IEnumerable<Translation> GetUntranslated(TranslationTreeNode possibilities)
-        {
-            while (possibilities.Children.Any())
-            {
-                if (possibilities.Translation.From is Unclassified)
-                    yield return possibilities.Translation;
-                possibilities = possibilities.Children.First();
-            }
-        }
+        private static IEnumerable<Translation> GetUntranslated(IList<Translation[]> possibilities)
+            => possibilities.Select(alternatives => alternatives[0])
+                .Where(t => t.From is Unclassified);
 
-        private static TranslationTarget SelectBestTarget(TranslationTreeNode possibilities, string translated)
+        private static TranslationTarget SelectBestTarget(IList<Translation[]> possibilities, string translated)
         {
-            var candidateSequences = GetCandidateSequences(possibilities.Children, translated).ToArray();
+            var candidateSequences = GetCandidateSequences(possibilities, 0, translated).ToArray();
             var targetCandidates = candidateSequences
                 .Select(sequence => GenerateTarget(sequence, translated))
                 .Where(tt => tt.IsFullyTranslated)
@@ -60,26 +54,27 @@ namespace Lingua.Learning
             => new TargetSelector(translated).GenerateTarget(sequence.ToArray());
 
         private static IEnumerable<IEnumerable<Translation>> GetCandidateSequences(
-            IList<TranslationTreeNode> candidates, string translated)
+            IList<Translation[]> possibilities, int offset, string translated)
         {
-            if (!candidates.Any())
+            if (offset >= possibilities.Count)
                 return new[] {new Translation[0]};
-            var orderedCandidates = candidates.OrderBy(cand => cand.Translation.Output.Length).ToList();
-            var firstCandidates = orderedCandidates.Where(tn => MatchesTranslated(translated, tn.Translation.Output))
-                .OrderByDescending(tn => tn.Translation.Output.Length)
+            var alternatives = possibilities[offset];
+            var orderedCandidates = alternatives.OrderBy(t => t.Output.Length).ToList();
+            var firstCandidates = orderedCandidates.Where(t => MatchesTranslated(translated, t.Output))
+                .OrderByDescending(t => t.Output.Length)
                 .ToList();
             if (!firstCandidates.Any())
                 firstCandidates.Add(orderedCandidates.First());
             return firstCandidates
-                .SelectMany(fc => GetCandidateSequences(fc.Children, translated)
-                    .Select(sequence => sequence.Prepend(fc.Translation)));
+                .SelectMany(t => GetCandidateSequences(possibilities, offset + t.WordCount, translated)
+                    .Select(sequence => sequence.Prepend(t)));
         }
 
         private TargetSelector(string translated) => _translated = translated;
 
-        private TranslationTarget SelectFirstTarget(TranslationTreeNode possibilities)
+        private TranslationTarget SelectFirstTarget(IList<Translation[]> possibilities)
         {
-            var translations = SelectTranslations(possibilities.Children)?.ToArray();
+            var translations = SelectTranslations(possibilities, 0)?.ToArray();
             return CreateTarget(translations);
         }
 
@@ -107,16 +102,17 @@ namespace Lingua.Learning
                 .ToArray();
 
         private IEnumerable<Translation> SelectTranslations(
-            ICollection<TranslationTreeNode> candidates)
+            IList<Translation[]> possibilities, int offset)
         {
-            if (!candidates.Any())
+            if (offset >= possibilities.Count)
                 return IsFullyTranslated
                     ? new Translation[0]
                     : null;
-            var matchingCandidates = candidates.Where(tn => MatchesTranslated(_translated, tn.Translation.Output))
-                .OrderByDescending(tn => tn.Translation.Output.Length);
-            return matchingCandidates.Concat(candidates)
-                .Select(FilterPossibilities)
+            var alternatives = possibilities[offset];
+            var matchingCandidates = alternatives.Where(t => MatchesTranslated(_translated, t.Output))
+                .OrderByDescending(t => t.Output.Length);
+            return matchingCandidates.Concat(alternatives)
+                .Select(t => FilterPossibilities(possibilities, offset, t))
                 .FirstOrDefault();
         }
 
@@ -125,12 +121,11 @@ namespace Lingua.Learning
         private static bool MatchesTranslated(string translated, string output)
             => string.IsNullOrEmpty(output) || translated.Contains(output.ToLower());
 
-        private IEnumerable<Translation> FilterPossibilities(TranslationTreeNode possibilities)
+        private IEnumerable<Translation> FilterPossibilities(IList<Translation[]> possibilities, int offset, Translation translation)
         {
-            var translation = possibilities.Translation;
             TryReplaceWithNextPosition(translation);
             _previousIsAbbreviation = translation.From is Abbreviation;
-            return SelectTranslations(possibilities.Children)?.Prepend(translation);
+            return SelectTranslations(possibilities, offset + translation.WordCount)?.Prepend(translation);
         }
 
         private void TryReplaceWithNextPosition(Translation translation)

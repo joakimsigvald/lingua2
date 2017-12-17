@@ -53,7 +53,7 @@ namespace Lingua.Learning
             => snippets.SelectMany(snippet => ApplyMask(snippet, mask));
 
         private static IEnumerable<ushort[]> ApplyMask(ushort[] code, bool[] mask)
-            => code.Select((c, i) => Mask(c, mask[i])).Combine();
+            => code.Select((c, i) => Mask(c, mask[i])).Expand();
 
         private static IEnumerable<bool[]> GetMasks(int n)
         {

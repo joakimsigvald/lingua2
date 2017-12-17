@@ -32,7 +32,7 @@ namespace Lingua.Core.Test
         {
             var sets = ExtractLists(setsStr);// new[] { new [] {1}};
             var expectedCombinations = ExtractLists(combinationsStr);// new[] { new[] { 1 } };
-            var actualCombinations = sets.Combine();
+            var actualCombinations = sets.Expand();
             Assert.That(actualCombinations, Is.EquivalentTo(expectedCombinations));
         }
 
