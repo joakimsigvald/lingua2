@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Lingua.Core.Tokens;
 
 namespace Lingua.Learning
 {
@@ -42,8 +43,22 @@ namespace Lingua.Learning
                 .Where(tc => !string.IsNullOrWhiteSpace(tc.From))
                 .ToList();
             preparedTestCases.ForEach(PrepareForLearning);
-            return preparedTestCases;
+            var prioritizedTestCases = preparedTestCases
+                .Select(tc => (testcase: tc, priority: ComputePriority(tc.Target.Translations)))
+                .OrderBy(pair => pair.priority);
+            return prioritizedTestCases
+                .Select(pair => pair.testcase)
+                .ToList();
         }
+
+        private static int ComputePriority(IReadOnlyCollection<Translation> translations)
+            => translations.Count
+               + translations.Select(t => t.From.GetType())
+            .Distinct().Count()
+               + translations.Select(t => t.From)
+            .OfType<Element>()
+            .Select(e => e.Modifiers)
+            .Distinct().Count();
 
         private void PrepareForLearning(TestCase testCase)
         {

@@ -36,7 +36,8 @@ namespace Lingua.Core
         {
             var tokens = Expand(Tokenize(original)).ToArray();
             var candidates = Translate(tokens).ToList();
-            return new TranslationTreeNode(null, candidates, true);
+            var completedCandidates = CompoundCombiner.Combine(candidates).ToList();
+            return new TranslationTreeNode(null, completedCandidates);
         }
 
         public TranslationResult Construct(TranslationTreeNode possibilities)

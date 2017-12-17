@@ -11,11 +11,11 @@ namespace Lingua.Core
     {
         private readonly Lazy<IList<TranslationTreeNode>> _lazyChildren;
 
-        public TranslationTreeNode(Translation current, ICollection<Translation[]> futureAlternatives, bool completeCompounds = false)
+        public TranslationTreeNode(Translation current, ICollection<Translation[]> futureAlternatives)
         {
             Translation = current;
             Code = current == null ? Start.Code : Encoder.Encode(current.From);
-            _lazyChildren = new Lazy<IList<TranslationTreeNode>>(() => Combine(futureAlternatives, completeCompounds));
+            _lazyChildren = new Lazy<IList<TranslationTreeNode>>(() => Combine(futureAlternatives));
         }
 
         public readonly Translation Translation;
@@ -32,59 +32,22 @@ namespace Lingua.Core
                     .SelectMany(child => child.Expand(depth - 1))
                 : new[] { new TranslationTreeNode[0] };
 
-        private static IList<TranslationTreeNode> Combine(ICollection<Translation[]> alternatives, bool completeCompounds)
+        private static IList<TranslationTreeNode> Combine(ICollection<Translation[]> alternatives)
             => alternatives.Any()
-                ? CombineRemaining(alternatives, completeCompounds)
+                ? CombineRemaining(alternatives)
                 : new List<TranslationTreeNode>();
 
-        private static IList<TranslationTreeNode> CombineRemaining(ICollection<Translation[]> alternatives
-            , bool completeCompounds)
-            => CreateSubtrees(completeCompounds ? CompleteFirst(alternatives) : alternatives.First()
-                , alternatives
-                , completeCompounds);
-
-        private static IEnumerable<Translation> CompleteFirst(ICollection<Translation[]> alternatives)
-        {
-            var incompleteCompounds = alternatives.First().Where(t => t.IsIncompleteCompound).ToArray();
-            var words = alternatives.First().Except(incompleteCompounds);
-            var compounds =
-                incompleteCompounds.SelectMany(ic => CompleteCompound(ic, alternatives.Skip(ic.WordCount).ToArray()));
-            return words.Concat(compounds);
-        }
-
-        private static IEnumerable<Translation> CompleteCompound(Translation incompleteCompound,
-            ICollection<Translation[]> future)
-        {
-            if (!future.Any() || !(future.First()[0].From is Word))
-                return new Translation[0];
-            var nextWords = future.First().Where(t => t.From.GetType() == incompleteCompound.From.GetType());
-            return nextWords.Select(completion => CompleteCompound(incompleteCompound, completion));
-        }
-
-        private static Translation CompleteCompound(Translation incompleteCompound, Translation completion)
-        {
-            var completedFrom = ((Word)incompleteCompound.From).Clone();
-            var fromCompletion = (Word)completion.From;
-            completedFrom.Modifiers = fromCompletion.Modifiers;
-            return new Translation
-            {
-                From = completedFrom,
-                To = incompleteCompound.To + completion.To,
-                IsIncompleteCompound = completion.IsIncompleteCompound,
-                Continuation = completion.Continuation.Prepend((Word)completion.From).ToArray()
-            };
-        }
+        private static IList<TranslationTreeNode> CombineRemaining(ICollection<Translation[]> alternatives)
+            => CreateSubtrees(alternatives.First(), alternatives);
 
         private static IList<TranslationTreeNode> CreateSubtrees(IEnumerable<Translation> first
-            , ICollection<Translation[]> alternatives
-            , bool completeCompounds)
+            , ICollection<Translation[]> alternatives)
             => first
-                .Select(t => CreateSubtree(t, alternatives, completeCompounds))
+                .Select(t => CreateSubtree(t, alternatives))
                 .ToList();
 
         private static TranslationTreeNode CreateSubtree(Translation translation
-            , IEnumerable<Translation[]> alternatives
-            , bool completeCompounds)
-            => new TranslationTreeNode(translation, alternatives.Skip(translation.WordCount).ToList(), completeCompounds);
+            , IEnumerable<Translation[]> alternatives)
+            => new TranslationTreeNode(translation, alternatives.Skip(translation.WordCount).ToList());
     }
 }
