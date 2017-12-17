@@ -38,7 +38,7 @@ namespace Lingua.Grammar
 
         private IEnumerable<Translation> Choose()
         {
-            int offset = 0;
+            var offset = 0;
             IList<ushort> previous = new List<ushort> {Start.Code};
             while (offset < _possibilities.Count)
             {
@@ -50,7 +50,9 @@ namespace Lingua.Grammar
         }
 
         private Translation GetNext(IEnumerable<ushort> previous, int offset)
-            => _possibilities[offset].Length > 1 ? FindNext(previous, offset) : _possibilities[offset].Single();
+            => _possibilities[offset].Length > 1 
+            ? FindNext(previous, offset) 
+            : _possibilities[offset].Single();
 
         private Translation FindNext(IEnumerable<ushort> previous, int offset)
         {
