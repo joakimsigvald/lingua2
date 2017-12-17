@@ -5,7 +5,7 @@ namespace Lingua.Learning.Test
     [TestFixture]
     public class TrainerTests
     {
-        [Test]
+        [Test, Category("Longrunning")]
         public void TestAll()
         {
             var trainer = new Trainer();
@@ -15,7 +15,7 @@ namespace Lingua.Learning.Test
             Assert.That(res.Success, $"Failed on {res.SuccessCount + 1}th case");
         }
 
-        [Test, Explicit("Saves generated patterns to file on success")]
+        [Test, Category("Longrunning"), Explicit("Saves generated patterns to file on success")]
         public void GeneratePatterns()
         {
             var trainer = new Trainer();
