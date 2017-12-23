@@ -53,8 +53,7 @@ namespace Lingua.Learning
 
         private static int ComputePriority(IReadOnlyCollection<Translation> translations)
             => translations.Count
-               + translations.Select(t => t.From.GetType())
-            .Distinct().Count()
+               + translations.Select(t => t.From.GetType()).Distinct().Count()
                + translations.Select(t => t.From)
             .OfType<Element>()
             .Select(e => e.Modifiers)
@@ -190,13 +189,8 @@ namespace Lingua.Learning
         private IEnumerator<ScoredPattern> EnumerateScoredPatterns(TestCaseResult result)
             => _patternGenerator
             .GetScoredPatterns(result)
-            .Select(sp => (pattern: sp, priority: ComputePriority(sp)))
-            .OrderBy(tuple => tuple.priority)
-            .Select(tuple => tuple.pattern)
+            .OrderBy(sp => sp.Priority)
             .ToList()
             .GetEnumerator();
-
-        private int ComputePriority(ScoredPattern sp)
-            => sp.Size * Math.Abs(_evaluator.GetScore(sp.Code));
     }
 }

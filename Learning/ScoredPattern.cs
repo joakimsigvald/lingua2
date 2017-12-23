@@ -1,3 +1,4 @@
+using System;
 using System.Linq;
 using Lingua.Core;
 using Lingua.Core.Extensions;
@@ -9,23 +10,26 @@ namespace Lingua.Learning
         public ScoredPattern(ushort[] code, sbyte score)
         {
             Code = code;
-            Size = ComputeSize(code, score);
             Score = score;
+            Priority = ComputePriority();
         }
 
-        private static byte ComputeSize(ushort[] code, sbyte score)
-            => (byte)code.Sum(c => ComputeSize(c, score));
+        private double ComputePriority()
+            => ComputeSize() * Math.Sqrt(Math.Abs(Score)) * (Score < 0 ? 2 : 1);
 
-        private static byte ComputeSize(ushort code, sbyte score)
+        private int ComputeSize()
+            => Code.Sum(ComputeSize);
+
+        private static int ComputeSize(ushort code)
         {
-            var modifiers = code & Encoder.ModifiersMask;
-            var size = 3 - score + modifiers.CountBits();
-            return (byte)(modifiers < Encoder.Wildcard ? size : size - 2);
+            var modifiers = code & Encoder.ProperModifiersMask;
+            var size = 2 + (int)Math.Pow(2, modifiers.CountBits());
+            return (code & Encoder.Wildcard) == 0 ? size : size - 2;
         }
 
         public ushort[] Code{ get; }
         public string Pattern => Encoder.Serialize(Code);
         public sbyte Score { get; }
-        public byte Size { get; }
+        public double Priority { get; }
     }
 }
