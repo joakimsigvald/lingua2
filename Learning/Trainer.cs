@@ -55,9 +55,9 @@ namespace Lingua.Learning
             => translations.Count
                + translations.Select(t => t.From.GetType()).Distinct().Count()
                + translations.Select(t => t.From)
-            .OfType<Element>()
-            .Select(e => e.Modifiers)
-            .Distinct().Count();
+                   .OfType<Element>()
+                   .Select(e => e.Modifiers)
+                   .Distinct().Count();
 
         private void PrepareForLearning(TestCase testCase)
         {
@@ -83,17 +83,17 @@ namespace Lingua.Learning
             LearnRearrangements(outOfOrderCases, arrangerCandidates);
         }
 
-        private static IEnumerable<Arranger> GetArrangementCandidates(IEnumerable<TestCase> outOfOrderCases) 
+        private static IEnumerable<Arranger> GetArrangementCandidates(IEnumerable<TestCase> outOfOrderCases)
             => ArrangerGenerator
-            .GetArrangerCandidates(GetTargetArrangers(outOfOrderCases))
-            .Select(arr => new Arranger(arr));
+                .GetArrangerCandidates(GetTargetArrangers(outOfOrderCases))
+                .Select(arr => new Arranger(arr));
 
-        private static IEnumerable<Arrangement> GetTargetArrangers(IEnumerable<TestCase> outOfOrderCases) 
+        private static IEnumerable<Arrangement> GetTargetArrangers(IEnumerable<TestCase> outOfOrderCases)
             => outOfOrderCases
-            .Select(tc => tc.Target.Arrangement)
-            .Distinct()
-            .Where(arr => !arr.IsInPerfectOrder)
-            .ToArray();
+                .Select(tc => tc.Target.Arrangement)
+                .Distinct()
+                .Where(arr => !arr.IsInPerfectOrder)
+                .ToArray();
 
         private void LearnRearrangements(ICollection<TestCase> testCases, IEnumerable<Arranger> arrangerCandidates)
         {
@@ -188,9 +188,14 @@ namespace Lingua.Learning
 
         private IEnumerator<ScoredPattern> EnumerateScoredPatterns(TestCaseResult result)
             => _patternGenerator
-            .GetScoredPatterns(result)
-            .OrderBy(sp => sp.Priority)
-            .ToList()
-            .GetEnumerator();
+                .GetScoredPatterns(result)
+                .Select(PrioritizePattern)
+                .OrderBy(tuple => tuple.priority)
+                .Select(tuple => tuple.sp)
+                .ToList()
+                .GetEnumerator();
+
+        private static (ScoredPattern sp, int priority) PrioritizePattern(ScoredPattern sp)
+            => (sp, ScoredPatternPriorityComputer.ComputePriority(sp.Score, sp.Code));
     }
 }

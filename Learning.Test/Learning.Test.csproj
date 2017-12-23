@@ -58,6 +58,7 @@
   <ItemGroup>
     <Compile Include="ArrangerGeneratorTests.cs" />
     <Compile Include="PatternGeneratorTests.cs" />
+    <Compile Include="ScoredPatternPriorityComputerTests.cs" />
     <Compile Include="TestHelper.cs" />
     <Compile Include="TargetSelectorTests.cs" />
     <Compile Include="PatternExtractorTests.cs" />

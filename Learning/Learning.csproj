@@ -47,6 +47,7 @@
     <Compile Include="ConsoleReporter.cs" />
     <Compile Include="IPatternExtractor.cs" />
     <Compile Include="MissingTranslations.cs" />
+    <Compile Include="ScoredPatternPriorityComputer.cs" />
     <Compile Include="TestCaseTranslators\TestCaseConstructor.cs" />
     <Compile Include="EvaluatorEnhancement.cs" />
     <Compile Include="TestCaseTranslators\FullTextTranslator.cs" />
