@@ -1,14 +1,24 @@
 using System;
 using System.Linq;
-using Lingua.Core;
-using Lingua.Core.Extensions;
 
 namespace Lingua.Learning
 {
+    using Core;
+    using Core.Extensions;
+
     public static class ScoredPatternPriorityComputer
     {
-        public static int ComputePriority(int score, ushort[] code)
-            => (int)(ComputeSize(code) * Math.Sqrt(Math.Abs(score)) * (score < 0 ? 2 : 1));
+        public static int ComputePriority(int currentScore, sbyte increment, ushort[] code)
+        {
+            var scoreFactor =
+                currentScore == 0
+                    ? 1
+                    : increment * currentScore < 0
+                        ? 0.25 * Math.Sqrt(Math.Abs(currentScore))
+                        : Math.Sqrt(Math.Abs(currentScore) + 1);
+            if (increment < 0) scoreFactor *= 2;
+            return (int) (scoreFactor * ComputeSize(code));
+        }
 
         private static int ComputeSize(ushort[] code)
             => code.Sum(ComputeSize);

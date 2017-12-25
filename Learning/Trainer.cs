@@ -195,7 +195,7 @@ namespace Lingua.Learning
                 .ToList()
                 .GetEnumerator();
 
-        private static (ScoredPattern sp, int priority) PrioritizePattern(ScoredPattern sp)
-            => (sp, ScoredPatternPriorityComputer.ComputePriority(sp.Score, sp.Code));
+        private (ScoredPattern sp, int priority) PrioritizePattern(ScoredPattern sp)
+            => (sp, ScoredPatternPriorityComputer.ComputePriority(_evaluator.GetScore(sp.Code), sp.Score, sp.Code));
     }
 }

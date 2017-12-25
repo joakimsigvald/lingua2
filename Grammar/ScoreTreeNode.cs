@@ -8,16 +8,16 @@ namespace Lingua.Grammar
 
     public class ScoreTreeNode
     {
-        public ScoreTreeNode(ushort code, ushort[] path, sbyte score, List<ScoreTreeNode> children)
+        public ScoreTreeNode(ushort code, ushort[] path, sbyte score, IEnumerable<ScoreTreeNode> children)
         {
             Code = code;
             ClassCode = Encoder.GetClassCode(code);
             Path = path;
             Score = score;
-            Children = children;
+            Children = children.OrderBy(c => c.ClassCode).ToArray();
         }
 
-        public readonly List<ScoreTreeNode> Children;
+        public ScoreTreeNode[] Children;
         public readonly ushort Code;
         public readonly ushort ClassCode;
         public readonly ushort[] Path;
@@ -37,6 +37,22 @@ namespace Lingua.Grammar
             return Score == 0
                 ? scoredPatterns
                 : scoredPatterns.Prepend(new KeyValuePair<string, sbyte>(Pattern, Score));
+        }
+
+        public IEnumerable<ScoreTreeNode> GetMatchingChildren(ushort code)
+        {
+            var classCode = Encoder.GetClassCode(code);
+            return Children.Where(child => child.ClassCode == classCode && Encoder.Matches(code, child.Code));
+        }
+
+        public void AddChild(ScoreTreeNode child)
+        {
+            Children = Children.Append(child).OrderBy(c => c.ClassCode).ToArray();
+        }
+
+        public void RemoveChild(ScoreTreeNode child)
+        {
+            Children = Children.Except(child).ToArray();
         }
     }
 }

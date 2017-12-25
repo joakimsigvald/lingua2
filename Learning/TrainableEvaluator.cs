@@ -63,11 +63,11 @@ namespace Lingua.Learning
                 if (child == null)
                 {
                     child = new ScoreTreeNode(next, node.Path.Append(next).ToArray(), 0, new List<ScoreTreeNode>());
-                    node.Children.Add(child);
+                    node.AddChild(child);
                 }
                 UpdateScore(child, codedPattern, index + 1);
                 if (child.Score == 0 && !child.Children.Any())
-                    node.Children.Remove(child);
+                    node.RemoveChild(child);
             }
         }
 

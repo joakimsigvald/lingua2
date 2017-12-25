@@ -45,6 +45,9 @@ namespace Lingua.Core.Extensions
             => Expand(sets.ToList(), 0)
             .Select(seq => seq.ToArray());
 
+        public static IEnumerable<TValue> Except<TValue>(this IEnumerable<TValue> items, TValue exceptItem)
+            => items.Where(item => !item.Equals(exceptItem));
+
         private static IEnumerable<IEnumerable<TValue>> Expand<TValue>(
             IList<IEnumerable<TValue>> sets, int offset)
             => sets.Count > offset

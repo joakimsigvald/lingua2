@@ -21,9 +21,7 @@ namespace Lingua.Grammar
             if (subtree.Score != 0) yield return subtree;
             if (index >= _sequence.Length) yield break;
             var code = _sequence[index];
-            var classCode = Encoder.GetClassCode(code);
-            var matchingChildren = subtree.Children
-                .Where(child => classCode == child.ClassCode && Encoder.Matches(code, child.Code));
+            var matchingChildren = subtree.GetMatchingChildren(code);
             foreach (var node in GetMatchingScorers(matchingChildren, index + 1))
                 yield return node;
         }

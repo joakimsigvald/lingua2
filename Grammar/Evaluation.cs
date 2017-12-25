@@ -9,22 +9,22 @@ namespace Lingua.Grammar
 
     public class Evaluation : IEvaluation, IEquatable<IEvaluation>
     {
-        private readonly string _code;
+        private readonly Lazy<string> _code;
 
         public Evaluation(IList<Scoring> scorings)
         {
             Score = scorings.Sum(s => s.TotalScore);
-            Patterns = scorings.Select(s => s.Pattern).ToList();
-            _code = MakeCode(Score, Patterns);
+            Patterns = scorings.Select(s => s.Pattern).ToArray();
+            _code = new Lazy<string>(MakeCode);
         }
 
-        private static string MakeCode(int score, IEnumerable<ushort[]> patterns)
+        private string MakeCode()
         {
             var sb = new StringBuilder();
-            sb.Append((char)score);
+            sb.Append((char)Score);
             int i = 1;
             int j;
-            foreach (var pattern in patterns)
+            foreach (var pattern in Patterns)
             {
                 j = 0;
                 for (; j < pattern.Length - 1; j += 2)
@@ -41,12 +41,12 @@ namespace Lingua.Grammar
         public override string ToString() => $"{string.Join(",", Patterns.Select(Encoder.Serialize))}:{Score}";
 
         public bool Equals(IEvaluation other)
-            => other != null && ((Evaluation)other)._code == _code;
+            => other != null && ((Evaluation)other)._code.Value == _code.Value;
 
         public override bool Equals(object obj)
             => Equals(obj as IEvaluation);
 
         public override int GetHashCode()
-            => _code.GetHashCode();
+            => _code.Value.GetHashCode();
     }
 }
