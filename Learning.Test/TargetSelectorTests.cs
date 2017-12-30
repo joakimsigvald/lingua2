@@ -10,12 +10,13 @@ namespace Lingua.Learning.Test
     public class TargetSelectorTests
     {
         [TestCase("", "", null)]
+        [TestCase("x>,y>a", "a", "1")]
         [TestCase("x>a", "a", "0")]
         [TestCase("x>a,y>b", "ab", "01")]
         [TestCase("x>a,y>b", "a", "0")]
         [TestCase("x>a,y>b", "ba", "10")]
         [TestCase("x>a,y>b,z>c", "ca", "20")]
-        [TestCase("x>A", "a", "0")]
+        [TestCase("x>a", "A", "0")]
         [TestCase("x>a/b,y>c", "bc", "01")]
         [TestCase("x>a", "ab", "")]
         [TestCase("x>ab,y>abc", "abcab", "10")]
@@ -23,6 +24,9 @@ namespace Lingua.Learning.Test
         [TestCase("x>a,x>a", "aa", "01")]
         [TestCase("x>a,y>b,x>a", "ab", "01")]
         [TestCase("x>a,y>b,x>a", "ba", "12")]
+        [TestCase("x>a,y>bc,z>def", "bcdefa", "120")]
+        [TestCase("The>,cat>katten,caught>fångade,a>en,rat>råtta", "Katten fångade en råtta", "1234")]
+        [TestCase("The>De/,cat>katten,caught>fångade,a>en,rat>råtta", "Katten fångade en råtta", "1234")]
         public void TestArrangementOrder(string possibilitiesStr, string to, string expectedOrdersStr)
         {
             var target = CreateTarget(possibilitiesStr, to);
@@ -40,7 +44,8 @@ namespace Lingua.Learning.Test
         }
 
         [TestCase("x>a", "ab", "b")]
-        [TestCase("x>a,y>d", "  a    b   cd  ", "b c")]
+        [TestCase("x>a,y>d", "  a    b   cd  ", "b,c")]
+        [TestCase("x>a,x>b", "c d", "c,d")]
         public void TestUnmatched(string possibilitiesStr, string to, string expected)
         {
             var target = CreateTarget(possibilitiesStr, to);
@@ -61,13 +66,22 @@ namespace Lingua.Learning.Test
         [TestCase("x>a", "a", "x>a")]
         [TestCase("x>a/b,y>c", "bc", "x>b,y>c")]
         [TestCase("x>a/b,y>c", "b", "x>b,y>c")]
+        [TestCase("x>a:1/b:1,y>c", "b", "x>b,y>c")]
+        [TestCase("x>a b/a,y>b", "a b", "x>a b")]
+        [TestCase("x>a/,y>b", "b", "x>,y>b")]
+        [TestCase("The>De/,cat>katten,caught>fångade,a>en,rat>råtta", "Katten fångade en råtta", "The>,cat>katten,caught>fångade,a>en,rat>råtta")]
         public void TestTranslations(string possibilitiesStr, string to, string expectedTranslationsStr)
         {
             var target = CreateTarget(possibilitiesStr, to);
             var expectedTranslations = ParsePossibilities(expectedTranslationsStr)
                 .Select(alts => alts.Single()).ToArray();
-            Assert.That(target?.Translations.Select(t => t.Output), Is.EqualTo(expectedTranslations.Select(t => t.Output)));
+            var actual = GetOutputs(target?.Translations);
+            var expected = GetOutputs(expectedTranslations);
+            Assert.That(actual, Is.EqualTo(expected));
         }
+
+        private static string[] GetOutputs(IEnumerable<ITranslation> translations)
+            => translations.Select(t => t.Output).ToArray();
 
         private TranslationTarget CreateTarget(string possibilitiesStr, string to)
         {
@@ -91,12 +105,14 @@ namespace Lingua.Learning.Test
         private static ITranslation ParseTranslation(string from, string to, int index)
         {
             var toParts = to.Split(':');
+            var toWord = toParts[0];
             var code = toParts.Length == 1
                 ? (ushort)index
                 : ushort.Parse(toParts[1]);
             return Mock.Of<ITranslation>(translation => translation.Input == from
-                                                        && translation.Output == toParts[0]
-                                                        && translation.Code == code);
+                                                        && translation.Output == toWord
+                                                        && translation.Code == code
+                                                        && translation.WordCount == toWord.Split(' ').Length);
         }
 
         private static ushort[] ParseCode(string codeStr)

@@ -46,6 +46,7 @@
     <Compile Include="Arrangement.cs" />
     <Compile Include="Arranger.cs" />
     <Compile Include="EvaluationProcess.cs" />
+    <Compile Include="Expander.cs" />
     <Compile Include="IEvaluator.cs" />
     <Compile Include="Repository.cs" />
     <Compile Include="Process.cs" />

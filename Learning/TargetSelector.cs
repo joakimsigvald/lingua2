@@ -2,12 +2,12 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
-using Lingua.Core.Extensions;
-using Lingua.Grammar;
 
 namespace Lingua.Learning
 {
     using Core;
+    using Core.Extensions;
+    using Grammar;
 
     public static class TargetSelector
     {
@@ -15,32 +15,28 @@ namespace Lingua.Learning
         {
             if (possibilities == null)
                 return null;
-            var arrangementAndUntranslated = GetArrangementAndUnmatched(possibilities, translated);
-            var arrangement = arrangementAndUntranslated.arrangement;
+            var orderedTranslations = SelectAndOrderTranslations(possibilities, translated);
+            var translations = orderedTranslations.translations;
+            var arrangement = CreateArrangement(translations, orderedTranslations.order);
             return new TranslationTarget
             {
                 Arrangement = arrangement,
                 IsFullyTranslated = arrangement.Order.Any(),
-                Unmatched = arrangementAndUntranslated.unmatched,
-                Translations = possibilities.Select((p, i) => p.Single(t => t.Code == arrangement.Code[i])).ToArray()
+                Unmatched = orderedTranslations.unmatched,
+                Translations = translations
             };
         }
 
-        private static (Arrangement arrangement, string unmatched) GetArrangementAndUnmatched(IEnumerable<ITranslation[]> possibilities, string translated)
-        {
-            var orderAndUntranslated = MakeOrder(possibilities, translated);
-            return (
-                new Arrangement(orderAndUntranslated.code, orderAndUntranslated.order)
-                , orderAndUntranslated.untranslated);
-        }
+        private static Arrangement CreateArrangement(IEnumerable<ITranslation> translations, byte[] order)
+            => new Arrangement(translations.Select(t => t.Code).ToArray(), order);
 
-        private static (byte[] order, ushort[] code, string untranslated) MakeOrder(IEnumerable<ITranslation[]> possibilities, string translated)
+        private static (ITranslation[] translations, byte[] order, string unmatched) SelectAndOrderTranslations(IEnumerable<ITranslation[]> possibilities, string translated)
         {
-            var filteredPossibilities = FilterPossibilities(possibilities, translated);
-            var possibleSequences = filteredPossibilities.Expand();
+            var filteredPossibilities = FilterPossibilities(possibilities, translated).ToList();
+            var possibleSequences = new Expander(filteredPossibilities).Expand(out var _);
             return possibleSequences
-                .Select(ps => new OrderMaker(translated).GetOrderAndUntranslated(ps))
-                .OrderBy(o => o.untranslated.Length)
+                .Select(ps => new OrderMaker(translated).SelectAndOrderTranslations(ps))
+                .OrderBy(o => o.unmatched.Length)
                 .First();
         }
 
@@ -62,30 +58,50 @@ namespace Lingua.Learning
 
     public class OrderMaker
     {
-        private string _translated;
+        private const char Tab = '\u0009';
+        private readonly string _translated;
+        private string _matched;
 
-        public OrderMaker(string translate) => _translated = translate;
-
-        public (byte[] order, ushort[] codes, string untranslated) GetOrderAndUntranslated(ITranslation[] translations)
+        public OrderMaker(string translate)
         {
-            var words = translations.Select(t => t.Output).ToArray();
-            var code = translations.Select(t => t.Code).ToArray();
-            var order = MakeOrder(words).ToArray();
-            return (order, code, TrimWords(_translated));
+            _translated = translate;
+            _matched = new string(Tab, _translated.Length);
         }
 
-        private static string TrimWords(string text)
-             => Regex.Replace(text.Trim(), "\\s+", " ");
+        public (ITranslation[] translations, byte[] order, string unmatched) SelectAndOrderTranslations(ITranslation[] translations)
+        {
+            var words = translations.Select(t => t.Output).ToArray();
+            var order = MakeOrder(words).ToArray();
+            return (translations, order, Unmatched);
+        }
+
+        private string Unmatched
+        {
+            get
+            {
+                var unmatchedIndices = _matched.Select((c, i) => (c: c, i: i))
+                    .Where(tuple => tuple.c == Tab)
+                    .Select(tuple => tuple.i);
+                var unmatched = new string(_translated.Select((c, i) => (c: c, i: i))
+                    .Join(unmatchedIndices, tuple => tuple.i, i => i, (tuple, i) => tuple.c)
+                    .ToArray());
+                var words = SplitWords(unmatched);
+                return string.Join(",", words);
+            }
+        }
+
+        private static IEnumerable<string> SplitWords(string text)
+            => Regex.Split(text.Trim().ToLower(), "\\s+");
 
         private IEnumerable<byte> MakeOrder(string[] words)
         {
             var orderedIndexedWords = words
                 .OrderByDescending(word => word.Length)
-                .Select(word => (word: word, index: Remove(word)))
+                .Select(word => (word: word, index: Match(word)))
                 .OrderBy(tuple => tuple.index)
                 .SkipWhile(tuple => tuple.index < 0)
                 .ToArray();
-            if (!string.IsNullOrWhiteSpace(_translated))
+            if (!IsAllTranslated)
                 yield break;
             var prevIndex = -1;
             foreach (var tuple in orderedIndexedWords)
@@ -94,17 +110,30 @@ namespace Lingua.Learning
             }
         }
 
+        private bool IsAllTranslated
+            => _translated.Count(c => c > ' ') == _matched.Count(c => c > ' ');
+
         private static int GetNextIndex(string[] words, string word, int startIndex)
         {
             var index = Array.IndexOf(words, word, startIndex);
             return index < 0 ? Array.IndexOf(words, word) : index;
         }
 
-        private int Remove(string input)
+        private int Match(string word)
         {
-            var index = _translated.IndexOfIgnoreCase(input);
+            if (string.IsNullOrEmpty(word))
+                return -1;
+            var startIndex = 0;
+            int index;
+            do
+            {
+                index = _translated.IndexOfIgnoreCase(word, startIndex);
+                if (index < 0)
+                    return index;
+                startIndex = index + _matched.Substring(index, word.Length).TrimEnd().Length;
+            } while (startIndex > index);
             if (index >= 0)
-                _translated = _translated.Remove(index, input.Length);
+                _matched = _matched.Substring(0, index) + word + _matched.Substring(index + word.Length);
             return index;
         }
     }

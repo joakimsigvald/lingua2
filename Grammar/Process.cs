@@ -1,11 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 
 namespace Lingua.Grammar
 {
     using Core;
-    using Core.Extensions;
     using Core.Tokens;
 
     internal class Process
@@ -89,51 +87,11 @@ namespace Lingua.Grammar
         private IEnumerable<ITranslation[]> GetNextFutures(ITranslation translation)
             => _futureKnown
                 ? _futures.Where(future => future[_futureOffset - 1] == translation)
-                : new Expander(_possibilities.Skip(_offset).ToList()).Expand(out _futureKnown);
+                : new Expander(_possibilities.Skip(_offset).ToList(), Horizon).Expand(out _futureKnown);
 
         private static ushort[] GetCodeWithinHorizon(IEnumerable<ushort> pastReversed,
             IEnumerable<ITranslation> future)
             => pastReversed.Concat(future.Select(node => node.Code)).ToArray();
 
-        private class Expander
-        {
-            private readonly IList<ITranslation[]>[] _expansions;
-            private readonly IList<ITranslation[]> _possibilities;
-
-            public Expander(IList<ITranslation[]> possibilities)
-            {
-                _possibilities = possibilities;
-                _expansions = new IList<ITranslation[]>[Math.Min(Horizon, _possibilities.Count)];
-            }
-
-            public IEnumerable<ITranslation[]> Expand(out bool futureKnown)
-            {
-                futureKnown = true;
-                return Expand(0, Horizon, ref futureKnown)
-                    .Select(seq => seq.ToArray());
-            }
-
-            private IEnumerable<ITranslation[]> Expand(int offset, int todo, ref bool futureKnown)
-            {
-                if (offset == _possibilities.Count)
-                    return new[] { new ITranslation[0] };
-                if (todo > 0)
-                    return _expansions[offset] 
-                        ?? (_expansions[offset] = DoExpand(offset, todo, ref futureKnown).ToList());
-                futureKnown = false;
-                return new[] { new ITranslation[0] };
-            }
-
-            private IEnumerable<ITranslation[]> DoExpand(int offset, int todo, ref bool cutoff)
-            {
-                var futures = new List<ITranslation[]>();
-                foreach (var first in _possibilities[offset])
-                {
-                    var continuations = Expand(offset + first.WordCount, todo - 1, ref cutoff);
-                    futures.AddRange(continuations.Select(continuation => continuation.Prepend(first).ToArray()));
-                }
-                return futures;
-            }
-        }
     }
 }
