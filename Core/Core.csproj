@@ -53,6 +53,7 @@
     <Compile Include="IReason.cs" />
     <Compile Include="IThesaurus.cs" />
     <Compile Include="ITokenizer.cs" />
+    <Compile Include="ITranslation.cs" />
     <Compile Include="LoaderBase.cs" />
     <Compile Include="Tokens\Start.cs" />
     <Compile Include="Tokens\Ellipsis.cs" />

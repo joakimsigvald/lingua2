@@ -34,14 +34,14 @@ namespace Lingua.Learning
         public bool Success => Actual == TestCase.Expected;
         private bool WordTranslationSuccess { get; }
         public IReason Reason => _translationResult.Reason;
-        public IList<Translation> ExpectedTranslations => TestCase.Target.Translations;
-        public IEnumerable<Translation> Translations => _translationResult.Translations;
+        public IList<ITranslation> ExpectedTranslations => TestCase.Target.Translations;
+        public IEnumerable<ITranslation> Translations => _translationResult.Translations;
         public int ScoreDeficit { get; set; } = -1;
 
         public override string ToString()
             => $"{From}=>{Expected}/{Actual}:{Success}";
 
-        private IEnumerable<string> GetWords(IEnumerable<Translation> translations)
+        private IEnumerable<string> GetWords(IEnumerable<ITranslation> translations)
             => translations.Select(t => t.Output.ToLower());
     }
 }

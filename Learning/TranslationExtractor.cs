@@ -13,10 +13,10 @@ namespace Lingua.Learning
         public ushort[] GetUnwantedSequence(TestCaseResult result)
             => Encoder.Encode(GetUnwantedTranslations(result));
 
-        private static IEnumerable<Translation> GetWantedTranslations(TestCaseResult result)
-            => result?.ExpectedTranslations?? Enumerable.Empty<Translation>();
+        private static IEnumerable<ITranslation> GetWantedTranslations(TestCaseResult result)
+            => result?.ExpectedTranslations?? Enumerable.Empty<ITranslation>();
 
-        private static IEnumerable<Translation> GetUnwantedTranslations(TestCaseResult result)
-            => result?.Translations ?? Enumerable.Empty<Translation>();
+        private static IEnumerable<ITranslation> GetUnwantedTranslations(TestCaseResult result)
+            => result?.Translations ?? new ITranslation[0];
     }
 }

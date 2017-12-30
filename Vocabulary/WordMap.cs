@@ -63,13 +63,13 @@ namespace Lingua.Vocabulary
                 .Where(t => !string.IsNullOrEmpty(t.From.Value));
         }
 
-        private IEnumerable<Translation> ApplyRules(IEnumerable<Translation> translations)
+        private IEnumerable<Translation> ApplyRules(IEnumerable<ITranslation> translations)
             => translations.SelectMany(ApplyRules).ExceptNull();
 
-        private IEnumerable<Translation> ApplyRules(Translation translation)
+        private IEnumerable<Translation> ApplyRules(ITranslation translation)
             => _rules.Select(rule => rule.Apply(translation));
 
-        private Translation CreateIncompleteCompoundTranslation(Specification from, Specification to)
+        private static Translation CreateIncompleteCompoundTranslation(Specification from, Specification to)
         {
             var incompleteCompound = CreateTranslation(from.Base, to.IncompleteCompound, from.Modifiers);
             incompleteCompound.IsIncompleteCompound = true;

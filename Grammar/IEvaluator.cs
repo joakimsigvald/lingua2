@@ -6,6 +6,6 @@ namespace Lingua.Grammar
     public interface IEvaluator
     {
         Evaluation Evaluate(ushort[] code);
-        Translation[] Arrange(IEnumerable<Translation> translations);
+        ITranslation[] Arrange(IEnumerable<ITranslation> translations);
     }
 }

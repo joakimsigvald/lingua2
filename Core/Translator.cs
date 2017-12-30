@@ -32,7 +32,7 @@ namespace Lingua.Core
             return Construct(possibilities);
         }
 
-        public IList<Translation[]> Destruct(string original)
+        public IList<ITranslation[]> Destruct(string original)
         {
             var tokens = Expand(Tokenize(original)).ToArray();
             var possibilities = CompoundCombiner.Combine(Translate(tokens).ToList()).ToList();
@@ -40,14 +40,14 @@ namespace Lingua.Core
             return possibilities;
         }
 
-        private void SetCodes(List<Translation[]> possibilities)
+        private static void SetCodes(IEnumerable<ITranslation[]> possibilities)
         {
             foreach (var alternatives in possibilities)
                 foreach (var translation in alternatives)
                     translation.Code = Encoder.Encode(translation.From);
         }
 
-        public TranslationResult Construct(IList<Translation[]> possibilities)
+        public TranslationResult Construct(IList<ITranslation[]> possibilities)
         {
             (var translations, var reason) = _grammar.Reduce(possibilities);
             var arrangedTranslations = _grammar.Arrange(translations);
@@ -63,10 +63,10 @@ namespace Lingua.Core
             };
         }
 
-        private static IEnumerable<Translation> Respace(IEnumerable<Translation> translations)
+        private static IEnumerable<ITranslation> Respace(IEnumerable<ITranslation> translations)
         {
             var space = Translation.Create(new Divider());
-            Translation previous = null;
+            ITranslation previous = null;
             foreach (var translation in translations)
             {
                 if (previous != null && !(translation.From is Punctuation || translation.From is Ellipsis))
@@ -92,39 +92,39 @@ namespace Lingua.Core
         private IEnumerable<Token> Tokenize(string text)
             => text == null ? null : _tokenizer.Tokenize(text);
 
-        private IEnumerable<Translation[]> Translate(IReadOnlyList<Token> tokens)
+        private IEnumerable<ITranslation[]> Translate(IReadOnlyList<Token> tokens)
             => Reduce(tokens.Select(_thesaurus.Translate), tokens);
 
-        private static IEnumerable<Translation[]> Reduce(IEnumerable<Translation[]> alternatives,
+        private static IEnumerable<ITranslation[]> Reduce(IEnumerable<ITranslation[]> alternatives,
             IReadOnlyList<Token> tokens)
             => alternatives.Select((candidates, ai) => Reduce(candidates, tokens, ai + 1).ToArray());
 
-        private static IEnumerable<Translation> Reduce(IEnumerable<Translation> candidates, IReadOnlyList<Token> tokens,
+        private static IEnumerable<ITranslation> Reduce(IEnumerable<ITranslation> candidates, IReadOnlyList<Token> tokens,
             int nextIndex)
             => candidates.Where(t => t.Matches(tokens, nextIndex));
 
-        private static IEnumerable<Translation> Adjust(IEnumerable<Translation> translations)
+        private static IEnumerable<ITranslation> Adjust(IEnumerable<ITranslation> translations)
             => PromoteInvisibleCapitalization(
                 CapitalizeStartOfSentences(
                     RemoveRedundantDots(translations)));
 
-        private static IEnumerable<Translation> CapitalizeStartOfSentences(IEnumerable<Translation> translations)
+        private static IEnumerable<ITranslation> CapitalizeStartOfSentences(IEnumerable<ITranslation> translations)
             => SeparateSentences(translations).SelectMany(CapitalizeStartOfSentence);
 
-        private static IEnumerable<IList<Translation>> SeparateSentences(IEnumerable<Translation> translations)
+        private static IEnumerable<IList<ITranslation>> SeparateSentences(IEnumerable<ITranslation> translations)
         {
-            var nextSequence = new List<Translation>();
+            var nextSequence = new List<ITranslation>();
             foreach (var translation in translations)
             {
                 nextSequence.Add(translation);
                 if (!IsEndOfSentence(translation.From)) continue;
                 yield return nextSequence;
-                nextSequence = new List<Translation>();
+                nextSequence = new List<ITranslation>();
             }
             yield return nextSequence;
         }
 
-        private static IEnumerable<Translation> CapitalizeStartOfSentence(IList<Translation> sequence)
+        private static IEnumerable<ITranslation> CapitalizeStartOfSentence(IList<ITranslation> sequence)
         {
             if (!IsSentence(sequence))
                 return sequence;
@@ -136,15 +136,15 @@ namespace Lingua.Core
                 : preWord.Concat(sentence.Skip(1).Prepend(firstWord.Capitalize()));
         }
 
-        private static bool IsSentence(IList<Translation> translations)
+        private static bool IsSentence(IList<ITranslation> translations)
             => translations.Any(t => t.From is Element) && IsEndOfSentence(translations.Last().From);
 
         private static bool IsEndOfSentence(Token token)
             => token is Terminator || token is Ellipsis;
 
-        private static IEnumerable<Translation> PromoteInvisibleCapitalization(IEnumerable<Translation> translations)
+        private static IEnumerable<ITranslation> PromoteInvisibleCapitalization(IEnumerable<ITranslation> translations)
         {
-            Translation prevWord = null;
+            ITranslation prevWord = null;
             foreach (var translation in translations)
             {
                 yield return prevWord?.IsInvisibleCapitalized ?? false
@@ -155,9 +155,9 @@ namespace Lingua.Core
             }
         }
 
-        private static IEnumerable<Translation> RemoveRedundantDots(IEnumerable<Translation> translations)
+        private static IEnumerable<ITranslation> RemoveRedundantDots(IEnumerable<ITranslation> translations)
         {
-            Translation current = null;
+            ITranslation current = null;
             foreach (var translation in translations)
             {
                 var prev = current;
@@ -175,7 +175,7 @@ namespace Lingua.Core
 
         private static readonly Regex Whitespace = new Regex(@"\s+");
 
-        private static string Output(IEnumerable<Translation> translations)
+        private static string Output(IEnumerable<ITranslation> translations)
             => Whitespace.Replace(string.Join("", translations
                     .Select(translation => translation.Output)).Trim()
                 , " ");

@@ -14,7 +14,7 @@ namespace Lingua.Vocabulary
 
         private static readonly ILexicon Lexicon = Loader.LoadLexicon();
 
-        public Translation[] Translate(Token token)
+        public ITranslation[] Translate(Token token)
         {
             if (token is Generic generic)
                 return Translate(generic);
@@ -29,10 +29,10 @@ namespace Lingua.Vocabulary
         public bool TryExpand(string word, out string expanded)
             => Expanders.TryGetValue(word, out expanded);
 
-        private static Translation[] Translate(Generic generic)
+        private static ITranslation[] Translate(Generic generic)
             => Translate(generic.Stem).SelectMany(t => t.Variations).ToArray();
 
-        private static Translation[] Translate(Word word)
+        private static ITranslation[] Translate(Word word)
         {
             var translations = Translate(word.Value);
             return !translations.Any() && word.PossibleAbbreviation
@@ -40,20 +40,20 @@ namespace Lingua.Vocabulary
                 : translations;
         }
 
-        private static Translation[] Translate(string word)
+        private static ITranslation[] Translate(string word)
         {
             if (string.IsNullOrWhiteSpace(word))
-                return new Translation[0];
+                return new ITranslation[0];
             var exactTranslations = TranslateExact(word);
             return exactTranslations.Any()
                     ? exactTranslations
                     : TranslateCapitalized(word);
         }
 
-        private static Translation[] TranslateCapitalized(string word)
+        private static ITranslation[] TranslateCapitalized(string word)
             => TranslateExact(word.Decapitalize()).Select(t => t.Capitalize()).ToArray();
 
-        private static Translation[] TranslateExact(string word)
+        private static ITranslation[] TranslateExact(string word)
         {
             var directTranslations = Lexicon.Lookup(word);
             return directTranslations.Any()
@@ -61,17 +61,17 @@ namespace Lingua.Vocabulary
                 : TranslateParts(word);
         }
 
-        private static Translation[] TranslateParts(string word)
+        private static ITranslation[] TranslateParts(string word)
         {
             var splitIndex = word.IndexOf('-') + 1;
             if (splitIndex < 2 || splitIndex >= word.Length)
-                return new Translation[0];
+                return new ITranslation[0];
             var firstWord = word.Substring(0, splitIndex);
             var firstTranslations = Lexicon.Lookup(firstWord)
                 .Where(t => t.IsTranslatedWord)
                 .ToList();
             if (!firstTranslations.Any())
-                return new Translation[0];
+                return new ITranslation[0];
             var remainingTranslations = TranslateExact(word.Substring(splitIndex))
                 .Where(t => t.IsTranslatedWord)
                 .ToList();

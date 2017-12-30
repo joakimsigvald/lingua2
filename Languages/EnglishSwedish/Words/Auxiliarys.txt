@@ -1,7 +1,8 @@
 be::ing!am!are!is!are!been!were = var:a:_3är||||::it:
 have::_ing:::_2s::_2d: = ha::r||||:de:ft:
-will::_ing:::::_3ould:_ing = ska:::::::_ulle:_olat:_
-shall:::::::_3ould: = ska:::::::_ulle:_olat:_
+want::_ing:::s::_3ould:_ing = vill:::::::e:_3elat:
+will::_ing:::::_3ould:_ing = ska:::::::_ulle:_olat:
+shall:::::::_3ould: = ska:::::::_ulle:_olat:
 :will be<f = :kommer att
 :will have been<fr = :kommer att ha
 :could have been<fr = :kunde ha

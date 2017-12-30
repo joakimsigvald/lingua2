@@ -11,7 +11,7 @@ namespace Lingua.Learning
             Expected = expected;
         }
 
-        public IList<Translation[]> Possibilities { get; set; }
+        public IList<ITranslation[]> Possibilities { get; set; }
         public TranslationTarget Target { get; set; }
         public string Suite { get; set; }
         public string From { get; }

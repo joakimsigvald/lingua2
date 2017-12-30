@@ -8,19 +8,19 @@ namespace Lingua.Learning
 
     public class TranslationTarget
     {
-        public Translation[] Translations { get; set; }
+        public ITranslation[] Translations { get; set; }
         public Arrangement Arrangement { get; set; }
-
-        public IEnumerable<Translation> ArrangedTranslations
-            => LazyArrangedTranslations.Value;
-
-        private Lazy<IEnumerable<Translation>> LazyArrangedTranslations
-            => new Lazy<IEnumerable<Translation>>(ComputeArrangedTranslations);
-
         public bool IsFullyTranslated { get; set; }
         public string Unmatched { get; set; }
 
-        private IEnumerable<Translation> ComputeArrangedTranslations()
+        public IEnumerable<ITranslation> ArrangedTranslations
+            => LazyArrangedTranslations.Value;
+
+        private Lazy<IEnumerable<ITranslation>> LazyArrangedTranslations
+            => new Lazy<IEnumerable<ITranslation>>(ComputeArrangedTranslations);
+
+
+        private IEnumerable<ITranslation> ComputeArrangedTranslations()
             => new Arranger(Arrangement).Arrange(Translations);
     }
 }

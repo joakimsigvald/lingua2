@@ -40,7 +40,7 @@ namespace Lingua.Grammar
             return new Evaluation(scorings);
         }
 
-        public Translation[] Arrange(IEnumerable<Translation> translations)
+        public ITranslation[] Arrange(IEnumerable<ITranslation> translations)
             => Arrangers
                 .Aggregate(translations
                     , (input, arranger) => arranger

@@ -63,10 +63,10 @@ namespace Lingua.Vocabulary.Test
                 Assert.That(translations[i].From.Value, Is.EqualTo(variations[i]));
         }
 
-        private Translation GetTranslation(string from, string to)
+        private ITranslation GetTranslation(string from, string to)
             => GetTranslations<Unclassified>(new Dictionary<string, string> {{from, to}}).Single();
 
-        private static Translation[] GetTranslations<TWord>(IDictionary<string, string> mapings)
+        private static ITranslation[] GetTranslations<TWord>(IDictionary<string, string> mapings)
             where TWord : Word, new()
             => new WordMap<TWord>(mapings).Translations.ToArray();
 

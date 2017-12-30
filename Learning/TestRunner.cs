@@ -66,8 +66,8 @@ namespace Lingua.Learning
         {
             if (testCase.Target != null)
                 return;
-            testCase.Target = testCase.Target ?? TargetSelector
-                                  .SelectTarget(translationResult.Possibilities, testCase.Expected);
+            testCase.Target = testCase.Target 
+                ?? TargetSelector.SelectTarget(translationResult.Possibilities, testCase.Expected);
         }
     }
 }

@@ -8,7 +8,7 @@ namespace Lingua.Core
 
     public static class CompoundCombiner
     {
-        public static IEnumerable<Translation[]> Combine(ICollection<Translation[]> alternatives)
+        public static IEnumerable<ITranslation[]> Combine(ICollection<ITranslation[]> alternatives)
         {
             return alternatives.Select((translations, i) =>
             {
@@ -21,16 +21,16 @@ namespace Lingua.Core
             });
         }
 
-        private static IEnumerable<Translation> CompleteCompound(Translation incompleteCompound,
-            ICollection<Translation[]> future)
+        private static IEnumerable<ITranslation> CompleteCompound(ITranslation incompleteCompound,
+            ICollection<ITranslation[]> future)
         {
             if (!future.Any() || !(future.First()[0].From is Word))
-                return new Translation[0];
+                return new ITranslation[0];
             var nextWords = future.First().Where(t => t.From.GetType() == incompleteCompound.From.GetType());
             return nextWords.Select(completion => CompleteCompound(incompleteCompound, completion));
         }
 
-        private static Translation CompleteCompound(Translation incompleteCompound, Translation completion)
+        private static ITranslation CompleteCompound(ITranslation incompleteCompound, ITranslation completion)
         {
             var completedFrom = ((Word)incompleteCompound.From).Clone();
             var fromCompletion = (Word)completion.From;

@@ -21,6 +21,7 @@ school::s| = skola:n::_orna
 sea::s|<t = hav:et::en
 search = sök/
 street::s| = gata:n:_or|na/_u
+theater::s| = teater:n:_2rar|na
 wall::s| = vägg:en:ar|na
 
 //Rules

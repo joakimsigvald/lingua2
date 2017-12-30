@@ -1,159 +1,111 @@
-using Lingua.Core.WordClasses;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
+using Lingua.Core.Extensions;
+using Lingua.Grammar;
 
 namespace Lingua.Learning
 {
     using Core;
-    using Core.Extensions;
-    using Core.Tokens;
-    using Grammar;
 
-    public class TargetSelector
+    public static class TargetSelector
     {
-        private const char FirstSymbol = '!';
-        private const char Space = (char) 32;
-        private string _translated;
-        private string _nextReplacement = "";
-        private string _unmatched = "";
-        private int _nextPosition = 1;
-        private bool _previousIsAbbreviation;
-
-        public static TranslationTarget SelectTarget(
-            IList<Translation[]> possibilities
-            , string translated)
+        public static TranslationTarget SelectTarget(IList<ITranslation[]> possibilities, string translated)
         {
-            translated = translated.ToLower();
             if (possibilities == null)
                 return null;
-            var target = new TargetSelector(translated).SelectFirstTarget(possibilities);
-            return target.IsFullyTranslated && target.Arrangement.IsInOrder
-                ? target
-                : SelectBestTarget(possibilities, translated)
-                  ?? throw new MissingTranslations(translated, GetUntranslated(possibilities).ToList());
-        }
-
-        private static IEnumerable<Translation> GetUntranslated(IList<Translation[]> possibilities)
-            => possibilities.Select(alternatives => alternatives[0])
-                .Where(t => t.From is Unclassified);
-
-        private static TranslationTarget SelectBestTarget(IList<Translation[]> possibilities, string translated)
-        {
-            var candidateSequences = GetCandidateSequences(possibilities, 0, translated).ToArray();
-            var targetCandidates = candidateSequences
-                .Select(sequence => GenerateTarget(sequence, translated))
-                .Where(tt => tt.IsFullyTranslated)
-                .OrderBy(target => target.Unmatched.Length)
-                .ThenBy(target => target.Arrangement.Deviation)
-                .ToArray();
-            return targetCandidates.First();
-        }
-
-        private static TranslationTarget GenerateTarget(IEnumerable<Translation> sequence, string translated)
-            => new TargetSelector(translated).GenerateTarget(sequence.ToArray());
-
-        private static IEnumerable<IEnumerable<Translation>> GetCandidateSequences(
-            IList<Translation[]> possibilities, int offset, string translated)
-        {
-            if (offset >= possibilities.Count)
-                return new[] {new Translation[0]};
-            var alternatives = possibilities[offset];
-            var orderedCandidates = alternatives.OrderBy(t => t.Output.Length).ToList();
-            var firstCandidates = orderedCandidates.Where(t => MatchesTranslated(translated, t.Output))
-                .OrderByDescending(t => t.Output.Length)
-                .ToList();
-            if (!firstCandidates.Any())
-                firstCandidates.Add(orderedCandidates.First());
-            return firstCandidates
-                .SelectMany(t => GetCandidateSequences(possibilities, offset + t.WordCount, translated)
-                    .Select(sequence => sequence.Prepend(t)));
-        }
-
-        private TargetSelector(string translated) => _translated = translated;
-
-        private TranslationTarget SelectFirstTarget(IList<Translation[]> possibilities)
-        {
-            var translations = SelectTranslations(possibilities, 0)?.ToArray();
-            return CreateTarget(translations);
-        }
-
-        private TranslationTarget GenerateTarget(Translation[] translations)
-        {
-            translations.ForEach(TryReplaceWithNextPosition);
-            return CreateTarget(translations);
-        }
-
-        private TranslationTarget CreateTarget(Translation[] translations)
-            => new TranslationTarget
+            var arrangementAndUntranslated = GetArrangementAndUnmatched(possibilities, translated);
+            var arrangement = arrangementAndUntranslated.arrangement;
+            return new TranslationTarget
             {
-                Translations = translations,
-                IsFullyTranslated = IsFullyTranslated,
-                Unmatched = _unmatched,
-                Arrangement = translations == null
-                    ? null
-                    : new Arrangement(Encoder.Encode(translations).ToArray(), GetOrder())
+                Arrangement = arrangement,
+                IsFullyTranslated = arrangement.Order.Any(),
+                Unmatched = arrangementAndUntranslated.unmatched,
+                Translations = possibilities.Select((p, i) => p.Single(t => t.Code == arrangement.Code[i])).ToArray()
             };
+        }
 
-        private byte[] GetOrder()
-            => _translated
-                .Where(c => c < Space)
-                .Select(c => (byte) (c - 1))
-                .ToArray();
-
-        private IEnumerable<Translation> SelectTranslations(
-            IList<Translation[]> possibilities, int offset)
+        private static (Arrangement arrangement, string unmatched) GetArrangementAndUnmatched(IEnumerable<ITranslation[]> possibilities, string translated)
         {
-            if (offset >= possibilities.Count)
-                return IsFullyTranslated
-                    ? new Translation[0]
-                    : null;
-            var alternatives = possibilities[offset];
-            var matchingCandidates = alternatives.Where(t => MatchesTranslated(_translated, t.Output))
+            var orderAndUntranslated = MakeOrder(possibilities, translated);
+            return (
+                new Arrangement(orderAndUntranslated.code, orderAndUntranslated.order)
+                , orderAndUntranslated.untranslated);
+        }
+
+        private static (byte[] order, ushort[] code, string untranslated) MakeOrder(IEnumerable<ITranslation[]> possibilities, string translated)
+        {
+            var filteredPossibilities = FilterPossibilities(possibilities, translated);
+            var possibleSequences = filteredPossibilities.Expand();
+            return possibleSequences
+                .Select(ps => new OrderMaker(translated).GetOrderAndUntranslated(ps))
+                .OrderBy(o => o.untranslated.Length)
+                .First();
+        }
+
+        private static IEnumerable<ITranslation[]> FilterPossibilities(
+            IEnumerable<ITranslation[]> possibilities, string translated)
+            => possibilities.Select(p => SelectAlternatives(p, translated));
+
+        private static ITranslation[] SelectAlternatives(ITranslation[] alternatives, string translated)
+        {
+            var matchningAlternatives = alternatives.Where(t => translated.ContainsIgnoreCase(t.Output))
                 .OrderByDescending(t => t.Output.Length);
-            return matchingCandidates.Concat(alternatives)
-                .Select(t => FilterPossibilities(possibilities, offset, t))
-                .FirstOrDefault();
+            var nonMatchingAlternative = alternatives
+                .Where(t => !translated.ContainsIgnoreCase(t.Output)).Take(1);
+            return matchningAlternatives
+                .Concat(nonMatchingAlternative)
+                .ToArray();
         }
+    }
 
-        private bool IsFullyTranslated => _translated.All(c => c < FirstSymbol);
+    public class OrderMaker
+    {
+        private string _translated;
 
-        private static bool MatchesTranslated(string translated, string output)
-            => string.IsNullOrEmpty(output) || translated.Contains(output.ToLower());
+        public OrderMaker(string translate) => _translated = translate;
 
-        private IEnumerable<Translation> FilterPossibilities(IList<Translation[]> possibilities, int offset, Translation translation)
+        public (byte[] order, ushort[] codes, string untranslated) GetOrderAndUntranslated(ITranslation[] translations)
         {
-            TryReplaceWithNextPosition(translation);
-            _previousIsAbbreviation = translation.From is Abbreviation;
-            return SelectTranslations(possibilities, offset + translation.WordCount)?.Prepend(translation);
+            var words = translations.Select(t => t.Output).ToArray();
+            var code = translations.Select(t => t.Code).ToArray();
+            var order = MakeOrder(words).ToArray();
+            return (order, code, TrimWords(_translated));
         }
 
-        private void TryReplaceWithNextPosition(Translation translation)
+        private static string TrimWords(string text)
+             => Regex.Replace(text.Trim(), "\\s+", " ");
+
+        private IEnumerable<byte> MakeOrder(string[] words)
         {
-            var output = translation.Output;
-            if (_nextPosition >= Space - 1)
-                throw new Exception("Testcase too long, ran out of positions to assign");
-            if (_previousIsAbbreviation && output == ".")
-                return;
-            _nextReplacement += (char) _nextPosition++;
-            if (string.IsNullOrEmpty(output))
-                return;
-            var replaced = ReplaceWithNextPosition(ShortenEllipsisToFit(output), out _translated);
-            if (replaced)
-                _unmatched += output;
-                _nextReplacement = "";
+            var orderedIndexedWords = words
+                .OrderByDescending(word => word.Length)
+                .Select(word => (word: word, index: Remove(word)))
+                .OrderBy(tuple => tuple.index)
+                .SkipWhile(tuple => tuple.index < 0)
+                .ToArray();
+            if (!string.IsNullOrWhiteSpace(_translated))
+                yield break;
+            var prevIndex = -1;
+            foreach (var tuple in orderedIndexedWords)
+            {
+                yield return (byte)(prevIndex = GetNextIndex(words, tuple.word, prevIndex + 1));
+            }
         }
 
-        private bool ReplaceWithNextPosition(string output, out string updated)
-            => Replace($" {output} ", $" {_nextReplacement} ", out updated)
-               || Replace($"{output} ", $"{_nextReplacement} ", out updated)
-               || Replace($" {output} ", $" {_nextReplacement}", out updated)
-               || Replace($"{output}", $"{_nextReplacement}", out updated);
+        private static int GetNextIndex(string[] words, string word, int startIndex)
+        {
+            var index = Array.IndexOf(words, word, startIndex);
+            return index < 0 ? Array.IndexOf(words, word) : index;
+        }
 
-        private bool Replace(string output, string replacement, out string updated)
-            => _translated.ReplaceFirst(output.ToLower(), replacement, out updated);
-
-        private string ShortenEllipsisToFit(string output)
-            => output == "..." && !_translated.Contains(output) ? ".." : output;
+        private int Remove(string input)
+        {
+            var index = _translated.IndexOfIgnoreCase(input);
+            if (index >= 0)
+                _translated = _translated.Remove(index, input.Length);
+            return index;
+        }
     }
 }

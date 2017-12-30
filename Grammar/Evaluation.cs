@@ -22,15 +22,13 @@ namespace Lingua.Grammar
         {
             var sb = new StringBuilder();
             sb.Append((char)Score);
-            int i = 1;
-            int j;
             foreach (var pattern in Patterns)
             {
-                j = 0;
-                for (; j < pattern.Length - 1; j += 2)
-                    sb.Append((char) (pattern[j] + (pattern[j + 1] << 16)));
-                if (j < pattern.Length)
-                    sb[0] = (char) (pattern[j] << 16);
+                var i = 0;
+                for (; i < pattern.Length - 1; i += 2)
+                    sb.Append((char) (pattern[i] + (pattern[i + 1] << 16)));
+                if (i < pattern.Length)
+                    sb[0] = (char) (pattern[i] << 16);
             }
             return sb.ToString();
         }

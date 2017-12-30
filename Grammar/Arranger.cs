@@ -12,13 +12,13 @@ namespace Lingua.Grammar
 
         public Arrangement Arrangement { get; }
 
-        public IEnumerable<Translation> Arrange(IList<Translation> input)
+        public IEnumerable<ITranslation> Arrange(IList<ITranslation> input)
             => ArrangeSegments(input).SelectMany(x => x.Select(y => y));
 
         public override string ToString()
             => Arrangement.ToString();
 
-        private IEnumerable<IEnumerable<Translation>> ArrangeSegments(ICollection<Translation> input)
+        private IEnumerable<IEnumerable<ITranslation>> ArrangeSegments(ICollection<ITranslation> input)
         {
             for (var i = 0; i < input.Count; i++)
             {
@@ -35,7 +35,7 @@ namespace Lingua.Grammar
             }
         }
 
-        private IEnumerable<Translation> Arrange(Translation[] segment)
+        private IEnumerable<ITranslation> Arrange(ITranslation[] segment)
         {
             var tokens = segment.Select(t => t.From).ToArray();
             var codedSegment = Encoder.Encode(tokens).ToArray();
@@ -45,7 +45,7 @@ namespace Lingua.Grammar
             return rearrangedSegment;
         }
 
-        private IEnumerable<Translation> Rearrange(IList<Translation> segment)
+        private IEnumerable<ITranslation> Rearrange(IList<ITranslation> segment)
             => Arrangement.Order.Select(i => segment[i]);
     }
 }

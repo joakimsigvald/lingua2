@@ -7,7 +7,7 @@ namespace Lingua.Core
     using Tokens;
     using WordClasses;
 
-    public class Translation
+    public class Translation : ITranslation
     {
         public static Translation Create(Token from, string to = null)
             => new Translation(from, to, CreateContinuation(from as Word));
@@ -35,22 +35,22 @@ namespace Lingua.Core
         public Token From { get; set; }
         public string To { get; set; }
         public Word[] Continuation { get; set; } = new Word[0];
-        public Translation[] Variations { get; set; } = new Translation[0];
+        public ITranslation[] Variations { get; set; } = new ITranslation[0];
         public byte WordCount => (byte)(Continuation.Length + 1);
         public bool IsTranslatedWord => To != null && !Continuation.Any();
 
-        public Translation Capitalize() 
+        public ITranslation Capitalize() 
             => new Translation(From.Capitalize(), To.Capitalize(), Continuation)
             {
                 IsCapitalized = true
             };
 
-        public bool IsInvisibleCapitalized => IsCapitalized && IsInvisible;
+        public bool IsInvisibleCapitalized => IsCapitalized && string.IsNullOrEmpty(Output);
 
         public bool IsCapitalized { get; private set; }
-        public string Output => To ?? From.Value;
+        public string Input => From.Value;
+        public string Output => To ?? Input;
         public bool IsIncompleteCompound { get; set; }
-        public bool IsInvisible => string.IsNullOrEmpty(Output);
         public ushort Code { get; set; }
 
         public override string ToString() => $"{From}->{To}{(Continuation.Any() ? "..." : "")}";
@@ -62,7 +62,7 @@ namespace Lingua.Core
             => tokens.Count >= nextIndex + Continuation.Length
                    && Continuation.All(word => Matches(word, tokens, ref nextIndex));
 
-        private static bool Matches(Word word, IReadOnlyList<Token> tokens, ref int nextIndex)
-            => tokens[nextIndex++] is Word next && next.Value == word.Value;
+        private static bool Matches(Token word, IReadOnlyList<Token> tokens, ref int nextIndex)
+            => (tokens[nextIndex++] as Word)?.Value == word.Value;
     }
 }

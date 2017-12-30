@@ -8,11 +8,11 @@ namespace Lingua.Grammar
         private readonly IEvaluator _evaluator;
         public GrammarEngine(IEvaluator evaluator) => _evaluator = evaluator;
 
-        public (Translation[] Translations, IReason Reason) Reduce(
-            IList<Translation[]> possibilities)
+        public (ITranslation[] Translations, IReason Reason) Reduce(
+            IList<ITranslation[]> possibilities)
             => Process.Execute(_evaluator, possibilities);
 
-        public IEnumerable<Translation> Arrange(IEnumerable<Translation> translations)
+        public IEnumerable<ITranslation> Arrange(IEnumerable<ITranslation> translations)
             => _evaluator.Arrange(translations);
     }
 }

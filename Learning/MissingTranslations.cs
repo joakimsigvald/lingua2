@@ -6,7 +6,7 @@ namespace Lingua.Learning
 {
     public class MissingTranslations : Exception
     {
-        public MissingTranslations(string partiallyTargetedTranslation, IList<Translation> untranslated)
+        public MissingTranslations(string partiallyTargetedTranslation, IEnumerable<ITranslation> untranslated)
             : base($"Failed to translate {partiallyTargetedTranslation}. {string.Join(", ", untranslated)}")
         {
         }

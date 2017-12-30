@@ -51,7 +51,7 @@ namespace Lingua.Learning
                 .ToList();
         }
 
-        private static int ComputePriority(IReadOnlyCollection<Translation> translations)
+        private static int ComputePriority(IReadOnlyCollection<ITranslation> translations)
             => translations.Count
                + translations.Select(t => t.From.GetType()).Distinct().Count()
                + translations.Select(t => t.From)
