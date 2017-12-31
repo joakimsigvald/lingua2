@@ -69,6 +69,7 @@ namespace Lingua.Learning.Test
         [TestCase("x>a:1/b:1,y>c", "b", "x>b,y>c")]
         [TestCase("x>a b/a,y>b", "a b", "x>a b")]
         [TestCase("x>a/,y>b", "b", "x>,y>b")]
+        [TestCase("x>a/,y>b,z>a", "ba", "x>,y>b,z>a")]
         [TestCase("The>De/,cat>katten,caught>fångade,a>en,rat>råtta", "Katten fångade en råtta", "The>,cat>katten,caught>fångade,a>en,rat>råtta")]
         public void TestTranslations(string possibilitiesStr, string to, string expectedTranslationsStr)
         {

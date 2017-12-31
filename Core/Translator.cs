@@ -43,16 +43,20 @@ namespace Lingua.Core
         private static void SetCodes(IEnumerable<ITranslation[]> possibilities)
         {
             foreach (var alternatives in possibilities)
-                foreach (var translation in alternatives)
-                    translation.Code = Encoder.Encode(translation.From);
+            foreach (var translation in alternatives)
+                translation.Code = Encoder.Encode(translation.From);
         }
 
         public TranslationResult Construct(IList<ITranslation[]> possibilities)
         {
             (var translations, var reason) = _grammar.Reduce(possibilities);
-            var arrangedTranslations = _grammar.Arrange(translations);
-            var adjustedResult = Adjust(arrangedTranslations).ToArray();
-            var respacedResult = Respace(adjustedResult).ToArray();
+            var arrangedTranslations = _grammar.Arrange(translations).ToList();
+
+            var recapitalized = PromoteInvisibleCapitalizations(arrangedTranslations, translations);
+            var undotted = RemoveRedundantDots(recapitalized).ToArray();
+            var capitalized = CapitalizeStartOfSentences(undotted).ToArray();
+
+            var respacedResult = Respace(capitalized).ToArray();
             var translation = Output(respacedResult);
             return new TranslationResult
             {
@@ -79,15 +83,16 @@ namespace Lingua.Core
             => tokens.SelectMany(Expand);
 
         private IEnumerable<Token> Expand(Token token)
-            => Tokenize(Expand(token as Unclassified)) ?? new[] { token };
+            => Tokenize(Expand(token as Unclassified)) ?? new[] {token};
 
         private string Expand(Unclassified word)
-            => word == null ? null 
-            : _thesaurus.TryExpand(word.Value, out string exactExpanded)
-                ? exactExpanded
-                : _thesaurus.TryExpand(word.Value.ToLower(), out string lowerExpanded)
-                    ? lowerExpanded.Capitalize()
-                    : null;
+            => word == null
+                ? null
+                : _thesaurus.TryExpand(word.Value, out string exactExpanded)
+                    ? exactExpanded
+                    : _thesaurus.TryExpand(word.Value.ToLower(), out string lowerExpanded)
+                        ? lowerExpanded.Capitalize()
+                        : null;
 
         private IEnumerable<Token> Tokenize(string text)
             => text == null ? null : _tokenizer.Tokenize(text);
@@ -99,14 +104,10 @@ namespace Lingua.Core
             IReadOnlyList<Token> tokens)
             => alternatives.Select((candidates, ai) => Reduce(candidates, tokens, ai + 1).ToArray());
 
-        private static IEnumerable<ITranslation> Reduce(IEnumerable<ITranslation> candidates, IReadOnlyList<Token> tokens,
+        private static IEnumerable<ITranslation> Reduce(IEnumerable<ITranslation> candidates,
+            IReadOnlyList<Token> tokens,
             int nextIndex)
             => candidates.Where(t => t.Matches(tokens, nextIndex));
-
-        private static IEnumerable<ITranslation> Adjust(IEnumerable<ITranslation> translations)
-            => PromoteInvisibleCapitalization(
-                CapitalizeStartOfSentences(
-                    RemoveRedundantDots(translations)));
 
         private static IEnumerable<ITranslation> CapitalizeStartOfSentences(IEnumerable<ITranslation> translations)
             => SeparateSentences(translations).SelectMany(CapitalizeStartOfSentence);
@@ -142,18 +143,39 @@ namespace Lingua.Core
         private static bool IsEndOfSentence(Token token)
             => token is Terminator || token is Ellipsis;
 
-        private static IEnumerable<ITranslation> PromoteInvisibleCapitalization(IEnumerable<ITranslation> translations)
+        private static IEnumerable<ITranslation> PromoteInvisibleCapitalizations(
+            ICollection<ITranslation> arrangedTranslations, IList<ITranslation> allTranslations)
+            => arrangedTranslations
+                .Select(t => PromoteInvisibleCapitalization(
+                    arrangedTranslations, t, GetPreviousTranslation(allTranslations, t)));
+
+        private static ITranslation GetPreviousTranslation(IList<ITranslation> allTranslations,
+            ITranslation translation)
         {
-            ITranslation prevWord = null;
-            foreach (var translation in translations)
-            {
-                yield return prevWord?.IsInvisibleCapitalized ?? false
-                    ? translation.Capitalize()
-                    : translation;
-                if (translation.From is Word)
-                    prevWord = translation;
-            }
+            var index = allTranslations.IndexOf(translation);
+            return index > 0 ? allTranslations[index - 1] : null;
         }
+
+        private static ITranslation PromoteInvisibleCapitalization(
+            ICollection<ITranslation> arrangedTranslations
+            , ITranslation translation
+            , ITranslation previousTranslation)
+            => ShouldPromoteInvisibleCapitalization(arrangedTranslations, translation, previousTranslation)
+                ? translation.Capitalize()
+                : translation;
+
+        private static bool ShouldPromoteInvisibleCapitalization(
+            ICollection<ITranslation> arrangedTranslations
+            , ITranslation translation
+            , ITranslation previousTranslation)
+            => !translation.IsCapitalized
+               && previousTranslation != null
+               && IsInvisibleCapitalized(arrangedTranslations, previousTranslation);
+
+        private static bool IsInvisibleCapitalized(
+            ICollection<ITranslation> arrangedTranslations, ITranslation previousWord)
+            => previousWord.IsCapitalized 
+            && (string.IsNullOrEmpty(previousWord.Output) || !arrangedTranslations.Contains(previousWord));
 
         private static IEnumerable<ITranslation> RemoveRedundantDots(IEnumerable<ITranslation> translations)
         {

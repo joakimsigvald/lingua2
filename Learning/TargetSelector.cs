@@ -30,13 +30,14 @@ namespace Lingua.Learning
         private static Arrangement CreateArrangement(IEnumerable<ITranslation> translations, byte[] order)
             => new Arrangement(translations.Select(t => t.Code).ToArray(), order);
 
-        private static (ITranslation[] translations, byte[] order, string unmatched) SelectAndOrderTranslations(IEnumerable<ITranslation[]> possibilities, string translated)
+        private static (ITranslation[] translations, byte[] order, string unmatched, int length) SelectAndOrderTranslations(IEnumerable<ITranslation[]> possibilities, string translated)
         {
             var filteredPossibilities = FilterPossibilities(possibilities, translated).ToList();
             var possibleSequences = new Expander(filteredPossibilities).Expand(out var _);
             return possibleSequences
                 .Select(ps => new OrderMaker(translated).SelectAndOrderTranslations(ps))
                 .OrderBy(o => o.unmatched.Length)
+                .ThenBy(o => o.length)
                 .First();
         }
 
@@ -68,11 +69,11 @@ namespace Lingua.Learning
             _matched = new string(Tab, _translated.Length);
         }
 
-        public (ITranslation[] translations, byte[] order, string unmatched) SelectAndOrderTranslations(ITranslation[] translations)
+        public (ITranslation[] translations, byte[] order, string unmatched, int length) SelectAndOrderTranslations(ITranslation[] translations)
         {
             var words = translations.Select(t => t.Output).ToArray();
             var order = MakeOrder(words).ToArray();
-            return (translations, order, Unmatched);
+            return (translations, order, Unmatched, words.Sum(word => word.Length));
         }
 
         private string Unmatched
