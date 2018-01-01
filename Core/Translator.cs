@@ -170,12 +170,10 @@ namespace Lingua.Core
             , ITranslation previousTranslation)
             => !translation.IsCapitalized
                && previousTranslation != null
-               && IsInvisibleCapitalized(arrangedTranslations, previousTranslation);
+               && IsInvisibleCapitalized(previousTranslation);
 
-        private static bool IsInvisibleCapitalized(
-            ICollection<ITranslation> arrangedTranslations, ITranslation previousWord)
-            => previousWord.IsCapitalized 
-            && (string.IsNullOrEmpty(previousWord.Output) || !arrangedTranslations.Contains(previousWord));
+        private static bool IsInvisibleCapitalized(ITranslation previousWord)
+            => previousWord.IsCapitalized && string.IsNullOrEmpty(previousWord.Output);
 
         private static IEnumerable<ITranslation> RemoveRedundantDots(IEnumerable<ITranslation> translations)
         {

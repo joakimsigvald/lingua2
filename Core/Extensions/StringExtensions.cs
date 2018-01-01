@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 
 namespace Lingua.Core.Extensions
 {
@@ -20,6 +21,9 @@ namespace Lingua.Core.Extensions
 
         public static int IndexOfIgnoreCase(this string str, string part, int startIndex = 0)
             => str.IndexOf(part, startIndex, StringComparison.OrdinalIgnoreCase);
+
+        public static int CountSymbols(this string text)
+            => text.Count(c => c > ' ');
 
         private static string AlterInitial(string word, Func<char, char> alter)
             => string.IsNullOrEmpty(word) ? word : alter(word[0]) + word.Substring(1);

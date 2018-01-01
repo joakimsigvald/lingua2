@@ -13,7 +13,7 @@ namespace Lingua.Core
         public const ushort Wildcard = 1 << 10;
         public const byte ModifierCount = 11;
         private const ushort ClassMask = 0xf800;
-        public const ushort ModifiersMask = 0x07ff;
+        private const ushort ModifiersMask = 0x07ff;
         public const ushort ProperModifiersMask = 0x03ff;
 
         public static ushort[] Encode(string serial)
@@ -287,5 +287,8 @@ namespace Lingua.Core
 
         public static ushort GetClassCode(ushort code)
             => (ushort)(code >> ModifierCount);
+
+        public static bool IsElement(ushort code)
+            => code >= Number.Code;
     }
 }

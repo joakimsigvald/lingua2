@@ -30,7 +30,9 @@ namespace Lingua.Learning.Test
         [TestCase("It is my pen", "Det är min penna")]
         [TestCase("The cat caught a rat and ate it", "Katten fångade en råtta och åt den")]
         [TestCase("The cat caught a rat", "Katten fångade en råtta")]
-        [TestCase("The cat", "Katten")]
+        [TestCase("The rat made a nest and slept in it", "Råttan byggde ett bo och sov i det")]
+        [TestCase("He runs. I run.", "Han springer. Jag springer.")]
+        [TestCase("I want to go to the theater", "jag vill gå till teatern")]
         public void Test(string from, string expected)
         {
             var trainer = new Trainer();

@@ -168,4 +168,4 @@
 "The rat made a nest and slept in it.", "Råttan byggde ett bo och sov i det."
 "The rat made a bed and slept in it.", "Råttan byggde en säng och sov i den."
 
-"I want to go to the theater", "Jag vill gå till teatern"
+"I want to go to the theater", "jag vill gå till teatern"

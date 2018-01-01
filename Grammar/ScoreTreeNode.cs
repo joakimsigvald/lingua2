@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Lingua.Core.Extensions;
 
@@ -11,24 +12,33 @@ namespace Lingua.Grammar
         public ScoreTreeNode(ushort code, ushort[] path, sbyte score, IEnumerable<ScoreTreeNode> children)
         {
             Code = code;
-            ClassCode = Encoder.GetClassCode(code);
+            _classCode = Encoder.GetClassCode(code);
             Path = path;
             Score = score;
-            Children = children.OrderBy(c => c.ClassCode).ToArray();
+            Children = children.OrderBy(c => c._classCode).ToArray();
         }
 
         public ScoreTreeNode[] Children;
         public readonly ushort Code;
-        public readonly ushort ClassCode;
+        private readonly ushort _classCode;
         public readonly ushort[] Path;
         public sbyte Score { get; set; }
 
         private string Pattern => Encoder.Serialize(Path);
 
         public override string ToString()
-            => $"{Pattern}: {Score}";
+            => string.Join(Environment.NewLine, PatternLines);
 
-        public IDictionary<string, sbyte> ToDictionary() 
+        public string[] PatternLines
+            => ToDictionary()
+                .OrderByDescending(sp => sp.Value)
+                .ThenBy(sp => sp.Key)
+                .Select(ToLine).ToArray();
+
+        private static string ToLine(KeyValuePair<string, sbyte> scoredPattern)
+            => $"{scoredPattern.Key}:{scoredPattern.Value}";
+
+        private IDictionary<string, sbyte> ToDictionary() 
             => GetScoredPatterns().ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
 
         private IEnumerable<KeyValuePair<string, sbyte>> GetScoredPatterns()
@@ -42,12 +52,12 @@ namespace Lingua.Grammar
         public IEnumerable<ScoreTreeNode> GetMatchingChildren(ushort code)
         {
             var classCode = Encoder.GetClassCode(code);
-            return Children.Where(child => child.ClassCode == classCode && Encoder.Matches(code, child.Code));
+            return Children.Where(child => child._classCode == classCode && Encoder.Matches(code, child.Code));
         }
 
         public void AddChild(ScoreTreeNode child)
         {
-            Children = Children.Append(child).OrderBy(c => c.ClassCode).ToArray();
+            Children = Children.Append(child).OrderBy(c => c._classCode).ToArray();
         }
 
         public void RemoveChild(ScoreTreeNode child)

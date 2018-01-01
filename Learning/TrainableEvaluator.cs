@@ -1,10 +1,10 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using Lingua.Core.Extensions;
 
 namespace Lingua.Learning
 {
     using Core;
+    using Core.Extensions;
     using Grammar;
 
     public class TrainableEvaluator : Evaluator
@@ -48,7 +48,7 @@ namespace Lingua.Learning
 
         public void SavePatterns()
         {
-            Repository.StoreScoredPatterns(ScoringTree.ToDictionary());
+            Repository.StoreScoredPatterns(ScoringTree.PatternLines);
             Repository.StoreRearrangements(Arrangers);
         }
 

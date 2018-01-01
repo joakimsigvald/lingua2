@@ -67,6 +67,7 @@ namespace Lingua.Learning.Test
         [TestCase("x>a/b,y>c", "bc", "x>b,y>c")]
         [TestCase("x>a/b,y>c", "b", "x>b,y>c")]
         [TestCase("x>a:1/b:1,y>c", "b", "x>b,y>c")]
+        [TestCase("x>a/a b,y>b", "a b", "x>a b")]
         [TestCase("x>a b/a,y>b", "a b", "x>a b")]
         [TestCase("x>a/,y>b", "b", "x>,y>b")]
         [TestCase("x>a/,y>b,z>a", "ba", "x>,y>b,z>a")]

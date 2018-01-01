@@ -30,14 +30,14 @@ namespace Lingua.Learning
         private static Arrangement CreateArrangement(IEnumerable<ITranslation> translations, byte[] order)
             => new Arrangement(translations.Select(t => t.Code).ToArray(), order);
 
-        private static (ITranslation[] translations, byte[] order, string unmatched, int length) SelectAndOrderTranslations(IEnumerable<ITranslation[]> possibilities, string translated)
+        private static (ITranslation[] translations, byte[] order, string unmatched, string hidden) SelectAndOrderTranslations(IEnumerable<ITranslation[]> possibilities, string translated)
         {
             var filteredPossibilities = FilterPossibilities(possibilities, translated).ToList();
             var possibleSequences = new Expander(filteredPossibilities).Expand(out var _);
             return possibleSequences
                 .Select(ps => new OrderMaker(translated).SelectAndOrderTranslations(ps))
                 .OrderBy(o => o.unmatched.Length)
-                .ThenBy(o => o.length)
+                .ThenBy(o => o.hidden.Length)
                 .First();
         }
 
@@ -62,6 +62,7 @@ namespace Lingua.Learning
         private const char Tab = '\u0009';
         private readonly string _translated;
         private string _matched;
+        private readonly List<string> _hidden = new List<string>();
 
         public OrderMaker(string translate)
         {
@@ -69,11 +70,11 @@ namespace Lingua.Learning
             _matched = new string(Tab, _translated.Length);
         }
 
-        public (ITranslation[] translations, byte[] order, string unmatched, int length) SelectAndOrderTranslations(ITranslation[] translations)
+        public (ITranslation[] translations, byte[] order, string unmatched, string hidden) SelectAndOrderTranslations(ITranslation[] translations)
         {
             var words = translations.Select(t => t.Output).ToArray();
             var order = MakeOrder(words).ToArray();
-            return (translations, order, Unmatched, words.Sum(word => word.Length));
+            return (translations, order, Unmatched, string.Join(",", _hidden));
         }
 
         private string Unmatched
@@ -103,16 +104,14 @@ namespace Lingua.Learning
                 .SkipWhile(tuple => tuple.index < 0)
                 .ToArray();
             if (!IsAllTranslated)
-                yield break;
+                return new byte[0];
             var prevIndex = -1;
-            foreach (var tuple in orderedIndexedWords)
-            {
-                yield return (byte)(prevIndex = GetNextIndex(words, tuple.word, prevIndex + 1));
-            }
+            return orderedIndexedWords.Select(
+                tuple => (byte) (prevIndex = GetNextIndex(words, tuple.word, prevIndex + 1)));
         }
 
         private bool IsAllTranslated
-            => _translated.Count(c => c > ' ') == _matched.Count(c => c > ' ');
+            => _translated.CountSymbols() == _matched.CountSymbols();
 
         private static int GetNextIndex(string[] words, string word, int startIndex)
         {
@@ -124,6 +123,15 @@ namespace Lingua.Learning
         {
             if (string.IsNullOrEmpty(word))
                 return -1;
+            var index = GetUnmatchedIndex(word);
+            if (index >= 0)
+                _matched = _matched.Substring(0, index) + word + _matched.Substring(index + word.Length);
+            else _hidden.Add(word);
+            return index;
+        }
+
+        private int GetUnmatchedIndex(string word)
+        {
             var startIndex = 0;
             int index;
             do
@@ -133,8 +141,6 @@ namespace Lingua.Learning
                     return index;
                 startIndex = index + _matched.Substring(index, word.Length).TrimEnd().Length;
             } while (startIndex > index);
-            if (index >= 0)
-                _matched = _matched.Substring(0, index) + word + _matched.Substring(index + word.Length);
             return index;
         }
     }

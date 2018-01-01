@@ -11,19 +11,12 @@ namespace Lingua.Grammar
         public static IDictionary<string, sbyte> LoadScoredPatterns()
             => ReadLines("Patterns.txt").ToDictionary(sbyte.Parse);
 
-        public static void StoreScoredPatterns(IDictionary<string, sbyte> patterns)
-            => WriteLines(GetUniqueName("Patterns.txt")
-                , GetPatternLines(patterns));
+        public static void StoreScoredPatterns(string[] patterns)
+            => WriteLines(GetUniqueName("Patterns.txt"), patterns);
 
-        public static void StoreRearrangements(IList<Arranger> arrangers)
+        public static void StoreRearrangements(IEnumerable<Arranger> arrangers)
             => WriteLines(GetUniqueName("Rearrangements.txt")
                 , GetRearrangementLines(arrangers.Select(arr => arr.Arrangement)));
-
-        private static string[] GetPatternLines(IDictionary<string, sbyte> patterns) 
-            => patterns
-            .OrderByDescending(sp => sp.Value)
-            .ThenBy(sp => sp.Key)
-            .Select(ToLine).ToArray();
 
         private static string[] GetRearrangementLines(IEnumerable<Arrangement> arrangements)
             => arrangements
@@ -36,9 +29,6 @@ namespace Lingua.Grammar
 
         private static string GetUniqueName(string filename)
             => LoaderBase.GetUniqueName(filename);
-
-        private static string ToLine(KeyValuePair<string, sbyte> scoredPattern)
-            => $"{scoredPattern.Key}:{scoredPattern.Value}";
 
         public static IEnumerable<Arrangement> LoadArrangements()
             => ReadLines("Rearrangements.txt").Select(Arrangement.Deserialize);

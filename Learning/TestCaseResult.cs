@@ -17,14 +17,23 @@ namespace Lingua.Learning
             TestCase = testCase;
             _translationResult = translationResult;
             _allowReordered = allowReordered;
-            WordTranslationSuccess = allowReordered && ComputeWordTranslationSuccess();
+            WordTranslationSuccess = allowReordered && Deficit == 0;
         }
 
-        private bool ComputeWordTranslationSuccess()
+        public int Deficit
         {
-            var translatedWords = GetWords(Translations).ToList();
-            return GetWords(ExpectedTranslations).All(translatedWords.Remove);
+            get
+            {
+                var originalWords = GetWords(Translations).ToList();
+                var translatedWords = originalWords.ToList();
+                var expectedWords = GetWords(ExpectedTranslations).ToArray();
+                var missingWords = expectedWords.Where(word => !translatedWords.Remove(word)).ToArray();
+                var superfluousWords = translatedWords.Except(expectedWords).Distinct().ToArray();
+                return missingWords.Length + superfluousWords.Length + ScoreDeficit;
+            }
         }
+
+        public int ScoreDeficit { get; set; } = 0;
 
         public TestCase TestCase { get; }
         public string From => TestCase.From;
@@ -36,12 +45,11 @@ namespace Lingua.Learning
         public IReason Reason => _translationResult.Reason;
         public IList<ITranslation> ExpectedTranslations => TestCase.Target.Translations;
         public IEnumerable<ITranslation> Translations => _translationResult.Translations;
-        public int ScoreDeficit { get; set; } = -1;
 
         public override string ToString()
             => $"{From}=>{Expected}/{Actual}:{Success}";
 
-        private IEnumerable<string> GetWords(IEnumerable<ITranslation> translations)
+        private static IEnumerable<string> GetWords(IEnumerable<ITranslation> translations)
             => translations.Select(t => t.Output.ToLower());
     }
 }

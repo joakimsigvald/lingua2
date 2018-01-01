@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using Lingua.Core;
 
 namespace Lingua.Learning
 {
@@ -21,19 +22,23 @@ namespace Lingua.Learning
 
         private static IEnumerable<Arrangement> GetArrangerCandidates(ushort[] code, byte[] order)
         {
-            for (var l = 1; l <= code.Length; l++)
-            for (var i = 0; i <= code.Length - l; i++)
-                yield return GetArrangerCandidate(code, order, l, i);
+            for (var length = 1; length <= code.Length; length++)
+            for (var index = 0; index <= code.Length - length; index++)
+                yield return GetArrangerCandidate(code, order, length, index);
         }
 
-        private static Arrangement GetArrangerCandidate(ushort[] code, byte[] order, int l, int i)
+        private static Arrangement GetArrangerCandidate(ushort[] code, byte[] order, int length, int startIindex)
         {
-            var suborder = order.Where(n => n >= i && n < i + l).ToArray();
+            var endIndex = startIindex + length;
+            var suborder = order.Where(n => n >= startIindex && n < endIndex).ToArray();
             if (!suborder.IsSegmentOf(order))
                 return null;
+            var subCode = code.Skip(startIindex).Take(length).ToArray();
+            if (!subCode.All(Encoder.IsElement))
+                return null;
             return new Arrangement(
-                code.Skip(i).Take(l).ToArray(),
-                suborder.Select(o => (byte) (o - i)).ToArray());
+                subCode,
+                suborder.Select(o => (byte) (o - startIindex)).ToArray());
         }
     }
 }

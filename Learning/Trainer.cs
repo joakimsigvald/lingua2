@@ -97,24 +97,29 @@ namespace Lingua.Learning
 
         private void LearnRearrangements(ICollection<TestCase> testCases, IEnumerable<Arranger> arrangerCandidates)
         {
-            var bestResult = 0;
+            var remaining = testCases.Count;
+            var failedCases = new List<TestCase>();
             foreach (var arranger in arrangerCandidates)
             {
                 _evaluator.Add(arranger);
-                var result = testCases.Count(IsCorrectlyArranged);
-                if (result <= bestResult)
-                    _evaluator.Remove(arranger);
-                else if (result == testCases.Count)
+                failedCases = testCases.Where(tc => !IsCorrectlyArranged(tc)).ToList();
+                var result = failedCases.Count;
+                if (result == 0)
                     return;
-                bestResult = result;
+                if (result < remaining)
+                    remaining = result;
+                else
+                    _evaluator.Remove(arranger);
             }
             throw new Exception("Failed to learn arrangements. Improve algorithm");
         }
 
         private bool IsCorrectlyArranged(TestCase testCase)
         {
-            var actual = _evaluator.Arrange(testCase.Target.Translations);
-            var expected = testCase.Target.ArrangedTranslations;
+            var actual = _evaluator.Arrange(testCase.Target.Translations)
+                .Where(t => t.From is Element);
+            var expected = testCase.Target.ArrangedTranslations
+                .Where(t => t.From is Element);
             return actual.SequenceEqual(expected);
         }
 
@@ -162,7 +167,7 @@ namespace Lingua.Learning
                     _evaluator.Do(currentScoredPattern);
                     testRunner.KnownResult = null;
                     lastFailedCase = testRunner.RunTestCase(lastFailedCase.TestCase);
-                } while (lastFailedCase.ScoreDeficit >= bestResult.FailedCase.ScoreDeficit);
+                } while (lastFailedCase.Deficit >= bestResult.FailedCase.Deficit);
                 if (lastFailedCase.IsSuccess)
                     testCases.MoveToBeginning(lastFailedCase.TestCase);
                 testRunner.KnownResult = lastFailedCase;
@@ -187,13 +192,15 @@ namespace Lingua.Learning
         }
 
         private IEnumerator<ScoredPattern> EnumerateScoredPatterns(TestCaseResult result)
-            => _patternGenerator
+        {
+            var patterns = _patternGenerator
                 .GetScoredPatterns(result)
                 .Select(PrioritizePattern)
                 .OrderBy(tuple => tuple.priority)
                 .Select(tuple => tuple.sp)
-                .ToList()
-                .GetEnumerator();
+                .ToList();
+           return patterns.GetEnumerator();
+        }
 
         private (ScoredPattern sp, int priority) PrioritizePattern(ScoredPattern sp)
             => (sp, ScoredPatternPriorityComputer.ComputePriority(_evaluator.GetScore(sp.Code), sp.Score, sp.Code));
