@@ -24,15 +24,16 @@ namespace Lingua.Learning.Test
             trainer.SavePatterns();
         }
 
+        [TestCase("I want to go to the theater", "jag vill gå till teatern")]
+        [TestCase("A ball i.e..", "En boll dvs...")]
+        [TestCase("The rat made a nest and slept in it.", "Råttan byggde ett bo och sov i det.")]
         [TestCase("I have been running", "jag har sprungit")]
         [TestCase("I will be running", "jag kommer att springa")]
         [TestCase("I will have been running", "jag kommer att ha sprungit")]
         [TestCase("It is my pen", "Det är min penna")]
         [TestCase("The cat caught a rat and ate it", "Katten fångade en råtta och åt den")]
         [TestCase("The cat caught a rat", "Katten fångade en råtta")]
-        [TestCase("The rat made a nest and slept in it", "Råttan byggde ett bo och sov i det")]
         [TestCase("He runs. I run.", "Han springer. Jag springer.")]
-        [TestCase("I want to go to the theater", "jag vill gå till teatern")]
         public void Test(string from, string expected)
         {
             var trainer = new Trainer();

@@ -9,11 +9,12 @@ namespace Lingua.Learning
 
     public static class ArrangerGenerator
     {
-        public static IEnumerable<Arrangement> GetArrangerCandidates(IEnumerable<Arrangement> targetArrangements)
+        public static IEnumerable<Arranger> GetArrangerCandidates(IEnumerable<Arrangement> targetArrangements)
             => targetArrangements
                 .SelectMany(GetArrangerCandidates)
                 .Distinct()
-                .OrderBy(arr => arr.Length);
+                .OrderBy(arr => arr.Length)
+                .Select(arr => new Arranger(arr));
 
         private static IEnumerable<Arrangement> GetArrangerCandidates(Arrangement targetArrangement)
             => GetArrangerCandidates(targetArrangement.Code, targetArrangement.Order)

@@ -27,6 +27,7 @@ namespace Lingua.Learning.Test
         [TestCase("x>a,y>bc,z>def", "bcdefa", "120")]
         [TestCase("The>,cat>katten,caught>fångade,a>en,rat>råtta", "Katten fångade en råtta", "1234")]
         [TestCase("The>De/,cat>katten,caught>fångade,a>en,rat>råtta", "Katten fångade en råtta", "1234")]
+        [TestCase("A>En,ball>boll,i.e.>dvs.,..>..", "En boll dvs...", "0123")]
         public void TestArrangementOrder(string possibilitiesStr, string to, string expectedOrdersStr)
         {
             var target = CreateTarget(possibilitiesStr, to);

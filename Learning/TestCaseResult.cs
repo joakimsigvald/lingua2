@@ -33,7 +33,7 @@ namespace Lingua.Learning
             }
         }
 
-        public int ScoreDeficit { get; set; } = 0;
+        public int ScoreDeficit { private get; set; }
 
         public TestCase TestCase { get; }
         public string From => TestCase.From;
@@ -43,11 +43,11 @@ namespace Lingua.Learning
         public bool Success => Actual == TestCase.Expected;
         private bool WordTranslationSuccess { get; }
         public IReason Reason => _translationResult.Reason;
-        public IList<ITranslation> ExpectedTranslations => TestCase.Target.Translations;
+        public IEnumerable<ITranslation> ExpectedTranslations => TestCase.Target.Translations;
         public IEnumerable<ITranslation> Translations => _translationResult.Translations;
 
         public override string ToString()
-            => $"{From}=>{Expected}/{Actual}:{Success}";
+            => $"{TestCase}/{Actual}:{Success}";
 
         private static IEnumerable<string> GetWords(IEnumerable<ITranslation> translations)
             => translations.Select(t => t.Output.ToLower());

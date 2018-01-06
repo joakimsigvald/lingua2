@@ -36,8 +36,9 @@ namespace Lingua.Core
         {
             var tokens = Expand(Tokenize(original)).ToArray();
             var possibilities = CompoundCombiner.Combine(Translate(tokens).ToList()).ToList();
-            SetCodes(possibilities);
-            return possibilities;
+            var undotted = RemoveRedundantDots(possibilities).ToArray();
+            SetCodes(undotted);
+            return undotted;
         }
 
         private static void SetCodes(IEnumerable<ITranslation[]> possibilities)
@@ -53,8 +54,7 @@ namespace Lingua.Core
             var arrangedTranslations = _grammar.Arrange(translations).ToList();
 
             var recapitalized = PromoteInvisibleCapitalizations(arrangedTranslations, translations);
-            var undotted = RemoveRedundantDots(recapitalized).ToArray();
-            var capitalized = CapitalizeStartOfSentences(undotted).ToArray();
+            var capitalized = CapitalizeStartOfSentences(recapitalized).ToArray();
 
             var respacedResult = Respace(capitalized).ToArray();
             var translation = Output(respacedResult);
@@ -147,7 +147,7 @@ namespace Lingua.Core
             ICollection<ITranslation> arrangedTranslations, IList<ITranslation> allTranslations)
             => arrangedTranslations
                 .Select(t => PromoteInvisibleCapitalization(
-                    arrangedTranslations, t, GetPreviousTranslation(allTranslations, t)));
+                    t, GetPreviousTranslation(allTranslations, t)));
 
         private static ITranslation GetPreviousTranslation(IList<ITranslation> allTranslations,
             ITranslation translation)
@@ -157,17 +157,13 @@ namespace Lingua.Core
         }
 
         private static ITranslation PromoteInvisibleCapitalization(
-            ICollection<ITranslation> arrangedTranslations
-            , ITranslation translation
-            , ITranslation previousTranslation)
-            => ShouldPromoteInvisibleCapitalization(arrangedTranslations, translation, previousTranslation)
+            ITranslation translation, ITranslation previousTranslation)
+            => ShouldPromoteInvisibleCapitalization(translation, previousTranslation)
                 ? translation.Capitalize()
                 : translation;
 
         private static bool ShouldPromoteInvisibleCapitalization(
-            ICollection<ITranslation> arrangedTranslations
-            , ITranslation translation
-            , ITranslation previousTranslation)
+            ITranslation translation, ITranslation previousTranslation)
             => !translation.IsCapitalized
                && previousTranslation != null
                && IsInvisibleCapitalized(previousTranslation);
@@ -175,21 +171,25 @@ namespace Lingua.Core
         private static bool IsInvisibleCapitalized(ITranslation previousWord)
             => previousWord.IsCapitalized && string.IsNullOrEmpty(previousWord.Output);
 
-        private static IEnumerable<ITranslation> RemoveRedundantDots(IEnumerable<ITranslation> translations)
+        private static IEnumerable<ITranslation[]> RemoveRedundantDots(IEnumerable<ITranslation[]> possibilities)
         {
-            ITranslation current = null;
-            foreach (var translation in translations)
+            ITranslation[] current = null;
+            foreach (var translations in possibilities)
             {
                 var prev = current;
-                current = translation;
-                if (prev?.From is Abbreviation)
+                current = translations;
+                if (translations.Length == 1 && prev?.Length == 1)
                 {
-                    if (translation.From is Terminator)
-                        continue;
-                    if (translation.From is Ellipsis ellipsis)
-                        ellipsis.Shortened = true;
+                    var translation = translations.Single();
+                    if (prev.Single().From is Abbreviation)
+                    {
+                        if (translation.From is Terminator)
+                            continue;
+                        if (translation.From is Ellipsis ellipsis)
+                            ellipsis.Shortened = true;
+                    }
                 }
-                yield return translation;
+                yield return translations;
             }
         }
 

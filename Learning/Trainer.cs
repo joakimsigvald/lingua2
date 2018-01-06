@@ -69,24 +69,24 @@ namespace Lingua.Learning
 
         private void LearnRearrangements(TestSessionResult result)
         {
-            var outOfOrderCases = result.Results
-                .Where(tcr => !tcr.TestCase.Target.Arrangement.IsInPerfectOrder)
+            var allTestCases = result.Results
                 .Select(tcr => tcr.TestCase)
                 .ToArray();
+            var outOfOrderCases = allTestCases
+                .Where(tc => !tc.Target.Arrangement.IsInPerfectOrder)
+                .ToArray();
             if (outOfOrderCases.Any())
-                LearnRearrangements(outOfOrderCases);
+                LearnRearrangements(outOfOrderCases, allTestCases);
         }
 
-        private void LearnRearrangements(ICollection<TestCase> outOfOrderCases)
+        private void LearnRearrangements(ICollection<TestCase> outOfOrderCases, IEnumerable<TestCase> allTestCases)
         {
-            var arrangerCandidates = GetArrangementCandidates(outOfOrderCases);
-            LearnRearrangements(outOfOrderCases, arrangerCandidates);
+            var arrangerCandidates = GetArrangementCandidates(outOfOrderCases).ToArray();
+            LearnRearrangements(allTestCases, outOfOrderCases, arrangerCandidates);
         }
 
         private static IEnumerable<Arranger> GetArrangementCandidates(IEnumerable<TestCase> outOfOrderCases)
-            => ArrangerGenerator
-                .GetArrangerCandidates(GetTargetArrangers(outOfOrderCases))
-                .Select(arr => new Arranger(arr));
+            => ArrangerGenerator.GetArrangerCandidates(GetTargetArrangers(outOfOrderCases));
 
         private static IEnumerable<Arrangement> GetTargetArrangers(IEnumerable<TestCase> outOfOrderCases)
             => outOfOrderCases
@@ -95,32 +95,40 @@ namespace Lingua.Learning
                 .Where(arr => !arr.IsInPerfectOrder)
                 .ToArray();
 
-        private void LearnRearrangements(ICollection<TestCase> testCases, IEnumerable<Arranger> arrangerCandidates)
+        private void LearnRearrangements(IEnumerable<TestCase> allTestCases, ICollection<TestCase> outOfOrderCases, IEnumerable<Arranger> arrangerCandidates)
         {
-            var remaining = testCases.Count;
-            var failedCases = new List<TestCase>();
+            var inOrderCases = allTestCases.Except(outOfOrderCases).ToArray();
             foreach (var arranger in arrangerCandidates)
             {
                 _evaluator.Add(arranger);
-                failedCases = testCases.Where(tc => !IsCorrectlyArranged(tc)).ToList();
-                var result = failedCases.Count;
-                if (result == 0)
+                var newInOrderCases = TryNewArranger(inOrderCases, outOfOrderCases);
+                if (newInOrderCases.Length == outOfOrderCases.Count)
                     return;
-                if (result < remaining)
-                    remaining = result;
-                else
+                inOrderCases = inOrderCases.Concat(newInOrderCases).ToArray();
+                outOfOrderCases = outOfOrderCases.Except(newInOrderCases).ToArray();
+                if (!newInOrderCases.Any())
                     _evaluator.Remove(arranger);
             }
-            throw new Exception("Failed to learn arrangements. Improve algorithm");
+            throw new Exception($"Failed to learn arrangements. Improve algorithm: {string.Join("|", outOfOrderCases)}");
         }
+
+        private TestCase[] TryNewArranger(
+            IEnumerable<TestCase> inOrderCases
+            , IEnumerable<TestCase> outOfOrderCases) 
+            => inOrderCases.All(IsCorrectlyArranged)
+            ? outOfOrderCases.Where(IsCorrectlyArranged).ToArray()
+            : new TestCase[0];
 
         private bool IsCorrectlyArranged(TestCase testCase)
         {
             var actual = _evaluator.Arrange(testCase.Target.Translations)
-                .Where(t => t.From is Element);
+                .Where(t => t.From is Element)
+                .ToArray();
             var expected = testCase.Target.ArrangedTranslations
-                .Where(t => t.From is Element);
-            return actual.SequenceEqual(expected);
+                .Where(t => t.From is Element)
+                .ToArray();
+            var result = actual.SequenceEqual(expected);
+            return result;
         }
 
         private TestSessionResult LearnPatterns(IList<TestCase> testCases)

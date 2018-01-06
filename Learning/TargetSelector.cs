@@ -15,7 +15,7 @@ namespace Lingua.Learning
         {
             if (possibilities == null)
                 return null;
-            var orderedTranslations = SelectAndOrderTranslations(possibilities, translated);
+            var orderedTranslations = SelectBestTranslationsWithOrder(possibilities, translated);
             var translations = orderedTranslations.translations;
             var arrangement = CreateArrangement(translations, orderedTranslations.order);
             return new TranslationTarget
@@ -30,16 +30,21 @@ namespace Lingua.Learning
         private static Arrangement CreateArrangement(IEnumerable<ITranslation> translations, byte[] order)
             => new Arrangement(translations.Select(t => t.Code).ToArray(), order);
 
-        private static (ITranslation[] translations, byte[] order, string unmatched, string hidden) SelectAndOrderTranslations(IEnumerable<ITranslation[]> possibilities, string translated)
+        private static (ITranslation[] translations, byte[] order, string unmatched, string hidden) SelectBestTranslationsWithOrder(IEnumerable<ITranslation[]> possibilities, string translated)
         {
             var filteredPossibilities = FilterPossibilities(possibilities, translated).ToList();
             var possibleSequences = new Expander(filteredPossibilities).Expand(out var _);
-            return possibleSequences
+            var bestSequences = possibleSequences
                 .Select(ps => new OrderMaker(translated).SelectAndOrderTranslations(ps))
                 .OrderBy(o => o.unmatched.Length)
+                .ThenBy(o => OutOfOrderCount(o.order))
                 .ThenBy(o => o.hidden.Length)
-                .First();
+                .ToArray();
+            return bestSequences.First();
         }
+
+        private static int OutOfOrderCount(byte[] order)
+            => order.Skip(1).Select((n, i) => n < order[i]).Count(v => v);
 
         private static IEnumerable<ITranslation[]> FilterPossibilities(
             IEnumerable<ITranslation[]> possibilities, string translated)

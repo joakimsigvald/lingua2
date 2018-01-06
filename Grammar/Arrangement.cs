@@ -28,8 +28,6 @@ namespace Lingua.Grammar
         public ushort[] Code { get; }
         public byte[] Order { get; }
         public int Length => Code.Length;
-        public int Deviation => Order.OrderBy(n => n).Select((n, i) => Math.Abs(n - Order[i])).Sum();
-        public bool IsInOrder => Deviation == 0;
         public bool IsInPerfectOrder => Order.Select((n, i) => n - i).All(dif => dif == 0);
 
         public string Serialize()

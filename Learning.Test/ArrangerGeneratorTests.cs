@@ -20,7 +20,7 @@ namespace Lingua.Learning.Test
         {
             var targetArranger = Arrangement.Deserialize(patternOrder);
             var output = ArrangerGenerator.GetArrangerCandidates(new []{ targetArranger });
-            var outputArrangers = output.Select(arr => arr.Serialize());
+            var outputArrangers = output.Select(arr => arr.Arrangement.Serialize());
             Assert.That(outputArrangers, Is.EqualTo(expectedOutput));
         }
     }
