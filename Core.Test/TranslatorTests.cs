@@ -68,9 +68,9 @@ namespace Lingua.Core.Test
         private static void TestCase(string from, string to)
         {
             var result = TestBench.RunTestCase(new TestCase(from, to) {Suite = "Single"});
-            if (!result.IsSuccess)
+            if (!result.Success)
                 Output(result.Reason);
-            Assert.That(result.IsSuccess, $"Expected \"{result.Expected}\" but was \"{result.Actual}\"");
+            Assert.That(result.Success, $"Expected \"{result.Expected}\" but was \"{result.Actual}\"");
         }
 
         private static void Output(IReason reason)

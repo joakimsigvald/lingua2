@@ -40,11 +40,9 @@ namespace Lingua.Learning
                 return KnownResult;
             var translationResult = _translator.Translate(testCase);
             if (_settings.PrepareTestCaseForAnalysis)
-                AssureTargetSet(testCase, translationResult);
-            var result = new TestCaseResult(testCase
-                , translationResult
-                , _settings.AllowReordered);
-            if (_evaluator != null && !result.IsSuccess)
+                AssureTargetsSet(testCase, translationResult);
+            var result = new TestCaseResult(testCase, translationResult);
+            if (_evaluator != null && !result.Success)
                 result.ScoreDeficit = _evaluator.ComputeScoreDeficit(result);
             return result;
         }
@@ -55,19 +53,17 @@ namespace Lingua.Learning
             TestCaseResult lastResult = null;
             var results = testCases
                 .Select(RunTestCase)
-                .TakeWhile(result => (lastResult = result).IsSuccess)
+                .TakeWhile(result => (lastResult = result).Success)
                 .ToList();
             if (lastResult != results.LastOrDefault())
                 results.Add(lastResult);
             return results;
         }
 
-        private static void AssureTargetSet(TestCase testCase, TranslationResult translationResult)
+        private static void AssureTargetsSet(TestCase testCase, TranslationResult translationResult)
         {
-            if (testCase.Target != null)
-                return;
-            testCase.Target = testCase.Target 
-                ?? TargetSelector.SelectTarget(translationResult.Possibilities, testCase.Expected);
+            testCase.Targets = testCase.Targets 
+                ?? TargetSelector.SelectTargets(translationResult.Possibilities, testCase.Expected);
         }
     }
 }

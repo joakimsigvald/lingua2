@@ -8,42 +8,38 @@ namespace Lingua.Learning
     public class TestCaseResult
     {
         private readonly TranslationResult _translationResult;
-        private readonly bool _allowReordered;
 
         public TestCaseResult(TestCase testCase
-            , TranslationResult translationResult
-            , bool allowReordered)
+            , TranslationResult translationResult)
         {
             TestCase = testCase;
             _translationResult = translationResult;
-            _allowReordered = allowReordered;
-            WordTranslationSuccess = allowReordered && Deficit == 0;
+            if (TestCase.Targets != null)
+                WordDeficit = ComputeWordDeficit();
         }
 
-        public int Deficit
-        {
-            get
-            {
-                var originalWords = GetWords(Translations).ToList();
-                var translatedWords = originalWords.ToList();
-                var expectedWords = GetWords(ExpectedTranslations).ToArray();
-                var missingWords = expectedWords.Where(word => !translatedWords.Remove(word)).ToArray();
-                var superfluousWords = translatedWords.Except(expectedWords).Distinct().ToArray();
-                return missingWords.Length + superfluousWords.Length + ScoreDeficit;
-            }
-        }
-
+        public int Deficit => WordDeficit + ScoreDeficit;
+        private int WordDeficit { get; }
         public int ScoreDeficit { private get; set; }
+
+        private int ComputeWordDeficit()
+        {
+            var originalWords = GetWords(Translations).ToList();
+            var translatedWords = originalWords.ToList();
+            var expectedWords = GetWords(ExpectedTranslations).ToArray();
+            var missingWords = expectedWords.Where(word => !translatedWords.Remove(word)).ToArray();
+            var superfluousWords = translatedWords.Except(expectedWords).Distinct().ToArray();
+            return missingWords.Length + superfluousWords.Length;
+        }
 
         public TestCase TestCase { get; }
         public string From => TestCase.From;
         public string Expected => TestCase.Expected;
         public string Actual => _translationResult.Translation;
-        public bool IsSuccess => _allowReordered && WordTranslationSuccess || Success;
         public bool Success => Actual == TestCase.Expected;
-        private bool WordTranslationSuccess { get; }
+        public bool WordTranslationSuccess => WordDeficit + ScoreDeficit == 0;
         public IReason Reason => _translationResult.Reason;
-        public IEnumerable<ITranslation> ExpectedTranslations => TestCase.Target.Translations;
+        public IEnumerable<ITranslation> ExpectedTranslations => TestCase.Targets.First().Translations;
         public IEnumerable<ITranslation> Translations => _translationResult.Translations;
 
         public override string ToString()

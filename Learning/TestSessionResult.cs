@@ -11,7 +11,7 @@ namespace Lingua.Learning
         public TestSessionResult(params TestCaseResult[] results)
         {
             Results = results;
-            SuccessCount = Results.Any() ? Results.TakeWhile(r => r.IsSuccess).Count() : -1;
+            SuccessCount = Results.Any() ? Results.TakeWhile(r => r.Success).Count() : -1;
             FailedCase = Results.Skip(SuccessCount).FirstOrDefault();
         }
 

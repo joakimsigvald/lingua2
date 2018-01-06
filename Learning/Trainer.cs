@@ -30,12 +30,10 @@ namespace Lingua.Learning
         public TestSessionResult RunTrainingSession(params TestCase[] testCases)
         {
             var preparedTestCases = PrepareForLearning(testCases);
-            //return LearnPatterns(preparedTestCases);
             var result = LearnPatterns(preparedTestCases);
-            if (!result.Success)
-                return result;
-            LearnRearrangements(result);
-            return VerifyPatterns(testCases);
+            return !result.Success 
+                ? result 
+                : VerifyPatterns(testCases);
         }
 
         private IList<TestCase> PrepareForLearning(IEnumerable<TestCase> testCases)
@@ -45,7 +43,7 @@ namespace Lingua.Learning
                 .ToList();
             preparedTestCases.ForEach(PrepareForLearning);
             var prioritizedTestCases = preparedTestCases
-                .Select(tc => (testcase: tc, priority: ComputePriority(tc.Target.Translations)))
+                .Select(tc => (testcase: tc, priority: ComputePriority(tc.Targets.First().Translations)))
                 .OrderBy(pair => pair.priority);
             return prioritizedTestCases
                 .Select(pair => pair.testcase)
@@ -63,11 +61,68 @@ namespace Lingua.Learning
         private void PrepareForLearning(TestCase testCase)
         {
             testCase.Possibilities = _translator.Destruct(testCase.From);
-            testCase.Target = TargetSelector.SelectTarget(testCase.Possibilities, testCase.Expected);
-            if (testCase.Target.Translations == null)
-                throw new Exception();
+            testCase.Targets = TargetSelector.SelectTargets(testCase.Possibilities, testCase.Expected);
+            if (!testCase.Targets.Any())
+                throw new Exception("Should not get into this state - throw exception from TargetSelector if no possible translation");
         }
 
+        private TestSessionResult LearnPatterns(IList<TestCase> testCases)
+        {
+            var settings = new TestRunnerSettings
+            {
+                AbortOnFail = true,
+                AllowReordered = false
+            };
+            var testRunner = new TestRunner(new PossibitiesTranslator(_translator), _evaluator, settings);
+
+            IEnumerator<ScoredPattern> scoredPatterns = null;
+            TestSessionResult bestResult = null;
+            ScoredPattern currentScoredPattern = null;
+            TestSessionResult result;
+            TestCaseResult lastFailedCase = null;
+            while (!(result = testRunner.RunTestSession(testCases)).Success)
+            {
+                if (bestResult == null)
+                {
+                    bestResult = result;
+                    scoredPatterns = EnumerateScoredPatterns(result.FailedCase);
+                }
+                else if (result > bestResult)
+                {
+                    currentScoredPattern = null;
+                    if (result.SuccessCount > bestResult.SuccessCount)
+                    {
+                        scoredPatterns.Dispose();
+                        scoredPatterns = EnumerateScoredPatterns(result.FailedCase);
+                        testCases.MoveToBeginning(lastFailedCase.TestCase);
+                        testRunner.KnownResult = null;
+                    }
+                    else scoredPatterns.Reset();
+                    bestResult = result;
+                }
+                lastFailedCase = result.FailedCase;
+                do
+                {
+                    if (currentScoredPattern != null)
+                        _evaluator.Undo(currentScoredPattern);
+                    if (!scoredPatterns.MoveNext())
+                        return bestResult;
+                    currentScoredPattern = scoredPatterns.Current;
+                    _evaluator.Do(currentScoredPattern);
+                    testRunner.KnownResult = null;
+                    lastFailedCase = testRunner.RunTestCase(lastFailedCase.TestCase);
+                } while (lastFailedCase.Deficit >= bestResult.FailedCase.Deficit);
+                if (lastFailedCase.Success)
+                    testCases.MoveToBeginning(lastFailedCase.TestCase);
+                else if (lastFailedCase.WordTranslationSuccess)
+                {
+                    throw new Exception("TODO: Learn reordering of " + lastFailedCase);
+                }
+                testRunner.KnownResult = lastFailedCase;
+            }
+            return result;
+        }
+        /*
         private void LearnRearrangements(TestSessionResult result)
         {
             var allTestCases = result.Results
@@ -115,10 +170,10 @@ namespace Lingua.Learning
 
         private TestCase[] TryNewArranger(
             IEnumerable<TestCase> inOrderCases
-            , IEnumerable<TestCase> outOfOrderCases) 
+            , IEnumerable<TestCase> outOfOrderCases)
             => inOrderCases.All(IsCorrectlyArranged)
-            ? outOfOrderCases.Where(IsCorrectlyArranged).ToArray()
-            : new TestCase[0];
+                ? outOfOrderCases.Where(IsCorrectlyArranged).ToArray()
+                : new TestCase[0];
 
         private bool IsCorrectlyArranged(TestCase testCase)
         {
@@ -131,59 +186,7 @@ namespace Lingua.Learning
             var result = actual.SequenceEqual(expected);
             return result;
         }
-
-        private TestSessionResult LearnPatterns(IList<TestCase> testCases)
-        {
-            var settings = new TestRunnerSettings
-            {
-                AbortOnFail = true,
-                AllowReordered = true
-            };
-            var testRunner = new TestRunner(new WordByWordTranslator(_grammar), _evaluator, settings);
-            IEnumerator<ScoredPattern> scoredPatterns = null;
-            TestSessionResult bestResult = null;
-            ScoredPattern currentScoredPattern = null;
-            TestSessionResult result;
-            TestCaseResult lastFailedCase = null;
-            while (!(result = testRunner.RunTestSession(testCases)).Success)
-            {
-                if (bestResult == null)
-                {
-                    bestResult = result;
-                    scoredPatterns = EnumerateScoredPatterns(result.FailedCase);
-                }
-                else if (result > bestResult)
-                {
-                    currentScoredPattern = null;
-                    if (result.SuccessCount > bestResult.SuccessCount)
-                    {
-                        scoredPatterns.Dispose();
-                        scoredPatterns = EnumerateScoredPatterns(result.FailedCase);
-                        testCases.MoveToBeginning(lastFailedCase.TestCase);
-                        testRunner.KnownResult = null;
-                    }
-                    else scoredPatterns.Reset();
-                    bestResult = result;
-                }
-                lastFailedCase = result.FailedCase;
-                do
-                {
-                    if (currentScoredPattern != null)
-                        _evaluator.Undo(currentScoredPattern);
-                    if (!scoredPatterns.MoveNext())
-                        return bestResult;
-                    currentScoredPattern = scoredPatterns.Current;
-                    _evaluator.Do(currentScoredPattern);
-                    testRunner.KnownResult = null;
-                    lastFailedCase = testRunner.RunTestCase(lastFailedCase.TestCase);
-                } while (lastFailedCase.Deficit >= bestResult.FailedCase.Deficit);
-                if (lastFailedCase.IsSuccess)
-                    testCases.MoveToBeginning(lastFailedCase.TestCase);
-                testRunner.KnownResult = lastFailedCase;
-            }
-            return result;
-        }
-
+        */
         private TestSessionResult VerifyPatterns(IEnumerable<TestCase> testCases)
         {
             var settings = new TestRunnerSettings

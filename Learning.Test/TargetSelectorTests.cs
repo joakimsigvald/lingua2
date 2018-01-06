@@ -80,7 +80,7 @@ namespace Lingua.Learning.Test
         private TranslationTarget CreateTarget(string possibilitiesStr, string to)
         {
             var possibilities = ParsePossibilities(possibilitiesStr);
-            return TargetSelector.SelectTarget(possibilities, to);
+            return TargetSelector.SelectTargets(possibilities, to).FirstOrDefault();
         }
 
         private IList<ITranslation[]> ParsePossibilities(string possibilitiesStr)

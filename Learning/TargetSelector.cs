@@ -11,41 +11,45 @@ namespace Lingua.Learning
 
     public static class TargetSelector
     {
-        public static TranslationTarget SelectTarget(IList<ITranslation[]> possibilities, string translated)
+        public static TranslationTarget[] SelectTargets(IList<ITranslation[]> possibilities, string translated)
         {
             if (possibilities == null)
-                return null;
+                return new TranslationTarget[0];
             var orderedTranslations = SelectBestTranslationsWithOrder(possibilities, translated);
-            if (!orderedTranslations.order.Any())
-                throw new Exception($"Could not find possible translation for: {translated}, missing: {orderedTranslations.unmatched}");
-            var translations = orderedTranslations.translations;
-            var arrangement = CreateArrangement(translations, orderedTranslations.order);
-            return new TranslationTarget
-            {
-                Arrangement = arrangement,
-                Unmatched = orderedTranslations.unmatched,
-                Translations = translations
-            };
+            if (!orderedTranslations.First().order.Any())
+                throw new Exception($"Could not find possible translation for: {translated}, missing: {orderedTranslations.First().unmatched}");
+            return orderedTranslations
+                .Select(x => CreateTarget(x.translations, x.order, x.unmatched))
+                .ToArray();
         }
+
+        private static TranslationTarget CreateTarget(ITranslation[] translations, byte[] order, string unmatched) 
+            => new TranslationTarget
+        {
+            Arrangement = CreateArrangement(translations, order),
+            Unmatched = unmatched,
+            Translations = translations
+        };
 
         private static Arrangement CreateArrangement(IEnumerable<ITranslation> translations, byte[] order)
             => new Arrangement(translations.Select(t => t.Code).ToArray(), order);
 
-        private static (ITranslation[] translations, byte[] order, string unmatched, string hidden) SelectBestTranslationsWithOrder(IEnumerable<ITranslation[]> possibilities, string translated)
+        private static (ITranslation[] translations, byte[] order, string unmatched, string hidden)[] SelectBestTranslationsWithOrder(IEnumerable<ITranslation[]> possibilities, string translated)
         {
             var filteredPossibilities = FilterPossibilities(possibilities, translated).ToList();
             var possibleSequences = new Expander(filteredPossibilities).Expand(out var _);
-            var bestSequences = possibleSequences
+            return possibleSequences
                 .Select(ps => new OrderMaker(translated).SelectAndOrderTranslations(ps))
                 .OrderBy(o => o.unmatched.Length)
                 .ThenBy(o => OutOfOrderCount(o.order))
                 .ThenBy(o => o.hidden.Length)
                 .ToArray();
-            return bestSequences.First();
         }
 
         private static int OutOfOrderCount(byte[] order)
-            => order.Skip(1).Select((n, i) => n < order[i]).Count(v => v);
+            => order.Any() 
+            ? order.Skip(1).Select((n, i) => n != order[i] + 1).Prepend(order[0] != 0).Count(v => v)
+            : 0;
 
         private static IEnumerable<ITranslation[]> FilterPossibilities(
             IEnumerable<ITranslation[]> possibilities, string translated)

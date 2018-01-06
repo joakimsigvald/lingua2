@@ -39,7 +39,7 @@ namespace Lingua.Learning.Test
             var trainer = new Trainer();
             var testCase = new TestCase(from, expected);
             var res = trainer.RunTrainingSession(testCase);
-            Assert.That(res.FailedCase?.IsSuccess ?? true, $"Failed on {res.SuccessCount + 1}th case");
+            Assert.That(res.FailedCase?.Success ?? true, $"Failed on {res.SuccessCount + 1}th case");
         }
 
         private static TestSessionResult GeneratePatterns(Trainer trainer)

@@ -12,7 +12,7 @@ namespace Lingua.Learning
         }
 
         public IList<ITranslation[]> Possibilities { get; set; }
-        public TranslationTarget Target { get; set; }
+        public TranslationTarget[] Targets { get; set; }
         public string Suite { get; set; }
         public string From { get; }
         public string Expected { get; }
