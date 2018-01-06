@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Lingua.Core;
 using Moq;
@@ -18,7 +19,6 @@ namespace Lingua.Learning.Test
         [TestCase("x>a,y>b,z>c", "ca", "20")]
         [TestCase("x>a", "A", "0")]
         [TestCase("x>a/b,y>c", "bc", "01")]
-        [TestCase("x>a", "ab", "")]
         [TestCase("x>ab,y>abc", "abcab", "10")]
         [TestCase("x>cab/a/ab,y>abc", "abcab", "10")]
         [TestCase("x>a,x>a", "aa", "01")]
@@ -35,22 +35,13 @@ namespace Lingua.Learning.Test
             Assert.That(target?.Arrangement?.Order, Is.EqualTo(expectedOrder));
         }
 
-        [TestCase("", "", null)]
-        [TestCase("x>a", "a", true)]
-        [TestCase("x>a", "ab", false)]
-        public void TestIsFullyTranslated(string possibilitiesStr, string to, bool? expected)
-        {
-            var target = CreateTarget(possibilitiesStr, to);
-            Assert.That(target?.IsFullyTranslated, Is.EqualTo(expected));
-        }
-
         [TestCase("x>a", "ab", "b")]
         [TestCase("x>a,y>d", "  a    b   cd  ", "b,c")]
         [TestCase("x>a,x>b", "c d", "c,d")]
         public void TestUnmatched(string possibilitiesStr, string to, string expected)
         {
-            var target = CreateTarget(possibilitiesStr, to);
-            Assert.That(target.Unmatched, Is.EqualTo(expected));
+            var ex = Assert.Throws<Exception>(() => CreateTarget(possibilitiesStr, to));
+            Assert.That(ex.Message, Does.Contain("missing: " + expected));
         }
 
         [TestCase("x>a:1", "a", "1")]

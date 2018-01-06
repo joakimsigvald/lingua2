@@ -30,6 +30,7 @@ namespace Lingua.Learning
         public TestSessionResult RunTrainingSession(params TestCase[] testCases)
         {
             var preparedTestCases = PrepareForLearning(testCases);
+            //return LearnPatterns(preparedTestCases);
             var result = LearnPatterns(preparedTestCases);
             if (!result.Success)
                 return result;

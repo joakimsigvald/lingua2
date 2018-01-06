@@ -16,12 +16,13 @@ namespace Lingua.Learning
             if (possibilities == null)
                 return null;
             var orderedTranslations = SelectBestTranslationsWithOrder(possibilities, translated);
+            if (!orderedTranslations.order.Any())
+                throw new Exception($"Could not find possible translation for: {translated}, missing: {orderedTranslations.unmatched}");
             var translations = orderedTranslations.translations;
             var arrangement = CreateArrangement(translations, orderedTranslations.order);
             return new TranslationTarget
             {
                 Arrangement = arrangement,
-                IsFullyTranslated = arrangement.Order.Any(),
                 Unmatched = orderedTranslations.unmatched,
                 Translations = translations
             };
@@ -75,7 +76,8 @@ namespace Lingua.Learning
             _matched = new string(Tab, _translated.Length);
         }
 
-        public (ITranslation[] translations, byte[] order, string unmatched, string hidden) SelectAndOrderTranslations(ITranslation[] translations)
+        public (ITranslation[] translations, byte[] order, string unmatched, string hidden) 
+            SelectAndOrderTranslations(ITranslation[] translations)
         {
             var words = translations.Select(t => t.Output).ToArray();
             var order = MakeOrder(words).ToArray();

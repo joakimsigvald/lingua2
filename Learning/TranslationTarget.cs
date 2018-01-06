@@ -10,7 +10,6 @@ namespace Lingua.Learning
     {
         public ITranslation[] Translations { get; set; }
         public Arrangement Arrangement { get; set; }
-        public bool IsFullyTranslated { get; set; }
         public string Unmatched { get; set; }
 
         public IEnumerable<ITranslation> ArrangedTranslations
