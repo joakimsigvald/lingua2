@@ -1,9 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using Lingua.Core;
 
 namespace Lingua.Learning
 {
+    using Core;
     using Core.Extensions;
     using Grammar;
 
@@ -11,24 +11,32 @@ namespace Lingua.Learning
     {
         public static IEnumerable<Arranger> GetArrangerCandidates(IEnumerable<Arrangement> targetArrangements)
             => targetArrangements
-                .SelectMany(GetArrangerCandidates)
+                .SelectMany(GetArrangements)
                 .Distinct()
                 .OrderBy(arr => arr.Length)
                 .Select(arr => new Arranger(arr));
 
-        private static IEnumerable<Arrangement> GetArrangerCandidates(Arrangement targetArrangement)
-            => GetArrangerCandidates(targetArrangement.Code, targetArrangement.Order)
+        public static IEnumerable<Arranger> GetArrangerCandidates(Arrangement targetArrangement)
+            => targetArrangement.IsInPerfectOrder 
+            ? new Arranger[0]
+            : GetArrangements(targetArrangement)
+                .Distinct()
+                .OrderBy(arr => arr.Length)
+                .Select(arr => new Arranger(arr));
+
+        private static IEnumerable<Arrangement> GetArrangements(Arrangement targetArrangement)
+            => GetArrangements(targetArrangement.Code, targetArrangement.Order)
                 .ExceptNull()
                 .Where(arr => !arr.IsInPerfectOrder);
 
-        private static IEnumerable<Arrangement> GetArrangerCandidates(ushort[] code, byte[] order)
+        private static IEnumerable<Arrangement> GetArrangements(ushort[] code, byte[] order)
         {
             for (var length = 1; length <= code.Length; length++)
             for (var index = 0; index <= code.Length - length; index++)
-                yield return GetArrangerCandidate(code, order, length, index);
+                yield return GetArrangement(code, order, length, index);
         }
 
-        private static Arrangement GetArrangerCandidate(ushort[] code, byte[] order, int length, int startIindex)
+        private static Arrangement GetArrangement(ushort[] code, byte[] order, int length, int startIindex)
         {
             var endIndex = startIindex + length;
             var suborder = order.Where(n => n >= startIindex && n < endIndex).ToArray();

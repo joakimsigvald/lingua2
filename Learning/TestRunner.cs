@@ -21,8 +21,6 @@ namespace Lingua.Learning
             _evaluator = evaluator;
         }
 
-        public TestCaseResult KnownResult { private get; set; }
-
         public static TestCase[] LoadTestCases()
             => Loader.LoadTestSuites()
                 .SelectMany(kvp => kvp.Value.Select(v => new TestCase(v.Key, v.Value)
@@ -36,8 +34,6 @@ namespace Lingua.Learning
 
         public TestCaseResult RunTestCase(TestCase testCase)
         {
-            if (testCase == KnownResult?.TestCase)
-                return KnownResult;
             var translationResult = _translator.Translate(testCase);
             if (_settings.PrepareTestCaseForAnalysis)
                 AssureTargetsSet(testCase, translationResult);
@@ -62,8 +58,8 @@ namespace Lingua.Learning
 
         private static void AssureTargetsSet(TestCase testCase, TranslationResult translationResult)
         {
-            testCase.Targets = testCase.Targets 
-                ?? TargetSelector.SelectTargets(translationResult.Possibilities, testCase.Expected);
+            if (testCase.Target == null)
+                testCase.Targets = TargetSelector.SelectTargets(translationResult.Possibilities, testCase.Expected);
         }
     }
 }

@@ -46,6 +46,7 @@
     <Compile Include="ArrangerGenerator.cs" />
     <Compile Include="ConsoleReporter.cs" />
     <Compile Include="IPatternExtractor.cs" />
+    <Compile Include="LearningFailed.cs" />
     <Compile Include="MissingTranslations.cs" />
     <Compile Include="ScoredPatternPriorityComputer.cs" />
     <Compile Include="TestCaseTranslators\TestCaseConstructor.cs" />
@@ -58,6 +59,7 @@
     <Compile Include="TestCaseTranslators\PossibilitiesTranslator.cs" />
     <Compile Include="TestRunnerSettings.cs" />
     <Compile Include="TestSessionResult.cs" />
+    <Compile Include="TrainingSession.cs" />
     <Compile Include="TranslationExtractor.cs" />
     <Compile Include="PatternExtractor.cs" />
     <Compile Include="TestCase.cs" />

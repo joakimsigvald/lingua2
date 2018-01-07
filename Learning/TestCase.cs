@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using Lingua.Core;
 
 namespace Lingua.Learning
@@ -12,12 +13,18 @@ namespace Lingua.Learning
         }
 
         public IList<ITranslation[]> Possibilities { get; set; }
-        public TranslationTarget[] Targets { get; set; }
+        public TranslationTarget Target => Targets?.FirstOrDefault();
+        public TranslationTarget[] Targets { private get; set; }
         public string Suite { get; set; }
         public string From { get; }
         public string Expected { get; }
 
         public override string ToString()
             => $"{From}=>{Expected}";
+
+        public void RemoveTarget()
+        {
+            Targets = Targets.Skip(1).ToArray();
+        }
     }
 }

@@ -19,6 +19,7 @@ namespace Lingua.Learning
             if (!orderedTranslations.First().order.Any())
                 throw new Exception($"Could not find possible translation for: {translated}, missing: {orderedTranslations.First().unmatched}");
             return orderedTranslations
+                .Where(x => x.order.Any())
                 .Select(x => CreateTarget(x.translations, x.order, x.unmatched))
                 .ToArray();
         }

@@ -11,7 +11,7 @@ namespace Lingua.Grammar
     public class Evaluator : IEvaluator
     {
         public ScoreTreeNode ScoringTree;
-        protected IList<Arranger> Arrangers = new List<Arranger>();
+        public IList<Arranger> Arrangers = new List<Arranger>();
 
         private static readonly Lazy<ScoreTreeNode> LoadedScoringTree =
             new Lazy<ScoreTreeNode>(() => BuildScoringTree(Repository.LoadScoredPatterns()));

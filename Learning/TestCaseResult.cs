@@ -14,12 +14,11 @@ namespace Lingua.Learning
         {
             TestCase = testCase;
             _translationResult = translationResult;
-            if (TestCase.Targets != null)
-                WordDeficit = ComputeWordDeficit();
+            UpdateDeficit();
         }
 
         public int Deficit => WordDeficit + ScoreDeficit;
-        private int WordDeficit { get; }
+        private int WordDeficit { get; set; }
         public int ScoreDeficit { private get; set; }
 
         private int ComputeWordDeficit()
@@ -37,9 +36,8 @@ namespace Lingua.Learning
         public string Expected => TestCase.Expected;
         public string Actual => _translationResult.Translation;
         public bool Success => Actual == TestCase.Expected;
-        public bool WordTranslationSuccess => WordDeficit + ScoreDeficit == 0;
         public IReason Reason => _translationResult.Reason;
-        public IEnumerable<ITranslation> ExpectedTranslations => TestCase.Targets.First().Translations;
+        public IEnumerable<ITranslation> ExpectedTranslations => TestCase.Target.Translations;
         public IEnumerable<ITranslation> Translations => _translationResult.Translations;
 
         public override string ToString()
@@ -47,5 +45,17 @@ namespace Lingua.Learning
 
         private static IEnumerable<string> GetWords(IEnumerable<ITranslation> translations)
             => translations.Select(t => t.Output.ToLower());
+
+        public void RemoveTarget()
+        {
+            TestCase.RemoveTarget();
+            UpdateDeficit();
+        }
+
+        private void UpdateDeficit()
+        {
+            if (TestCase.Target != null)
+                WordDeficit = ComputeWordDeficit();
+        }
     }
 }
