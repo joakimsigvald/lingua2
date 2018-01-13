@@ -11,8 +11,8 @@ namespace Lingua.Learning.Test
     [TestFixture]
     public class PatternGeneratorTests
     {
-        private static readonly ushort[] WantedSequence = { 1 };
-        private static readonly ushort[] UnwantedSequence = { 2 };
+        private static readonly ushort[] WantedSequence = {1};
+        private static readonly ushort[] UnwantedSequence = {2};
 
         [Test]
         public void GivenNoPatterns_GenerateNoScoredPatterns()
@@ -31,18 +31,19 @@ namespace Lingua.Learning.Test
 
         [TestCase("A")]
         [TestCase("A", "C")]
-        public void GivenUnwantedMonoPatterns_GenerateThosePatternsWithScore_Minus_1(params string[] unwantedMonoPatterns)
+        public void GivenUnwantedMonoPatterns_GenerateThosePatternsWithScore_Minus_1(
+            params string[] unwantedMonoPatterns)
         {
             var scoredPatterns = GetScoredPatterns(unwantedPatterns: unwantedMonoPatterns);
             Assert.That(scoredPatterns.Select(sp => sp.Pattern), Is.EquivalentTo(unwantedMonoPatterns));
             Assert.That(scoredPatterns.All(sp => sp.Score == -1));
         }
 
-        [TestCase(new[] { "A" }, new[] { "C" })]
-        [TestCase(new[] { "A", "C" }, new[] { "N" })]
-        [TestCase(new[] { "A" }, new[] { "C", "N" })]
-        [TestCase(new[] { "A" }, new[] { "A" })]
-        [TestCase(new[] { "A", "C" }, new[] { "A", "N" })]
+        [TestCase(new[] {"A"}, new[] {"C"})]
+        [TestCase(new[] {"A", "C"}, new[] {"N"})]
+        [TestCase(new[] {"A"}, new[] {"C", "N"})]
+        [TestCase(new[] {"A"}, new[] {"A"})]
+        [TestCase(new[] {"A", "C"}, new[] {"A", "N"})]
         public void GivenWantedAndUnwantedMonoPatterns_GenerateThosePatternsWithScore_PlusOrMinus_1(
             string[] wantedMonoPatterns
             , string[] unwantedMonoPatterns)
@@ -78,6 +79,40 @@ namespace Lingua.Learning.Test
             Assert.That(scoredPatterns
                 .Where(sp => sp.Score == -1)
                 .Select(sp => sp.Pattern), Is.EquivalentTo(patterns));
+        }
+
+        [TestCase("N", "V", "+N*", "+N", "-V*", "-V", "+^N*", "+^N", "-^V*", "-^V")]
+        [TestCase("NV", "VN"
+            , "+N*V*", "+NV*", "+N*V", "+NV", "+^N*", "+^N", "+^N*V*", "+^NV*", "+^N*V", "+^NV"
+            , "-V*N*", "-VN*", "-V*N", "-VN", "-^V*", "-^V", "-^V*N*", "-^VN*", "-^V*N", "-^VN")]
+        public void Test(string wantedSequence, string unwantedSequence, params string[] scoredPatterns)
+        {
+            var translationExtractorMock = new Mock<ITranslationExtractor>();
+            translationExtractorMock.Setup(extractor => extractor.GetWantedSequence(null))
+                .Returns(Encoder.Encode(wantedSequence));
+            translationExtractorMock.Setup(extractor => extractor.GetUnwantedSequence(null))
+                .Returns(Encoder.Encode(unwantedSequence));
+            var patternExtractor = new PatternExtractor();
+            var generator = new PatternGenerator(translationExtractorMock.Object, patternExtractor);
+
+            var actualPatterns = generator.GetScoredPatterns(null);
+
+            var expectedPatterns = scoredPatterns.Select(CreateScoredPattern).ToList();
+            Assert.That(actualPatterns, Is.EquivalentTo(expectedPatterns),
+                ShowDifference(actualPatterns, expectedPatterns));
+        }
+
+        private static string ShowDifference(IList<ScoredPattern> actualPatterns, IReadOnlyCollection<ScoredPattern> expectedPatterns)
+            => $"Wanted {ListDifference(expectedPatterns, actualPatterns)} but got {ListDifference(actualPatterns, expectedPatterns)}";
+
+        private static string ListDifference(IEnumerable<ScoredPattern> a, IEnumerable<ScoredPattern> b)
+            => string.Join(", ", a.Except(b));
+
+        private static ScoredPattern CreateScoredPattern(string str)
+        {
+            var score = str[0] == '+' ? 1 : -1;
+            var code = Encoder.Encode(str.Substring(1));
+            return new ScoredPattern(code, (sbyte)score);
         }
 
         private static IList<ScoredPattern> GetScoredPatterns(

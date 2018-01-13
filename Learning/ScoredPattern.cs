@@ -1,8 +1,10 @@
+using System;
+using System.Linq;
 using Lingua.Core;
 
 namespace Lingua.Learning
 {
-    public class ScoredPattern
+    public class ScoredPattern : IEquatable<ScoredPattern>
     {
         public ScoredPattern(ushort[] code, sbyte score)
         {
@@ -16,5 +18,16 @@ namespace Lingua.Learning
 
         public override string ToString()
             => $"{Pattern}:{Score}";
+
+        public bool Equals(ScoredPattern other)
+            => other != null
+               && Code.SequenceEqual(other.Code)
+               && Score == other.Score;
+
+        public override bool Equals(object obj)
+            => Equals(obj as ScoredPattern);
+
+        public override int GetHashCode()
+            => Code.Aggregate(0, (a, b) => a + b);
     }
 }
