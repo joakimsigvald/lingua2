@@ -6,19 +6,18 @@ namespace Lingua.Core
 {
     using Extensions;
     using Tokens;
-    using WordClasses;
 
     public class Translator : ITranslator
     {
-        private readonly ITokenizer _tokenizer;
         private readonly IThesaurus _thesaurus;
         private readonly IGrammar _grammar;
+        private readonly TokenGenerator _tokenGenerator;
 
         public Translator(ITokenizer tokenizer, IThesaurus thesaurus, IGrammar grammar)
         {
-            _tokenizer = tokenizer;
             _thesaurus = thesaurus;
             _grammar = grammar;
+            _tokenGenerator = new TokenGenerator(tokenizer);
         }
 
         public TranslationResult Translate(string original)
@@ -34,7 +33,7 @@ namespace Lingua.Core
 
         public IList<ITranslation[]> Destruct(string original)
         {
-            var tokens = Expand(Tokenize(original)).ToArray();
+            var tokens = _tokenGenerator.GetTokens(original);
             var possibilities = CompoundCombiner.Combine(Translate(tokens).ToList()).ToList();
             var undotted = RemoveRedundantDots(possibilities).ToArray();
             SetCodes(undotted);
@@ -78,24 +77,6 @@ namespace Lingua.Core
                 yield return previous = translation;
             }
         }
-
-        private IEnumerable<Token> Expand(IEnumerable<Token> tokens)
-            => tokens.SelectMany(Expand);
-
-        private IEnumerable<Token> Expand(Token token)
-            => Tokenize(Expand(token as Unclassified)) ?? new[] {token};
-
-        private string Expand(Unclassified word)
-            => word == null
-                ? null
-                : _thesaurus.TryExpand(word.Value, out string exactExpanded)
-                    ? exactExpanded
-                    : _thesaurus.TryExpand(word.Value.ToLower(), out string lowerExpanded)
-                        ? lowerExpanded.Capitalize()
-                        : null;
-
-        private IEnumerable<Token> Tokenize(string text)
-            => text == null ? null : _tokenizer.Tokenize(text);
 
         private IEnumerable<ITranslation[]> Translate(IReadOnlyList<Token> tokens)
             => Reduce(tokens.Select(_thesaurus.Translate), tokens);

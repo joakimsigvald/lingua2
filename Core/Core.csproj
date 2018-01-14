@@ -55,6 +55,7 @@
     <Compile Include="ITokenizer.cs" />
     <Compile Include="ITranslation.cs" />
     <Compile Include="LoaderBase.cs" />
+    <Compile Include="TokenGenerator.cs" />
     <Compile Include="Tokens\Start.cs" />
     <Compile Include="Tokens\Ellipsis.cs" />
     <Compile Include="Tokens\Generic.cs" />

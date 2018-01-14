@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 
 namespace Lingua.Vocabulary
 {
@@ -10,8 +9,6 @@ namespace Lingua.Vocabulary
 
     public class Thesaurus : IThesaurus
     {
-        private static readonly IDictionary<string, string> Expanders = Loader.LoadExpanders();
-
         private static readonly ILexicon Lexicon = Loader.LoadLexicon();
 
         public ITranslation[] Translate(Token token)
@@ -25,9 +22,6 @@ namespace Lingua.Vocabulary
                 ? translations.ToArray()
                 : new[] { Translation.Create(token)};
         }
-
-        public bool TryExpand(string word, out string expanded)
-            => Expanders.TryGetValue(word, out expanded);
 
         private static ITranslation[] Translate(Generic generic)
             => Translate(generic.Stem).SelectMany(t => t.Variations).ToArray();
