@@ -20,7 +20,13 @@ namespace Lingua.Learning
             var unwantedCode = _translationExtractor.GetUnwantedSequence(result);
             var scoredMonoPatterns = GetScoredMonoPatterns(wantedCode, unwantedCode);
             var scoredMultiPatterns = GetScoredMultiPatterns(wantedCode, unwantedCode);
-            return scoredMonoPatterns.Concat(scoredMultiPatterns).ToArray();
+            var patterns = scoredMonoPatterns.Concat(scoredMultiPatterns).ToArray();
+            var uniquePatterns = patterns
+                .GroupBy(p => p.Pattern)
+                .Where(g => g.Sum(sp => sp.Score) != 0)
+                .Select(g => g.OrderBy(sp => sp.Score).Skip(g.Count() / 2).First())
+                .ToArray();
+            return uniquePatterns;
         }
 
         private IEnumerable<ScoredPattern> GetScoredMonoPatterns(
@@ -32,14 +38,7 @@ namespace Lingua.Learning
                 .Select(code => new ScoredPattern(code, 1))
                 .ToArray();
             var unwantedScoredMonoPatterns = _patternExtractor.GetMatchingMonoCodes(unwanted)
-                    .Select(code => new ScoredPattern(code, 1))
-                    .ToArray();
-            var commonScoredMonoPatterns = wantedScoredMonoPatterns.Intersect(unwantedScoredMonoPatterns)
-                .ToArray();
-            wantedScoredMonoPatterns = wantedScoredMonoPatterns.Except(commonScoredMonoPatterns)
-                .ToArray();
-            unwantedScoredMonoPatterns = unwantedScoredMonoPatterns.Except(commonScoredMonoPatterns)
-                .Select(p => new ScoredPattern(p.Code, -1))
+                .Select(code => new ScoredPattern(code, -1))
                 .ToArray();
             return wantedScoredMonoPatterns.Concat(unwantedScoredMonoPatterns);
         }

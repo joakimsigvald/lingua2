@@ -39,24 +39,6 @@ namespace Lingua.Learning.Test
             Assert.That(scoredPatterns.All(sp => sp.Score == -1));
         }
 
-        [TestCase(new[] {"A"}, new[] {"C"})]
-        [TestCase(new[] {"A", "C"}, new[] {"N"})]
-        [TestCase(new[] {"A"}, new[] {"C", "N"})]
-        [TestCase(new[] {"A"}, new[] {"A"})]
-        [TestCase(new[] {"A", "C"}, new[] {"A", "N"})]
-        public void GivenWantedAndUnwantedMonoPatterns_GenerateThosePatternsWithScore_PlusOrMinus_1(
-            string[] wantedMonoPatterns
-            , string[] unwantedMonoPatterns)
-        {
-            var scoredPatterns = GetScoredPatterns(wantedMonoPatterns, unwantedMonoPatterns);
-            Assert.That(scoredPatterns
-                .Where(sp => sp.Score == 1)
-                .Select(sp => sp.Pattern), Is.EquivalentTo(wantedMonoPatterns));
-            Assert.That(scoredPatterns
-                .Where(sp => sp.Score == -1)
-                .Select(sp => sp.Pattern), Is.EquivalentTo(unwantedMonoPatterns));
-        }
-
         [TestCase("^A", "A")]
         [TestCase("^AA", "AA")]
         [TestCase("^A", "A", "^AA", "AA")]
@@ -85,7 +67,7 @@ namespace Lingua.Learning.Test
         [TestCase("NV", "VN"
             , "+N*V*", "+NV*", "+N*V", "+NV", "+^N*", "+^N", "+^N*V*", "+^NV*", "+^N*V", "+^NV"
             , "-V*N*", "-VN*", "-V*N", "-VN", "-^V*", "-^V", "-^V*N*", "-^VN*", "-^V*N", "-^VN")]
-        public void Test(string wantedSequence, string unwantedSequence, params string[] scoredPatterns)
+        public void TestAllPatterns(string wantedSequence, string unwantedSequence, params string[] scoredPatterns)
         {
             var translationExtractorMock = new Mock<ITranslationExtractor>();
             translationExtractorMock.Setup(extractor => extractor.GetWantedSequence(null))
@@ -101,6 +83,39 @@ namespace Lingua.Learning.Test
             Assert.That(actualPatterns, Is.EquivalentTo(expectedPatterns),
                 ShowDifference(actualPatterns, expectedPatterns));
         }
+
+        [TestCase("NPV", "VNP"
+            , "+PV", "+NPV", "+^N", "+^NP", "+^NPV"
+            , "-VN", "-VNP", "-^V", "-^VN", "-^VNP")]
+        [TestCase("NN", "N"
+            , "+N", "+NN", "+^NN")]
+        [TestCase("N", "NN"
+            , "-N", "-NN", "-^NN")]
+        public void TestUngeneralizedPatterns(string wantedSequence, string unwantedSequence, params string[] scoredPatterns)
+        {
+            var translationExtractorMock = new Mock<ITranslationExtractor>();
+            translationExtractorMock.Setup(extractor => extractor.GetWantedSequence(null))
+                .Returns(Encoder.Encode(wantedSequence));
+            translationExtractorMock.Setup(extractor => extractor.GetUnwantedSequence(null))
+                .Returns(Encoder.Encode(unwantedSequence));
+            var patternExtractor = new PatternExtractor();
+            var generator = new PatternGenerator(translationExtractorMock.Object, patternExtractor);
+
+            var actualUngeneralizedPatterns = generator
+                .GetScoredPatterns(null)
+                .Where(p => !IsGeneralized(p))
+                .ToList();
+
+            var expectedUngeneralizedPatterns = scoredPatterns
+                .Select(CreateScoredPattern)
+                .Where(p => !IsGeneralized(p))
+                .ToList();
+            Assert.That(actualUngeneralizedPatterns, Is.EquivalentTo(expectedUngeneralizedPatterns),
+                ShowDifference(actualUngeneralizedPatterns, expectedUngeneralizedPatterns));
+        }
+
+        private static bool IsGeneralized(ScoredPattern scoredPattern)
+            => scoredPattern.Pattern.Contains('*');
 
         private static string ShowDifference(IList<ScoredPattern> actualPatterns, IReadOnlyCollection<ScoredPattern> expectedPatterns)
             => $"Wanted {ListDifference(expectedPatterns, actualPatterns)} but got {ListDifference(actualPatterns, expectedPatterns)}";

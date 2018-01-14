@@ -18,7 +18,9 @@ namespace Lingua.Learning
         private readonly TestRunner _testRunner;
         private readonly PatternGenerator _patternGenerator;
 
+        private IList<ScoredPattern> _scoredPatternsList;
         private IEnumerator<ScoredPattern> _scoredPatterns;
+        private IList<Arranger> _arrangementCandidatesList;
         private IEnumerator<Arranger> _arrangementCandidates;
         private TestSessionResult _bestResult;
         private ScoredPattern _currentScoredPattern;
@@ -175,30 +177,30 @@ namespace Lingua.Learning
 
         private void GenerateNewPatterns(TestSessionResult result)
         {
-            _scoredPatterns = EnumerateScoredPatterns(result.FailedCase);
-            _arrangementCandidates = EnumerateArrangementCandidates(result.FailedCase.TestCase);
+            RenewScoredPatterns(result.FailedCase);
+            RenewArrangementCandidates(result.FailedCase.TestCase);
         }
 
-        private IEnumerator<ScoredPattern> EnumerateScoredPatterns(TestCaseResult result)
+        private void RenewScoredPatterns(TestCaseResult result)
         {
-            var patterns = _patternGenerator
+            _scoredPatternsList = _patternGenerator
                 .GetScoredPatterns(result)
                 .Select(PrioritizePattern)
                 .OrderBy(tuple => tuple.priority)
                 .Select(tuple => tuple.sp)
                 .ToList();
-            return patterns.GetEnumerator();
+            _scoredPatterns = _scoredPatternsList.GetEnumerator();
         }
 
         private (ScoredPattern sp, int priority) PrioritizePattern(ScoredPattern sp)
             => (sp, ScoredPatternPriorityComputer.ComputePriority(_evaluator.GetScore(sp.Code), sp.Score, sp.Code));
 
-        private IEnumerator<Arranger> EnumerateArrangementCandidates(TestCase testCase)
+        private void RenewArrangementCandidates(TestCase testCase)
         {
-            var arrangerCandidates = ArrangerGenerator.GetArrangerCandidates(testCase.Target.Arrangement)
+            _arrangementCandidatesList = ArrangerGenerator.GetArrangerCandidates(testCase.Target.Arrangement)
                 .Except(_evaluator.Arrangers)
                 .ToList();
-            return arrangerCandidates.GetEnumerator();
+            _arrangementCandidates = _arrangementCandidatesList.GetEnumerator();
         }
     }
 }

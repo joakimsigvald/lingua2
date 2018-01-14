@@ -1,6 +1,5 @@
 ﻿R*Vl*:2
 Vf*:2
-Xf*:2
 Ad*:1
 I*:1
 I*V:1
@@ -25,8 +24,8 @@ Vi*P*:1
 Vi*P*R*:1
 Vi*P*T*:1
 Vi*R*:1
+Vl:1
 Vl*T*:1
-VlT*:1
 VP*:1
 VT*:1
 X*V:1
@@ -34,7 +33,6 @@ X*Vr*:1
 X1*:1
 Xi*I*:1
 Xp*Vr*:1
-Xr*:1
-Xr*Vl*:1
-A*:-1
+Xr*Vr*:1
 N*:-1
+X*:-2

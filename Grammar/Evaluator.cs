@@ -6,7 +6,6 @@ namespace Lingua.Grammar
 {
     using Core.Extensions;
     using Core;
-    using Core.WordClasses;
 
     public class Evaluator : IEvaluator
     {
@@ -32,8 +31,7 @@ namespace Lingua.Grammar
 
         public Evaluation Evaluate(ushort[] code)
         {
-            var mergedCode = MergeConjunctions(code);
-            var scorings = GetMatchingScoreNodes(mergedCode)
+            var scorings = GetMatchingScoreNodes(code)
                 .GroupBy(n => n)
                 .Select(n => new Scoring(n.Key.Path, (byte)n.Count(), n.Key.Score))
                 .ToArray();
@@ -52,37 +50,6 @@ namespace Lingua.Grammar
 
         private IEnumerable<ScoreTreeNode> GetMatchingScoreNodes(ushort[] sequence)
             => new EvaluationProcess(sequence).GetMatchingScoreNodes(ScoringTree);
-
-        private static ushort[] MergeConjunctions(ushort[] code)
-        {
-            var nextConjunctionIndex = GetNextHomogeneousConjunctionIndex(code);
-            if (nextConjunctionIndex < 0)
-                return code;
-
-            var mergedCode = new List<ushort>();
-            var prevConjunctionIndex = 0;
-            while (nextConjunctionIndex >= 0)
-            {
-                mergedCode.AddRange(code.Take(nextConjunctionIndex).Skip(prevConjunctionIndex));
-                mergedCode.Add(code[nextConjunctionIndex]);
-                prevConjunctionIndex = nextConjunctionIndex + 3;
-                nextConjunctionIndex = GetNextHomogeneousConjunctionIndex(code, prevConjunctionIndex);
-            }
-            mergedCode.AddRange(code.Skip(prevConjunctionIndex));
-
-            return mergedCode.ToArray();
-        }
-
-        private static int GetNextHomogeneousConjunctionIndex(IReadOnlyList<ushort> code, int offset = 0)
-        {
-            for (var i = offset; i < code.Count - 2; i++)
-                if (IsHomogeneousConjunction(code[i], code[i + 1], code[i + 2]))
-                    return i;
-            return -1;
-        }
-
-        private static bool IsHomogeneousConjunction(ushort a, ushort c, ushort b)
-            => c == Conjunction.Code && a == b;
 
         private static ScoreTreeNode BuildScoringTree(IDictionary<string, sbyte> patterns)
         {

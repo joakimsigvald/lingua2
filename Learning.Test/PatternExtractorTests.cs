@@ -14,10 +14,12 @@ namespace Lingua.Learning.Test
         [TestCase("Nn", "N*", "Nn*", "Nn")]
         [TestCase("NN", "N*", "N")]
         [TestCase("AAA", "A*", "A")]
-        public void ExtractMonoPatterns(string from, params string[] expected)
+        public void ExtractDistinctMonoPatterns(string from, params string[] expected)
         {
             var sequence = Encoder.Encode(from);
-            var patterns = PatternExtractor.GetMatchingMonoCodes(sequence).Select(Encoder.Serialize);
+            var patterns = PatternExtractor.GetMatchingMonoCodes(sequence)
+                .Select(Encoder.Serialize)
+                .Distinct();
             Assert.That(patterns, Is.EquivalentTo(expected));
         }
 

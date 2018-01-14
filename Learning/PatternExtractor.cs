@@ -11,13 +11,10 @@ namespace Lingua.Learning
     {
         private static readonly List<IList<bool[]>> Masks = new List<IList<bool[]>>();
 
-        public IEnumerable<ushort[]> GetMatchingMonoCodes(ushort[] sequence)
-        {
-            var codes = sequence.Distinct().ToArray();
-            return codes.SelectMany(Encoder.Generalize)
-                .Concat(codes)
-                .Select(code => new[] { code });
-        }
+        public IEnumerable<ushort[]> GetMatchingMonoCodes(ushort[] sequence) 
+            => sequence.SelectMany(Encoder.Generalize)
+            .Concat(sequence)
+            .Select(code => new[] { code });
 
         public IEnumerable<ushort[]> GetMatchingCodes(ushort[] sequence, int length)
         {
