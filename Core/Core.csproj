@@ -67,6 +67,9 @@
     <Compile Include="Tokens\Element.cs" />
     <Compile Include="CompoundCombiner.cs" />
     <Compile Include="TranslationResult.cs" />
+    <Compile Include="WordClasses\AdverbQualifying.cs" />
+    <Compile Include="WordClasses\AdverbPositioning.cs" />
+    <Compile Include="WordClasses\AdverbQuestion.cs" />
     <Compile Include="WordClasses\InfinitiveMarker.cs" />
     <Compile Include="WordClasses\Conjunction.cs" />
     <Compile Include="WordClasses\Preposition.cs" />

@@ -21,20 +21,15 @@ namespace Lingua.Core
         }
 
         public TranslationResult Translate(string original)
-        {
-            if (string.IsNullOrWhiteSpace(original))
-                return new TranslationResult
-                {
-                    Translation = string.Empty
-                };
-            var possibilities = Destruct(original);
-            return Construct(possibilities);
-        }
+            => string.IsNullOrWhiteSpace(original)
+                ? new TranslationResult("")
+                : Compose(Decompose(original));
 
-        public IList<ITranslation[]> Destruct(string original)
+        public IList<ITranslation[]> Decompose(string original)
         {
             var tokens = _tokenGenerator.GetTokens(original);
-            var possibilities = CompoundCombiner.Combine(Translate(tokens).ToList()).ToList();
+            var translationCandidates = Translate(tokens).ToList();
+            var possibilities = CompoundCombiner.Combine(translationCandidates).ToList();
             var undotted = RemoveRedundantDots(possibilities).ToArray();
             SetCodes(undotted);
             return undotted;
@@ -47,7 +42,7 @@ namespace Lingua.Core
                 translation.Code = Encoder.Encode(translation.From);
         }
 
-        public TranslationResult Construct(IList<ITranslation[]> possibilities)
+        public TranslationResult Compose(IList<ITranslation[]> possibilities)
         {
             (var translations, var reason) = _grammar.Reduce(possibilities);
             var arrangedTranslations = _grammar.Arrange(translations).ToList();
@@ -57,10 +52,9 @@ namespace Lingua.Core
 
             var respacedResult = Respace(capitalized).ToArray();
             var translation = Output(respacedResult);
-            return new TranslationResult
+            return new TranslationResult(translation)
             {
                 Translations = translations,
-                Translation = translation,
                 Reason = reason,
                 Possibilities = possibilities
             };

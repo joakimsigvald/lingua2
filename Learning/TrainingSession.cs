@@ -69,7 +69,7 @@ namespace Lingua.Learning
 
         private void PrepareForLearning(TestCase testCase)
         {
-            testCase.Possibilities = _translator.Destruct(testCase.From);
+            testCase.Possibilities = _translator.Decompose(testCase.From);
             testCase.Targets = TargetSelector.SelectTargets(testCase.Possibilities, testCase.Expected);
             if (testCase.Target == null)
                 throw new Exception(

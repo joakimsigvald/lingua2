@@ -1,0 +1,4 @@
+here = här
+there = där
+today = idag
+tomorrow = imorgon

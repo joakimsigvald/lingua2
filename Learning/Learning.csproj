@@ -74,7 +74,6 @@
     <Compile Include="TestCaseResult.cs" />
     <Compile Include="TestSuiteResult.cs" />
     <Compile Include="TranslationTarget.cs" />
-    <Compile Include="TestCaseTranslators\WordByWordTranslator.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Core\Core.csproj">

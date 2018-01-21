@@ -24,9 +24,10 @@ namespace Lingua.Learning.Test
             trainer.SavePatterns();
         }
 
+        [TestCase("I am here", "jag är här")]
         [TestCase("I want to go to the theater", "jag vill gå till teatern")]
         [TestCase("A ball i.e..", "En boll dvs...")]
-        [TestCase("The rat made a nest and slept in it.", "Råttan byggde ett bo och sov i det.")]
+        [TestCase("The rat made a nest and slept in it.", "Råttan gjorde ett bo och sov i det.")]
         [TestCase("I have been running", "jag har sprungit")]
         [TestCase("I will be running", "jag kommer att springa")]
         [TestCase("I will have been running", "jag kommer att ha sprungit")]

@@ -1,7 +1,7 @@
 at = vid
 by = vid
-here = här
 in = i
+of = av
 on = på
 to = till
 with = med

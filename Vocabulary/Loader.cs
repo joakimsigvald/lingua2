@@ -23,6 +23,9 @@ namespace Lingua.Vocabulary
             Load<Adjective>(),
             Load<Auxiliary>(),
             Load<Verb>(),
+            Load<AdverbQualifying>(),
+            Load<AdverbPositioning>(),
+            Load<AdverbQuestion>(),
             Load<InfinitiveMarker>(),
             Load<Conjunction>(),
             Load<Greeting>()

@@ -1,0 +1,3 @@
+when = när
+where = var
+why = varför

@@ -1,5 +1,6 @@
 ﻿achievement-oriented = prestationsorienterad
 alright = okej
+big:::er:est| = stor:t:a|_2örre:_2örst|a
 blue:::r:st| = blå:tt:a|re:ast|e
 red:::er:est| = röd:_tt:a|re:ast|e
 easy:::_ier|_st:_ily = lätt::a|re:ast|e:
@@ -11,6 +12,7 @@ French- = fransk
 good = god
 good-looking = snygg
 green:::er:est| = grön:t:a|re:ast|e
+kind:::er:est| = snäll:t:a|re:ast|e
 non- = icke-
 speaking = talande
 yellow:::er:est| = gul:t:a|re:ast|e

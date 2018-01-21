@@ -35,13 +35,14 @@ namespace Lingua.Core.Test
         [Test]
         public void TranslateNull()
             => TestCase(null, "");
-                         
+
+        [TestCase("|I am here| /=> |jag är här|")]
         [TestCase("|Bouncing ball to play with| /=> |Studsboll att leka med|")]
         [TestCase("|It is my pen| /=> |Det är min penna|")]
         [TestCase("|I am painting the wall| /=> |jag målar väggen|")]
         [TestCase("|search results| /=> |sökresultat|")]
         [TestCase("|I have been running| /=> |jag har sprungit|")]
-        [TestCase("|The rat made a nest and slept in it.| /=> |Råttan byggde ett bo och sov i det.|")]
+        [TestCase("|The rat made a nest and slept in it.| /=> |Råttan gjorde ett bo och sov i det.|")]
         public void RunTestCase(string testCase)
         {
             var parts = Regex.Split(testCase, @"\s+/=>\s+");
