@@ -69,6 +69,7 @@ namespace Lingua.Vocabulary.Test
 
         [TestCase("search", "sök")]
         [TestCase("street", "gatu")]
+        [TestCase("concert", "konsert")]
         public void IncompleteCompund(string from, string to)
         {
             var translations = Thesaurus.Translate(new Unclassified {Value = from});

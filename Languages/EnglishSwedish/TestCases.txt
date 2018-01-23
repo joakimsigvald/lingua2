@@ -150,7 +150,7 @@
 "come to me", "kom till mig"
 "the ball is on the chair", "bollen är på stolen"
 "He is by the sea", "Han är vid havet"
-"He is at the lake", "Han är vid sjön"
+"He is by the lake", "Han är vid sjön"
 
 //Conjunctions
 "Give me apples and bananas", "Ge mig äpplen och bananer"
@@ -176,6 +176,8 @@
 "It is a red ball.", "Det är en röd boll."
 //"The ball hit a table. It made a mark in it.", "Bollen träffade ett bord. Den gjorde ett märke i det."
 //"The table stood on a rug. It made a mark in it.", "Bordet stod på en matta. Det gjorde ett märke i den."
+
+//Adverbs
 //"When I was young I was a salesman.", "När jag var ung var jag en säljare."
-//"Today I have been to the concert hall.", "Idag har jag varit till konserthallen."
-//"I'm sitting in the room and looking at dolls.", "Jag sitter i rummet och tittar på dockor."
+"Today I have been to the concert hall.", "Idag har jag varit till konserthallen."
+"I'm sitting in the room and looking at dolls.", "Jag sitter i rummet och tittar på dockor."

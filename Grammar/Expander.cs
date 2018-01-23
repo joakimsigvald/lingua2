@@ -29,12 +29,14 @@ namespace Lingua.Grammar
         private IEnumerable<ITranslation[]> Expand(int offset, int todo, ref bool futureKnown)
         {
             if (offset == _possibilities.Count)
-                return new[] { new ITranslation[0] };
+                return new[] {new ITranslation[0]};
             if (todo > 0)
-                return _expansions[offset]
-                       ?? (_expansions[offset] = DoExpand(offset, todo, ref futureKnown).ToList());
+                return offset >= _expansions.Length
+                    ? DoExpand(offset, todo, ref futureKnown).ToList()
+                    : (_expansions[offset]
+                       ?? (_expansions[offset] = DoExpand(offset, todo, ref futureKnown).ToList()));
             futureKnown = false;
-            return new[] { new ITranslation[0] };
+            return new[] {new ITranslation[0]};
         }
 
         private IEnumerable<ITranslation[]> DoExpand(int offset, int todo, ref bool cutoff)

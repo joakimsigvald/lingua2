@@ -1,4 +1,4 @@
-at = vid
+at = på
 by = vid
 in = i
 of = av
