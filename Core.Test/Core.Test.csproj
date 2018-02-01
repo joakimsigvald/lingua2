@@ -55,6 +55,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CapitalizerTests.cs" />
     <Compile Include="EncoderTests.cs" />
     <Compile Include="EnumerableExtensionsTests.cs" />
     <Compile Include="IntExtensionsTests.cs" />

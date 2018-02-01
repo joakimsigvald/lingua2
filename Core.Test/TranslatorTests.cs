@@ -23,7 +23,7 @@ namespace Lingua.Core.Test
             => new TestBench(new TestRunner(new FullTextTranslator(Translator)), new TestReporter());
 
         private static Translator CreateTranslator() 
-            => new Translator(new Tokenizer(), new Thesaurus(), new GrammarEngine(Evaluator));
+            => new Translator(new Tokenizer(), new Thesaurus(), new GrammarEngine(Evaluator), new Capitalizer());
 
         private static Evaluator GetEvaluator()
         {

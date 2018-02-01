@@ -4,20 +4,23 @@ using System.Text.RegularExpressions;
 
 namespace Lingua.Core
 {
-    using Extensions;
     using Tokens;
 
     public class Translator : ITranslator
     {
+        private static readonly Regex Whitespace = new Regex(@"\s+");
+
         private readonly IThesaurus _thesaurus;
         private readonly IGrammar _grammar;
+        private readonly ICapitalizer _capitalizer;
         private readonly TokenGenerator _tokenGenerator;
 
-        public Translator(ITokenizer tokenizer, IThesaurus thesaurus, IGrammar grammar)
+        public Translator(ITokenizer tokenizer, IThesaurus thesaurus, IGrammar grammar, ICapitalizer capitalizer)
         {
             _thesaurus = thesaurus;
             _grammar = grammar;
             _tokenGenerator = new TokenGenerator(tokenizer);
+            _capitalizer = capitalizer;
         }
 
         public TranslationResult Translate(string original)
@@ -47,8 +50,7 @@ namespace Lingua.Core
             (var translations, var reason) = _grammar.Reduce(possibilities);
             var arrangedTranslations = _grammar.Arrange(translations).ToList();
 
-            var recapitalized = PromoteInvisibleCapitalizations(arrangedTranslations, translations);
-            var capitalized = CapitalizeStartOfSentences(recapitalized).ToArray();
+            var capitalized = _capitalizer.Capitalize(arrangedTranslations, translations);
 
             var respacedResult = Respace(capitalized).ToArray();
             var translation = Output(respacedResult);
@@ -84,68 +86,6 @@ namespace Lingua.Core
             int nextIndex)
             => candidates.Where(t => t.Matches(tokens, nextIndex));
 
-        private static IEnumerable<ITranslation> CapitalizeStartOfSentences(IEnumerable<ITranslation> translations)
-            => SeparateSentences(translations).SelectMany(CapitalizeStartOfSentence);
-
-        private static IEnumerable<IList<ITranslation>> SeparateSentences(IEnumerable<ITranslation> translations)
-        {
-            var nextSequence = new List<ITranslation>();
-            foreach (var translation in translations)
-            {
-                nextSequence.Add(translation);
-                if (!IsEndOfSentence(translation.From)) continue;
-                yield return nextSequence;
-                nextSequence = new List<ITranslation>();
-            }
-            yield return nextSequence;
-        }
-
-        private static IEnumerable<ITranslation> CapitalizeStartOfSentence(IList<ITranslation> sequence)
-        {
-            if (!IsSentence(sequence))
-                return sequence;
-            var preWord = sequence.TakeWhile(t => !(t.From is Element)).ToArray();
-            var sentence = sequence.Skip(preWord.Length).ToArray();
-            var firstWord = sentence.First();
-            return firstWord.IsCapitalized
-                ? sequence
-                : preWord.Concat(sentence.Skip(1).Prepend(firstWord.Capitalize()));
-        }
-
-        private static bool IsSentence(IList<ITranslation> translations)
-            => translations.Any(t => t.From is Element) && IsEndOfSentence(translations.Last().From);
-
-        private static bool IsEndOfSentence(Token token)
-            => token is Terminator || token is Ellipsis;
-
-        private static IEnumerable<ITranslation> PromoteInvisibleCapitalizations(
-            ICollection<ITranslation> arrangedTranslations, IList<ITranslation> allTranslations)
-            => arrangedTranslations
-                .Select(t => PromoteInvisibleCapitalization(
-                    t, GetPreviousTranslation(allTranslations, t)));
-
-        private static ITranslation GetPreviousTranslation(IList<ITranslation> allTranslations,
-            ITranslation translation)
-        {
-            var index = allTranslations.IndexOf(translation);
-            return index > 0 ? allTranslations[index - 1] : null;
-        }
-
-        private static ITranslation PromoteInvisibleCapitalization(
-            ITranslation translation, ITranslation previousTranslation)
-            => ShouldPromoteInvisibleCapitalization(translation, previousTranslation)
-                ? translation.Capitalize()
-                : translation;
-
-        private static bool ShouldPromoteInvisibleCapitalization(
-            ITranslation translation, ITranslation previousTranslation)
-            => !translation.IsCapitalized
-               && previousTranslation != null
-               && IsInvisibleCapitalized(previousTranslation);
-
-        private static bool IsInvisibleCapitalized(ITranslation previousWord)
-            => previousWord.IsCapitalized && string.IsNullOrEmpty(previousWord.Output);
-
         private static IEnumerable<ITranslation[]> RemoveRedundantDots(IEnumerable<ITranslation[]> possibilities)
         {
             ITranslation[] current = null;
@@ -167,8 +107,6 @@ namespace Lingua.Core
                 yield return translations;
             }
         }
-
-        private static readonly Regex Whitespace = new Regex(@"\s+");
 
         private static string Output(IEnumerable<ITranslation> translations)
             => Whitespace.Replace(string.Join("", translations

@@ -133,7 +133,7 @@ namespace Lingua.Learning
 
         private void TryNextPattern()
         {
-            if (!EnumerateNextPattern())
+            while (!EnumerateNextPattern())
                 TryNextTarget();
             AddNextPattern();
         }

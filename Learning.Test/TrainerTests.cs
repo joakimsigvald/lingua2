@@ -24,7 +24,12 @@ namespace Lingua.Learning.Test
             trainer.SavePatterns();
         }
 
+        [TestCase("Are you painting?", "Målar du?")]
         [TestCase("Today I have been to the concert hall.", "Idag har jag varit till konserthallen.")]
+        [TestCase("I have been to the concert hall.", "Jag har varit till konserthallen.")]
+        [TestCase("have been to the concert hall.", "har varit till konserthallen.")]
+        [TestCase("been to the concert hall.", "varit till konserthallen.")]
+        [TestCase("to the concert hall.", "till konserthallen.")]
         [TestCase("the concert hall.", "konserthallen.")]
         [TestCase("I am here", "jag är här")]
         [TestCase("I want to go to the theater", "jag vill gå till teatern")]

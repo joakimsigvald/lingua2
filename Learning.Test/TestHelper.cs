@@ -33,8 +33,9 @@ namespace Lingua.Learning.Test
             var thesaurus = new Thesaurus();
             var evaluator = new Evaluator();
             var grammar = new GrammarEngine(evaluator);
+            var capitalizer = new Capitalizer();
             evaluator.Load();
-            return new Translator(Tokenizer, thesaurus, grammar);
+            return new Translator(Tokenizer, thesaurus, grammar, capitalizer);
         }
 
         private static TestRunner CreateTestRunner()

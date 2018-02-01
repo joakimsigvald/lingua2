@@ -45,8 +45,6 @@ namespace Lingua.Core
                 IsCapitalized = true
             };
 
-        public bool IsInvisibleCapitalized => IsCapitalized && string.IsNullOrEmpty(Output);
-
         public bool IsCapitalized { get; private set; }
         public string Input => From.Value;
         public string Output => To ?? Input;
