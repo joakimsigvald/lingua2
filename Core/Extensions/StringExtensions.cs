@@ -10,6 +10,9 @@ namespace Lingua.Core.Extensions
                 ? text.Substring(0, count)
                 : text.Substring(0, text.Length + count);
 
+        public static bool IsCapitalized(this string word)
+            => word.Any() && char.IsUpper(word[0]);
+
         public static string Capitalize(this string word)
             => AlterInitial(word, char.ToUpper);
 

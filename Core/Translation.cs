@@ -39,11 +39,14 @@ namespace Lingua.Core
         public byte WordCount => (byte)(Continuation.Length + 1);
         public bool IsTranslatedWord => To != null && !Continuation.Any();
 
-        public ITranslation Capitalize() 
+        public ITranslation Capitalize()
             => new Translation(From.Capitalize(), To.Capitalize(), Continuation)
             {
                 IsCapitalized = true
             };
+
+        public ITranslation Decapitalize()
+            => new Translation(From.Decapitalize(), To.Decapitalize(), Continuation);
 
         public bool IsCapitalized { get; private set; }
         public string Input => From.Value;

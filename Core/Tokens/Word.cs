@@ -16,6 +16,9 @@ namespace Lingua.Core.Tokens
         public override Token Capitalize()
             => Clone(Value.Capitalize());
 
+        public override Token Decapitalize()
+            => Clone(Value.Decapitalize());
+
         public Word Clone(string newValue = null)
         {
             var clone = (Word)MemberwiseClone();

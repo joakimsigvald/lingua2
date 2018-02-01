@@ -3,7 +3,6 @@ Vf*:2
 .R3:1
 Ad*:1
 At*P*:1
-I*:1
 I*V:1
 Nd*X*:1
 Nt*.R*X*At*:1
@@ -32,6 +31,7 @@ Vi*P*R*:1
 Vi*P*T*:1
 Vi*R*:1
 Vl:1
+Vl*P*:1
 Vl*T*:1
 VP*:1
 VT*:1

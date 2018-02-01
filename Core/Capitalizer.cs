@@ -7,12 +7,43 @@ namespace Lingua.Core
 {
     public class Capitalizer : ICapitalizer
     {
-        public IEnumerable<ITranslation> Capitalize(IList<ITranslation> arrangedTranslations, IList<ITranslation> allTranslations)
+        public IEnumerable<ITranslation> Capitalize(IList<ITranslation> arrangedTranslations,
+            IList<ITranslation> allTranslations)
         {
             var recapitalized = PromoteInvisibleCapitalizations(arrangedTranslations, allTranslations);
             return CapitalizeStartOfSentences(recapitalized);
         }
 
+        private static IEnumerable<ITranslation> PromoteInvisibleCapitalizations(
+            IEnumerable<ITranslation> arrangedTranslations,
+            IEnumerable<ITranslation> allTranslations)
+        {
+            var remaining = allTranslations.ToList();
+            foreach (var tran in arrangedTranslations)
+            {
+                var index = remaining.IndexOf(tran);
+                if (string.IsNullOrEmpty(tran.Output))
+                    continue;
+                remaining.Remove(tran);
+                if (index < 0 && tran.IsCapitalized)
+                    yield return tran.Decapitalize();
+                else if (!tran.IsCapitalized)
+                    yield return PromoteInvisibleCapitalization(remaining, tran, index);
+                else yield return tran;
+            }
+        }
+
+        private static ITranslation PromoteInvisibleCapitalization(IList<ITranslation> remaining, ITranslation tran, int index)
+        {
+            for (var i = index - 1; i >= 0; i--)
+            {
+                var other = remaining[i];
+                remaining.RemoveAt(i);
+                if (other.IsCapitalized)
+                    return tran.Capitalize();
+            }
+            return tran;
+        }
         private static IEnumerable<ITranslation> CapitalizeStartOfSentences(IEnumerable<ITranslation> translations)
             => SeparateSentences(translations).SelectMany(CapitalizeStartOfSentence);
 
@@ -41,9 +72,6 @@ namespace Lingua.Core
                 : preWord.Concat(sentence.Skip(1).Prepend(firstWord.Capitalize()));
         }
 
-        //private static bool IsSentence(IList<ITranslation> translations)
-        //    => translations.Any(t => t.From is Element) && IsEndOfSentence(translations.Last().From);
-
         private static bool IsSentence(IList<ITranslation> translations)
             => translations.Any() && IsStartOfSentence(translations.First().From) && IsEndOfSentence(translations.Last().From);
 
@@ -52,34 +80,5 @@ namespace Lingua.Core
 
         private static bool IsEndOfSentence(Token token)
             => token is Terminator || token is Ellipsis;
-
-        private static IEnumerable<ITranslation> PromoteInvisibleCapitalizations(
-            ICollection<ITranslation> arrangedTranslations, IList<ITranslation> allTranslations)
-            => arrangedTranslations
-                .Select(t => PromoteInvisibleCapitalization(
-                    t, GetPreviousTranslation(allTranslations, t)));
-
-        private static ITranslation GetPreviousTranslation(IList<ITranslation> allTranslations,
-            ITranslation translation)
-        {
-            var index = allTranslations.IndexOf(translation);
-            return index > 0 ? allTranslations[index - 1] : null;
-        }
-
-        private static ITranslation PromoteInvisibleCapitalization(
-            ITranslation translation, ITranslation previousTranslation)
-            => ShouldPromoteInvisibleCapitalization(translation, previousTranslation)
-                ? translation.Capitalize()
-                : translation;
-
-        private static bool ShouldPromoteInvisibleCapitalization(
-            ITranslation translation, ITranslation previousTranslation)
-            => !translation.IsCapitalized
-               && previousTranslation != null
-               && IsInvisibleCapitalized(previousTranslation);
-
-        private static bool IsInvisibleCapitalized(ITranslation previousWord)
-            => previousWord.IsCapitalized && string.IsNullOrEmpty(previousWord.Output);
-
     }
 }

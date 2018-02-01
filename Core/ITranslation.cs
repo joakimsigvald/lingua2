@@ -18,5 +18,6 @@ namespace Lingua.Core
         string Input { get; }
         ITranslation Capitalize();
         bool Matches(IReadOnlyList<Token> tokens, int nextIndex);
+        ITranslation Decapitalize();
     }
 }

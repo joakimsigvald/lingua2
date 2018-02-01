@@ -140,7 +140,7 @@ namespace Lingua.Learning
 
         private bool EnumerateNextPattern()
         {
-            if (IsLearningArrangements)
+            if (_bestResult.FailedCase.Deficit == 0)
             {
                 if (_currentArranger != null)
                     _evaluator.Remove(_currentArranger);
@@ -157,13 +157,12 @@ namespace Lingua.Learning
 
         private void AddNextPattern()
         {
-            if (IsLearningArrangements)
+            if (_bestResult.FailedCase.Deficit == 0
+                && _arrangementCandidates.Current != null)
                 _evaluator.Add(_currentArranger = _arrangementCandidates.Current);
             else
                 _evaluator.Do(_currentScoredPattern = _scoredPatterns.Current);
         }
-
-        private bool IsLearningArrangements => _bestResult.FailedCase.Deficit == 0;
 
         private void TryNextTarget()
         {
