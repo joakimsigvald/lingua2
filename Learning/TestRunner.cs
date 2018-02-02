@@ -38,6 +38,8 @@ namespace Lingua.Learning
             if (_settings.PrepareTestCaseForAnalysis)
                 AssureTargetsSet(testCase, translationResult);
             var result = new TestCaseResult(testCase, translationResult);
+            if (result.Success != result.SuccessIgnoringCase)
+                throw new InvalidExample(testCase, "Expected has invalid casing");
             if (_evaluator != null && !result.Success)
                 result.ScoreDeficit = _evaluator.ComputeScoreDeficit(result);
             return result;

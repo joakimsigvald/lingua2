@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -36,6 +37,7 @@ namespace Lingua.Learning
         public string Expected => TestCase.Expected;
         public string Actual => _translationResult.Translation;
         public bool Success => Actual == TestCase.Expected;
+        public bool SuccessIgnoringCase => string.Equals(Actual, TestCase.Expected, StringComparison.InvariantCultureIgnoreCase);
         public IReason Reason => _translationResult.Reason;
         public IEnumerable<ITranslation> ExpectedTranslations => TestCase.Target.Translations;
         public IEnumerable<ITranslation> Translations => _translationResult.Translations;

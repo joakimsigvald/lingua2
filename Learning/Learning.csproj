@@ -45,6 +45,7 @@
   <ItemGroup>
     <Compile Include="ArrangerGenerator.cs" />
     <Compile Include="ConsoleReporter.cs" />
+    <Compile Include="InvalidExample.cs" />
     <Compile Include="IPatternExtractor.cs" />
     <Compile Include="LearningFailed.cs" />
     <Compile Include="MissingTranslations.cs" />
