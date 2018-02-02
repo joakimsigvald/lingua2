@@ -1,23 +1,23 @@
-/// Imperative|Infinitive|Participle|First|Second|Third|ThirdPlural|Past|Perfect|PastContinuous|FutureContinuous
+/// (Imperative|Infinitive|Participle)|(First|Second|Third|ThirdPlural)|(Perfect-First|Perfect-Second|Perfect-Third)|(Past|PastContinuous|FutureContinuous)
 
-build::ing:::s::_t|:ing| = bygg:a:er||||:de:t|:
-catch::ing:::es::_3ught|:ing| = fånga::r||||:de:t|:
-come::ing:::s::_3ame|:ing| = kom:ma:mer||||::::ma
-eat::ing:::s::_3ate|:ing| = ät:a:er||||:_2åt:it|:a
-give::_ing:::s::d|:_ing| = ge::r||||:_2v:tt|:
-go::_ing:::es::_2went|:_ing| = gå::r||||:_ick:_av|:
-help::ing:::s::ed|:ing| = hjälp:a:er||||:te:::a
-hit::ing:::s::|:ing| = träffa::r||||:de:::
-look::ing:::s::ed|:ing| = titta::r||||:de|t|:
-make::ing:::s::_2de|:ing| = gör:a:||||:_2jorde|_2t|:
-paint::ing:::s::ed|:ing| = måla::r||||:de:t|:
-play::ing:::s::ed|:ing| = lek:a:er||||:te:t|:a
-run::ning:::s::_2an|:ning| = spring:a:er||||:_3ang:_3ungit|:a
-shake::ing:::s::d|:ing| = skaka::r||||:de:t|:
-sleep::ing:::s::_2pt|:ing| = sov:a:er||||::it|:a
-sit::ting:::s::_2at|:ing| = sitt:a:er||||::_3uttit|:a
-stand::ing:::s::_3ood|:ing| = stå::r||||:_od:tt|:
-write::ing:::s::_3ote|:ing| = skriva::_er||||:_3ev:_3ivit|:
+build::ing :::s: :_t|||	|:ing| = bygg:a:er |||| :de||| :t:de:a
+catch::ing :::es: !caught|| |:ing| = fånga::r |||| :de||| :t:de:
+come::ing :::s: !came||| |:ing| = kom:ma:mer |||| :||| :mit::ma
+eat::ing :::s: !ate||| |:ing| = ät:a:er |||| !åt||| :it!åt:a
+give::_ing :::s: !gave||| |:_ing| = ge::r |||| !gav||| :tt!gav:
+go::ing :::es: !went||| |:ing| = gå::r |||| !gick||| :tt!gick:
+help::ing :::s: :ed||| |:ing| = hjälp:a:er |||| :te||| :t|e:a
+hit::ing :::s: :||| |:ing| = träffa::r |||| :de||| :t:de:
+look::ing :::s: :ed||| |:ing| = titta::r |||| :de||| :t:de:
+make::ing :::s: :_2de||| |:ing| = gör:a: |||| !gjorde||| |_2t|_de:a
+paint::ing :::s: :ed||| |:ing| = måla::r |||| :de||| :t:de:
+play::ing :::s: :ed||| |:ing| = lek:a:er |||| :te||| |_|e:a
+run::ning :::s: :_2an||| |:ning| = spring:a:er |||| :_3ang||| :_3ungit:_3ang:a
+shake::_ing :::s: :d||| |:_ing| = skaka::r |||| :de||| :t:de:
+sleep::ing :::s: :_2pt||| |:ing| = sov:a:er |||| :||| :it::a
+sit::ting :::s: !sat||| |:ing| = sitt:a:er |||| !satt||| !suttit!satt:a
+stand::ing :::s: !stood||| |:ing| = stå::r |||| :_od||| :tt:_od:
+write::ing :::s: !wrote||| |:ing| = skriva::_er |||| :_3ev||| :_it:_3ev:
 
 //Settings
 BaseForm = 1

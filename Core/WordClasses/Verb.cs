@@ -23,12 +23,18 @@ namespace Lingua.Core.WordClasses
                 case 6:
                     return Modifier.Plural | Modifier.ThirdPerson;
                 case 7:
-                    return Modifier.Past;
+                    return Modifier.Perfect | Modifier.FirstPerson;
                 case 8:
-                    return Modifier.Perfect;
+                    return Modifier.Perfect | Modifier.SecondPerson;
                 case 9:
-                    return Modifier.Participle | Modifier.Perfect;
+                    return Modifier.Perfect | Modifier.ThirdPerson;
                 case 10:
+                    return Modifier.Perfect | Modifier.Plural | Modifier.ThirdPerson;
+                case 11:
+                    return Modifier.Past;
+                case 12:
+                    return Modifier.Participle | Modifier.Perfect;
+                case 13:
                     return Modifier.Future;
                 default: return Modifier.None;
             }

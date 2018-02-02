@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 
@@ -9,39 +10,77 @@ namespace Lingua.Vocabulary
         public static Specification Expand(string pattern)
         {
             var parts = pattern.Split('<');
-            var wordPattern = parts[0];
-            var modifiers = parts.Skip(1).FirstOrDefault();
-            parts = wordPattern.Split('/');
-            var connector = parts.Skip(1).FirstOrDefault();
-            var variations = GetVariations(parts[0]).ToArray();
-            var incompleteCompound = GetIncompleteCompound(variations[0], connector);
-            return new Specification(variations
-                , incompleteCompound, modifiers);
+            return Expand(parts[0], parts.Skip(1).FirstOrDefault());
         }
 
-        private static IEnumerable<string> GetVariations(string wordPattern)
-            => wordPattern.Split('!').SelectMany(GetVariationGroup);
-
-        private static IEnumerable<string> GetVariationGroup(string groupPattern)
+        private static Specification Expand(string wordPattern, string modifiers)
         {
-            var parts = groupPattern.Split(':');
-            var stem = parts[0].Split('|')[0];
-            return Expand("", parts[0])
-                .Concat(parts.Skip(1).SelectMany(modifier => Expand(stem, modifier)))
-                .ToArray();
+            var parts = wordPattern.Split('/');
+            return Expand(parts[0], modifiers, parts.Skip(1).FirstOrDefault());
+        }
+
+        private static Specification Expand(string variationsPattern, string modifiers, string connector)
+        {
+            var variations = GetVariations(variationsPattern).ToArray();
+            var incompleteCompound = GetIncompleteCompound(variations[0], connector);
+            return new Specification(variations, incompleteCompound, modifiers);
+        }
+
+        private static IEnumerable<string> GetVariations(string variationsPattern)
+        {
+            string stem = null;
+            var current = "";
+            var previous = "";
+            var prevC = (char)0;
+            foreach (var c in variationsPattern)
+            {
+                switch (c)
+                {
+                    case '2':
+                    case '3':
+                    case '4':
+                    case '5':
+                    case '6':
+                    case '7':
+                    case '8':
+                    case '9':
+                        if (prevC == '_')
+                            previous = previous.Substring(0, previous.Length - (c - 49));
+                        else throw new Exception("Invalid pattern: " + variationsPattern);
+                        break;
+                    case '_':
+                        previous = previous.Substring(0, previous.Length - 1);
+                        break;
+                    case ':':
+                        yield return CreateVariation(previous, ref current, ref stem);
+                        previous = stem;
+                        break;
+                    case '!':
+                        yield return CreateVariation(previous, ref current, ref stem);
+                        previous = "";
+                        break;
+                    case '|':
+                        yield return previous = CreateVariation(previous, ref current, ref stem);
+                        break;
+                    default:
+                        current += c;
+                        break;
+                }
+                prevC = c;
+            }
+            yield return CreateVariation(previous, ref current, ref stem);
+        }
+
+        private static string CreateVariation(string previous, ref string current, ref string stem)
+        {
+            var retVal = previous.Trim() + current.Trim();
+            stem = stem ?? retVal;
+            current = "";
+            return retVal;
         }
 
         private static string GetIncompleteCompound(string stem, string connector)
             => Modify(stem, connector);
-
-        private static IEnumerable<string> Expand(string stem, string modifier)
-        {
-            var parts = modifier.Split('|');
-            if (parts.Length == 1)
-                return new[] {Modify(stem, modifier)};
-            var prev = stem;
-            return parts.Select(part => prev = Modify(prev, part));
-        }
 
         private static string Modify(string stem, string modifier)
         {

@@ -1,9 +1,9 @@
-I!me:_y:_ine<1 = jag!mig:_n|
-we!us!our:s<1n = vi!oss!vår|
+I!me|_y|_ine<1 = jag!mig|_n|
+we!us!our|s<1n = vi!oss!vår|
 you::re|_s<2 = du:_ig:_in|
-you::re|_s<2n = ni!er::
-he:_im:_is|<3 = han:_2onom:s|
-she!her:s|<3 = hon!henne:s|
+you::re|_s<2n = ni!er||
+he:_im:_is|<3 = han!honom:s|
+she!her:s|<3 = hon!henne|s|
 it::s|<3 = den::_ss|
 it::s|<3t = det::_ss|
 they:_m:_ir|s<3n = de:m:ras|

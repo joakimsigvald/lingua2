@@ -14,8 +14,11 @@ namespace Lingua.Vocabulary.Test
         [TestCase("abc|_d:e|_f", "abc", "abd", "abce", "abcf")]
         [TestCase("the:::<d", "the", "the", "the", "the")]
         [TestCase("a!b!c", "a", "b", "c")]
-        [TestCase("a:b!c:d", "a", "ab", "c", "cd")]
+        [TestCase("a:b!c:d", "a", "ab", "c", "ad")]
         [TestCase("a!b!c<d", "a", "b", "c")]
+        [TestCase("a!b:c", "a", "b", "ac")]
+        [TestCase("ball :s", "ball", "balls")]
+        [TestCase("ball :  s", "ball", "balls")]
         public void ExpandVariants(string pattern, params string[] expected)
         {
             var actual = VariationExpander.Expand(pattern);
