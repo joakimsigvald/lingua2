@@ -113,14 +113,14 @@
 "They ran fast", "De sprang snabbt"
 
 //VerbsPerfectTense
-"I have ran", "jag har sprungit"
-"She has ran", "Hon har sprungit"
-"They have ran", "De har sprungit"
+"I have run", "jag har sprungit"
+"She has run", "Hon har sprungit"
+"They have run", "De har sprungit"
 
 //VerbsPastPerfectTense
-"I had ran", "jag hade sprungit"
-"She had ran", "Hon hade sprungit"
-"They had ran", "De hade sprungit"
+"I had run", "jag hade sprungit"
+"She had run", "Hon hade sprungit"
+"They had run", "De hade sprungit"
 
 //VerbsMiscellaneous
 "I will run", "jag ska springa"
@@ -178,6 +178,6 @@
 //"The table stood on a rug. It made a mark in it.", "Bordet stod på en matta. Det gjorde ett märke i den."
 
 //Adverbs
-"When I was young I was a salesman.", "När jag var ung var jag en säljare."
+//"When I was young I was a salesman.", "När jag var ung var jag en säljare."
 "Today I have been to the concert hall.", "Idag har jag varit till konserthallen."
 "I'm sitting in the room and looking at dolls.", "Jag sitter i rummet och tittar på dockor."

@@ -13,7 +13,7 @@ namespace Lingua.Core.Tokens
         Neuter = 1 << 3,
         //Verb
         Imperitive = 1 << 2,
-        Participle = 1 << 3,
+        Continuous = 1 << 3,
         //Adjective
         Comparative = 1 << 4,
         Superlative = 1 << 5,
@@ -54,7 +54,7 @@ namespace Lingua.Core.Tokens
                 case 1 << 3:
                     switch (this)
                     {
-                        case Verb _: return Modifier.Participle;
+                        case Verb _: return Modifier.Continuous;
                         default: return Modifier.Neuter;
                     }
                 case 1 << 4:

@@ -228,7 +228,7 @@ namespace Lingua.Core
                 yield return 't';
             if (modifiers.HasFlag(Modifier.Imperitive) && element is Verb)
                 yield return 'i';
-            if (modifiers.HasFlag(Modifier.Participle) && element is Verb)
+            if (modifiers.HasFlag(Modifier.Continuous) && element is Verb)
                 yield return 'l';
             if (modifiers.HasFlag(Modifier.Comparative) && element is Adjective)
                 yield return 'c';
@@ -271,7 +271,7 @@ namespace Lingua.Core
                 case 'f': return Modifier.Future;
                 case 'g': return Modifier.Genitive;
                 case 'i': return Modifier.Imperitive;
-                case 'l': return Modifier.Participle;
+                case 'l': return Modifier.Continuous;
                 case 'm': return Modifier.Possessive;
                 case 'n': return Modifier.Plural;
                 case 'o': return Modifier.Object;
