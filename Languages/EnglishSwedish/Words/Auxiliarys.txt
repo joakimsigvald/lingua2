@@ -1,8 +1,8 @@
-be: !am!are!is!are !was!were!was!were:en :ing||| = var:a !är||| :|||:it !är:|it:a
-have: :::_2s: :_2d|||| :ing||| = ha: :r||| :de|||:ft :r:de:ft:
-want: :::s: !would|||:ed :_ing||| = vill:_ja :||| :e|||!velat ::e!velat:_ja
-: :will::: !would|||! !|||<f = : :ska||| |_ulle|||! !|||
-: :shall::: !should|||! !|||<f = : :ska||| |_ulle|||! !|||
+be: !am!are|!is !was!were|!was:en 4:ing = var:a 4!är 4::it !är:|it:a
+have 4::_2s 5:_2d 4:ing = ha: 4:r 4:de:ft :r:de:ft:
+want 4::s 4!would:ed 4:_ing = vill:_ja 4: 4:e!velat ::e!velat:_ja
+: 4:will 4!would! 4!<f = : 4:ska 4|_ulle! 4!
+: 4:shall 4!should! 4!<f = : 4:ska 4|_ulle! 4!
 :will be<f = :kommer att
 :will have been<fr = :kommer att ha
 :could have been<fr = :kunde ha

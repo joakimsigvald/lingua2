@@ -17,17 +17,17 @@ namespace Lingua.Core.WordClasses
                 case 3:
                     return Modifier.SecondPerson;
                 case 4:
-                    return Modifier.ThirdPerson;
+                    return Modifier.Plural;
                 case 5:
-                    return Modifier.Plural | Modifier.ThirdPerson;
+                    return Modifier.ThirdPerson;
                 case 6:
                     return Modifier.Past | Modifier.FirstPerson;
                 case 7:
                     return Modifier.Past | Modifier.SecondPerson;
+                case 9:
+                    return Modifier.Past | Modifier.Plural;
                 case 8:
                     return Modifier.Past | Modifier.ThirdPerson;
-                case 9:
-                    return Modifier.Past | Modifier.Plural | Modifier.ThirdPerson;
                 case 10:
                     return Modifier.Perfect;
                 case 11:

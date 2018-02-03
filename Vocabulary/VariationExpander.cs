@@ -27,57 +27,7 @@ namespace Lingua.Vocabulary
         }
 
         private static IEnumerable<string> GetVariations(string variationsPattern)
-        {
-            string stem = null;
-            var current = "";
-            var previous = "";
-            var prevC = (char)0;
-            foreach (var c in variationsPattern)
-            {
-                switch (c)
-                {
-                    case '2':
-                    case '3':
-                    case '4':
-                    case '5':
-                    case '6':
-                    case '7':
-                    case '8':
-                    case '9':
-                        if (prevC == '_')
-                            previous = previous.Substring(0, previous.Length - (c - 49));
-                        else throw new Exception("Invalid pattern: " + variationsPattern);
-                        break;
-                    case '_':
-                        previous = previous.Substring(0, previous.Length - 1);
-                        break;
-                    case ':':
-                        yield return CreateVariation(previous, ref current, ref stem);
-                        previous = stem;
-                        break;
-                    case '!':
-                        yield return CreateVariation(previous, ref current, ref stem);
-                        previous = "";
-                        break;
-                    case '|':
-                        yield return previous = CreateVariation(previous, ref current, ref stem);
-                        break;
-                    default:
-                        current += c;
-                        break;
-                }
-                prevC = c;
-            }
-            yield return CreateVariation(previous, ref current, ref stem);
-        }
-
-        private static string CreateVariation(string previous, ref string current, ref string stem)
-        {
-            var retVal = previous.Trim() + current.Trim();
-            stem = stem ?? retVal;
-            current = "";
-            return retVal;
-        }
+            => new Process(variationsPattern).GetVariations();
 
         private static string GetIncompleteCompound(string stem, string connector)
             => Modify(stem, connector);
@@ -101,5 +51,91 @@ namespace Lingua.Vocabulary
                 : int.TryParse($"{reduction.Last()}", out int count)
                     ? count
                     : reduction.Length;
+
+        private class Process
+        {
+            private static readonly char[] Divisors = { ':', '!', '|' };
+
+            private readonly string _variationsPattern;
+            private string _stem;
+            private string _current = "";
+            private string _previous = "";
+            private char _prevC = (char) 0;
+            private int _multiplier = 1;
+            private string _variation;
+
+            public Process(string variationsPattern)
+            {
+                _variationsPattern = variationsPattern;
+            }
+
+            public IEnumerable<string> GetVariations()
+            {
+                foreach (var c in _variationsPattern)
+                {
+                    if (char.IsDigit(c))
+                    {
+                        switch (_prevC)
+                        {
+                            case '_':
+                                _previous = _previous.Substring(0, _previous.Length - (c - 49));
+                                break;
+                            case ' ':
+                                break;
+                            default:
+                                throw new Exception("Invalid pattern: " + _variationsPattern);
+                        }
+                    }
+                    else if (Divisors.Contains(c))
+                    {
+                        foreach (var variation in GetPreviousVariations())
+                            yield return variation;
+                        InitNextVariation(c);
+                    }
+                    else if (c == '_')
+                        _previous = _previous.Substring(0, _previous.Length - 1);
+                    else
+                        _current += c;
+                    _prevC = c;
+                }
+                foreach (var variation in GetPreviousVariations())
+                    yield return variation;
+            }
+
+            private void InitNextVariation(char c)
+            {
+                _previous = GetPrevious(c);
+                _multiplier = char.IsDigit(_prevC) ? _prevC - 48 : 1;
+            }
+
+            private IEnumerable<string> GetPreviousVariations()
+            {
+                _variation = CreateVariation();
+                for (var i = 0; i < _multiplier; i++)
+                    yield return _variation;
+            }
+
+            private string GetPrevious(char c)
+            {
+                switch (c)
+                {
+                    case ':':
+                        return _stem;
+                    case '!':
+                        return string.Empty;
+                    case '|':
+                        return _variation;
+                    default: throw new NotImplementedException();
+                }
+            }
+
+            private string CreateVariation()
+            {
+                var retVal = _previous.Trim() + _current.Trim();
+                _stem = _stem ?? retVal;
+                _current = "";
+                return retVal;
+            }
+        }
     }
 }
