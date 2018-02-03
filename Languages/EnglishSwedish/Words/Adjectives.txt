@@ -16,3 +16,4 @@ kind:::er:est| = snäll:t:a|re:ast|e
 non- = icke-
 speaking = talande
 yellow:::er:est| = gul:t:a|re:ast|e
+young:::er:est| = ung:t:a!yngre|_2st|a
