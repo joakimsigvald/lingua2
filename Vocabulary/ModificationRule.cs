@@ -8,7 +8,7 @@ namespace Lingua.Vocabulary
 {
     public interface IModificationRule
     {
-        Translation Apply(ITranslation translation);
+        ITranslation Apply(ITranslation translation);
     }
 
     public class ModificationRule<TWord> : IModificationRule
@@ -29,7 +29,7 @@ namespace Lingua.Vocabulary
             _toTransforms = Parse(toTransforms);
         }
 
-        public Translation Apply(ITranslation translation)
+        public ITranslation Apply(ITranslation translation)
         {
             var fromWord = translation.From as TWord;
             if (fromWord == null)

@@ -44,7 +44,7 @@ namespace Lingua.Core
             private ITranslation PromoteCapitalization(ITranslation tran,
                 int index)
             {
-                for (var i = index - 1; i >= 0; i--)
+                for (var i = 0; i < index; i++)
                 {
                     var other = _uncheckedTranslationsOriginalOrder[i];
                     _uncheckedTranslationsOriginalOrder.RemoveAt(i);
@@ -58,7 +58,9 @@ namespace Lingua.Core
         private static class SentenceCapitalizer
         {
             public static IEnumerable<ITranslation> Capitalize(IEnumerable<ITranslation> translations)
-                => SeparateSentences(translations).SelectMany(CapitalizeStartOfSentence);
+                => SeparateSentences(translations)
+                .Where(s => s.Any())
+                .SelectMany(HandleSequence);
 
             private static IEnumerable<IList<ITranslation>> SeparateSentences(IEnumerable<ITranslation> translations)
             {
@@ -73,24 +75,23 @@ namespace Lingua.Core
                 yield return nextSequence;
             }
 
+            private static IEnumerable<ITranslation> HandleSequence(IList<ITranslation> sequence) 
+                => IsProperSentence(sequence) 
+                ? CapitalizeStartOfSentence(sequence) 
+                : sequence;
+
             private static IEnumerable<ITranslation> CapitalizeStartOfSentence(IList<ITranslation> sequence)
             {
-                if (!IsSentence(sequence))
-                    return sequence;
-                var preWord = sequence.TakeWhile(t => !(t.From is Element)).ToArray();
-                var sentence = sequence.Skip(preWord.Length).ToArray();
+                var leadingSymbols = sequence.TakeWhile(t => !(t.From is Element)).ToArray();
+                var sentence = sequence.Skip(leadingSymbols.Length).ToArray();
                 var firstWord = sentence.First();
                 return firstWord.IsCapitalized
                     ? sequence
-                    : preWord.Concat(sentence.Skip(1).Prepend(firstWord.Capitalize()));
+                    : leadingSymbols.Concat(sentence.Skip(1).Prepend(firstWord.Capitalize()));
             }
 
-            private static bool IsSentence(IList<ITranslation> translations)
-                => translations.Any() && IsStartOfSentence(translations.First().From) &&
-                   IsEndOfSentence(translations.Last().From);
-
-            private static bool IsStartOfSentence(Token token)
-                => token is Element && char.IsUpper(token.Value.FirstOrDefault());
+            private static bool IsProperSentence(IList<ITranslation> translations)
+                => translations.First().From.Value.IsCapitalized() && IsEndOfSentence(translations.Last().From);
 
             private static bool IsEndOfSentence(Token token)
                 => token is Terminator || token is Ellipsis;

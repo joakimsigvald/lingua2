@@ -52,25 +52,13 @@ namespace Lingua.Core
             var arrangedTranslations = _grammar.Arrange(translations).ToList();
             var capitalized = _capitalizer.Capitalize(arrangedTranslations, translations);
             var respacedResult = Respace(capitalized).ToArray();
-            var translation = Output(respacedResult);
+            var translation = Merge(respacedResult);
             return new TranslationResult(translation)
             {
                 Translations = translations,
                 Reason = reason,
                 Possibilities = possibilities
             };
-        }
-
-        private static IEnumerable<ITranslation> Respace(IEnumerable<ITranslation> translations)
-        {
-            var space = Translation.Create(new Divider());
-            ITranslation previous = null;
-            foreach (var translation in translations)
-            {
-                if (previous != null && !(translation.From is Punctuation || translation.From is Ellipsis))
-                    yield return space;
-                yield return previous = translation;
-            }
         }
 
         private IEnumerable<ITranslation[]> Translate(IEnumerable<Token> tokens)
@@ -107,7 +95,19 @@ namespace Lingua.Core
             }
         }
 
-        private static string Output(IEnumerable<ITranslation> translations)
+        private static IEnumerable<ITranslation> Respace(IEnumerable<ITranslation> translations)
+        {
+            var space = Translation.Create(new Divider());
+            ITranslation previous = null;
+            foreach (var translation in translations)
+            {
+                if (previous != null && !(translation.From is Punctuation || translation.From is Ellipsis))
+                    yield return space;
+                yield return previous = translation;
+            }
+        }
+
+        private static string Merge(IEnumerable<ITranslation> translations)
             => Whitespace.Replace(string.Join("", translations
                     .Select(translation => translation.Output)).Trim()
                 , " ");

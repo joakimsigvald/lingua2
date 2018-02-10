@@ -5,6 +5,6 @@ namespace Lingua.Vocabulary
 {
     public interface ILexicon
     {
-        IList<Translation> Lookup(string word);
+        IList<ITranslation> Lookup(string word);
     }
 }

@@ -9,7 +9,7 @@ namespace Lingua.Core
 
     public class Translation : ITranslation
     {
-        public static Translation Create(Token from, string to = null)
+        public static ITranslation Create(Token from, string to = null)
             => new Translation(from, to, CreateContinuation(from as Word));
 
         private static Word[] CreateContinuation(Word from)

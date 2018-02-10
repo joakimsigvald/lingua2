@@ -11,7 +11,7 @@ namespace Lingua.Vocabulary
 
     public interface IWordMap
     {
-        IEnumerable<Translation> Translations { get; }
+        IEnumerable<ITranslation> Translations { get; }
     }
 
     [Serializable]
@@ -43,9 +43,9 @@ namespace Lingua.Vocabulary
         {
         }
 
-        public IEnumerable<Translation> Translations => this.SelectMany(CreateTranslations);
+        public IEnumerable<ITranslation> Translations => this.SelectMany(CreateTranslations);
 
-        private IEnumerable<Translation> CreateTranslations(KeyValuePair<string, string> mapping)
+        private IEnumerable<ITranslation> CreateTranslations(KeyValuePair<string, string> mapping)
         {
             var from = VariationExpander.Expand(mapping.Key);
             var to = VariationExpander.Expand(mapping.Value);
@@ -63,20 +63,20 @@ namespace Lingua.Vocabulary
                 .Where(t => !string.IsNullOrEmpty(t.From.Value));
         }
 
-        private IEnumerable<Translation> ApplyRules(IEnumerable<ITranslation> translations)
+        private IEnumerable<ITranslation> ApplyRules(IEnumerable<ITranslation> translations)
             => translations.SelectMany(ApplyRules).ExceptNull();
 
-        private IEnumerable<Translation> ApplyRules(ITranslation translation)
+        private IEnumerable<ITranslation> ApplyRules(ITranslation translation)
             => _rules.Select(rule => rule.Apply(translation));
 
-        private static Translation CreateIncompleteCompoundTranslation(Specification from, Specification to)
+        private static ITranslation CreateIncompleteCompoundTranslation(Specification from, Specification to)
         {
             var incompleteCompound = CreateTranslation(from.Base, to.IncompleteCompound, from.Modifiers);
             incompleteCompound.IsIncompleteCompound = true;
             return incompleteCompound;
         }
 
-        private static Translation CreateTranslation(string from, string to, string modifiers, int variationIndex = 0)
+        private static ITranslation CreateTranslation(string from, string to, string modifiers, int variationIndex = 0)
         {
             var token = new TWord
             {

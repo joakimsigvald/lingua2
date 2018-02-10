@@ -10,9 +10,9 @@ namespace Lingua.Core
         ushort Code { get; set; }
         byte WordCount { get; }
         bool IsCapitalized { get; }
-        ITranslation[] Variations { get; }
+        ITranslation[] Variations { get; set; }
         bool IsTranslatedWord { get;  }
-        bool IsIncompleteCompound { get; }
+        bool IsIncompleteCompound { get; set;  }
         string To { get; }
         Word[] Continuation { get; }
         string Input { get; }
