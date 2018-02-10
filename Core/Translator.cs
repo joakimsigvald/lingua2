@@ -31,8 +31,9 @@ namespace Lingua.Core
         public IList<ITranslation[]> Decompose(string original)
         {
             var tokens = _tokenGenerator.GetTokens(original);
-            var translationCandidates = Translate(tokens).ToList();
-            var possibilities = CompoundCombiner.Combine(translationCandidates).ToList();
+            var translationCandidates = Translate(tokens).ToArray();
+            var filteredCandidates = FilterCompounds(translationCandidates, tokens).ToArray();
+            var possibilities = CompoundMerger.Merge(filteredCandidates).ToList();
             var undotted = RemoveRedundantDots(possibilities).ToArray();
             SetCodes(undotted);
             return undotted;
@@ -49,9 +50,7 @@ namespace Lingua.Core
         {
             (var translations, var reason) = _grammar.Reduce(possibilities);
             var arrangedTranslations = _grammar.Arrange(translations).ToList();
-
             var capitalized = _capitalizer.Capitalize(arrangedTranslations, translations);
-
             var respacedResult = Respace(capitalized).ToArray();
             var translation = Output(respacedResult);
             return new TranslationResult(translation)
@@ -74,14 +73,14 @@ namespace Lingua.Core
             }
         }
 
-        private IEnumerable<ITranslation[]> Translate(IReadOnlyList<Token> tokens)
-            => Reduce(tokens.Select(_thesaurus.Translate), tokens);
+        private IEnumerable<ITranslation[]> Translate(IEnumerable<Token> tokens)
+            => tokens.Select(_thesaurus.Translate);
 
-        private static IEnumerable<ITranslation[]> Reduce(IEnumerable<ITranslation[]> alternatives,
+        private static IEnumerable<ITranslation[]> FilterCompounds(IEnumerable<ITranslation[]> alternatives,
             IReadOnlyList<Token> tokens)
-            => alternatives.Select((candidates, ai) => Reduce(candidates, tokens, ai + 1).ToArray());
+            => alternatives.Select((candidates, ai) => FilterCompounds(candidates, tokens, ai + 1).ToArray());
 
-        private static IEnumerable<ITranslation> Reduce(IEnumerable<ITranslation> candidates,
+        private static IEnumerable<ITranslation> FilterCompounds(IEnumerable<ITranslation> candidates,
             IReadOnlyList<Token> tokens,
             int nextIndex)
             => candidates.Where(t => t.Matches(tokens, nextIndex));

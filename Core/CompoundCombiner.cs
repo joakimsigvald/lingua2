@@ -6,9 +6,9 @@ namespace Lingua.Core
     using Extensions;
     using Tokens;
 
-    public static class CompoundCombiner
+    public static class CompoundMerger
     {
-        public static IEnumerable<ITranslation[]> Combine(ICollection<ITranslation[]> alternatives)
+        public static IEnumerable<ITranslation[]> Merge(ICollection<ITranslation[]> alternatives)
         {
             return alternatives.Select((translations, i) =>
             {

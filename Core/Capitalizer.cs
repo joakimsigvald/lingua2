@@ -10,40 +10,10 @@ namespace Lingua.Core
         public IEnumerable<ITranslation> Capitalize(IList<ITranslation> arrangedTranslations,
             IList<ITranslation> allTranslations)
         {
-            var recapitalized = PromoteInvisibleCapitalizations(arrangedTranslations, allTranslations);
+            var recapitalized = new Recapitalizer(allTranslations).Recapitalize(arrangedTranslations);
             return CapitalizeStartOfSentences(recapitalized);
         }
 
-        private static IEnumerable<ITranslation> PromoteInvisibleCapitalizations(
-            IEnumerable<ITranslation> arrangedTranslations,
-            IEnumerable<ITranslation> allTranslations)
-        {
-            var remaining = allTranslations.ToList();
-            foreach (var tran in arrangedTranslations)
-            {
-                var index = remaining.IndexOf(tran);
-                if (string.IsNullOrEmpty(tran.Output))
-                    continue;
-                remaining.Remove(tran);
-                if (index < 0 && tran.IsCapitalized)
-                    yield return tran.Decapitalize();
-                else if (!tran.IsCapitalized)
-                    yield return PromoteInvisibleCapitalization(remaining, tran, index);
-                else yield return tran;
-            }
-        }
-
-        private static ITranslation PromoteInvisibleCapitalization(IList<ITranslation> remaining, ITranslation tran, int index)
-        {
-            for (var i = index - 1; i >= 0; i--)
-            {
-                var other = remaining[i];
-                remaining.RemoveAt(i);
-                if (other.IsCapitalized)
-                    return tran.Capitalize();
-            }
-            return tran;
-        }
         private static IEnumerable<ITranslation> CapitalizeStartOfSentences(IEnumerable<ITranslation> translations)
             => SeparateSentences(translations).SelectMany(CapitalizeStartOfSentence);
 
@@ -73,12 +43,55 @@ namespace Lingua.Core
         }
 
         private static bool IsSentence(IList<ITranslation> translations)
-            => translations.Any() && IsStartOfSentence(translations.First().From) && IsEndOfSentence(translations.Last().From);
+            => translations.Any() && IsStartOfSentence(translations.First().From) &&
+               IsEndOfSentence(translations.Last().From);
 
         private static bool IsStartOfSentence(Token token)
             => token is Element && char.IsUpper(token.Value.FirstOrDefault());
 
         private static bool IsEndOfSentence(Token token)
             => token is Terminator || token is Ellipsis;
+
+        private class Recapitalizer
+        {
+            private readonly List<ITranslation> _uncheckedTranslationsOriginalOrder;
+
+            public Recapitalizer(IEnumerable<ITranslation> allTranslations)
+                => _uncheckedTranslationsOriginalOrder = allTranslations.ToList();
+
+            public IEnumerable<ITranslation> Recapitalize(IEnumerable<ITranslation> arrangedTranslations)
+                => arrangedTranslations
+                    .Select(Recapitalize)
+                    .ExceptNull();
+
+            private ITranslation Recapitalize(ITranslation translation)
+            {
+                var originalIndex = _uncheckedTranslationsOriginalOrder.IndexOf(translation);
+                if (string.IsNullOrEmpty(translation.Output))
+                    return null;
+                _uncheckedTranslationsOriginalOrder.Remove(translation);
+                return Recapitalize(originalIndex, translation);
+            }
+
+            private ITranslation Recapitalize(int originalIndex, ITranslation translation)
+                => !translation.IsCapitalized
+                    ? PromoteInvisibleCapitalization(translation, originalIndex)
+                    : originalIndex < 0
+                        ? translation.Decapitalize()
+                        : translation;
+
+            private ITranslation PromoteInvisibleCapitalization(ITranslation tran,
+                int index)
+            {
+                for (var i = index - 1; i >= 0; i--)
+                {
+                    var other = _uncheckedTranslationsOriginalOrder[i];
+                    _uncheckedTranslationsOriginalOrder.RemoveAt(i);
+                    if (other.IsCapitalized)
+                        return tran.Capitalize();
+                }
+                return tran;
+            }
+        }
     }
 }
