@@ -20,6 +20,7 @@ morning::s| = morgon:en:_2nar|na
 mouse::_4ice| = mus:en:__öss|en
 nest::s|<t = bo:n|a|s
 pen::s| = penna:n:_or|na
+rainbow::s| = regnbåge:n:_ar|na
 rat::s| = råtta:n:_or|na
 result::s|<t = resultat:et::en
 room::s| = rum:met::men
@@ -31,6 +32,7 @@ search = sök/
 street::s| = gata:n:_or|na/_u
 table::s|<t = bord:et:|en
 theater::s| = teater:n:_2rar|na
+::trousers| = ::byxor|na
 wall::s| = vägg:en:ar|na
 
 //Rules

@@ -1,5 +1,6 @@
 one = en
 two = två
+seven = sju
 several = flera
 many = många
 all = alla

@@ -67,7 +67,7 @@
     <Compile Include="Tokens\Number.cs" />
     <Compile Include="Tokens\Abbreviation.cs" />
     <Compile Include="Tokens\Element.cs" />
-    <Compile Include="CompoundMerger.cs" />
+    <Compile Include="CompoundHandler.cs" />
     <Compile Include="TranslationResult.cs" />
     <Compile Include="WordClasses\AdverbQualifying.cs" />
     <Compile Include="WordClasses\AdverbPositioning.cs" />

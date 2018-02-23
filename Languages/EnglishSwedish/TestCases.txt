@@ -181,3 +181,6 @@
 "When I was young I was a salesman.", "När jag var ung var jag en säljare."
 "Today I have been to the concert hall.", "Idag har jag varit till konserthallen."
 "I'm sitting in the room and looking at dolls.", "Jag sitter i rummet och tittar på dockor."
+
+//"I'm sitting in Joakim's livingroom", "Jag sitter i Joakims vardagsrum"
+"I have black trousers.", "Jag har svarta byxor."

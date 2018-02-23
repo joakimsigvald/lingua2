@@ -23,6 +23,9 @@ namespace Lingua.Core
         private IEnumerable<Token> Expand(Token token)
             => Tokenize(Expand(token as Unclassified)) ?? new[] { token };
 
+        private IEnumerable<Token> Tokenize(string text)
+            => text == null ? null : _tokenizer.Tokenize(text);
+
         private static string Expand(Unclassified word)
             => word == null
                 ? null
@@ -34,9 +37,6 @@ namespace Lingua.Core
 
         private static bool TryExpand(string word, out string expanded)
             => Expanders.TryGetValue(word, out expanded);
-
-        private IEnumerable<Token> Tokenize(string text)
-            => text == null ? null : _tokenizer.Tokenize(text);
 
         private static IDictionary<string, string> LoadExpanders()
         {

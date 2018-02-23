@@ -6,9 +6,24 @@ namespace Lingua.Core
     using Extensions;
     using Tokens;
 
-    public static class CompoundMerger
+    public static class CompoundHandler
     {
-        public static IEnumerable<ITranslation[]> Merge(ICollection<ITranslation[]> alternatives)
+        public static IEnumerable<ITranslation[]> CompleteCompounds(IEnumerable<ITranslation[]> translationCandidates, Token[] tokens)
+        {
+            var filteredCandidates = FilterCompounds(translationCandidates, tokens).ToArray();
+            return MergeCompounds(filteredCandidates);
+        }
+
+        private static IEnumerable<ITranslation[]> FilterCompounds(IEnumerable<ITranslation[]> alternatives,
+            IReadOnlyList<Token> tokens)
+            => alternatives.Select((candidates, ai) => FilterCompounds(candidates, tokens, ai + 1).ToArray());
+
+        private static IEnumerable<ITranslation> FilterCompounds(IEnumerable<ITranslation> candidates,
+            IReadOnlyList<Token> tokens,
+            int nextIndex)
+            => candidates.Where(t => t.Matches(tokens, nextIndex));
+
+        private static IEnumerable<ITranslation[]> MergeCompounds(ICollection<ITranslation[]> alternatives)
         {
             return alternatives.Select((translations, i) =>
             {
