@@ -4,15 +4,16 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{6F12FC3A-0E11-4E2B-BE31-3114F671D869}</ProjectGuid>
-    <OutputType>Library</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Lingua.Learning</RootNamespace>
-    <AssemblyName>Lingua.Learning</AssemblyName>
+    <ProjectGuid>{A46C5B5B-F914-4C9E-8CE5-C060E7EEC464}</ProjectGuid>
+    <OutputType>Exe</OutputType>
+    <RootNamespace>Lingua.TestRunner</RootNamespace>
+    <AssemblyName>Lingua.TestRunner</AssemblyName>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
@@ -22,6 +23,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
@@ -32,9 +34,6 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Core" />
-    <Reference Include="System.ValueTuple, Version=4.0.2.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.ValueTuple.4.4.0\lib\net461\System.ValueTuple.dll</HintPath>
-    </Reference>
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -43,39 +42,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ArrangerGenerator.cs" />
-    <Compile Include="ConsoleReporter.cs" />
-    <Compile Include="InvalidExample.cs" />
-    <Compile Include="IPatternExtractor.cs" />
-    <Compile Include="LearningFailed.cs" />
-    <Compile Include="MissingTranslations.cs" />
-    <Compile Include="OrderMaker.cs" />
-    <Compile Include="ScoredPatternPriorityComputer.cs" />
-    <Compile Include="TestCaseTranslators\TestCaseConstructor.cs" />
-    <Compile Include="EvaluatorEnhancement.cs" />
-    <Compile Include="TestCaseTranslators\FullTextTranslator.cs" />
-    <Compile Include="TestCaseTranslators\ITestCaseTranslator.cs" />
-    <Compile Include="ITranslationExtractor.cs" />
-    <Compile Include="IReporter.cs" />
-    <Compile Include="ScoredPattern.cs" />
-    <Compile Include="TestCaseTranslators\PossibilitiesTranslator.cs" />
-    <Compile Include="TestRunnerSettings.cs" />
-    <Compile Include="TestSessionResult.cs" />
-    <Compile Include="TrainingSession.cs" />
-    <Compile Include="TranslationExtractor.cs" />
-    <Compile Include="PatternExtractor.cs" />
-    <Compile Include="TestCase.cs" />
-    <Compile Include="TargetSelector.cs" />
-    <Compile Include="TestRunner.cs" />
-    <Compile Include="TrainableEvaluator.cs" />
-    <Compile Include="Loader.cs" />
+    <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="PatternGenerator.cs" />
-    <Compile Include="Trainer.cs" />
-    <Compile Include="TestBench.cs" />
-    <Compile Include="TestCaseResult.cs" />
-    <Compile Include="TestSuiteResult.cs" />
-    <Compile Include="TranslationTarget.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Core\Core.csproj">
@@ -83,20 +54,25 @@
       <Name>Core</Name>
     </ProjectReference>
     <ProjectReference Include="..\Grammar\Grammar.csproj">
-      <Project>{13FC0B05-5926-4626-89C0-296CCF7444A7}</Project>
+      <Project>{13fc0b05-5926-4626-89c0-296ccf7444a7}</Project>
       <Name>Grammar</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Learning.Test\Learning.Test.csproj">
+      <Project>{ebee74be-27c3-48e5-8c05-14cb8923a94b}</Project>
+      <Name>Learning.Test</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Learning\Learning.csproj">
+      <Project>{6f12fc3a-0e11-4e2b-be31-3114f671d869}</Project>
+      <Name>Learning</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Tokenization\Tokenization.csproj">
-      <Project>{BF62CD42-7CDC-4616-9B25-49E985FFF1F7}</Project>
+      <Project>{bf62cd42-7cdc-4616-9b25-49e985fff1f7}</Project>
       <Name>Tokenization</Name>
     </ProjectReference>
     <ProjectReference Include="..\Vocabulary\Vocabulary.csproj">
-      <Project>{9C9EFB87-FDD6-42D2-A32E-8F3E3A95ED5B}</Project>
+      <Project>{9c9efb87-fdd6-42d2-a32e-8f3e3a95ed5b}</Project>
       <Name>Vocabulary</Name>
     </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

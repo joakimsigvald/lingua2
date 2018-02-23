@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Lingua.Core;
-using Moq;
+using Lingua.Core.Tokens;
 using NUnit.Framework;
 
 namespace Lingua.Learning.Test
@@ -93,20 +93,7 @@ namespace Lingua.Learning.Test
             var parts = alternativesStr.Split('>');
             var from = parts[0];
             var to = parts[1].Split('/');
-            return to.Select((alt, i) => ParseTranslation(from, alt, i)).ToArray();
-        }
-
-        private static ITranslation ParseTranslation(string from, string to, int index)
-        {
-            var toParts = to.Split(':');
-            var toWord = toParts[0];
-            var code = toParts.Length == 1
-                ? (ushort)index
-                : ushort.Parse(toParts[1]);
-            return Mock.Of<ITranslation>(translation => translation.Input == from
-                                                        && translation.Output == toWord
-                                                        && translation.Code == code
-                                                        && translation.WordCount == toWord.Split(' ').Length);
+            return to.Select((alt, i) => FakeTranslation.Create(from, alt, i)).ToArray();
         }
 
         private static ushort[] ParseCode(string codeStr)
@@ -116,5 +103,50 @@ namespace Lingua.Learning.Test
 
         private static byte[] ParseOrder(string ordersStr)
             => ordersStr?.Select(c => (byte) (c - 48)).ToArray();
+    }
+
+    public class FakeTranslation : ITranslation
+    {
+        public static ITranslation Create(string from, string to, int index)
+        {
+            var toParts = to.Split(':');
+            var toWord = toParts[0];
+            var code = toParts.Length == 1
+                ? (ushort)index
+                : ushort.Parse(toParts[1]);
+            return new FakeTranslation
+            {
+                Input = from,
+                Output = toWord,
+                Code = code,
+                WordCount = (byte)toWord.Split(' ').Length
+        };
+        }
+
+        public string Output { get; private set; }
+        public Token From => null;
+        public ushort Code { get; set; }
+        public byte WordCount { get; private set; }
+        public bool IsCapitalized => false;
+        public ITranslation[] Variations { get; set; }
+        public bool IsTranslatedWord => false;
+        public bool IsIncompleteCompound { get; set; }
+        public string To => null;
+        public Word[] Continuation => null;
+        public string Input { get; private set; }
+        public ITranslation Capitalize()
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool Matches(IReadOnlyList<Token> tokens, int nextIndex)
+        {
+            throw new NotImplementedException();
+        }
+
+        public ITranslation Decapitalize()
+        {
+            throw new NotImplementedException();
+        }
     }
 }
