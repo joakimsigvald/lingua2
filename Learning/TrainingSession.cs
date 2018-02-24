@@ -185,17 +185,17 @@ namespace Lingua.Learning
 
         private static bool AffectedBy(TestCase testCase, ScoredPattern scoredPattern)
             => testCase.Reduction != null
-            && testCase.Possibilities.Count >= scoredPattern.Code.Length
-               && ContainsPattern(testCase.Possibilities.SelectMany(c => c.Select(t => t.Code)),
+               && testCase.Possibilities.Count >= scoredPattern.Code.Length
+               && ContainsPattern(testCase.Possibilities.Select(c => c.Select(t => t.Code).ToArray()),
                    scoredPattern.Code);
 
-        private static bool ContainsPattern(IEnumerable<ushort> possibilities, ushort[] pattern)
+        private static bool ContainsPattern(IEnumerable<ushort[]> possibilities, ushort[] pattern)
             => SkipToLastCode(possibilities, pattern, 0).Any();
 
-        private static IEnumerable<ushort> SkipToLastCode(IEnumerable<ushort> possibilities, ushort[] pattern, int offset)
-            => offset == pattern.Length 
-            ? possibilities 
-            : SkipToLastCode(possibilities.SkipWhile(t => !Encoder.Matches(t, pattern[offset])), pattern, offset + 1);
+        private static IEnumerable<ushort[]> SkipToLastCode(IEnumerable<ushort[]> possibilities, ushort[] pattern, int offset)
+            => offset == pattern.Length
+                ? possibilities
+                : SkipToLastCode(possibilities.SkipWhile(c => !c.Any(t => Encoder.Matches(t, pattern[offset]))), pattern, offset + 1);
 
         private void TryNextTarget()
         {
