@@ -22,11 +22,17 @@ namespace Lingua.Learning
             var scoredMultiPatterns = GetScoredMultiPatterns(wantedCode, unwantedCode);
             var patterns = scoredMonoPatterns.Concat(scoredMultiPatterns).ToArray();
             var uniquePatterns = patterns
-                .GroupBy(p => p.Pattern)
+                .GroupBy(p => p, new ScoredPatternComparer())
                 .Where(g => g.Sum(sp => sp.Score) != 0)
                 .Select(g => g.OrderBy(sp => sp.Score).Skip(g.Count() / 2).First())
                 .ToArray();
             return uniquePatterns;
+        }
+
+        private class ScoredPatternComparer : IEqualityComparer<ScoredPattern>
+        {
+            public bool Equals(ScoredPattern x, ScoredPattern y) => x.Code.SequenceEqual(y.Code);
+            public int GetHashCode(ScoredPattern pattern) => pattern.GetHashCode();
         }
 
         private IEnumerable<ScoredPattern> GetScoredMonoPatterns(

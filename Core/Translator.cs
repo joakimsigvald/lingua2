@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text.RegularExpressions;
 
 namespace Lingua.Core
 {
@@ -8,8 +7,6 @@ namespace Lingua.Core
 
     public class Translator : ITranslator
     {
-        private static readonly Regex Whitespace = new Regex(@"\s+");
-
         private readonly IThesaurus _thesaurus;
         private readonly IGrammar _grammar;
         private readonly ICapitalizer _capitalizer;
@@ -98,8 +95,6 @@ namespace Lingua.Core
         }
 
         private static string Merge(IEnumerable<ITranslation> translations)
-            => Whitespace.Replace(string.Join("", translations
-                    .Select(translation => translation.Output)).Trim()
-                , " ");
+            => string.Join("", translations.Select(translation => translation.Output)).Trim();
     }
 }

@@ -6,10 +6,13 @@ namespace Lingua.Learning
 {
     public class ScoredPattern : IEquatable<ScoredPattern>
     {
+        private readonly int _hashCode;
+
         public ScoredPattern(ushort[] code, sbyte score)
         {
             Code = code;
             Score = score;
+            _hashCode = Code.Aggregate(0, (a, b) => a + b);
         }
 
         public ushort[] Code{ get; }
@@ -28,6 +31,6 @@ namespace Lingua.Learning
             => Equals(obj as ScoredPattern);
 
         public override int GetHashCode()
-            => Code.Aggregate(0, (a, b) => a + b);
+            => _hashCode;
     }
 }
