@@ -22,7 +22,7 @@ namespace Lingua.Core
 
         public TranslationResult Translate(string original)
             => string.IsNullOrWhiteSpace(original)
-                ? new TranslationResult("")
+                ? new TranslationResult { Translation = ""}
                 : Compose(Decompose(original));
 
         public IList<ITranslation[]> Decompose(string original)
@@ -35,6 +35,21 @@ namespace Lingua.Core
             return undotted;
         }
 
+        public ITranslation[] Reduce(IList<ITranslation[]> possibilities) 
+            => _grammar.Reduce(possibilities).Translations;
+
+        public TranslationResult Arrange(IList<ITranslation[]> possibilities, ITranslation[] reduction)
+        {
+            var arrangedTranslations = _grammar.Arrange(reduction).ToList();
+            var translation = Trim(arrangedTranslations, reduction);
+            return new TranslationResult
+            {
+                Translation = translation,
+                Translations = reduction,
+                Possibilities = possibilities
+            };
+        }
+
         private static void SetCodes(IEnumerable<ITranslation[]> possibilities)
         {
             foreach (var alternatives in possibilities)
@@ -42,19 +57,25 @@ namespace Lingua.Core
                 translation.Code = Encoder.Encode(translation.From);
         }
 
-        public TranslationResult Compose(IList<ITranslation[]> possibilities)
+        private TranslationResult Compose(IList<ITranslation[]> possibilities)
         {
             (var translations, var reason) = _grammar.Reduce(possibilities);
             var arrangedTranslations = _grammar.Arrange(translations).ToList();
-            var capitalized = _capitalizer.Capitalize(arrangedTranslations, translations);
-            var respacedResult = Respace(capitalized).ToArray();
-            var translation = Merge(respacedResult);
-            return new TranslationResult(translation)
+            var translation = Trim(arrangedTranslations, translations);
+            return new TranslationResult
             {
+                Translation = translation,
                 Translations = translations,
                 Reason = reason,
                 Possibilities = possibilities
             };
+        }
+
+        private string Trim(IList<ITranslation> arrangedTranslations, IList<ITranslation> translations)
+        {
+            var capitalized = _capitalizer.Capitalize(arrangedTranslations, translations);
+            var respacedResult = Respace(capitalized).ToArray();
+            return Merge(respacedResult);
         }
 
         private IEnumerable<ITranslation[]> Translate(IEnumerable<Token> tokens)

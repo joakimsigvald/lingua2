@@ -18,6 +18,7 @@ namespace Lingua.Learning
         public string Suite { get; set; }
         public string From { get; }
         public string Expected { get; }
+        public ITranslation[] Reduction { get; set; }
 
         public override string ToString()
             => $"{From}=>{Expected}";

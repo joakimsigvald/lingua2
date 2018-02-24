@@ -10,6 +10,8 @@ namespace Lingua.Learning.TestCaseTranslators
             => _translator = translator;
 
         public TranslationResult Translate(TestCase testCase) 
-            => _translator.Compose(testCase.Possibilities);
+            => _translator.Arrange(testCase.Possibilities
+                , testCase.Reduction 
+                ?? (testCase.Reduction = _translator.Reduce(testCase.Possibilities)));
     }
 }

@@ -150,7 +150,7 @@ namespace Lingua.Learning
                 _arrangementCandidates.Reset();
             }
             if (_currentScoredPattern != null)
-                _evaluator.Undo(_currentScoredPattern);
+                RemoveScoredPattern();
             _currentScoredPattern = null;
             return _scoredPatterns.MoveNext();
         }
@@ -161,8 +161,41 @@ namespace Lingua.Learning
                 && _arrangementCandidates.Current != null)
                 _evaluator.Add(_currentArranger = _arrangementCandidates.Current);
             else
-                _evaluator.Do(_currentScoredPattern = _scoredPatterns.Current);
+                AddScoredPattern();
         }
+
+        private void AddScoredPattern()
+        {
+            _evaluator.Do(_currentScoredPattern = _scoredPatterns.Current);
+            ResetReductions();
+        }
+
+        private void RemoveScoredPattern()
+        {
+            ResetReductions();
+            _evaluator.Undo(_currentScoredPattern);
+        }
+
+        private void ResetReductions()
+        {
+            _testCases
+                .Where(tc => AffectedBy(tc, _currentScoredPattern))
+                .ForEach(tc => tc.Reduction = null);
+        }
+
+        private static bool AffectedBy(TestCase testCase, ScoredPattern scoredPattern)
+            => testCase.Reduction != null
+            && testCase.Possibilities.Count >= scoredPattern.Code.Length
+               && ContainsPattern(testCase.Possibilities.SelectMany(c => c.Select(t => t.Code)),
+                   scoredPattern.Code);
+
+        private static bool ContainsPattern(IEnumerable<ushort> possibilities, ushort[] pattern)
+            => SkipToLastCode(possibilities, pattern, 0).Any();
+
+        private static IEnumerable<ushort> SkipToLastCode(IEnumerable<ushort> possibilities, ushort[] pattern, int offset)
+            => offset == pattern.Length 
+            ? possibilities 
+            : SkipToLastCode(possibilities.SkipWhile(t => !Encoder.Matches(t, pattern[offset])), pattern, offset + 1);
 
         private void TryNextTarget()
         {
