@@ -39,11 +39,31 @@ namespace Lingua.Grammar
         }
 
         public ITranslation[] Arrange(IEnumerable<ITranslation> translations)
+            => DoArrange(translations.ToArray()).SelectMany(s => s).ToArray();
+
+        private IEnumerable<IEnumerable<ITranslation>> DoArrange(ICollection<ITranslation> translations)
+        {
+            for (var i = 0; i < translations.Count;)
+            {
+                var remaining = translations.Skip(i).ToArray();
+                (var arrangedSegment, var length) = ArrangeSegment(remaining);
+                i += Math.Max(1, length);
+                yield return arrangedSegment ?? remaining.Take(1);
+            }
+        }
+
+        private (ITranslation[] arrangement, int length) ArrangeSegment(IList<ITranslation> remainingTranslations)
             => Arrangers
-                .Aggregate(translations
-                    , (input, arranger) => arranger
-                        .Arrange(input.ToList()))
+                .Select(arranger => Arrange(arranger, remainingTranslations))
+                .FirstOrDefault(result => result.arrangement != null);
+
+        private static (ITranslation[] arrangement, int length) Arrange(Arranger arr, IEnumerable<ITranslation> remainingTranslations)
+        {
+            var segment = remainingTranslations
+                .Take(arr.Length)
                 .ToArray();
+            return arr.Arrange(segment);
+        }
 
         private static IList<Arranger> BuildArrangers(IEnumerable<Arrangement> arrangements)
             => arrangements.Select(arr => new Arranger(arr)).ToList();

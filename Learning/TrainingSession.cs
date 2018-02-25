@@ -143,7 +143,7 @@ namespace Lingua.Learning
             if (_bestResult.FailedCase.Deficit == 0)
             {
                 if (_currentArranger != null)
-                    _evaluator.Remove(_currentArranger);
+                    RemoveArranger();
                 _currentArranger = null;
                 if (_arrangementCandidates.MoveNext())
                     return true;
@@ -159,7 +159,7 @@ namespace Lingua.Learning
         {
             if (_bestResult.FailedCase.Deficit == 0
                 && _arrangementCandidates.Current != null)
-                _evaluator.Add(_currentArranger = _arrangementCandidates.Current);
+                AddArranger();
             else
                 AddScoredPattern();
         }
@@ -176,11 +176,34 @@ namespace Lingua.Learning
             _evaluator.Undo(_currentScoredPattern);
         }
 
+        private void AddArranger()
+        {
+            _evaluator.Add(_currentArranger = _arrangementCandidates.Current);
+            ResetResult();
+        }
+
+        private void RemoveArranger()
+        {
+            ResetResult();
+            _evaluator.Remove(_currentArranger);
+        }
+
         private void ResetReductions()
         {
             _testCases
                 .Where(tc => AffectedBy(tc, _currentScoredPattern))
-                .ForEach(tc => tc.Reduction = null);
+                .ForEach(tc =>
+                {
+                    tc.Reduction = null;
+                    tc.Result = null;
+                });
+        }
+
+        private void ResetResult()
+        {
+            _testCases
+                .Where(tc => AffectedBy(tc, _currentArranger))
+                .ForEach(tc => tc.Result = null);
         }
 
         private static bool AffectedBy(TestCase testCase, ScoredPattern scoredPattern)
@@ -196,6 +219,19 @@ namespace Lingua.Learning
             => offset == pattern.Length
                 ? possibilities
                 : SkipToLastCode(possibilities.SkipWhile(c => !c.Any(t => Encoder.Matches(t, pattern[offset]))), pattern, offset + 1);
+
+        private static bool AffectedBy(TestCase testCase, Arranger arranger)
+            => testCase.Result != null
+               && testCase.Reduction.Length >= arranger.Arrangement.Code.Length
+               && ContainsPattern(testCase.Reduction.Select(t => t.Code), arranger.Arrangement.Code);
+
+        private static bool ContainsPattern(IEnumerable<ushort> translations, ushort[] pattern)
+            => SkipToLastCode(translations, pattern, 0).Any();
+
+        private static IEnumerable<ushort> SkipToLastCode(IEnumerable<ushort> translations, ushort[] pattern, int offset)
+            => offset == pattern.Length
+                ? translations
+                : SkipToLastCode(translations.SkipWhile(t => !Encoder.Matches(t, pattern[offset])), pattern, offset + 1);
 
         private void TryNextTarget()
         {
