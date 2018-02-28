@@ -1,4 +1,6 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
+using Lingua.Core.WordClasses;
 
 namespace Lingua.Vocabulary
 {
@@ -7,12 +9,23 @@ namespace Lingua.Vocabulary
 
     public class Lexicon : ILexicon
     {
+        private readonly IList<IModificationRule> _rules;
         private readonly IDictionary<string, IList<ITranslation>> _translations = new Dictionary<string, IList<ITranslation>>();
 
-        public Lexicon(params IWordMap[] maps) => maps.ForEach(AddToDictionary);
+        public Lexicon(IList<IModificationRule> rules, params IWordMap[] maps)
+        {
+            _rules = rules;
+            maps.ForEach(AddToDictionary);
+        }
 
         public IList<ITranslation> Lookup(string word) 
             => _translations.SafeGetValue(word) ?? new ITranslation[0];
+
+        public ITranslation[] PostApplyRules(ITranslation translation)
+            => _rules.Select(rule => rule.PostApply(translation))
+            .ExceptNull()
+            .Concat(new []{translation})
+            .ToArray();
 
         private void AddToDictionary(IWordMap map) => map.Translations.ForEach(AddToDictionary);
 

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Lingua.Core.WordClasses;
 using NUnit.Framework;
 
 namespace Lingua.Tokenization.Test
@@ -129,6 +130,13 @@ namespace Lingua.Tokenization.Test
         public void InvalidGenericWord(string text)
         {
             Assert.Throws<NotImplementedException>(() => text.Tokenize());
+        }
+
+        [TestCase("Joakim")]
+        public void Name(string text)
+        {
+            var tokens = text.Tokenize();
+            Assert.That(tokens.Single().GetType(), Is.EqualTo(typeof(Name)));
         }
     }
 

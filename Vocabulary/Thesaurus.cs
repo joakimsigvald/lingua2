@@ -20,8 +20,11 @@ namespace Lingua.Vocabulary
                 : new Translation[0];
             return translations.Any()
                 ? translations.ToArray()
-                : new[] { Translation.Create(token)};
+                : GetUnclassified(token);//Translation.Create(token)};
         }
+
+        private ITranslation[] GetUnclassified(Token token) 
+            => Lexicon.PostApplyRules(Translation.Create(token));
 
         private static ITranslation[] Translate(Generic generic)
             => Translate(generic.Stem).SelectMany(t => t.Variations).ToArray();

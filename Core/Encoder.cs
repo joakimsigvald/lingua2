@@ -100,9 +100,10 @@ namespace Lingua.Core
                 case InfinitiveMarker.Code: return new InfinitiveMarker();
                 case Conjunction.Code: return new Conjunction();
                 case Greeting.Code: return new Greeting();
-                case AdverbQualifying.Code: return new AdverbQualifying();
-                case AdverbPositioning.Code: return new AdverbPositioning();
                 case AdverbQuestion.Code: return new AdverbQuestion();
+                case AdverbPositioning.Code: return new AdverbPositioning();
+                case AdverbQualifying.Code: return new AdverbQualifying();
+                case Name.Code: return new Name();
                 case Unclassified.Code: return new Unclassified();
                 default: throw new NotImplementedException();
             }
@@ -131,6 +132,7 @@ namespace Lingua.Core
                 case AdverbQuestion _: return AdverbQuestion.Code;
                 case AdverbPositioning _: return AdverbPositioning.Code;
                 case AdverbQualifying _: return AdverbQualifying.Code;
+                case Name _: return Name.Code;
                 case Abbreviation _:
                 case Unclassified _: return Unclassified.Code;
                 default: throw new NotImplementedException();
@@ -164,6 +166,7 @@ namespace Lingua.Core
                 case Greeting _: return "G";
                 case InfinitiveMarker _: return "I";
                 case Noun _: return "N";
+                case Name _: return "E";
                 case Preposition _: return "P";
                 case Quantifier _:
                 case Number _: return "Q";
@@ -197,6 +200,7 @@ namespace Lingua.Core
                 case 'A': return new Adjective();
                 case 'B': return new AdverbQualifying();
                 case 'C': return new Conjunction();
+                case 'E': return new Name();
                 case 'G': return new Greeting();
                 case 'I': return new InfinitiveMarker();
                 case 'N': return new Noun();

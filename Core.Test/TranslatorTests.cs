@@ -36,6 +36,7 @@ namespace Lingua.Core.Test
         public void TranslateNull()
             => TestCase(null, "");
 
+        [TestCase("|Joakim's| /=> |Joakims|")]
         [TestCase("|I am here| /=> |jag är här|")]
         [TestCase("|Bouncing ball to play with| /=> |Studsboll att leka med|")]
         [TestCase("|It is my pen| /=> |Det är min penna|")]

@@ -64,7 +64,7 @@ namespace Lingua.Vocabulary.Test
         }
 
         private static Lexicon CreateLexicon(params IDictionary<string, string>[] maps) 
-            => new Lexicon(maps.Select(map => new WordMap<Unclassified>(map)).Cast<IWordMap>().ToArray());
+            => new Lexicon(new List<IModificationRule>(), maps.Select(map => new WordMap<Unclassified>(map)).Cast<IWordMap>().ToArray());
 
         private static void CanLookup(ILexicon lexicon, string from, string to)
         {

@@ -36,7 +36,7 @@ namespace Lingua.Learning
         private Translator CreateTranslator() 
             => new Translator(new Tokenizer(), new Thesaurus(), new GrammarEngine(_evaluator), new Capitalizer());
 
-        private TestSessionResult VerifyPatterns(ICollection<TestCase> testCases)
+        private TestSessionResult VerifyPatterns(IList<TestCase> testCases)
         {
             var settings = new TestRunnerSettings
             {

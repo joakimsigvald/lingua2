@@ -13,42 +13,49 @@ namespace Lingua.Vocabulary
     {
         private const string WordsDir = "Words";
 
-        public static ILexicon LoadLexicon() => new Lexicon(
-            Load<Abbreviation>(),
-            Load<Quantifier>(),
-            Load<Noun>(),
-            Load<Article>(),
-            Load<Preposition>(),
-            Load<Pronoun>(),
-            Load<Adjective>(),
-            Load<Auxiliary>(),
-            Load<Verb>(),
-            Load<AdverbQualifying>(),
-            Load<AdverbPositioning>(),
-            Load<AdverbQuestion>(),
-            Load<InfinitiveMarker>(),
-            Load<Conjunction>(),
-            Load<Greeting>()
-        );
+        public static ILexicon LoadLexicon()
+        {
+            var rules = LoadRules().ToArray();
+            return new Lexicon(
+                rules,
+                Load<Abbreviation>(rules),
+                Load<Quantifier>(rules),
+                Load<Noun>(rules),
+                Load<Article>(rules),
+                Load<Preposition>(rules),
+                Load<Pronoun>(rules),
+                Load<Adjective>(rules),
+                Load<Auxiliary>(rules),
+                Load<Verb>(rules),
+                Load<AdverbQualifying>(rules),
+                Load<AdverbPositioning>(rules),
+                Load<AdverbQuestion>(rules),
+                Load<InfinitiveMarker>(rules),
+                Load<Conjunction>(rules),
+                Load<Greeting>(rules)
+            );
+        }
 
-        private static IWordMap Load<TWord>()
+        private static IEnumerable<IModificationRule> LoadRules()
+        {
+            var ruleLines = LoaderBase.ReadFile(Path.Combine(WordsDir, "rules.txt"));
+            return ParseRules(ruleLines);
+        }
+
+        private static IWordMap Load<TWord>(IModificationRule[] rules)
             where TWord : Word, new()
         {
             var allLines = ReadLines<TWord>();
             var wordLines = allLines
-                .TakeWhile(line => line != "//Rules" && line != "//Settings")
-                .ToArray();
-            var ruleLines = allLines
-                .SkipWhile(line => line != "//Rules")
                 .TakeWhile(line => line != "//Settings")
                 .ToArray();
             var settingsLines = allLines
                 .SkipWhile(line => line != "//Settings")
                 .ToArray();
-            var rules = ParseRules<TWord>(ruleLines);
+            var applicableRules = rules.Where(rule => rule.AppliesTo(typeof(TWord)));
             var settings = ParseSettings(settingsLines);
             var words = ParseWords(wordLines);
-            return new WordMap<TWord>(words, rules.ToList(), settings.baseForm);
+            return new WordMap<TWord>(words, applicableRules.ToList(), settings.baseForm);
         }
 
         private static (int baseForm, int placeholder) ParseSettings(IEnumerable<string> settingsLines)
@@ -72,24 +79,29 @@ namespace Lingua.Vocabulary
             return wordPairs.ToDictionary(pair => pair[0], pair => pair[1]);
         }
 
-        private static IEnumerable<IModificationRule> ParseRules<TWord>(IList<string> ruleLines)
-            where TWord : Word
+        private static IEnumerable<IModificationRule> ParseRules(IList<string> ruleLines)
         {
-            var forLine = PickLine(ruleLines, "For");
+            var coversLine = PickLine(ruleLines, "Covers");
+            var addsLine = PickLine(ruleLines, "Adds");
             var fromLine = PickLine(ruleLines, "From");
             var toLine = PickLine(ruleLines, "To");
-            if (forLine == null)
-                yield break;
-            Enum.TryParse<Modifier>(forLine.Split(':')[1], out var modifier);
-            var fromTransforms = ParseTransforms(fromLine.Split(':')[1]);
-            var toTransforms = ParseTransforms(toLine.Split(':')[1]);
-            yield return new ModificationRule<TWord>(modifier, fromTransforms, toTransforms);
+            if (coversLine == null)
+                return new IModificationRule[0];
+            Enum.TryParse<Modifier>(GetValues(addsLine).Single(), out var modifier);
+            var types = GetValues(coversLine).Select(GetWordType).ToArray();
+            var fromTransforms = GetValues(fromLine);
+            var toTransforms = GetValues(toLine);
+            return new[] {new ModificationRule(types, modifier, fromTransforms, toTransforms)}
+                .Concat(ParseRules(ruleLines.SkipWhile(line => !string.IsNullOrWhiteSpace(line)).ToList()));
         }
 
-        private static IEnumerable<string> ParseTransforms(string transformString)
-            => transformString.Split(',');
+        private static Type GetWordType(string name)
+            => typeof(Word).Assembly.GetTypes().Single(t => t.FullName == $"Lingua.Core.WordClasses.{name}");
+
+        private static string[] GetValues(string line)
+            => line.Split(':')[1].Split(',');
 
         private static string PickLine(IEnumerable<string> lines, string label)
-            => lines.SingleOrDefault(line => line.StartsWith(label));
+            => lines.FirstOrDefault(line => line.StartsWith(label));
     }
 }

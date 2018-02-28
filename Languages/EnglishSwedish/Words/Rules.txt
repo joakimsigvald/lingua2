@@ -1,0 +1,4 @@
+Covers:Noun,Name
+Adds:Genitive
+From:*>*'s,*s>*'
+To:*>*s,*s>*'

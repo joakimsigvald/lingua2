@@ -8,20 +8,23 @@ namespace Lingua.Vocabulary
 {
     public interface IModificationRule
     {
+        bool AppliesTo(Type type); 
         ITranslation Apply(ITranslation translation);
+        ITranslation PostApply(ITranslation translation);
     }
 
-    public class ModificationRule<TWord> : IModificationRule
-        where TWord : Word
+    public class ModificationRule : IModificationRule
     {
+        private readonly Type[] _appliesTo;
         private readonly Modifier _modifier;
         private readonly Transformation[] _fromTransforms;
         private readonly Transformation[] _toTransforms;
 
-        public ModificationRule(Modifier modifier, IEnumerable<string> fromTransforms, IEnumerable<string> toTransforms)
+        public ModificationRule(Type[] appliesTo, Modifier modifier, IEnumerable<string> fromTransforms, IEnumerable<string> toTransforms)
         {
             if (modifier == Modifier.None)
                 throw new ArgumentException("Rule must have modifier, was None");
+            _appliesTo = appliesTo;
             _modifier = modifier;
             _fromTransforms = Parse(fromTransforms);
             if (_fromTransforms.Any(transform => transform.To == "*"))
@@ -29,10 +32,13 @@ namespace Lingua.Vocabulary
             _toTransforms = Parse(toTransforms);
         }
 
+        public bool AppliesTo(Type type) 
+            => _appliesTo.Any(t => t.IsAssignableFrom(type));
+
         public ITranslation Apply(ITranslation translation)
         {
-            var fromWord = translation.From as TWord;
-            if (fromWord == null)
+            var fromWord = translation.From as Word;
+            if (fromWord == null || !_appliesTo.Any(t => t.IsInstanceOfType(fromWord)))
                 return null;
             var fromModification = _fromTransforms.FirstOrDefault(transform => Matches(transform.From, fromWord.Value));
             if (fromModification == null)
@@ -42,6 +48,21 @@ namespace Lingua.Vocabulary
             var toModification = _toTransforms.FirstOrDefault(transform => Matches(transform.From, translation.To));
             var modifiedTo = Modify(translation.To, toModification?.To ?? "*");
             return Translation.Create(modifiedFrom, modifiedTo);
+        }
+
+        public ITranslation PostApply(ITranslation translation)
+        {
+            var fromWord = translation.From as Word;
+            if (fromWord == null || !_appliesTo.Any(t => t.IsInstanceOfType(fromWord)))
+                return null;
+            var fromModification = _fromTransforms.FirstOrDefault(transform => Matches(transform.To, fromWord.Value));
+            if (fromModification == null)
+                return null;
+            var unmodifiedFrom = fromWord.Value.Substring(0, fromWord.Value.Length - fromModification.To.Length + 1);
+            fromWord.Modifiers |= _modifier;
+            var toModification = _toTransforms.FirstOrDefault(transform => Matches(transform.From, unmodifiedFrom));
+            var modifiedTo = Modify(unmodifiedFrom, toModification?.To ?? "*");
+            return Translation.Create(fromWord, modifiedTo);
         }
 
         private static Transformation[] Parse(IEnumerable<string> transforms)

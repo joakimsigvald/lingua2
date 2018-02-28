@@ -13,7 +13,7 @@ namespace Lingua.Vocabulary.Test
         public void CreatingRuleWithoutModifier_ThrowsException()
         {
             Assert.Throws<ArgumentException>(
-                () => new ModificationRule<Noun>(Modifier.None, new string[0], new string[0]));
+                () => new ModificationRule(new []{typeof(Noun) }, Modifier.None, new string[0], new string[0]));
         }
 
         [Test]
@@ -21,7 +21,7 @@ namespace Lingua.Vocabulary.Test
         {
             var verb = new Verb();
             var translation = Translation.Create(verb, "");
-            var rule = new ModificationRule<Noun>(Modifier.Genitive, new[] { "*>*s" }, new[] { "*>*s" });
+            var rule = new ModificationRule(new[] { typeof(Noun) }, Modifier.Genitive, new[] { "*>*s" }, new[] { "*>*s" });
             var modification = rule.Apply(translation);
             Assert.That(modification, Is.Null);
         }
@@ -31,7 +31,7 @@ namespace Lingua.Vocabulary.Test
         {
             var noun = new Noun();
             var translation = Translation.Create(noun, "");
-            var rule = new ModificationRule<Noun>(Modifier.Genitive, new string[0], new string[0]);
+            var rule = new ModificationRule(new[] { typeof(Noun) }, Modifier.Genitive, new string[0], new string[0]);
             var modification = rule.Apply(translation);
             Assert.That(modification, Is.Null);
         }
@@ -40,7 +40,7 @@ namespace Lingua.Vocabulary.Test
         public void WhenHasFromIdentityTransformation_ConstructorThrowsArgumentException()
         {
             Assert.Throws<ArgumentException>(
-                () => new ModificationRule<Noun>(Modifier.Genitive, new[] { "*>*" }, new[] { "*>*" }));
+                () => new ModificationRule(new[] { typeof(Noun) }, Modifier.Genitive, new[] { "*>*" }, new[] { "*>*" }));
         }
 
         [TestCase("a", "b")]
@@ -55,7 +55,7 @@ namespace Lingua.Vocabulary.Test
                 Value = from
             };
             var translation = Translation.Create(noun, to);
-            var rule = new ModificationRule<Noun>(Modifier.Genitive, new[] { "*>*" + addToFrom }, new[] { "*>*" + addToTo });
+            var rule = new ModificationRule(new[] { typeof(Noun) }, Modifier.Genitive, new[] { "*>*" + addToFrom }, new[] { "*>*" + addToTo });
             var modification = rule.Apply(translation);
             Assert.That(modification.From.Value, Is.EqualTo(from + addToFrom));
             Assert.That(modification.To, Is.EqualTo(to + addToTo));
@@ -71,7 +71,7 @@ namespace Lingua.Vocabulary.Test
                 Value = from
             };
             var translation = Translation.Create(noun, "any");
-            var rule = new ModificationRule<Noun>(Modifier.Genitive, new[] { $"*{suffix}>*s" }, new[] { "*>*s" });
+            var rule = new ModificationRule(new[] { typeof(Noun) }, Modifier.Genitive, new[] { $"*{suffix}>*s" }, new[] { "*>*s" });
             var modification = rule.Apply(translation);
             Assert.That(modification != null, Is.EqualTo(matches));
         }
@@ -85,7 +85,7 @@ namespace Lingua.Vocabulary.Test
                 Value = origin
             };
             var translation = Translation.Create(noun, "any");
-            var rule = new ModificationRule<Noun>(Modifier.Genitive, new[] { "*>*'s", "*s>*'" }, new[] { "*>*s" });
+            var rule = new ModificationRule(new[] { typeof(Noun) }, Modifier.Genitive, new[] { "*>*'s", "*s>*'" }, new[] { "*>*s" });
             var modification = rule.Apply(translation);
             Assert.That(modification.From.Value, Is.EqualTo(transformed));
         }
@@ -99,7 +99,7 @@ namespace Lingua.Vocabulary.Test
                 Value = "any"
             };
             var translation = Translation.Create(noun, origin);
-            var rule = new ModificationRule<Noun>(Modifier.Genitive, new[] { "*>*s" }, new[] { "*s>*'", "*>*s" });
+            var rule = new ModificationRule(new[] { typeof(Noun) }, Modifier.Genitive, new[] { "*>*s" }, new[] { "*s>*'", "*>*s" });
             var modification = rule.Apply(translation);
             Assert.That(modification.To, Is.EqualTo(transformed));
         }

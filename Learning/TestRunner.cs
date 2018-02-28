@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Lingua.Core;
+using Lingua.Core.Extensions;
 
 namespace Lingua.Learning
 {
@@ -32,7 +33,7 @@ namespace Lingua.Learning
                 }))
                 .ToArray();
 
-        public TestSessionResult RunTestSession(ICollection<TestCase> testCases)
+        public TestSessionResult RunTestSession(IList<TestCase> testCases)
         {
             //Keep, can be useful with more test cases
             //var results = TestRunnerProcess.Run(_translator, _evaluator, testCases);
@@ -75,28 +76,28 @@ namespace Lingua.Learning
 
     public class TestRunnerProcess
     {
-        private readonly ICollection<TestCase> _testCases;
+        private readonly IList<TestCase> _testCases;
         private int _failedIndex;
-        private readonly ConcurrentBag<(int index, TestCaseResult result)> _results = new ConcurrentBag<(int, TestCaseResult)>();
+        private readonly TestCaseResult[] _results;
         private readonly ITestCaseTranslator _translator;
         private readonly TrainableEvaluator _evaluator;
-        private Task[] _tasks;
 
         public static TestCaseResult[] Run(
             ITestCaseTranslator translator
             , TrainableEvaluator evaluator
-            , ICollection<TestCase> testCases)
+            , IList<TestCase> testCases)
             => new TestRunnerProcess(translator, evaluator, testCases).Run();
 
         private TestRunnerProcess(
             ITestCaseTranslator translator
             , TrainableEvaluator evaluator
-            , ICollection<TestCase> testCases)
+            , IList<TestCase> testCases)
         {
             _translator = translator;
             _evaluator = evaluator;
             _testCases = testCases;
             _failedIndex = testCases.Count;
+            _results = new TestCaseResult[testCases.Count];
         }
 
         private TestCaseResult[] Run()
@@ -107,15 +108,23 @@ namespace Lingua.Learning
             {
                 return new[] {firstResult};
             }
-            _results.Add((-1, firstResult));
-            _tasks = _testCases
-                .Skip(1)
-                .Select((tc, i) => Task.Factory.StartNew(() => RunTestTask(i, tc))).ToArray();
-            Task.WaitAll(_tasks);
+            _results[0] = firstResult;
+            var tasks = new List<Task>();
+            for (var i = 1; i < _testCases.Count; i++)
+            {
+                var testCase = _testCases[i];
+                if (testCase.Result != null)
+                    _results[i] = RunTestCase(testCase);
+                else
+                {
+                    var localI = i;
+                    tasks.Add(Task.Factory.StartNew(() => RunTestTask(localI, testCase)));
+                }
+            }
+            Task.WaitAll(tasks.ToArray());
             TestCaseResult lastResult = null;
             var resultsUntilFail = _results
-                .OrderBy(indexedRes => indexedRes.index)
-                .Select(indexedRes => indexedRes.result)
+                .ExceptNull()
                 .TakeWhile(res => (lastResult?.Success ?? true) && (lastResult = res) == res)
                 .ToArray();
             return resultsUntilFail;
@@ -127,7 +136,7 @@ namespace Lingua.Learning
             var result = RunTestCase(tc);
             if (!result.Success)
                 Fail(testIndex);
-            _results.Add((testIndex, result));
+            _results[testIndex] = result;
         }
 
         private void Fail(int testIndex)

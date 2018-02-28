@@ -47,6 +47,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Words", "Words", "{BDD18A92
 		Languages\EnglishSwedish\Words\Prepositions.txt = Languages\EnglishSwedish\Words\Prepositions.txt
 		Languages\EnglishSwedish\Words\Pronouns.txt = Languages\EnglishSwedish\Words\Pronouns.txt
 		Languages\EnglishSwedish\Words\Quantifiers.txt = Languages\EnglishSwedish\Words\Quantifiers.txt
+		Languages\EnglishSwedish\Words\Rules.txt = Languages\EnglishSwedish\Words\Rules.txt
 		Languages\EnglishSwedish\Words\Verbs.txt = Languages\EnglishSwedish\Words\Verbs.txt
 	EndProjectSection
 EndProject

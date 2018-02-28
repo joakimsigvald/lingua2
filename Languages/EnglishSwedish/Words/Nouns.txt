@@ -15,6 +15,7 @@ foot::_3eet| = fot:en:__ötter|na
 hall::s| = hall:en:ar|na
 hand::s| = hand:en:_3änder|na
 lake::s| = sjö:n:ar|na
+livingroom::s| = vardagsrum:met::men
 mark::s| = märke:t:n|a
 morning::s| = morgon:en:_2nar|na
 mouse::_4ice| = mus:en:__öss|en
@@ -34,8 +35,3 @@ table::s|<t = bord:et:|en
 theater::s| = teater:n:_2rar|na
 ::trousers| = ::byxor|na
 wall::s| = vägg:en:ar|na
-
-//Rules
-For:Genitive
-From:*>*'s,*s>*'
-To:*>*s,*s>*'

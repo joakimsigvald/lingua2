@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Lingua.Core.Extensions;
+using Lingua.Core.WordClasses;
 using Lingua.Tokenization.Symbols;
 
 namespace Lingua.Tokenization
@@ -75,10 +77,12 @@ namespace Lingua.Tokenization
         private static Token GetEnriched(Token token, string original, Symbol next)
         {
             token.Value = original;
-            if (token is Word word)
-                word.PossibleAbbreviation = next is Dot;
             if ((token is StartGeneric || token is EndGeneric) && token.Value.Length != 2)
                 throw new NotImplementedException("Unknown token: " + token.Value);
+            if (!(token is Unclassified word)) return token;
+            if (word.Value.IsCapitalized())
+                token = word = new Name {Value = word.Value};
+            word.PossibleAbbreviation = next is Dot;
             return token;
         }
     }

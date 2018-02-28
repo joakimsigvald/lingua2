@@ -65,7 +65,7 @@
     <Compile Include="Tokens\Separator.cs" />
     <Compile Include="Tokens\Terminator.cs" />
     <Compile Include="Tokens\Number.cs" />
-    <Compile Include="Tokens\Abbreviation.cs" />
+    <Compile Include="WordClasses\Abbreviation.cs" />
     <Compile Include="Tokens\Element.cs" />
     <Compile Include="CompoundHandler.cs" />
     <Compile Include="TranslationResult.cs" />
@@ -74,6 +74,7 @@
     <Compile Include="WordClasses\AdverbQuestion.cs" />
     <Compile Include="WordClasses\InfinitiveMarker.cs" />
     <Compile Include="WordClasses\Conjunction.cs" />
+    <Compile Include="WordClasses\Name.cs" />
     <Compile Include="WordClasses\Preposition.cs" />
     <Compile Include="WordClasses\Pronoun.cs" />
     <Compile Include="WordClasses\Auxiliary.cs" />
