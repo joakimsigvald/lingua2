@@ -174,8 +174,7 @@
 "It is kind of you.", "Det är snällt av dig."
 "That ball is red.", "Den bollen är röd."
 "It is a red ball.", "Det är en röd boll."
-//"The ball hit a table. It made a mark in it.", "Bollen träffade ett bord. Den gjorde ett märke i det."
-//"The table stood on a rug. It made a mark in it.", "Bordet stod på en matta. Det gjorde ett märke i den."
+"Mary knew that her essay contained an error, but she couldn't find it.", "Mary visste att hennes uppsats innehöll ett fel, men hon kunde inte hitta det."
 
 //Adverbs
 "When I was young I was a salesman.", "När jag var ung var jag en säljare."

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Lingua.Core.Tokens;
 
 namespace Lingua.Grammar
 {
@@ -11,6 +12,7 @@ namespace Lingua.Grammar
     {
         public ScoreTreeNode ScoringTree;
         public IList<Arranger> Arrangers = new List<Arranger>();
+        public List<Aggregate> Aggregates = new List<Aggregate>();
 
         private static readonly Lazy<ScoreTreeNode> LoadedScoringTree =
             new Lazy<ScoreTreeNode>(() => BuildScoringTree(Repository.LoadScoredPatterns()));
@@ -29,9 +31,9 @@ namespace Lingua.Grammar
             Arrangers = LoadedArrangers.Value;
         }
 
-        public Evaluation Evaluate(ushort[] code)
+        public Evaluation Evaluate(ushort[] code, int commonLength = 0)
         {
-            var scorings = GetMatchingScoreNodes(code)
+            var scorings = GetMatchingScoreNodes(code, commonLength)
                 .GroupBy(n => n)
                 .Select(n => new Scoring(n.Key.Path, (byte)n.Count(), n.Key.Score))
                 .ToArray();
@@ -68,8 +70,8 @@ namespace Lingua.Grammar
         private static IList<Arranger> BuildArrangers(IEnumerable<Arrangement> arrangements)
             => arrangements.Select(arr => new Arranger(arr)).ToList();
 
-        private IEnumerable<ScoreTreeNode> GetMatchingScoreNodes(ushort[] sequence)
-            => new EvaluationProcess(sequence).GetMatchingScoreNodes(ScoringTree);
+        private IEnumerable<ScoreTreeNode> GetMatchingScoreNodes(ushort[] sequence, int commonLength)
+            => new EvaluationProcess(sequence, commonLength).GetMatchingScoreNodes(ScoringTree);
 
         private static ScoreTreeNode BuildScoringTree(IDictionary<string, sbyte> patterns)
         {

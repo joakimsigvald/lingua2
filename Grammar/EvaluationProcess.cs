@@ -1,24 +1,27 @@
 using System.Collections.Generic;
 using System.Linq;
-using Lingua.Core;
 
 namespace Lingua.Grammar
 {
     public class EvaluationProcess
     {
         private readonly ushort[] _sequence;
+        private readonly int _commonLength;
 
-        public EvaluationProcess(ushort[] sequence) => _sequence = sequence;
-
-        public IEnumerable<ScoreTreeNode> GetMatchingScoreNodes(ScoreTreeNode root)
+        public EvaluationProcess(ushort[] sequence, int commonLength)
         {
-            return Enumerable.Range(0, _sequence.Length)
-                .SelectMany(i => GetMatchingScorers(root, i));
+            _sequence = sequence;
+            _commonLength = commonLength;
         }
+
+        public IEnumerable<ScoreTreeNode> GetMatchingScoreNodes(ScoreTreeNode root) 
+            => Enumerable.Range(0, _sequence.Length)
+            .SelectMany(i => GetMatchingScorers(root, i));
 
         private IEnumerable<ScoreTreeNode> GetMatchingScorers(ScoreTreeNode subtree, int index)
         {
-            if (subtree.Score != 0) yield return subtree;
+            if (index > _commonLength && subtree.Score != 0)
+                yield return subtree;
             if (index >= _sequence.Length) yield break;
             var code = _sequence[index];
             var matchingChildren = subtree.GetMatchingChildren(code);
@@ -26,8 +29,8 @@ namespace Lingua.Grammar
                 yield return node;
         }
 
-        private IEnumerable<ScoreTreeNode> GetMatchingScorers(IEnumerable<ScoreTreeNode> matchingChildren,
-            int index)
+        private IEnumerable<ScoreTreeNode> GetMatchingScorers(
+            IEnumerable<ScoreTreeNode> matchingChildren, int index)
             => matchingChildren.SelectMany(child => GetMatchingScorers(child, index));
     }
 }

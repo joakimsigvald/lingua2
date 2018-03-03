@@ -8,8 +8,9 @@ namespace Lingua.Grammar
 
     internal class Process
     {
-        private readonly IList<ITranslation[]> _possibilities;
         private const int Horizon = 6;
+
+        private readonly IList<ITranslation[]> _possibilities;
         private Reason _reason;
         private readonly List<IEvaluation> _evaluations = new List<IEvaluation>();
         private ITranslation[] _translations;
@@ -78,11 +79,15 @@ namespace Lingua.Grammar
                 .Select(future => EvaluateFuture(pastReversed, future))
                 .OrderByDescending(scoredTranslation => scoredTranslation.evaluation.Score).ToArray();
 
-        private (ITranslation[] future, Evaluation evaluation) EvaluateFuture(IEnumerable<ushort> pastReversed,
-            ITranslation[] future)
-            => (future: future
-                , evaluation: _evaluator.Evaluate(GetCodeWithinHorizon(pastReversed
-                    , _futureOffset == 0 ? future : future.Skip(_futureOffset))));
+        private (ITranslation[] future, Evaluation evaluation) EvaluateFuture(
+            ICollection<ushort> pastReversed, ITranslation[] future)
+        {
+            var commonLength = pastReversed.Count;
+            var pattern = GetCodeWithinHorizon(pastReversed
+                , _futureOffset == 0 ? future : future.Skip(_futureOffset));
+            var evaluation = _evaluator.Evaluate(pattern, commonLength);
+            return (future, evaluation);
+        }
 
         private IEnumerable<ITranslation[]> GetNextFutures(ITranslation translation)
             => _futureKnown

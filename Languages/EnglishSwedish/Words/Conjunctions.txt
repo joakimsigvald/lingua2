@@ -1,2 +1,4 @@
 and = och
 or = eller
+that = att
+but = men

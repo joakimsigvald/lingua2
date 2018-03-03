@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using Lingua.Core.Tokens;
 
 namespace Lingua.Learning
 {
@@ -9,6 +10,8 @@ namespace Lingua.Learning
 
     public class TrainableEvaluator : Evaluator
     {
+        private ushort _nextAggregateCode = Aggregate.MinCode;
+
         public void UpdateScore(ushort[] code, sbyte addScore)
         {
             if (addScore == 0)
@@ -23,7 +26,7 @@ namespace Lingua.Learning
 
         public void Undo(ScoredPattern scoredPattern)
         {
-            UpdateScore(scoredPattern.Code, (sbyte)-scoredPattern.Score);
+            UpdateScore(scoredPattern.Code, (sbyte) -scoredPattern.Score);
         }
 
         public void Add(Arranger arranger)
@@ -82,5 +85,53 @@ namespace Lingua.Learning
             var child = node.Children.FirstOrDefault(c => c.Code == next);
             return child == null ? null : GetScoreNode(child, code, index + 1);
         }
+
+        public void AggregatePatterns()
+        {
+            AddAggregates(GetSubPatterns());
+        }
+
+        private IEnumerable<ushort[]> GetSubPatterns()
+            => ScoringTree.Patterns
+                .SelectMany(GetSubPatterns)
+                .GroupBy(p => p, new CodeComparer())
+                .Where(g => g.Count() > 2)
+                .Select(g => g.Key);
+
+        private void AddAggregates(IEnumerable<ushort[]> subPatterns)
+        {
+            foreach (var subPattern in subPatterns)
+            {
+                if (_nextAggregateCode == 0)
+                    break;
+                var aggregate = new Aggregate(_nextAggregateCode++, subPattern);
+                AddAggregate(aggregate);
+            }
+        }
+
+        private void AddAggregate(Aggregate aggregate)
+        {
+            Aggregates.Add(aggregate);
+            ScoringTree.Replace(aggregate.Pattern, aggregate.Code);
+        }
+
+        private static IEnumerable<ushort[]> GetSubPatterns(ushort[] pattern)
+            => Enumerable.Range(1, pattern.Length - 2)
+                .SelectMany(o => GetStartingSubPatterns(pattern.Skip(o).ToArray()))
+                .Concat(GetStartingSubPatterns(pattern));
+
+        private static IEnumerable<ushort[]> GetStartingSubPatterns(ushort[] pattern)
+            => Enumerable.Range(2, pattern.Length - 1).Select(l => pattern.Take(l).ToArray());
+    }
+
+    public class CodeComparer : IEqualityComparer<ushort[]>
+    {
+        public bool Equals(ushort[] x, ushort[] y)
+            => x == null 
+            ? y == null 
+            : y != null && x.SequenceEqual(y);
+
+        public int GetHashCode(ushort[] code)
+            => code.Sum(c => c);
     }
 }

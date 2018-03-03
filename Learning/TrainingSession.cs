@@ -100,6 +100,7 @@ namespace Lingua.Learning
         {
             _currentScoredPattern = null;
             _currentArranger = null;
+            //_evaluator.AggregatePatterns();
             if (result.SuccessCount > _bestResult.SuccessCount)
                 PrepareToLearnNextTestCase(result);
             else ResetPatterns();

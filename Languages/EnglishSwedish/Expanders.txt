@@ -1,3 +1,4 @@
+couldn't => could not
 I'm => I am
 he's => he is
 she's => she is

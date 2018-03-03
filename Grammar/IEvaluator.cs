@@ -5,7 +5,7 @@ namespace Lingua.Grammar
 {
     public interface IEvaluator
     {
-        Evaluation Evaluate(ushort[] code);
+        Evaluation Evaluate(ushort[] code, int commonLength = 0);
         ITranslation[] Arrange(IEnumerable<ITranslation> translations);
     }
 }
