@@ -8,6 +8,7 @@ give 4::s 4!gave:n 4:_ing = ge: 4:r 4!gav:tt :r!gav:tt:
 go 4::es 4!went:ne 4:ing = gå: 4:r 4!gick:tt :r!gick:tt:
 help 4::s 5:ed 4:ing = hjälp:a 4:er 4:te:t :er:te:t:a
 hit 4::s 5: 4:ting = träffa: 4:r 4:de:t :r:de:t:
+kick 4::s 5:ed 4:ing = sparka: 4:r 4:de:t :r:de:t:
 know 4::s 4:_2ew:n 4:ing = veta: 4:_ 4!visste:t :!visste:t:
 look 4::s 5:ed 4:ing = titta: 4:r 4:de:t :r:de:t:
 make 4::s 5:_2de 4:_ing = gör:a 4: 4!gjorde|_2t :!gjorde|_2t:a
@@ -18,6 +19,7 @@ shake 4::s 4:d:n 4:_ing = skaka: 4:r 4:de:t :r:de:t:
 sleep 4::s 5:_2pt 4:ing = sov:a 4:er 4::it :er::it:a
 sit 4::s 5!sat 4:ting = sitt:a 4:er 4!satt!suttit :er!satt!suttit:a
 stand 4::s 5!stood 4:ing = stå: 4:r 4:_od:tt :r:_od:tt:
+take 4::s 5!took 4:_ing = ta: 4:r 4:_og:git :r:_og:git:
 write 4::s 4!wrote:_ten 4:ing = skriva: 4:_er 4:_3ev:_it :_er:_3ev:_it: 
 
 //Settings

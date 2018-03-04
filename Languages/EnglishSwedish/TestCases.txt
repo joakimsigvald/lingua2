@@ -183,3 +183,5 @@
 
 "I'm sitting in Joakim's livingroom.", "Jag sitter i Joakims vardagsrum."
 "I have black trousers.", "Jag har svarta byxor."
+"He took the ball with the blue dot and kicked it", "Han tog bollen med den blå pricken och sparkade den"
+//"He took the table with the blue dot and kicked it", "Han tog bordet med den blå pricken och sparkade det"

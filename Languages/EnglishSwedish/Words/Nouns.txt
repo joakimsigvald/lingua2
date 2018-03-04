@@ -11,6 +11,7 @@ chair::s| = stol:en:ar|na
 colour::s| = färg:en:er|na
 concert::s| = konsert:en:er|na/
 doll::s| = docka:n:_or|na
+dot::s| = prick:en:_ar|na
 foot::_3eet| = fot:en:__ötter|na
 error::s| = fel:et:er:en
 essay::s| = uppsats:en:er|na
