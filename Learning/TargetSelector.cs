@@ -10,6 +10,8 @@ namespace Lingua.Learning
 
     public static class TargetSelector
     {
+        private const int MaxTargets = 2;
+
         public static TranslationTarget[] SelectTargets(IList<ITranslation[]> possibilities, string translated)
         {
             if (possibilities == null)
@@ -19,6 +21,7 @@ namespace Lingua.Learning
                 throw new Exception($"Could not find possible translation for: {translated}, missing: {orderedTranslations.First().unmatched}");
             return orderedTranslations
                 .Where(x => x.order.Any())
+                .Take(MaxTargets)
                 .Select(x => CreateTarget(x.translations, x.order, x.unmatched))
                 .ToArray();
         }

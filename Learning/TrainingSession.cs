@@ -12,6 +12,8 @@ namespace Lingua.Learning
 
     internal class TrainingSession
     {
+        private const int MaxAttempts = 128;
+
         private readonly TrainableEvaluator _evaluator;
         private readonly Translator _translator;
         private readonly List<TestCase> _testCases;
@@ -100,7 +102,6 @@ namespace Lingua.Learning
         {
             _currentScoredPattern = null;
             _currentArranger = null;
-            //_evaluator.AggregatePatterns();
             if (result.SuccessCount > _bestResult.SuccessCount)
                 PrepareToLearnNextTestCase(result);
             else ResetPatterns();
@@ -256,6 +257,7 @@ namespace Lingua.Learning
                 .GetScoredPatterns(result)
                 .Select(PrioritizePattern)
                 .OrderBy(tuple => tuple.priority)
+                .Take(MaxAttempts)
                 .Select(tuple => tuple.sp)
                 .ToList();
             _scoredPatterns = _scoredPatternsList.GetEnumerator();

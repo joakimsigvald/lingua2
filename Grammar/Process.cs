@@ -67,7 +67,7 @@ namespace Lingua.Grammar
         private ITranslation FindNext(ITranslation translation)
         {
             _futures = GetNextFutures(translation).ToList();
-            var pastReversed = _previous.Take(Horizon).Reverse().ToArray();
+            var pastReversed = _previous.Reverse().ToArray();
             var evaluatedFutures = EvaluateFutures(pastReversed);
             _evaluations.AddRange(evaluatedFutures.Select(et => et.evaluation));
             _futures = evaluatedFutures.Select(ef => ef.future).ToList();
