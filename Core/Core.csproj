@@ -66,6 +66,7 @@
     <Compile Include="Tokens\Terminator.cs" />
     <Compile Include="Tokens\Number.cs" />
     <Compile Include="Tokens\Aggregate.cs" />
+    <Compile Include="Tokens\AnyToken.cs" />
     <Compile Include="WordClasses\Abbreviation.cs" />
     <Compile Include="Tokens\Element.cs" />
     <Compile Include="CompoundHandler.cs" />

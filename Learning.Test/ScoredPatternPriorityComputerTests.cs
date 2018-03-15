@@ -1,4 +1,5 @@
 ﻿using System.Linq;
+using Lingua.Core.Tokens;
 using NUnit.Framework;
 
 namespace Lingua.Learning.Test
@@ -13,11 +14,13 @@ namespace Lingua.Learning.Test
         [TestCase(2, 1, -1, 0x1000)]
         [TestCase(2, -4, 1, 0x1000)]
         [TestCase(8, 3, 1, 0x1000)]
-        [TestCase(1, 0, 1, 0x1400)] // wildcard
+        [TestCase(2, 0, 1, 0x1400)] // wildcard
         [TestCase(5, 0, 1, 0x1001)] // 1 modifier
         [TestCase(7, 0, 1, 0x1011)] // 2 modifiers
         [TestCase(11, 0, 1, 0x1111)] // 3 modifiers
-        [TestCase(10, 0, -1, 0x1000, 0x1400)]
+        [TestCase(12, 0, -1, 0x1000, 0x1400)]
+        [TestCase(1, 0, 1, AnyToken.Code)]
+        [TestCase(0, -1, 1, AnyToken.Code)]
         public void Test(int expectedPriority, int score, sbyte increment, params int[] code)
         {
             var actualPriority = ScoredPatternPriorityComputer.ComputePriority(score, increment, code.Select(i => (ushort)i).ToArray());

@@ -36,8 +36,8 @@ namespace Lingua.Learning.Test
         }
 
         [TestCase("N")]
-        [TestCase("NV", "^N*V", "^NV", "^N*V*", "^NV*")]
-        [TestCase("ANV", "^A*N", "^AN", "^A*N*", "^AN*", "A*N*V*", "AN*V*", "A*NV*", "A*N*V", "A*NV", "AN*V", "ANV*", "ANV")]
+        [TestCase("NV", "^_V*", "^N*V*", "^NV*", "^_V", "^N*V", "^NV")]
+        [TestCase("ANV", "^_N*", "A*_V*", "A*_V", "A_V*", "^_N", "A_V", "^A*N", "^AN", "^A*N*", "^AN*", "A*N*V*", "AN*V*", "A*NV*", "A*N*V", "A*NV", "AN*V", "ANV*", "ANV")]
         public void ExtracTripplePatterns(string from, params string[] expected)
         {
             var sequence = Encoder.Encode(from);

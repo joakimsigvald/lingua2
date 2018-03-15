@@ -69,10 +69,9 @@ namespace Lingua.Core
                && codes.Select((d, i) => Matches(d, pattern[i])).All(b => b);
 
         public static bool Matches(ushort code, ushort pattern)
-            => code == pattern || MatchesWithWildcard(code, pattern);
-
-        private static bool MatchesWithWildcard(ushort code, ushort pattern)
-            => (pattern ^ Wildcard) == ((pattern | ClassMask) & code);
+            => code == pattern 
+            || pattern == AnyToken.Code 
+            || (pattern ^ Wildcard) == ((pattern | ClassMask) & code);
 
         private static Token Decode(ushort code)
         {
@@ -105,6 +104,7 @@ namespace Lingua.Core
                 case AdverbQualifying.Code: return new AdverbQualifying();
                 case Name.Code: return new Name();
                 case Unclassified.Code: return new Unclassified();
+                case AnyToken.Code: return new AnyToken();
                 default: throw new NotImplementedException();
             }
         }
@@ -135,6 +135,7 @@ namespace Lingua.Core
                 case Name _: return Name.Code;
                 case Abbreviation _:
                 case Unclassified _: return Unclassified.Code;
+                case AnyToken _: return AnyToken.Code;
                 default: throw new NotImplementedException();
             }
         }
@@ -176,6 +177,7 @@ namespace Lingua.Core
                 case Unclassified _: return "U";
                 case Auxiliary _: return "X";
                 case Verb _: return "V";
+                case AnyToken _ : return "_";
                 default: throw new NotImplementedException();
             }
         }
@@ -210,6 +212,7 @@ namespace Lingua.Core
                 case 'T': return new Article();
                 case 'V': return new Verb();
                 case 'X': return new Auxiliary();
+                case '_': return new AnyToken();
                 default: throw new NotImplementedException();
             }
         }
@@ -293,7 +296,14 @@ namespace Lingua.Core
             => (ushort) (element?.Modifiers ?? Modifier.None);
 
         public static IEnumerable<ushort> Generalize(ushort code)
-            => Reduce(code).Distinct().Append(code).Select(rc => (ushort)(rc | Wildcard));
+            => GeneralizeModifiers(code)
+                .Prepend(AnyToken.Code);
+
+        public static IEnumerable<ushort> GeneralizeModifiers(ushort code)
+            => Reduce(code)
+                .Distinct()
+                .Append(code)
+                .Select(rc => (ushort)(rc | Wildcard));
 
         private static IEnumerable<ushort> Reduce(ushort code)
             => ModifierBits

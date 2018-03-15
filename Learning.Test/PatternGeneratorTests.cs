@@ -65,8 +65,8 @@ namespace Lingua.Learning.Test
 
         [TestCase("N", "V", "+N*", "+N", "-V*", "-V", "+^N*", "+^N", "-^V*", "-^V")]
         [TestCase("NV", "VN"
-            , "+N*V*", "+NV*", "+N*V", "+NV", "+^N*", "+^N", "+^N*V*", "+^NV*", "+^N*V", "+^NV"
-            , "-V*N*", "-VN*", "-V*N", "-VN", "-^V*", "-^V", "-^V*N*", "-^VN*", "-^V*N", "-^VN")]
+            , "+N*V*", "+NV*", "+N*V", "+NV", "+^N*", "+^N", "+^_V*", "+^_V", "+^N*V*", "+^NV*", "+^N*V", "+^NV"
+            , "-V*N*", "-VN*", "-V*N", "-VN", "-^V*", "-^V", "-^_N*", "-^_N", "-^V*N*", "-^VN*", "-^V*N", "-^VN")]
         public void TestAllPatterns(string wantedSequence, string unwantedSequence, params string[] scoredPatterns)
         {
             var translationExtractorMock = new Mock<ITranslationExtractor>();
@@ -85,12 +85,12 @@ namespace Lingua.Learning.Test
         }
 
         [TestCase("NPV", "VNP"
-            , "+PV", "+NPV", "+^N", "+^NP", "+^NPV"
-            , "-VN", "-VNP", "-^V", "-^VN", "-^VNP")]
+            , "+PV", "+N_V", "+NPV", "+^N", "+^_P", "+^NP", "+^__V", "+^_PV", "+^N_V", "+^NPV"
+            , "-VN", "-V_P", "-VNP", "-^V", "-^VN", "-^_N", "-^__P", "-^_NP", "-^V_P", "-^VNP")]
         [TestCase("NN", "N"
-            , "+N", "+NN", "+^NN")]
+            , "+N", "+NN", "+^_N", "+^NN")]
         [TestCase("N", "NN"
-            , "-N", "-NN", "-^NN")]
+            , "-N", "-NN", "-^_N", "-^NN")]
         public void TestUngeneralizedPatterns(string wantedSequence, string unwantedSequence, params string[] scoredPatterns)
         {
             var translationExtractorMock = new Mock<ITranslationExtractor>();

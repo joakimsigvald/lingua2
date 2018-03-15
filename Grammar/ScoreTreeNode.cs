@@ -57,10 +57,7 @@ namespace Lingua.Grammar
         }
 
         public IEnumerable<ScoreTreeNode> GetMatchingChildren(ushort code)
-        {
-            var classCode = Encoder.GetClassCode(code);
-            return Children.Where(child => child._classCode == classCode && Encoder.Matches(code, child.Code));
-        }
+            => Children.Where(child => Encoder.Matches(code, child.Code));
 
         public void AddChild(ScoreTreeNode child)
         {

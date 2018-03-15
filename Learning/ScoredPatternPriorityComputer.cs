@@ -1,5 +1,6 @@
 using System;
 using System.Linq;
+using Lingua.Core.Tokens;
 
 namespace Lingua.Learning
 {
@@ -9,26 +10,29 @@ namespace Lingua.Learning
     public static class ScoredPatternPriorityComputer
     {
         public static int ComputePriority(int currentScore, sbyte increment, ushort[] code)
-        {
-            var scoreFactor =
-                currentScore == 0
+            => (int)(
+            (increment < 0 ? 2 : 1) 
+            * ComputeScoreFactor(currentScore, increment) 
+            * ComputeSize(code));
+
+        private static double ComputeScoreFactor(int currentScore, sbyte increment)
+            => currentScore == 0
                     ? 1
                     : increment * currentScore < 0
                         ? 0.25 * Math.Sqrt(Math.Abs(currentScore))
                         : Math.Sqrt(Math.Abs(currentScore) + 1);
-            if (increment < 0) scoreFactor *= 2;
-            return (int) (scoreFactor * ComputeSize(code));
-        }
 
         private static int ComputeSize(ushort[] code)
             => code.Sum(ComputeSize);
 
         private static int ComputeSize(ushort code)
         {
+            if (code == AnyToken.Code)
+                return 1;
             var modifiers = code & Encoder.ProperModifiersMask;
             var bitCount = modifiers.CountBits();
             var size = 3 + (int)Math.Pow(2, bitCount);
-            return (code & Encoder.Wildcard) == 0 ? size : size - 3;
+            return (code & Encoder.Wildcard) == 0 ? size : size - 2;
         }
     }
 }

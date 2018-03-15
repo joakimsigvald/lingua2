@@ -94,6 +94,7 @@ namespace Lingua.Core.Test
         [TestCase("V1t", "Vt*", true)]
         [TestCase("R1m", "R*", true)]
         [TestCase("R3tX3R1mN", "R3tX3R*N", true)]
+        [TestCase("N", "_", true)]
         public void MatchPatterns(string example, string pattern, bool expected)
         {
             var exampleCode = Encoder.Encode(example);
