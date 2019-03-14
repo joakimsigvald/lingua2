@@ -1,24 +1,24 @@
 ﻿using System.Collections.Generic;
-using NUnit.Framework;
+using Xunit;
 
 namespace Lingua.Grammar.Test
 {
     using Core;
 
-    [TestFixture]
     public class EvaluatorTests
     {
-        [TestCase("Vi", "^Vi", 1)]
-        [TestCase("^Vi", "^Vi", 1)]
-        [TestCase("^Vi", "Vi", 0)]
-        [TestCase("A_N", "ATN", 1)]
-        public void MatchScorer(string pattern, string symbols, int matchCount)
+        [Theory]
+        [InlineData("Vi", "^Vi", 1)]
+        [InlineData("^Vi", "^Vi", 1)]
+        [InlineData("^Vi", "Vi", 0)]
+        [InlineData("A_N", "ATN", 1)]
+        public void MatchScorer(string pattern, string symbols, int expected)
         {
             const sbyte score = 1;
             var evaluator = new Evaluator(new Dictionary<string, sbyte> {{pattern, score } });
             var code = Encoder.Encode(symbols);
             var actualScore = evaluator.Evaluate(code).Score;
-            Assert.That(actualScore, Is.EqualTo(matchCount));
+            Assert.Equal(expected, actualScore);
         }
     }
 }

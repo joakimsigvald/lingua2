@@ -3,64 +3,67 @@ using System.Linq;
 using Lingua.Core;
 using Lingua.Core.Tokens;
 using Lingua.Core.WordClasses;
-using NUnit.Framework;
+using Xunit;
 
 namespace Lingua.Vocabulary.Test
 {
-    [TestFixture]
     public class WordMapTests
     {
-        [Test]
+        [Fact]
         public void Empty()
         {
             var wordMap = new WordMap<Unclassified>();
-            Assert.That(wordMap.Translations, Is.Empty);
+            Assert.Empty(wordMap.Translations);
         }
 
-        [TestCase("from", "to")]
-        [TestCase("hi", "hej")]
+        [Theory]
+        [InlineData("from", "to")]
+        [InlineData("hi", "hej")]
         public void OneWord(string from, string to)
         {
             var translation = GetTranslation(from, to);
-            Assert.That(translation.From, Is.InstanceOf<Word>());
-            Assert.That(translation.From.Value, Is.EqualTo(from));
-            Assert.That(translation.IsTranslatedWord, Is.True);
-            Assert.That(translation.To, Is.EqualTo(to));
+            Assert.IsAssignableFrom<Word>(translation.From);
+            Assert.Equal(from, translation.From.Value);
+            Assert.True(translation.IsTranslatedWord);
+            Assert.Equal(to, translation.To);
         }
 
-        [TestCase("hi hop", "hej hopp")]
+        [Theory]
+        [InlineData("hi hop", "hej hopp")]
         public void OneCompoundWord(string from, string to)
         {
             var translation = GetTranslation(from, to);
-            Assert.That(translation.From, Is.InstanceOf<Word>());
-            Assert.That(translation.From.Value, Is.EqualTo(from));
-            Assert.That(translation.WordCount, Is.EqualTo(2));
-            Assert.That(translation.IsTranslatedWord, Is.False);
-            Assert.That(translation.Matches(GetTokens(from).ToArray(), 1));
-            Assert.That(translation.To, Is.EqualTo(to));
+            Assert.IsAssignableFrom<Word>(translation.From);
+            Assert.Equal(from, translation.From.Value);
+            Assert.Equal(2, translation.WordCount);
+            Assert.False(translation.IsTranslatedWord);
+            Assert.True(translation.Matches(GetTokens(from).ToArray(), 1));
+            Assert.Equal(to, translation.To);
         }
 
-        [TestCase("ball:s", "boll:ar")]
+        [Theory]
+        [InlineData("ball:s", "boll:ar")]
         public void OneNoun(string from, string to)
         {
             var translations = GetTranslations<Noun>(new Dictionary<string, string> { { from, to } });
-            Assert.That(translations.Count, Is.EqualTo(2));
+            Assert.Equal(2, translations.Length);
             var stemTranslation = translations[0];
-            Assert.That(stemTranslation.Variations, Is.EquivalentTo(translations));
-            Assert.That(stemTranslation.From, Is.InstanceOf<Noun>());
-            Assert.That(stemTranslation.From.Value, Is.EqualTo(from.Split(':')[0]));
-            Assert.That(stemTranslation.To, Is.EqualTo(to.Split(':')[0]));
+            Assert.Equal(translations, stemTranslation.Variations);
+            Assert.IsAssignableFrom<Noun>(stemTranslation.From);
+            Assert.Equal(from.Split(':')[0], stemTranslation.From.Value);
+            Assert.Equal(to.Split(':')[0], stemTranslation.To);
         }
 
-        [TestCase("ball:s", "ball", "balls")]
-        [TestCase("foot:___eet", "foot", "feet")]
-        [TestCase("bouncing ball:s", "bouncing ball", "bouncing balls")]
+        [Theory]
+        [InlineData("ball:s", "ball", "balls")]
+        [InlineData("foot:___eet", "foot", "feet")]
+        [InlineData("bouncing ball:s", "bouncing ball", "bouncing balls")]
         public void Variations(string from, params string[] variations)
         {
             var translations = GetTranslations<Noun>(new Dictionary<string, string> { { from, from } });
-            Assert.That(translations.Count, Is.EqualTo(variations.Length));
+            Assert.Equal(variations.Length, translations.Length);
             for (var i = 0; i < variations.Length; i++)
-                Assert.That(translations[i].From.Value, Is.EqualTo(variations[i]));
+                Assert.Equal(variations[i], translations[i].From.Value);
         }
 
         private ITranslation GetTranslation(string from, string to)

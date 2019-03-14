@@ -14,7 +14,7 @@ namespace Lingua.Learning
             _patternExtractor = patternExtractor;
         }
 
-        public IList<ScoredPattern> GetScoredPatterns(TestCaseResult result)
+        public IList<ScoredPattern> GetScoredPatterns(TestCaseResult? result)
         {
             var wantedCode = _translationExtractor.GetWantedSequence(result);
             var unwantedCode = _translationExtractor.GetUnwantedSequence(result);

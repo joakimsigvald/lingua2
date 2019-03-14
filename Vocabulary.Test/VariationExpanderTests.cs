@@ -1,51 +1,53 @@
-﻿using NUnit.Framework;
+﻿using Xunit;
 
 namespace Lingua.Vocabulary.Test
 {
-    [TestFixture]
     public class VariationExpanderTests
     {
-        [TestCase("ball:s", "ball", "balls")]
-        [TestCase("foot:___eet", "foot", "feet")]
-        [TestCase("foot:_3eet", "foot", "feet")]
-        [TestCase("ball::s", "ball", "ball", "balls")]
-        [TestCase("boll:en:ar|na", "boll", "bollen", "bollar", "bollarna")]
-        [TestCase("abc|d|e", "abc", "abcd", "abcde")]
-        [TestCase("abc|_d:e|_f", "abc", "abd", "abce", "abcf")]
-        [TestCase("the:::<d", "the", "the", "the", "the")]
-        [TestCase("a!b!c", "a", "b", "c")]
-        [TestCase("a:b!c:d", "a", "ab", "c", "ad")]
-        [TestCase("a!b!c<d", "a", "b", "c")]
-        [TestCase("a!b:c", "a", "b", "ac")]
-        [TestCase("ball :s", "ball", "balls")]
-        [TestCase("ball :  s", "ball", "balls")]
-        [TestCase("ball 2:s", "ball", "balls", "balls")]
-        [TestCase("a :b 2|c", "a", "ab", "abc", "abc")]
-        [TestCase("ball 3!s", "ball", "s", "s", "s")]
+        [Theory]
+        [InlineData("ball:s", "ball", "balls")]
+        [InlineData("foot:___eet", "foot", "feet")]
+        [InlineData("foot:_3eet", "foot", "feet")]
+        [InlineData("ball::s", "ball", "ball", "balls")]
+        [InlineData("boll:en:ar|na", "boll", "bollen", "bollar", "bollarna")]
+        [InlineData("abc|d|e", "abc", "abcd", "abcde")]
+        [InlineData("abc|_d:e|_f", "abc", "abd", "abce", "abcf")]
+        [InlineData("the:::<d", "the", "the", "the", "the")]
+        [InlineData("a!b!c", "a", "b", "c")]
+        [InlineData("a:b!c:d", "a", "ab", "c", "ad")]
+        [InlineData("a!b!c<d", "a", "b", "c")]
+        [InlineData("a!b:c", "a", "b", "ac")]
+        [InlineData("ball :s", "ball", "balls")]
+        [InlineData("ball :  s", "ball", "balls")]
+        [InlineData("ball 2:s", "ball", "balls", "balls")]
+        [InlineData("a :b 2|c", "a", "ab", "abc", "abc")]
+        [InlineData("ball 3!s", "ball", "s", "s", "s")]
         public void ExpandVariants(string pattern, params string[] expected)
         {
             var actual = VariationExpander.Expand(pattern);
-            Assert.That(actual.Variations, Is.EquivalentTo(expected));
+            Assert.Equal(expected, actual.Variations);
         }
 
-        [TestCase("sök/", "sök")]
-        [TestCase("gata/_u", "gatu")]
-        [TestCase("abc", null)]
-        [TestCase("the:::<d", null)]
-        [TestCase("a!b!c<d", null)]
+        [Theory]
+        [InlineData("sök/", "sök")]
+        [InlineData("gata/_u", "gatu")]
+        [InlineData("abc", null)]
+        [InlineData("the:::<d", null)]
+        [InlineData("a!b!c<d", null)]
         public void ExpandConnector(string pattern, string expected)
         {
             var actual = VariationExpander.Expand(pattern);
-            Assert.That(actual.IncompleteCompound, Is.EqualTo(expected));
+            Assert.Equal(expected, actual.IncompleteCompound);
         }
 
-        [TestCase("abc<def", "def")]
-        [TestCase("the:::<d", "d")]
-        [TestCase("a!b!c<d", "d")]
+        [Theory]
+        [InlineData("abc<def", "def")]
+        [InlineData("the:::<d", "d")]
+        [InlineData("a!b!c<d", "d")]
         public void ExpandModifiers(string pattern, string expected)
         {
             var actual = VariationExpander.Expand(pattern);
-            Assert.That(actual.Modifiers, Is.EqualTo(expected));
+            Assert.Equal(expected, actual.Modifiers);
         }
     }
 }

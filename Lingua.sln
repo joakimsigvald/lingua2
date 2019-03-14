@@ -1,25 +1,25 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.27130.2027
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.28705.295
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Main", "Main\Main.csproj", "{E8150ABC-723E-4D4F-BDB8-66A5E5C84530}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Main", "Main\Main.csproj", "{E8150ABC-723E-4D4F-BDB8-66A5E5C84530}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Core", "Core\Core.csproj", "{5442D2B6-C698-464D-A934-AA2706F3B95C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Core", "Core\Core.csproj", "{5442D2B6-C698-464D-A934-AA2706F3B95C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Core.Test", "Core.Test\Core.Test.csproj", "{9A67FE0A-E176-4A3F-B52E-7148D76AB7AB}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Core.Test", "Core.Test\Core.Test.csproj", "{9A67FE0A-E176-4A3F-B52E-7148D76AB7AB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tokenization", "Tokenization\Tokenization.csproj", "{BF62CD42-7CDC-4616-9B25-49E985FFF1F7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Tokenization", "Tokenization\Tokenization.csproj", "{BF62CD42-7CDC-4616-9B25-49E985FFF1F7}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tokenization.Test", "Tokenization.Test\Tokenization.Test.csproj", "{A88178CB-54E6-4B6B-A290-F14BDDAA85D2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Tokenization.Test", "Tokenization.Test\Tokenization.Test.csproj", "{A88178CB-54E6-4B6B-A290-F14BDDAA85D2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Vocabulary", "Vocabulary\Vocabulary.csproj", "{9C9EFB87-FDD6-42D2-A32E-8F3E3A95ED5B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Vocabulary", "Vocabulary\Vocabulary.csproj", "{9C9EFB87-FDD6-42D2-A32E-8F3E3A95ED5B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Vocabulary.Test", "Vocabulary.Test\Vocabulary.Test.csproj", "{5DB8EAA2-CF5D-487C-A19E-D67C6B492539}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Vocabulary.Test", "Vocabulary.Test\Vocabulary.Test.csproj", "{5DB8EAA2-CF5D-487C-A19E-D67C6B492539}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Grammar", "Grammar\Grammar.csproj", "{13FC0B05-5926-4626-89C0-296CCF7444A7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Grammar", "Grammar\Grammar.csproj", "{13FC0B05-5926-4626-89C0-296CCF7444A7}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Grammar.Test", "Grammar.Test\Grammar.Test.csproj", "{A0B1C924-AE74-416D-B567-1933BA409474}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Grammar.Test", "Grammar.Test\Grammar.Test.csproj", "{A0B1C924-AE74-416D-B567-1933BA409474}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Languages", "Languages", "{BDD0CC39-5FA5-4BB2-A9D3-B38240D857DE}"
 EndProject
@@ -51,16 +51,18 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Words", "Words", "{BDD18A92
 		Languages\EnglishSwedish\Words\Verbs.txt = Languages\EnglishSwedish\Words\Verbs.txt
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Learning", "Learning\Learning.csproj", "{6F12FC3A-0E11-4E2B-BE31-3114F671D869}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Learning", "Learning\Learning.csproj", "{6F12FC3A-0E11-4E2B-BE31-3114F671D869}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Learning.Test", "Learning.Test\Learning.Test.csproj", "{EBEE74BE-27C3-48E5-8C05-14CB8923A94B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Learning.Test", "Learning.Test\Learning.Test.csproj", "{EBEE74BE-27C3-48E5-8C05-14CB8923A94B}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{F4BE28F4-59F4-4519-8531-F9919E94529C}"
 	ProjectSection(SolutionItems) = preProject
 		Optimize.txt = Optimize.txt
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestRunner", "TestRunner\TestRunner.csproj", "{A46C5B5B-F914-4C9E-8CE5-C060E7EEC464}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TestRunner", "TestRunner\TestRunner.csproj", "{A46C5B5B-F914-4C9E-8CE5-C060E7EEC464}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestUtils", "Assert\TestUtils.csproj", "{1196E009-1D9C-406F-9F14-643E4F90EB96}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -116,6 +118,10 @@ Global
 		{A46C5B5B-F914-4C9E-8CE5-C060E7EEC464}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A46C5B5B-F914-4C9E-8CE5-C060E7EEC464}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A46C5B5B-F914-4C9E-8CE5-C060E7EEC464}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1196E009-1D9C-406F-9F14-643E4F90EB96}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1196E009-1D9C-406F-9F14-643E4F90EB96}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1196E009-1D9C-406F-9F14-643E4F90EB96}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1196E009-1D9C-406F-9F14-643E4F90EB96}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

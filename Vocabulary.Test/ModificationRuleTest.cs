@@ -2,50 +2,50 @@
 using Lingua.Core;
 using Lingua.Core.Tokens;
 using Lingua.Core.WordClasses;
-using NUnit.Framework;
+using Xunit;
 
 namespace Lingua.Vocabulary.Test
 {
-    [TestFixture]
     public class ModificationRuleTest
     {
-        [Test]
+        [Fact]
         public void CreatingRuleWithoutModifier_ThrowsException()
         {
             Assert.Throws<ArgumentException>(
                 () => new ModificationRule(new []{typeof(Noun) }, Modifier.None, new string[0], new string[0]));
         }
 
-        [Test]
+        [Fact]
         public void WhenWordClassNotMatch_ReturnsNull()
         {
             var verb = new Verb();
             var translation = Translation.Create(verb, "");
             var rule = new ModificationRule(new[] { typeof(Noun) }, Modifier.Genitive, new[] { "*>*s" }, new[] { "*>*s" });
             var modification = rule.Apply(translation);
-            Assert.That(modification, Is.Null);
+            Assert.Null(modification);
         }
 
-        [Test]
+        [Fact]
         public void EmptyRule_ReturnsNull()
         {
             var noun = new Noun();
             var translation = Translation.Create(noun, "");
             var rule = new ModificationRule(new[] { typeof(Noun) }, Modifier.Genitive, new string[0], new string[0]);
             var modification = rule.Apply(translation);
-            Assert.That(modification, Is.Null);
+            Assert.Null(modification);
         }
 
-        [Test]
+        [Fact]
         public void WhenHasFromIdentityTransformation_ConstructorThrowsArgumentException()
         {
             Assert.Throws<ArgumentException>(
                 () => new ModificationRule(new[] { typeof(Noun) }, Modifier.Genitive, new[] { "*>*" }, new[] { "*>*" }));
         }
 
-        [TestCase("a", "b")]
-        [TestCase("s", "s")]
-        [TestCase("'s", "s")]
+        [Theory]
+        [InlineData("a", "b")]
+        [InlineData("s", "s")]
+        [InlineData("'s", "s")]
         public void RuleWithSingleAddTransformation_ReturnsTransformedTranslation(string addToFrom, string addToTo)
         {
             const string from = "from";
@@ -57,13 +57,14 @@ namespace Lingua.Vocabulary.Test
             var translation = Translation.Create(noun, to);
             var rule = new ModificationRule(new[] { typeof(Noun) }, Modifier.Genitive, new[] { "*>*" + addToFrom }, new[] { "*>*" + addToTo });
             var modification = rule.Apply(translation);
-            Assert.That(modification.From.Value, Is.EqualTo(from + addToFrom));
-            Assert.That(modification.To, Is.EqualTo(to + addToTo));
+            Assert.Equal(from + addToFrom, modification.From.Value);
+            Assert.Equal(to + addToTo, modification.To);
         }
 
-        [TestCase("abc", "c", true)]
-        [TestCase("abc", "bc", true)]
-        [TestCase("abc", "b", false)]
+        [Theory]
+        [InlineData("abc", "c", true)]
+        [InlineData("abc", "bc", true)]
+        [InlineData("abc", "b", false)]
         public void CanMatchOnSuffix(string from, string suffix, bool matches)
         {
             var noun = new Noun
@@ -73,11 +74,12 @@ namespace Lingua.Vocabulary.Test
             var translation = Translation.Create(noun, "any");
             var rule = new ModificationRule(new[] { typeof(Noun) }, Modifier.Genitive, new[] { $"*{suffix}>*s" }, new[] { "*>*s" });
             var modification = rule.Apply(translation);
-            Assert.That(modification != null, Is.EqualTo(matches));
+            Assert.Equal(matches, modification != null);
         }
 
-        [TestCase("ball", "ball's")]
-        [TestCase("balls", "balls'")]
+        [Theory]
+        [InlineData("ball", "ball's")]
+        [InlineData("balls", "balls'")]
         public void UsesMostSpecificMatchingFromTransform(string origin, string transformed)
         {
             var noun = new Noun
@@ -87,11 +89,12 @@ namespace Lingua.Vocabulary.Test
             var translation = Translation.Create(noun, "any");
             var rule = new ModificationRule(new[] { typeof(Noun) }, Modifier.Genitive, new[] { "*>*'s", "*s>*'" }, new[] { "*>*s" });
             var modification = rule.Apply(translation);
-            Assert.That(modification.From.Value, Is.EqualTo(transformed));
+            Assert.Equal(transformed, modification.From.Value);
         }
 
-        [TestCase("boll", "bolls")]
-        [TestCase("adress", "adress'")]
+        [Theory]
+        [InlineData("boll", "bolls")]
+        [InlineData("adress", "adress'")]
         public void UsesMostSpecificMatchingToTransform(string origin, string transformed)
         {
             var noun = new Noun
@@ -101,7 +104,7 @@ namespace Lingua.Vocabulary.Test
             var translation = Translation.Create(noun, origin);
             var rule = new ModificationRule(new[] { typeof(Noun) }, Modifier.Genitive, new[] { "*>*s" }, new[] { "*s>*'", "*>*s" });
             var modification = rule.Apply(translation);
-            Assert.That(modification.To, Is.EqualTo(transformed));
+            Assert.Equal(transformed, modification.To);
         }
     }
 }

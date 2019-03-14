@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Text.RegularExpressions;
-using NUnit.Framework;
+using Xunit;
 
 namespace Lingua.Core.Test
 {
@@ -12,7 +12,6 @@ namespace Lingua.Core.Test
     using Tokenization;
     using Vocabulary;
 
-    [TestFixture]
     public class TranslatorTests
     {
         private static readonly Evaluator Evaluator = GetEvaluator();
@@ -32,18 +31,19 @@ namespace Lingua.Core.Test
             return evaluator;
         }
 
-        [Test]
+        [Fact]
         public void TranslateNull()
             => TestCase(null, "");
 
-        [TestCase("|Joakim's| /=> |Joakims|")]
-        [TestCase("|I am here| /=> |jag är här|")]
-        [TestCase("|Bouncing ball to play with| /=> |Studsboll att leka med|")]
-        [TestCase("|It is my pen| /=> |Det är min penna|")]
-        [TestCase("|I am painting the wall| /=> |jag målar väggen|")]
-        [TestCase("|search results| /=> |sökresultat|")]
-        [TestCase("|I have been running| /=> |jag har sprungit|")]
-        [TestCase("|The rat made a nest and slept in it.| /=> |Råttan gjorde ett bo och sov i det.|")]
+        [Theory]
+        [InlineData("|Joakim's| /=> |Joakims|")]
+        [InlineData("|I am here| /=> |jag är här|")]
+        [InlineData("|Bouncing ball to play with| /=> |Studsboll att leka med|")]
+        [InlineData("|It is my pen| /=> |Det är min penna|")]
+        [InlineData("|I am painting the wall| /=> |jag målar väggen|")]
+        [InlineData("|search results| /=> |sökresultat|")]
+        [InlineData("|I have been running| /=> |jag har sprungit|")]
+        [InlineData("|The rat made a nest and slept in it.| /=> |Råttan gjorde ett bo och sov i det.|")]
         public void RunTestCase(string testCase)
         {
             var parts = Regex.Split(testCase, @"\s+/=>\s+");
@@ -52,19 +52,21 @@ namespace Lingua.Core.Test
             TestCase(from, to);
         }
 
-        [Test, Category("Longrunning")]
+        [Trait("Category", "Longrunning")]
+        [Fact]
         public void RunTestSuites()
         {
             var success = TestBench.RunTestSuites();
-            Assert.That(success);
+            Assert.True(success);
         }
 
-        [TestCase(null, "")]
-        [TestCase(".", ".")]
+        [Theory]
+        [InlineData(null, "")]
+        [InlineData(".", ".")]
         public void Translate(string original, string expected)
         {
             var actual = Translator.Translate(original);
-            Assert.That(actual.Translation, Is.EqualTo(expected));
+            Assert.Equal(expected, actual.Translation);
         }
 
         private static void TestCase(string from, string to)
@@ -72,7 +74,7 @@ namespace Lingua.Core.Test
             var result = TestBench.RunTestCase(new TestCase(from, to) {Suite = "Single"});
             if (!result.Success)
                 Output(result.Reason);
-            Assert.That(result.Success, $"Expected \"{result.Expected}\" but was \"{result.Actual}\"");
+            Assert.True(result.Success, $"Expected \"{result.Expected}\" but was \"{result.Actual}\"");
         }
 
         private static void Output(IReason reason)

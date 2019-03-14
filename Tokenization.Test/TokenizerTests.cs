@@ -2,141 +2,157 @@
 using System.Collections.Generic;
 using System.Linq;
 using Lingua.Core.WordClasses;
-using NUnit.Framework;
+using Xunit;
 
 namespace Lingua.Tokenization.Test
 {
     using Core.Extensions;
     using Core.Tokens;
 
-    [TestFixture]
     public class TokenizerTests
     {
-        [TestCase(null)]
-        [TestCase("")]
-        [TestCase(" ")]
-        [TestCase("  ")]
+        [Theory]
+        [InlineData(null)]
+        [InlineData("")]
+        [InlineData(" ")]
+        [InlineData("  ")]
         public void Nothing(string nothing)
         {
-            Assert.That(nothing.Tokenize(), Is.Empty);
+            Assert.Empty(nothing.Tokenize());
         }
 
-        [TestCase(".")]
-        [TestCase(" ?")]
-        [TestCase("! ")]
-        [TestCase("  : ")]
+        [Theory]
+        [InlineData(".")]
+        [InlineData(" ?")]
+        [InlineData("! ")]
+        [InlineData("  : ")]
         public void Terminator(string terminator)
             => terminator.Tokenize().Yields<Terminator>($"{terminator.Trim()}");
 
-        [TestCase(",")]
-        [TestCase("  ;     ")]
+        [Theory]
+        [InlineData(",")]
+        [InlineData("  ;     ")]
         public void Separator(string separator)
             => separator.Tokenize().Yields<Separator>($"{separator.Trim()}");
 
-        [TestCase("z")]
-        [TestCase("e")]
+        [Theory]
+        [InlineData("z")]
+        [InlineData("e")]
         public void Letter(string letter)
             => letter.Tokenize().Yields<Word>(letter);
 
-        [TestCase("0")]
-        [TestCase("1")]
-        [TestCase("9")]
+        [Theory]
+        [InlineData("0")]
+        [InlineData("1")]
+        [InlineData("9")]
         public void Digit(string digit)
             => digit.Tokenize().Yields<Number>(digit);
 
-        [TestCase("hi")]
-        [TestCase("you")]
-        [TestCase("qwe")]
-        [TestCase("rty")]
-        [TestCase("I'm")]
-        [TestCase("good-looking")]
+        [Theory]
+        [InlineData("hi")]
+        [InlineData("you")]
+        [InlineData("qwe")]
+        [InlineData("rty")]
+        [InlineData("I'm")]
+        [InlineData("good-looking")]
         public void Word(string text)
             => text.Tokenize().Yields<Word>(text);
 
-        [TestCase("023")]
-        [TestCase("9235235")]
+        [Theory]
+        [InlineData("023")]
+        [InlineData("9235235")]
         public void Number(string number)
             => number.Tokenize().Yields<Number>(number);
 
-        [TestCase("-23")]
+        [Theory]
+        [InlineData("-23")]
         public void NegativeNumber(string number)
             => number.Tokenize().Yields<Number>(number);
 
-        [TestCase("0.23")]
-        [TestCase("9235.235")]
-        [TestCase("-9235.235")]
+        [Theory]
+        [InlineData("0.23")]
+        [InlineData("9235.235")]
+        [InlineData("-9235.235")]
         public void DecimalNumber(string number)
             => number.Tokenize().Yields<Number>(number);
 
-        [TestCase("..")]
-        [TestCase("...")]
-        [TestCase(".....")]
+        [Theory]
+        [InlineData("..")]
+        [InlineData("...")]
+        [InlineData(".....")]
         public void Ellipsis(string ellipsis)
             => ellipsis.Tokenize().Yields<Ellipsis>("...");
 
-        [TestCase("hey you", "hey", "you")]
-        [TestCase("Where are you", "Where", "are", "you")]
+        [Theory]
+        [InlineData("hey you", "hey", "you")]
+        [InlineData("Where are you", "Where", "are", "you")]
         public void Words(string text, params string[] parts)
             => text.Tokenize().Yields(parts);
 
-        [TestCase("Where are you?", "Where", "are", "you", "?")]
-        [TestCase("I am here  .", "I", "am", "here", ".")]
-        [TestCase("Honey, I'm home.", "Honey", ",", "I'm", "home", ".")]
-        [TestCase("Hey... you", "Hey", "...", "you")]
-        [TestCase("  A    text; with spaces, dots and     a colon:  That's it! ", 
+        [Theory]
+        [InlineData("Where are you?", "Where", "are", "you", "?")]
+        [InlineData("I am here  .", "I", "am", "here", ".")]
+        [InlineData("Honey, I'm home.", "Honey", ",", "I'm", "home", ".")]
+        [InlineData("Hey... you", "Hey", "...", "you")]
+        [InlineData("  A    text; with spaces, dots and     a colon:  That's it! ", 
             "A", "text", ";", "with", "spaces", ",", "dots", "and", "a", "colon", ":", "That's", "it", "!")]
         public void Sentenses(string text, params string[] parts)
             => text.Tokenize().Yields(parts);
 
-        [TestCase("i.e.")]
-        [TestCase("e.g.")]
+        [Theory]
+        [InlineData("i.e.")]
+        [InlineData("e.g.")]
         public void Abbreviation(string text)
         {
             var elements = text.Tokenize();
             var first = elements.First();
-            Assert.That(first is Word);
-            Assert.That(first.Value, Is.EqualTo(text.Start(-1)));
-            Assert.That(((Word)first).PossibleAbbreviation);
-            Assert.That(elements[1] is Terminator);
+            Assert.True(first is Word);
+            Assert.Equal(text.Start(-1), first.Value);
+            Assert.True(((Word)first).PossibleAbbreviation);
+            Assert.True(elements[1] is Terminator);
         }
 
-        [TestCase("i.e..")]
-        [TestCase("e.g...")]
-        [TestCase("e.g.....")]
+        [Theory]
+        [InlineData("i.e..")]
+        [InlineData("e.g...")]
+        [InlineData("e.g.....")]
         public void AbbreviationAndEllipsis(string text)
         {
             var elements = text.Tokenize();
             var first = elements.First();
-            Assert.That(first is Word);
-            Assert.That(first.Value, Is.EqualTo(text.TrimEnd('.')));
-            Assert.That(((Word)first).PossibleAbbreviation);
-            Assert.That(elements[1] is Ellipsis);
+            Assert.True(first is Word);
+            Assert.Equal(text.TrimEnd('.'), first.Value);
+            Assert.True(((Word)first).PossibleAbbreviation);
+            Assert.True(elements[1] is Ellipsis);
         }
 
-        [TestCase("[[ball]]")]
-        [TestCase("[[foot]]")]
+        [Theory]
+        [InlineData("[[ball]]")]
+        [InlineData("[[foot]]")]
         public void GenericWord(string text)
         {
             var tokens = text.Tokenize();
-            Assert.That(tokens.Count, Is.EqualTo(1));
+            Assert.Single(tokens);
             var generic = tokens[0] as Generic;
-            Assert.That(generic, Is.Not.Null);
-            Assert.That(generic.Stem.Value, Is.EqualTo(text.Substring(2).Start(-2)));
+            Assert.NotNull(generic);
+            Assert.Equal(text.Substring(2).Start(-2), generic.Stem.Value);
         }
 
-        [TestCase("[ball]")]
-        [TestCase("[[[ball]]")]
-        [TestCase("[[foot]]]")]
+        [Theory]
+        [InlineData("[ball]")]
+        [InlineData("[[[ball]]")]
+        [InlineData("[[foot]]]")]
         public void InvalidGenericWord(string text)
         {
             Assert.Throws<NotImplementedException>(() => text.Tokenize());
         }
 
-        [TestCase("Joakim")]
+        [Theory]
+        [InlineData("Joakim")]
         public void Name(string text)
         {
             var tokens = text.Tokenize();
-            Assert.That(tokens.Single().GetType(), Is.EqualTo(typeof(Name)));
+            Assert.Equal(typeof(Name), tokens.Single().GetType());
         }
     }
 
@@ -149,13 +165,13 @@ namespace Lingua.Tokenization.Test
             where TToken : Token
         {
             var token = tokens.Single();
-            Assert.That(token is TToken);
-            Assert.That(token.Value, Is.EqualTo(part));
+            Assert.True(token is TToken);
+            Assert.Equal(part, token.Value);
         }
 
         public static void Yields(this List<Token> tokens, params string[] parts)
         {
-            Assert.That(tokens.Count, Is.EqualTo(parts.Length));
+            Assert.Equal(parts.Length, tokens.Count);
             for (var i = 0; i < parts.Length; i++)
                 tokens[i].Matches(parts[i]);
         }
@@ -168,20 +184,20 @@ namespace Lingua.Tokenization.Test
                 case ":":
                 case "!":
                 case "?":
-                    Assert.That(token is Terminator);
-                    Assert.That(token.Value, Is.EqualTo(representation));
+                    Assert.True(token is Terminator);
+                    Assert.Equal(representation, token.Value);
                     break;
                 case ";":
                 case ",":
-                    Assert.That(token is Separator);
-                    Assert.That(token.Value, Is.EqualTo(representation));
+                    Assert.True(token is Separator);
+                    Assert.Equal(representation, token.Value);
                     break;
                 case "...":
-                    Assert.That(token is Ellipsis);
+                    Assert.True(token is Ellipsis);
                     break;
                 default:
-                    Assert.That(token is Word);
-                    Assert.That(token.Value == representation);
+                    Assert.True(token is Word);
+                    Assert.Equal(representation, token.Value);
                     break;
             }
         }

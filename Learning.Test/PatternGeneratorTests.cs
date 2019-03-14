@@ -2,69 +2,74 @@
 using System.Collections.Generic;
 using System.Linq;
 using Moq;
-using NUnit.Framework;
+using Xunit;
+using static Lingua.TestUtils.Assert;
 
 namespace Lingua.Learning.Test
 {
     using Core;
 
-    [TestFixture]
     public class PatternGeneratorTests
     {
         private static readonly ushort[] WantedSequence = {1};
         private static readonly ushort[] UnwantedSequence = {2};
 
-        [Test]
+        [Fact]
         public void GivenNoPatterns_GenerateNoScoredPatterns()
         {
-            Assert.That(GetScoredPatterns(), Is.Empty);
+            Assert.Empty(GetScoredPatterns());
         }
 
-        [TestCase("A")]
-        [TestCase("A", "C")]
+        [Theory]
+        [InlineData("A")]
+        [InlineData("A", "C")]
         public void GivenWantedMonoPatterns_GenerateThosePatternsWithScore_1(params string[] wantedMonoPatterns)
         {
             var scoredPatterns = GetScoredPatterns(wantedMonoPatterns);
-            Assert.That(scoredPatterns.Select(sp => sp.Pattern), Is.EquivalentTo(wantedMonoPatterns));
-            Assert.That(scoredPatterns.All(sp => sp.Score == 1));
+            Assert.Equal(wantedMonoPatterns, scoredPatterns.Select(sp => sp.Pattern));
+            Assert.True(scoredPatterns.All(sp => sp.Score == 1));
         }
 
-        [TestCase("A")]
-        [TestCase("A", "C")]
+        [Theory]
+        [InlineData("A")]
+        [InlineData("A", "C")]
         public void GivenUnwantedMonoPatterns_GenerateThosePatternsWithScore_Minus_1(
             params string[] unwantedMonoPatterns)
         {
             var scoredPatterns = GetScoredPatterns(unwantedPatterns: unwantedMonoPatterns);
-            Assert.That(scoredPatterns.Select(sp => sp.Pattern), Is.EquivalentTo(unwantedMonoPatterns));
-            Assert.That(scoredPatterns.All(sp => sp.Score == -1));
+            Assert.Equal(unwantedMonoPatterns, scoredPatterns.Select(sp => sp.Pattern));
+            Assert.True(scoredPatterns.All(sp => sp.Score == -1));
         }
 
-        [TestCase("^A", "A")]
-        [TestCase("^AA", "AA")]
-        [TestCase("^A", "A", "^AA", "AA")]
-        [TestCase("A", "AC", "ACN", "^ACN")]
+        [Theory]
+        [InlineData("A", "^A")]
+        [InlineData("AA", "^AA")]
+        [InlineData("A", "^A", "AA", "^AA")]
+        [InlineData("A", "AC", "ACN", "^ACN")]
         public void GivenMixedWantedPatterns_GenerateThosePatternsWithScore_1(params string[] patterns)
         {
             var scoredPatterns = GetScoredPatterns(patterns);
-            Assert.That(scoredPatterns
+            Assert.Equal(patterns, scoredPatterns
                 .Where(sp => sp.Score == 1)
-                .Select(sp => sp.Pattern), Is.EquivalentTo(patterns));
+                .Select(sp => sp.Pattern));
         }
 
-        [TestCase("^A", "A")]
-        [TestCase("^AA", "AA")]
-        [TestCase("^A", "A", "^AA", "AA")]
-        [TestCase("A", "AC", "ACN", "^ACN")]
-        public void GivenMixedUnwantedPatterns_GenerateThosePatternsWithScore_Minus_1(params string[] patterns)
+        [Theory]
+        [InlineData("A", "^A")]
+        [InlineData("AA", "^AA")]
+        [InlineData("A", "^A", "AA", "^AA")]
+        [InlineData("A", "AC", "ACN", "^ACN")]
+        public void GivenMixedUnwantedPatterns_GenerateThosePatternsWithScore_Minus_1(params string[] expectedPatterns)
         {
-            var scoredPatterns = GetScoredPatterns(unwantedPatterns: patterns);
-            Assert.That(scoredPatterns
+            var scoredPatterns = GetScoredPatterns(unwantedPatterns: expectedPatterns);
+            Assert.Equal(expectedPatterns, scoredPatterns
                 .Where(sp => sp.Score == -1)
-                .Select(sp => sp.Pattern), Is.EquivalentTo(patterns));
+                .Select(sp => sp.Pattern));
         }
 
-        [TestCase("N", "V", "+N*", "+N", "-V*", "-V", "+^N*", "+^N", "-^V*", "-^V")]
-        [TestCase("NV", "VN"
+        [Theory]
+        [InlineData("N", "V", "+N*", "+N", "-V*", "-V", "+^N*", "+^N", "-^V*", "-^V")]
+        [InlineData("NV", "VN"
             , "+N*V*", "+NV*", "+N*V", "+NV", "+^N*", "+^N", "+^_V*", "+^_V", "+^N*V*", "+^NV*", "+^N*V", "+^NV"
             , "-V*N*", "-VN*", "-V*N", "-VN", "-^V*", "-^V", "-^_N*", "-^_N", "-^V*N*", "-^VN*", "-^V*N", "-^VN")]
         public void TestAllPatterns(string wantedSequence, string unwantedSequence, params string[] scoredPatterns)
@@ -79,17 +84,17 @@ namespace Lingua.Learning.Test
 
             var actualPatterns = generator.GetScoredPatterns(null);
 
-            var expectedPatterns = scoredPatterns.Select(CreateScoredPattern).ToList();
-            Assert.That(actualPatterns, Is.EquivalentTo(expectedPatterns),
-                ShowDifference(actualPatterns, expectedPatterns));
+            var expectedPatterns = scoredPatterns.Select(CreateScoredPattern).ToHashSet();
+            Equivalent(expectedPatterns, actualPatterns);
         }
 
-        [TestCase("NPV", "VNP"
+        [Theory]
+        [InlineData("NPV", "VNP"
             , "+PV", "+N_V", "+NPV", "+^N", "+^_P", "+^NP", "+^__V", "+^_PV", "+^N_V", "+^NPV"
             , "-VN", "-V_P", "-VNP", "-^V", "-^VN", "-^_N", "-^__P", "-^_NP", "-^V_P", "-^VNP")]
-        [TestCase("NN", "N"
+        [InlineData("NN", "N"
             , "+N", "+NN", "+^_N", "+^NN")]
-        [TestCase("N", "NN"
+        [InlineData("N", "NN"
             , "-N", "-NN", "-^_N", "-^NN")]
         public void TestUngeneralizedPatterns(string wantedSequence, string unwantedSequence, params string[] scoredPatterns)
         {
@@ -104,24 +109,17 @@ namespace Lingua.Learning.Test
             var actualUngeneralizedPatterns = generator
                 .GetScoredPatterns(null)
                 .Where(p => !IsGeneralized(p))
-                .ToList();
+                .ToHashSet();
 
             var expectedUngeneralizedPatterns = scoredPatterns
                 .Select(CreateScoredPattern)
                 .Where(p => !IsGeneralized(p))
-                .ToList();
-            Assert.That(actualUngeneralizedPatterns, Is.EquivalentTo(expectedUngeneralizedPatterns),
-                ShowDifference(actualUngeneralizedPatterns, expectedUngeneralizedPatterns));
+                .ToHashSet();
+            Equivalent(expectedUngeneralizedPatterns, actualUngeneralizedPatterns);
         }
 
         private static bool IsGeneralized(ScoredPattern scoredPattern)
             => scoredPattern.Pattern.Contains('*');
-
-        private static string ShowDifference(IList<ScoredPattern> actualPatterns, IReadOnlyCollection<ScoredPattern> expectedPatterns)
-            => $"Wanted {ListDifference(expectedPatterns, actualPatterns)} but got {ListDifference(actualPatterns, expectedPatterns)}";
-
-        private static string ListDifference(IEnumerable<ScoredPattern> a, IEnumerable<ScoredPattern> b)
-            => string.Join(", ", a.Except(b));
 
         private static ScoredPattern CreateScoredPattern(string str)
         {
@@ -131,8 +129,8 @@ namespace Lingua.Learning.Test
         }
 
         private static IList<ScoredPattern> GetScoredPatterns(
-            IReadOnlyCollection<string> wantedPatterns = null
-            , IReadOnlyCollection<string> unwantedPatterns = null) 
+            IReadOnlyCollection<string>? wantedPatterns = null
+            , IReadOnlyCollection<string>? unwantedPatterns = null) 
             => CreatePatternGenerator(
                 wantedPatterns ?? new string[0]
                 , unwantedPatterns ?? new string[0])

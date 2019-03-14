@@ -1,55 +1,58 @@
-﻿using NUnit.Framework;
+﻿using Xunit;
 
 namespace Lingua.Learning.Test
 {
-    [TestFixture]
     public class TrainerTests
     {
-        [Test, Category("Longrunning")]
+        [Fact]
+        [Trait("Category", "Longrunning")]
         public void TestAll()
         {
             var trainer = new Trainer();
             var res = GeneratePatterns(trainer);
             var reporter = new ConsoleReporter();
             reporter.Report(res);
-            Assert.That(res.Success, $"Failed on {res.SuccessCount + 1}th case");
+            Assert.True(res.Success, $"Failed on {res.SuccessCount + 1}th case");
         }
 
-        [Test, Category("Longrunning"), Explicit("Saves generated patterns to file on success")]
-        public void GeneratePatterns()
+        [Trait("Category", "Longrunning")]
+        [Fact(Skip="Saves generated patterns to file on success")]
+        public void GenerateAndStorePatterns()
         {
             var trainer = new Trainer();
             var success = GeneratePatterns(trainer).Success;
-            Assert.That(success, "Failed to generate and store patterns, failing testcase");
+            Assert.True(success, "Failed to generate and store patterns, failing testcase");
             trainer.SavePatterns();
         }
 
-        [TestCase("I will run", "jag ska springa")]
-        [TestCase("I have run", "jag har sprungit")]
-        [TestCase("Are you painting?", "Målar du?")]
-        [TestCase("Today I have been to the concert hall.", "Idag har jag varit till konserthallen.")]
-        [TestCase("I have been to the concert hall.", "Jag har varit till konserthallen.")]
-        [TestCase("have been to the concert hall.", "har varit till konserthallen.")]
-        [TestCase("been to the concert hall.", "varit till konserthallen.")]
-        [TestCase("to the concert hall.", "till konserthallen.")]
-        [TestCase("the concert hall.", "konserthallen.")]
-        [TestCase("I am here", "jag är här")]
-        [TestCase("I want to go to the theater", "jag vill gå till teatern")]
-        [TestCase("A ball i.e..", "En boll dvs...")]
-        [TestCase("The rat made a nest and slept in it.", "Råttan gjorde ett bo och sov i det.")]
-        [TestCase("I have been running", "jag har sprungit")]
-        [TestCase("I will be running", "jag kommer att springa")]
-        [TestCase("I will have been running", "jag kommer att ha sprungit")]
-        [TestCase("It is my pen", "Det är min penna")]
-        [TestCase("The cat caught a rat and ate it", "Katten fångade en råtta och åt den")]
-        [TestCase("The cat caught a rat", "Katten fångade en råtta")]
-        [TestCase("He runs. I run.", "Han springer. Jag springer.")]
+        [Theory]
+        [InlineData("I will run", "jag ska springa")]
+        [InlineData("I have run", "jag har sprungit")]
+        [InlineData("Are you painting?", "Målar du?")]
+        [InlineData("Today I have been to the concert hall.", "Idag har jag varit till konserthallen.")]
+        [InlineData("I have been to the concert hall.", "Jag har varit till konserthallen.")]
+        [InlineData("have been to the concert hall.", "har varit till konserthallen.")]
+        [InlineData("been to the concert hall.", "varit till konserthallen.")]
+        [InlineData("to the concert hall.", "till konserthallen.")]
+        [InlineData("the concert hall.", "konserthallen.")]
+        [InlineData("I am here", "jag är här")]
+        [InlineData("I want to go to the theater", "jag vill gå till teatern")]
+        [InlineData("A ball i.e..", "En boll dvs...")]
+        [InlineData("The rat made a nest and slept in it.", "Råttan gjorde ett bo och sov i det.")]
+        [InlineData("I have been running", "jag har sprungit")]
+        [InlineData("I will be running", "jag kommer att springa")]
+        [InlineData("I will have been running", "jag kommer att ha sprungit")]
+        [InlineData("It is my pen", "Det är min penna")]
+        [InlineData("The cat caught a rat and ate it", "Katten fångade en råtta och åt den")]
+        [InlineData("The cat caught a rat", "Katten fångade en råtta")]
+        [InlineData("He runs. I run.", "Han springer. Jag springer.")]
+        [InlineData("The cat found an apple and ate it", "Katten hittade ett äpple och åt det")]
         public void Test(string from, string expected)
         {
             var trainer = new Trainer();
             var testCase = new TestCase(from, expected);
             var res = trainer.RunTrainingSession(testCase);
-            Assert.That(res.FailedCase?.Success ?? true, $"Failed on {res.SuccessCount + 1}th case");
+            Assert.True(res.FailedCase?.Success ?? true, $"Failed on {res.SuccessCount + 1}th case");
         }
 
         private static TestSessionResult GeneratePatterns(Trainer trainer)

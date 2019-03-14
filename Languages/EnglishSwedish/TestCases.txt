@@ -167,6 +167,7 @@
 "The cat caught a rat and ate it", "Katten fångade en råtta och åt den"
 "The rat made a nest and slept in it.", "Råttan gjorde ett bo och sov i det."
 "The rat made a bed and slept in it.", "Råttan gjorde en säng och sov i den."
+"The cat found an apple and ate it.", "Katten hittade ett äpple och åt det."
 "I want to go to the theater", "jag vill gå till teatern"
 "I have a ball. It is red.", "Jag har en boll. Den är röd."
 "I have a table. It is big.", "Jag har ett bord. Det är stort."

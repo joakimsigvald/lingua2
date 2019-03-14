@@ -49,7 +49,7 @@ namespace Lingua.Core
         private static string GetDirectoryPath()
         {
             var projectDir = new DirectoryInfo(AppDomain.CurrentDomain.BaseDirectory);
-            var solutionDir = projectDir.Parent?.Parent?.Parent;
+            var solutionDir = projectDir.Parent?.Parent?.Parent?.Parent;
             return Path.Combine(solutionDir?.FullName ?? "", BaseDir, LanguageDir);
         }
     }

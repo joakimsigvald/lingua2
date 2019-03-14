@@ -1,13 +1,15 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
+
   <PropertyGroup>
     <TargetFramework>netcoreapp3.0</TargetFramework>
     <LangVersion>8.0</LangVersion>
-    <AssemblyName>Lingua.Tokenization</AssemblyName>
-    <RootNamespace>Lingua.Tokenization</RootNamespace>
+    <AssemblyName>Lingua.TestUtils</AssemblyName>
+    <RootNamespace>Lingua.TestUtils</RootNamespace>
     <NullableContextOptions>enable</NullableContextOptions>
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Core\Core.csproj" />
+    <PackageReference Include="xunit" Version="2.4.1" />
   </ItemGroup>
+
 </Project>

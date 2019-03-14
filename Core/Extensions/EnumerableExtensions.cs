@@ -6,9 +6,6 @@ namespace Lingua.Core.Extensions
 {
     public static class EnumerableExtensions
     {
-        public static IEnumerable<TItem> Append<TItem>(this IEnumerable<TItem> items, TItem item)
-            => items.Concat(new[] {item});
-
         public static void ForEach<TItem>(this IEnumerable<TItem> items, Action<TItem> action)
             => items.AsList().ForEach(action);
 
@@ -16,10 +13,7 @@ namespace Lingua.Core.Extensions
             => items as List<TItem> ?? new List<TItem>(items);
 
         public static TValue SafeGetValue<TKey, TValue>(this IDictionary<TKey, TValue> map, TKey key)
-            => key != null && map.TryGetValue(key, out TValue value) ? value : default(TValue);
-
-        public static IEnumerable<TItem> Prepend<TItem>(this IEnumerable<TItem> items, TItem item)
-            => new[] {item}.Concat(items);
+            => key != null && map.TryGetValue(key, out TValue value) ? value : default;
 
         public static IEnumerable<TItem> ExceptNull<TItem>(this IEnumerable<TItem> items)
             where TItem : class
