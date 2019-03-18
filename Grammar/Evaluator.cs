@@ -5,10 +5,9 @@ using Lingua.Core.Tokens;
 
 namespace Lingua.Grammar
 {
-    using Core.Extensions;
     using Core;
 
-    public class Evaluator : IEvaluator
+    public class Evaluator : IEvaluator, IArranger
     {
         public ScoreTreeNode ScoringTree;
         public IList<Arranger> Arrangers = new List<Arranger>();
@@ -20,10 +19,12 @@ namespace Lingua.Grammar
         private static readonly Lazy<IList<Arranger>> LoadedArrangers =
             new Lazy<IList<Arranger>>(() => BuildArrangers(Repository.LoadArrangements()));
 
-        public Evaluator(IDictionary<string, sbyte> patterns = null)
+        public Evaluator(IDictionary<string, sbyte>? patterns = null)
         {
             ScoringTree = BuildScoringTree(patterns ?? new Dictionary<string, sbyte>());
         }
+
+        public byte Horizon => 6;
 
         public void Load()
         {
@@ -31,7 +32,7 @@ namespace Lingua.Grammar
             Arrangers = LoadedArrangers.Value;
         }
 
-        public Evaluation Evaluate(ushort[] code, int commonLength = 0)
+        public IEvaluation Evaluate(ushort[] code, int commonLength = 0)
         {
             var scorings = GetMatchingScoreNodes(code, commonLength)
                 .GroupBy(n => n)
@@ -99,5 +100,10 @@ namespace Lingua.Grammar
 
         private static sbyte GetNodeScore(IEnumerable<(ushort[], sbyte)> codeScores, int index)
             => codeScores.SingleOrDefault(v => v.Item1.Length == index).Item2;
+
+        public int EvaluateInverted(ushort[] invertedCode)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

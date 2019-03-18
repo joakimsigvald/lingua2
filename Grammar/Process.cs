@@ -8,14 +8,12 @@ namespace Lingua.Grammar
 
     internal class Process
     {
-        private const int Horizon = 6;
-
         private readonly IList<ITranslation[]> _possibilities;
-        private Reason _reason;
+        private Reason? _reason;
         private readonly List<IEvaluation> _evaluations = new List<IEvaluation>();
-        private ITranslation[] _translations;
+        private ITranslation[]? _translations;
         private readonly IEvaluator _evaluator;
-        private IList<ITranslation[]> _futures;
+        private IList<ITranslation[]>? _futures;
         private bool _futureKnown;
         private int _offset;
         private int _futureOffset;
@@ -26,7 +24,7 @@ namespace Lingua.Grammar
         {
             var process = new Process(evaluator, possibilities);
             process.Reduce();
-            return (process._translations, process._reason);
+            return (process._translations!, process._reason!);
         }
 
         private Process(IEvaluator evaluator, IList<ITranslation[]> possibilities)
@@ -43,7 +41,7 @@ namespace Lingua.Grammar
 
         private IEnumerable<ITranslation> Choose()
         {
-            ITranslation translation = null;
+            ITranslation? translation = null;
             while (_offset < _possibilities.Count)
             {
                 yield return translation = ChooseNext(translation);
@@ -54,17 +52,17 @@ namespace Lingua.Grammar
             }
         }
 
-        private ITranslation ChooseNext(ITranslation translation)
+        private ITranslation ChooseNext(ITranslation? translation)
             => _futureKnown
                 ? _futures.First()[_futureOffset]
                 : SelectNext(translation);
 
-        private ITranslation SelectNext(ITranslation translation)
+        private ITranslation SelectNext(ITranslation? translation)
             => _possibilities[_offset].Length == 1
                 ? _possibilities[_offset].Single()
                 : FindNext(translation);
 
-        private ITranslation FindNext(ITranslation translation)
+        private ITranslation FindNext(ITranslation? translation)
         {
             _futures = GetNextFutures(translation).ToList();
             var pastReversed = _previous.Reverse().ToArray();
@@ -74,12 +72,12 @@ namespace Lingua.Grammar
             return _futures.First()[_futureOffset];
         }
 
-        private (ITranslation[] future, Evaluation evaluation)[] EvaluateFutures(ushort[] pastReversed)
+        private (ITranslation[] future, IEvaluation evaluation)[] EvaluateFutures(ushort[] pastReversed)
             => _futures
                 .Select(future => EvaluateFuture(pastReversed, future))
                 .OrderByDescending(scoredTranslation => scoredTranslation.evaluation.Score).ToArray();
 
-        private (ITranslation[] future, Evaluation evaluation) EvaluateFuture(
+        private (ITranslation[] future, IEvaluation evaluation) EvaluateFuture(
             ICollection<ushort> pastReversed, ITranslation[] future)
         {
             var commonLength = pastReversed.Count;
@@ -89,14 +87,13 @@ namespace Lingua.Grammar
             return (future, evaluation);
         }
 
-        private IEnumerable<ITranslation[]> GetNextFutures(ITranslation translation)
+        private IEnumerable<ITranslation[]> GetNextFutures(ITranslation? translation)
             => _futureKnown
                 ? _futures.Where(future => future[_futureOffset - 1] == translation)
-                : new Expander(_possibilities.Skip(_offset).ToList(), Horizon).Expand(out _futureKnown);
+                : new Expander(_possibilities.Skip(_offset).ToList(), _evaluator.Horizon).Expand(out _futureKnown);
 
         private static ushort[] GetCodeWithinHorizon(IEnumerable<ushort> pastReversed,
             IEnumerable<ITranslation> future)
             => pastReversed.Concat(future.Select(node => node.Code)).ToArray();
-
     }
 }

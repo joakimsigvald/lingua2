@@ -10,13 +10,20 @@ namespace Lingua.Core
     {
         private readonly IThesaurus _thesaurus;
         private readonly IGrammar _grammar;
+        private readonly IArranger _arranger;
         private readonly ICapitalizer _capitalizer;
         private readonly TokenGenerator _tokenGenerator;
 
-        public Translator(ITokenizer tokenizer, IThesaurus thesaurus, IGrammar grammar, ICapitalizer capitalizer)
+        public Translator(
+            ITokenizer tokenizer, 
+            IThesaurus thesaurus, 
+            IGrammar grammar,
+            IArranger arranger,
+            ICapitalizer capitalizer)
         {
             _thesaurus = thesaurus;
             _grammar = grammar;
+            _arranger = arranger;
             _tokenGenerator = new TokenGenerator(tokenizer);
             _capitalizer = capitalizer;
         }
@@ -41,7 +48,7 @@ namespace Lingua.Core
 
         public TranslationResult Arrange(IList<ITranslation[]> possibilities, ITranslation[] reduction)
         {
-            var arrangedTranslations = _grammar.Arrange(reduction).ToList();
+            var arrangedTranslations = _arranger.Arrange(reduction).ToList();
             var translation = Trim(arrangedTranslations, reduction);
             return new TranslationResult
             {
@@ -61,7 +68,7 @@ namespace Lingua.Core
         private TranslationResult Compose(IList<ITranslation[]> possibilities)
         {
             (var translations, var reason) = _grammar.Reduce(possibilities);
-            var arrangedTranslations = _grammar.Arrange(translations).ToList();
+            var arrangedTranslations = _arranger.Arrange(translations).ToList();
             var translation = Trim(arrangedTranslations, translations);
             return new TranslationResult
             {
@@ -84,12 +91,12 @@ namespace Lingua.Core
 
         private static IEnumerable<ITranslation[]> RemoveRedundantDots(IEnumerable<ITranslation[]> possibilities)
         {
-            ITranslation[] current = null;
+            ITranslation[] current = new ITranslation[0];
             foreach (var translations in possibilities)
             {
                 var prev = current;
                 current = translations;
-                if (translations.Length == 1 && prev?.Length == 1)
+                if (translations.Length == 1 && prev.Length == 1)
                 {
                     var translation = translations.Single();
                     if (prev.Single().From is Abbreviation)

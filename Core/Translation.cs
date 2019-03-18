@@ -9,10 +9,10 @@ namespace Lingua.Core
 
     public class Translation : ITranslation
     {
-        public static ITranslation Create(Token from, string to = null)
+        public static ITranslation Create(Token from, string? to = null)
             => new Translation(from, to, CreateContinuation(from as Word));
 
-        private static Word[] CreateContinuation(Word from)
+        private static Word[] CreateContinuation(Word? from)
             => string.IsNullOrWhiteSpace(from?.Value)
                 ? new Word[0]
                 : from.Value.Split(' ')
@@ -21,11 +21,7 @@ namespace Lingua.Core
                     .Cast<Word>()
                     .ToArray();
 
-        public Translation()
-        {
-        }
-
-        private Translation(Token from, string to, Word[] continuation)
+        public Translation(Token from, string? to, Word[] continuation)
         {
             From = from;
             To = to;
@@ -33,7 +29,7 @@ namespace Lingua.Core
         }
 
         public Token From { get; set; }
-        public string To { get; set; }
+        public string? To { get; set; }
         public Word[] Continuation { get; set; } = new Word[0];
         public ITranslation[] Variations { get; set; } = new ITranslation[0];
         public byte WordCount => (byte)(Continuation.Length + 1);

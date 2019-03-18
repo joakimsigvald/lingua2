@@ -13,7 +13,7 @@ namespace Lingua.Core
         ITranslation[] Variations { get; set; }
         bool IsTranslatedWord { get;  }
         bool IsIncompleteCompound { get; set;  }
-        string To { get; }
+        string? To { get; }
         Word[] Continuation { get; }
         string Input { get; }
         ITranslation Capitalize();
