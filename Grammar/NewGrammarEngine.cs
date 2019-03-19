@@ -19,17 +19,19 @@ namespace Lingua.Grammar
             return (translations, _emptyReason);
         }
 
-        private IEnumerable<ITranslation> GetTranslations(ITranslation[][] possibilities)
+        private IList<ITranslation> GetTranslations(ITranslation[][] possibilities)
         {
+            var translations = new List<ITranslation>();
             if (!possibilities.Any())
-                yield break;
+                return translations;
             Node? tree = CreateTree(possibilities);
             do
             {
-                yield return tree.Translation!;
+                translations.Add(tree!.Translation!);
                 tree = SelectBestBranch(tree, possibilities);
             }
             while (tree != null);
+            return translations;
         }
 
         private Node CreateTree(ITranslation[][] possibilities)
@@ -48,7 +50,7 @@ namespace Lingua.Grammar
         private Node CreateChild(Node parent, ITranslation candidate, ITranslation[][] possibilities, byte horizon)
         {
             var node = new Node(parent, candidate, _evaluator.Horizon);
-            node.Score += _evaluator.EvaluateInverted(node.InvertedCode);
+            node.Score += _evaluator.EvaluateReversed(node.ReversedCode);
             node.BestScore = node.Score;
             Populate(node, possibilities, (byte)(horizon - 1));
             return node;
@@ -56,10 +58,8 @@ namespace Lingua.Grammar
 
         private void Populate(Node node, ITranslation[][] possibilities, byte horizon)
         {
-            if (horizon == 0)
-                return;
             var nextIndex = node.Index + node.WordCount;
-            if (possibilities.Length <= nextIndex)
+            if (possibilities.Length <= nextIndex || horizon == 0)
                 return;
             node.Children = possibilities[nextIndex]
                 .Select(cand => CreateChild(node, cand, possibilities, horizon))
@@ -94,31 +94,5 @@ namespace Lingua.Grammar
             node.Children.ForEach(child => ExpandChild(child, possibilities, horizon));
             node.BestScore = node.Children.Max(child => child.BestScore);
         }
-    }
-
-    public class Node
-    {
-        public static Node[] NoChildren = new Node[0];
-
-        public Node()
-        {
-        }
-
-        public Node(Node parent, ITranslation translation, byte horizon)
-        {
-            Translation = translation;
-            WordCount = translation.WordCount;
-            Index = (byte)(parent.Index + parent.WordCount);
-            InvertedCode = parent.InvertedCode.Prepend(translation.Code).Take(horizon).ToArray();
-            Score = parent.Score;
-        }
-
-        public ITranslation? Translation { get; }
-        public Node[] Children { get; set; } = NoChildren;
-        public int WordCount { get; }
-        public int Score { get; set; }
-        public int BestScore { get; set; } = int.MinValue;
-        public byte Index { get; }
-        public ushort[] InvertedCode { get; } = new ushort[0];
     }
 }

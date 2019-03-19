@@ -6,6 +6,6 @@ namespace Lingua.Grammar
     {
         byte Horizon { get; }
         IEvaluation Evaluate(ushort[] code, int commonLength = 0);
-        int EvaluateInverted(ushort[] invertedCode);
+        int EvaluateReversed(ushort[] invertedCode);
     }
 }

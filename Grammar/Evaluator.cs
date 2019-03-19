@@ -101,7 +101,7 @@ namespace Lingua.Grammar
         private static sbyte GetNodeScore(IEnumerable<(ushort[], sbyte)> codeScores, int index)
             => codeScores.SingleOrDefault(v => v.Item1.Length == index).Item2;
 
-        public int EvaluateInverted(ushort[] invertedCode)
+        public int EvaluateReversed(ushort[] invertedCode)
         {
             throw new NotImplementedException();
         }

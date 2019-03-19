@@ -51,8 +51,7 @@ namespace Lingua.Grammar.Test
         [Fact]
         public void When_two_alternatives_return_translation_with_highest_value()
         {
-            var evaluator = MockEvaluator(
-                evaluations: new[] { (new[] { Code1 }, 1), (new[] { Code2 }, 2) });
+            var evaluator = MockEvaluator(bestPattern: new[] { Code2 });
             Test(evaluator, new[] {
                 new[] { Translation1, Translation2 } },
                 Translation2);
@@ -61,8 +60,7 @@ namespace Lingua.Grammar.Test
         [Fact]
         public void When_two_paths_return_best_path()
         {
-            var evaluator = MockEvaluator(
-                evaluations: new[] { (new[] { Code2, Code1 }, 1), (new[] { Code3, Code2 }, 2) });
+            var evaluator = MockEvaluator(bestPattern: new[] { Code2, Code3 });
             Test(evaluator, new[] {
                 new[] { Translation1, Translation2 }, new[] { Translation2, Translation3 } },
                 Translation2, Translation3);
@@ -71,8 +69,7 @@ namespace Lingua.Grammar.Test
         [Fact]
         public void When_two_paths_one_with_compound_word_then_return_best_path()
         {
-            var evaluator = MockEvaluator(
-                evaluations: (new[] { CodeDoubleWord, Code1 }, 1));
+            var evaluator = MockEvaluator(bestPattern: new[] { Code1, CodeDoubleWord });
             Test(evaluator, new[] {
                 new[] { Translation1, Translation2 },
                 new[] { Translation3, DoubleWord },
@@ -81,11 +78,18 @@ namespace Lingua.Grammar.Test
         }
 
         [Theory]
-        [InlineData(1)]
-        [InlineData(2)]
-        public void When_very_long_paths_only_evaluate_path_within_horizon(int longCount)
+        [InlineData(1, 2)]
+        [InlineData(2, 2)]
+        [InlineData(10, 2)]
+        [InlineData(10, 5)]
+        [InlineData(20, 6)]
+        [InlineData(20, 8)]
+        [InlineData(30, 12)] //1.221 sec
+//        [InlineData(30, 15)] //8.314 sec
+        public void When_very_long_paths_only_evaluate_path_within_horizon(int longCount, byte horizon)
         {
-            var evaluator = MockEvaluator(2, (new[] { CodeDoubleWord, Code1 }, 1));
+            var bestPattern = Enumerable.Range(0, horizon - 1).Select(_ => Code1).Append(CodeDoubleWord).ToArray();
+            var evaluator = MockEvaluator(horizon, bestPattern);
             var possibilities = Enumerable.Range(0, longCount)
                 .Select(_ => new[] { Translation1, Translation2 })
                 .Concat(new[] { new[] { Translation3, DoubleWord }, new[] { Translation3 } })
@@ -107,16 +111,13 @@ namespace Lingua.Grammar.Test
             return mock.Object;
         }
 
-        private IEvaluator MockEvaluator(byte horizon = byte.MaxValue, params (ushort[] code, int score)[] evaluations)
+        private IEvaluator MockEvaluator(byte horizon = byte.MaxValue, params ushort[] bestPattern)
         {
             var mock = new Mock<IEvaluator>();
             mock.Setup(eval => eval.Horizon).Returns(horizon);
-            mock.Setup(eval => eval.EvaluateInverted(It.IsAny<ushort[]>())).Returns(0);
-            foreach (var (code, score) in evaluations)
-            {
-                mock.Setup(eval => eval.EvaluateInverted(code))
-                    .Returns(score);
-            }
+            mock.Setup(eval => eval.EvaluateReversed(It.IsAny<ushort[]>())).Returns(0);
+            var bestPatternReversed = bestPattern.Reverse().ToArray();
+            mock.Setup(eval => eval.EvaluateReversed(bestPatternReversed)).Returns(1);
             return mock.Object;
         }
 
