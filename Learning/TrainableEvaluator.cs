@@ -4,11 +4,14 @@ using System.Linq;
 namespace Lingua.Learning
 {
     using Core;
-    using Core.Extensions;
     using Grammar;
 
     public class TrainableEvaluator : Evaluator
     {
+        private Rearranger _arranger;
+
+        public TrainableEvaluator(Rearranger arranger) => _arranger = arranger;
+
         public void UpdateScore(ushort[] code, sbyte addScore)
         {
             if (addScore == 0)
@@ -28,13 +31,12 @@ namespace Lingua.Learning
 
         public void Add(Arranger arranger)
         {
-            if (arranger != null && !Arrangers.Contains(arranger))
-                Arrangers.Add(arranger);
+            _arranger.Add(arranger);
         }
 
         public void Remove(Arranger arranger)
         {
-            Arrangers.Remove(arranger);
+            _arranger.Remove(arranger);
         }
 
         public int ComputeScoreDeficit(TestCaseResult failedCase)
@@ -49,7 +51,7 @@ namespace Lingua.Learning
         public void SavePatterns()
         {
             Repository.StoreScoredPatterns(ScoringTree.PatternLines);
-            Repository.StoreRearrangements(Arrangers);
+            Repository.StoreRearrangements(_arranger.Arrangers);
         }
 
         private static void UpdateScore(ScoreTreeNode node, (ushort[], sbyte) codedPattern, int index)
@@ -74,7 +76,7 @@ namespace Lingua.Learning
         public sbyte GetScore(ushort[] code)
             => GetScoreNode(ScoringTree, code, 0)?.Score ?? 0;
 
-        private static ScoreTreeNode GetScoreNode(ScoreTreeNode node, ushort[] code, int index)
+        private static ScoreTreeNode? GetScoreNode(ScoreTreeNode node, ushort[] code, int index)
         {
             if (code.Length == index)
                 return node;

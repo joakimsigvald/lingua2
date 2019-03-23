@@ -79,7 +79,9 @@ namespace Lingua.Main
         {
             var evaluator = new Evaluator();
             evaluator.Load();
-            return new Translator(new Tokenizer(), new Thesaurus(), new GrammarEngine(evaluator), evaluator, new Capitalizer());
+            var arranger = new Rearranger();
+            arranger.Load();
+            return new Translator(new Tokenizer(), new Thesaurus(), new GrammarEngine(evaluator), arranger, new Capitalizer());
         }
     }
 

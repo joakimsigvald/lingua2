@@ -15,6 +15,7 @@ namespace Lingua.Learning
         private const int MaxAttempts = 256;
 
         private readonly TrainableEvaluator _evaluator;
+        private readonly Rearranger _arranger;
         private readonly Translator _translator;
         private readonly List<TestCase> _testCases;
         private readonly TestRunner _testRunner;
@@ -28,9 +29,10 @@ namespace Lingua.Learning
         private ScoredPattern _currentScoredPattern;
         private Arranger _currentArranger;
 
-        public TrainingSession(TrainableEvaluator evaluator, Translator translator, IEnumerable<TestCase> testCases)
+        public TrainingSession(TrainableEvaluator evaluator, Rearranger arranger, Translator translator, IEnumerable<TestCase> testCases)
         {
             _evaluator = evaluator;
+            _arranger = arranger;
             _translator = translator;
             _testCases = PrepareForLearning(testCases);
             _testRunner = CreateLearningTestRunner();
@@ -269,7 +271,7 @@ namespace Lingua.Learning
         private void RenewArrangementCandidates(TestCase testCase)
         {
             _arrangementCandidatesList = ArrangerGenerator.GetArrangerCandidates(testCase.Target.Arrangement)
-                .Except(_evaluator.Arrangers)
+                .Except(_arranger.Arrangers)
                 .ToList();
             _arrangementCandidates = _arrangementCandidatesList.GetEnumerator();
         }

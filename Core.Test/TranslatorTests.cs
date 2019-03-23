@@ -15,6 +15,7 @@ namespace Lingua.Core.Test
     public class TranslatorTests
     {
         private static readonly Evaluator Evaluator = GetEvaluator();
+        private static readonly IArranger Arranger = GetArranger();
         private static readonly Translator Translator = CreateTranslator();
         private static readonly TestBench TestBench = CreateTestBench();
 
@@ -22,13 +23,20 @@ namespace Lingua.Core.Test
             => new TestBench(new TestRunner(new FullTextTranslator(Translator)), new TestReporter());
 
         private static Translator CreateTranslator() 
-            => new Translator(new Tokenizer(), new Thesaurus(), new GrammarEngine(Evaluator), Evaluator, new Capitalizer());
+            => new Translator(new Tokenizer(), new Thesaurus(), new GrammarEngine(Evaluator), Arranger, new Capitalizer());
 
         private static Evaluator GetEvaluator()
         {
             var evaluator = new Evaluator();
             evaluator.Load();
             return evaluator;
+        }
+
+        private static IArranger GetArranger()
+        {
+            var arranger = new Rearranger();
+            arranger.Load();
+            return arranger;
         }
 
         [Fact]
@@ -44,6 +52,7 @@ namespace Lingua.Core.Test
         [InlineData("|search results| /=> |sökresultat|")]
         [InlineData("|I have been running| /=> |jag har sprungit|")]
         [InlineData("|The rat made a nest and slept in it.| /=> |Råttan gjorde ett bo och sov i det.|")]
+        [InlineData("|The red ball.| /=> |Den röda bollen.|")]
         public void RunTestCase(string testCase)
         {
             var parts = Regex.Split(testCase, @"\s+/=>\s+");

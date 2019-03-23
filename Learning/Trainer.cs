@@ -10,18 +10,20 @@ namespace Lingua.Learning
 
     public class Trainer
     {
+        private readonly Rearranger _arranger;
         private readonly TrainableEvaluator _evaluator;
         private readonly Translator _translator;
 
         public Trainer()
         {
-            _evaluator = new TrainableEvaluator();
+            _arranger = new Rearranger();
+            _evaluator = new TrainableEvaluator(_arranger);
             _translator = CreateTranslator();
         }
 
         public TestSessionResult RunTrainingSession(params TestCase[] testCases)
         {
-            var trainingSession = new TrainingSession(_evaluator, _translator, testCases);
+            var trainingSession = new TrainingSession(_evaluator, _arranger, _translator, testCases);
             var result = trainingSession.LearnPatterns();
             return !result.Success
                 ? result
@@ -34,7 +36,7 @@ namespace Lingua.Learning
         }
 
         private Translator CreateTranslator() 
-            => new Translator(new Tokenizer(), new Thesaurus(), new GrammarEngine(_evaluator), _evaluator, new Capitalizer());
+            => new Translator(new Tokenizer(), new Thesaurus(), new GrammarEngine(_evaluator), _arranger, new Capitalizer());
 
         private TestSessionResult VerifyPatterns(IList<TestCase> testCases)
         {

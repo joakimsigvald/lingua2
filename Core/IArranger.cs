@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using Lingua.Core;
 
 namespace Lingua.Core
 {

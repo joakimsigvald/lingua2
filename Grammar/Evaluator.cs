@@ -1,23 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Lingua.Core.Tokens;
 
 namespace Lingua.Grammar
 {
     using Core;
 
-    public class Evaluator : IEvaluator, IArranger
+    public class Evaluator : IEvaluator
     {
         public ScoreTreeNode ScoringTree;
-        public IList<Arranger> Arrangers = new List<Arranger>();
-        public List<Aggregate> Aggregates = new List<Aggregate>();
 
         private static readonly Lazy<ScoreTreeNode> LoadedScoringTree =
             new Lazy<ScoreTreeNode>(() => BuildScoringTree(Repository.LoadScoredPatterns()));
-
-        private static readonly Lazy<IList<Arranger>> LoadedArrangers =
-            new Lazy<IList<Arranger>>(() => BuildArrangers(Repository.LoadArrangements()));
 
         public Evaluator(IDictionary<string, sbyte>? patterns = null)
         {
@@ -29,7 +23,6 @@ namespace Lingua.Grammar
         public void Load()
         {
             ScoringTree = LoadedScoringTree.Value;
-            Arrangers = LoadedArrangers.Value;
         }
 
         public IEvaluation Evaluate(ushort[] code, int commonLength = 0)
@@ -40,36 +33,6 @@ namespace Lingua.Grammar
                 .ToArray();
             return new Evaluation(scorings);
         }
-
-        public ITranslation[] Arrange(IEnumerable<ITranslation> translations)
-            => DoArrange(translations.ToArray()).SelectMany(s => s).ToArray();
-
-        private IEnumerable<IEnumerable<ITranslation>> DoArrange(ICollection<ITranslation> translations)
-        {
-            for (var i = 0; i < translations.Count;)
-            {
-                var remaining = translations.Skip(i).ToArray();
-                (var arrangedSegment, var length) = ArrangeSegment(remaining);
-                i += Math.Max(1, length);
-                yield return arrangedSegment ?? remaining.Take(1);
-            }
-        }
-
-        private (ITranslation[] arrangement, int length) ArrangeSegment(IList<ITranslation> remainingTranslations)
-            => Arrangers
-                .Select(arranger => Arrange(arranger, remainingTranslations))
-                .FirstOrDefault(result => result.arrangement != null);
-
-        private static (ITranslation[] arrangement, int length) Arrange(Arranger arr, IEnumerable<ITranslation> remainingTranslations)
-        {
-            var segment = remainingTranslations
-                .Take(arr.Length)
-                .ToArray();
-            return arr.Arrange(segment);
-        }
-
-        private static IList<Arranger> BuildArrangers(IEnumerable<Arrangement> arrangements)
-            => arrangements.Select(arr => new Arranger(arr)).ToList();
 
         private IEnumerable<ScoreTreeNode> GetMatchingScoreNodes(ushort[] sequence, int commonLength)
             => new EvaluationProcess(sequence, commonLength).GetMatchingScoreNodes(ScoringTree);
@@ -103,7 +66,7 @@ namespace Lingua.Grammar
 
         public int EvaluateReversed(ushort[] invertedCode)
         {
-            throw new NotImplementedException();
+            return 0;
         }
     }
 }
