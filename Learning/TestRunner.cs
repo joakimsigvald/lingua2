@@ -80,17 +80,17 @@ namespace Lingua.Learning
         private int _failedIndex;
         private readonly TestCaseResult[] _results;
         private readonly ITestCaseTranslator _translator;
-        private readonly TrainableEvaluator _evaluator;
+        private readonly ITrainableEvaluator _evaluator;
 
         public static TestCaseResult[] Run(
             ITestCaseTranslator translator
-            , TrainableEvaluator evaluator
+            , ITrainableEvaluator evaluator
             , IList<TestCase> testCases)
             => new TestRunnerProcess(translator, evaluator, testCases).Run();
 
         private TestRunnerProcess(
             ITestCaseTranslator translator
-            , TrainableEvaluator evaluator
+            , ITrainableEvaluator evaluator
             , IList<TestCase> testCases)
         {
             _translator = translator;

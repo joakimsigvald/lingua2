@@ -29,11 +29,6 @@ namespace Lingua.Grammar
                     Patterns.Extend(GetReversedCode(kvp.Key), kvp.Value);
         }
 
-        public IEvaluation Evaluate(ushort[] code, int commonLength = 0)
-        {
-            throw new NotImplementedException();
-        }
-
         public int EvaluateReversed(ushort[] invertedCode) => Patterns.Evaluate(invertedCode);
 
         private static ushort[] GetReversedCode(string symbols)

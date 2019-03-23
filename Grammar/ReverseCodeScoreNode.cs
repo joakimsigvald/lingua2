@@ -14,17 +14,17 @@ namespace Lingua.Grammar
 
         public ReverseCodeScoreNode(ushort code = 0) => Code = code;
 
-        public void Extend(ushort[] inversedCode, sbyte score)
+        public void Extend(ushort[] reversedCode, sbyte score)
         {
-            if (!inversedCode.Any())
+            if (!reversedCode.Any())
             {
                 if (Score != 0)
                     throw new InvalidOperationException("Pattern is already registered:");
                 Score = score;
                 return;
             }
-            var first = inversedCode[0];
-            var rest = inversedCode.Skip(1).ToArray();
+            var first = reversedCode[0];
+            var rest = reversedCode.Skip(1).ToArray();
             var previous = Previous.SingleOrDefault(p => p.Code == first);
             if (previous == null)
                 Previous.Add(previous = new ReverseCodeScoreNode(first));
@@ -42,24 +42,21 @@ namespace Lingua.Grammar
         }
 
         public string[] PatternLines
-            => ToDictionary(new ushort[0])
+            => Previous.SelectMany(p => p.GetScoredPatterns(new ushort[0]))
                 .OrderByDescending(sp => sp.Value)
                 .ThenBy(sp => sp.Key)
                 .Select(ToLine).ToArray();
 
-        private static string ToLine(KeyValuePair<string, sbyte> scoredPattern)
-            => $"{scoredPattern.Key}:{scoredPattern.Value}";
-
-        private IDictionary<string, sbyte> ToDictionary(ushort[] rest)
-            => GetScoredPatterns(rest).ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
-
         private IEnumerable<KeyValuePair<string, sbyte>> GetScoredPatterns(ushort[] rest)
         {
             var sequence = rest.Prepend(Code).ToArray();
-            var scoredPatterns = Previous.SelectMany(child => child.ToDictionary(sequence));
+            var scoredPatterns = Previous.SelectMany(child => child.GetScoredPatterns(sequence));
             return Score == 0
                 ? scoredPatterns
                 : scoredPatterns.Prepend(new KeyValuePair<string, sbyte>(Encoder.Serialize(sequence), Score));
         }
+
+        private static string ToLine(KeyValuePair<string, sbyte> scoredPattern)
+            => $"{scoredPattern.Key}:{scoredPattern.Value}";
     }
 }

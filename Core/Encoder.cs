@@ -4,7 +4,6 @@ using System.Linq;
 
 namespace Lingua.Core
 {
-    using Extensions;
     using Tokens;
     using WordClasses;
 
