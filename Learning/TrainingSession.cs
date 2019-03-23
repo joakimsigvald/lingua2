@@ -14,7 +14,7 @@ namespace Lingua.Learning
     {
         private const int MaxAttempts = 256;
 
-        private readonly TrainableEvaluator _evaluator;
+        private readonly ITrainableEvaluator _evaluator;
         private readonly Rearranger _arranger;
         private readonly Translator _translator;
         private readonly List<TestCase> _testCases;
@@ -29,7 +29,7 @@ namespace Lingua.Learning
         private ScoredPattern _currentScoredPattern;
         private Arranger _currentArranger;
 
-        public TrainingSession(TrainableEvaluator evaluator, Rearranger arranger, Translator translator, IEnumerable<TestCase> testCases)
+        public TrainingSession(ITrainableEvaluator evaluator, Rearranger arranger, Translator translator, IEnumerable<TestCase> testCases)
         {
             _evaluator = evaluator;
             _arranger = arranger;

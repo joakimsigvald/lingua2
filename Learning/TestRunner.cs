@@ -13,11 +13,11 @@ namespace Lingua.Learning
     public class TestRunner
     {
         private readonly ITestCaseTranslator _translator;
-        private readonly TrainableEvaluator? _evaluator;
+        private readonly ITrainableEvaluator? _evaluator;
         private readonly TestRunnerSettings _settings;
 
         public TestRunner(ITestCaseTranslator translator
-            , TrainableEvaluator? evaluator = null
+            , ITrainableEvaluator? evaluator = null
             , TestRunnerSettings? settings = null)
         {
             _settings = settings ?? new TestRunnerSettings();

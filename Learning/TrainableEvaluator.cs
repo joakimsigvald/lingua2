@@ -6,7 +6,16 @@ namespace Lingua.Learning
     using Core;
     using Grammar;
 
-    public class TrainableEvaluator : Evaluator
+    public interface ITrainableEvaluator {
+        int ComputeScoreDeficit(TestCaseResult failedCase);
+        void Do(ScoredPattern scoredPattern);
+        void Undo(ScoredPattern scoredPattern);
+        void Add(Arranger arranger);
+        void Remove(Arranger arranger);
+        sbyte GetScore(ushort[] code);
+    }
+
+    public class TrainableEvaluator : Evaluator, ITrainableEvaluator 
     {
         private Rearranger _arranger;
 
@@ -48,6 +57,9 @@ namespace Lingua.Learning
             return actualScore - expectedScore;
         }
 
+        public sbyte GetScore(ushort[] code)
+            => GetScoreNode(ScoringTree, code, 0)?.Score ?? 0;
+
         public void SavePatterns()
         {
             Repository.StoreScoredPatterns(ScoringTree.PatternLines);
@@ -72,9 +84,6 @@ namespace Lingua.Learning
                     node.RemoveChild(child);
             }
         }
-
-        public sbyte GetScore(ushort[] code)
-            => GetScoreNode(ScoringTree, code, 0)?.Score ?? 0;
 
         private static ScoreTreeNode? GetScoreNode(ScoreTreeNode node, ushort[] code, int index)
         {
