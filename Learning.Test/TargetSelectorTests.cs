@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Lingua.Core;
 using Lingua.Core.Tokens;
+using Lingua.Core.WordClasses;
 using Xunit;
 
 namespace Lingua.Learning.Test
@@ -127,7 +128,7 @@ namespace Lingua.Learning.Test
         }
 
         public string Output { get; private set; }
-        public Token From => null;
+        public Token From => new Unclassified();
         public ushort Code { get; set; }
         public byte WordCount { get; private set; }
         public bool IsCapitalized => false;

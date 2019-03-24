@@ -266,7 +266,7 @@ namespace Lingua.Learning
         }
 
         private (ScoredPattern sp, int priority) PrioritizePattern(ScoredPattern sp)
-            => (sp, ScoredPatternPriorityComputer.ComputePriority(_evaluator.GetScore(sp.Code), sp.Score, sp.Code));
+            => (sp, ScoredPatternPriorityComputer.ComputePriority(_evaluator.GetScore(sp.ReversedCode), sp.Score, sp.Code));
 
         private void RenewArrangementCandidates(TestCase testCase)
         {

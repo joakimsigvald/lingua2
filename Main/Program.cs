@@ -75,8 +75,7 @@ namespace Lingua.Main
 
         private static ITranslator CreateTranslator()
         {
-            var evaluator = new NewEvaluator();
-            evaluator.Load();
+            var evaluator = NewEvaluator.Load();
             var arranger = new Rearranger();
             arranger.Load();
             return new Translator(new Tokenizer(), new Thesaurus(), new NewGrammarEngine(evaluator), arranger, new Capitalizer());

@@ -30,7 +30,7 @@ namespace Lingua.Core
 
         public TranslationResult Translate(string original)
             => string.IsNullOrWhiteSpace(original)
-                ? new TranslationResult { Translation = ""}
+                ? new TranslationResult("")
                 : Compose(Decompose(original));
 
         public IList<ITranslation[]> Decompose(string original)
@@ -50,12 +50,7 @@ namespace Lingua.Core
         {
             var arrangedTranslations = _arranger.Arrange(reduction).ToList();
             var translation = Trim(arrangedTranslations, reduction);
-            return new TranslationResult
-            {
-                Translation = translation,
-                Translations = reduction,
-                Possibilities = possibilities
-            };
+            return new TranslationResult(translation, reduction, possibilities);
         }
 
         private static void SetCodes(IEnumerable<ITranslation[]> possibilities)
@@ -70,13 +65,7 @@ namespace Lingua.Core
             (var translations, var reason) = _grammar.Reduce(possibilities);
             var arrangedTranslations = _arranger.Arrange(translations).ToList();
             var translation = Trim(arrangedTranslations, translations);
-            return new TranslationResult
-            {
-                Translation = translation,
-                Translations = translations,
-                Reason = reason,
-                Possibilities = possibilities
-            };
+            return new TranslationResult(translation, translations, possibilities, reason);
         }
 
         private string Trim(IList<ITranslation> arrangedTranslations, IList<ITranslation> translations)

@@ -57,6 +57,11 @@ namespace Lingua.Core
             yield return CreateToken(primary, modifiers);
         }
 
+        public static object Encode(object reversedCode)
+        {
+            throw new NotImplementedException();
+        }
+
         public static Modifier ParseModifiers(string modifiers)
             => (modifiers ?? "").Select(ToModifier).Aggregate(Modifier.None, (o, n) => o | n);
 

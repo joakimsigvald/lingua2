@@ -27,12 +27,7 @@ namespace Lingua.Learning
         }
 
         private static TranslationTarget CreateTarget(ITranslation[] translations, byte[] order, string unmatched) 
-            => new TranslationTarget
-        {
-            Arrangement = CreateArrangement(translations, order),
-            Unmatched = unmatched,
-            Translations = translations
-        };
+            => new TranslationTarget(CreateArrangement(translations, order), unmatched, translations);
 
         private static Arrangement CreateArrangement(IEnumerable<ITranslation> translations, byte[] order)
             => new Arrangement(translations.Select(t => t.Code).ToArray(), order);

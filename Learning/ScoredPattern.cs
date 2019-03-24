@@ -11,11 +11,13 @@ namespace Lingua.Learning
         public ScoredPattern(ushort[] code, sbyte score)
         {
             Code = code;
+            ReversedCode = code.Reverse().ToArray();
             Score = score;
             _hashCode = Code.Aggregate(0, (a, b) => a + b);
         }
 
-        public ushort[] Code{ get; }
+        public ushort[] Code { get; }
+        public ushort[] ReversedCode { get; }
         public string Pattern => Encoder.Serialize(Code);
         public sbyte Score { get; }
 

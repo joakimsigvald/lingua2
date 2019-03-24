@@ -11,19 +11,21 @@ namespace Lingua.Learning
     public class Trainer
     {
         private readonly Rearranger _arranger;
-        private readonly NewTrainableEvaluator _evaluator;
+        private readonly NewEvaluator _evaluator;
+        private readonly NewTrainableEvaluator _trainableEvaluator;
         private readonly Translator _translator;
 
         public Trainer()
         {
             _arranger = new Rearranger();
-            _evaluator = new NewTrainableEvaluator(_arranger);
+            _evaluator = NewEvaluator.Create();
+            _trainableEvaluator = new NewTrainableEvaluator(_arranger, _evaluator);
             _translator = CreateTranslator();
         }
 
         public TestSessionResult RunTrainingSession(params TestCase[] testCases)
         {
-            var trainingSession = new TrainingSession(_evaluator, _arranger, _translator, testCases);
+            var trainingSession = new TrainingSession(_trainableEvaluator, _arranger, _translator, testCases);
             var result = trainingSession.LearnPatterns();
             return !result.Success
                 ? result
@@ -32,7 +34,7 @@ namespace Lingua.Learning
 
         public void SavePatterns()
         {
-            _evaluator.SavePatterns();
+            _trainableEvaluator.SavePatterns();
         }
 
         private Translator CreateTranslator() 
@@ -45,7 +47,7 @@ namespace Lingua.Learning
                 AbortOnFail = true,
                 AllowReordered = false
             };
-            var testRunner = new TestRunner(new FullTextTranslator(_translator), _evaluator, settings);
+            var testRunner = new TestRunner(new FullTextTranslator(_translator), _trainableEvaluator, settings);
             return testRunner.RunTestSession(testCases);
         }
     }

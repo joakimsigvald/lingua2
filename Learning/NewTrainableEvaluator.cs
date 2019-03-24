@@ -2,23 +2,29 @@
 
 namespace Lingua.Learning
 {
-    using Core;
     using Grammar;
 
-    public class NewTrainableEvaluator : NewEvaluator, ITrainableEvaluator
+    public class NewTrainableEvaluator : ITrainableEvaluator
     {
         private Rearranger _arranger;
+        private readonly NewEvaluator _evaluator;
 
-        public NewTrainableEvaluator(Rearranger arranger) => _arranger = arranger;
+        public NewTrainableEvaluator(Rearranger arranger, NewEvaluator evaluator)
+        {
+            _arranger = arranger;
+            _evaluator = evaluator;
+        }
+
+        public ReverseCodeScoreNode Patterns => _evaluator.Patterns;
 
         public void Do(ScoredPattern scoredPattern)
         {
-            UpdateScore(scoredPattern.Code, scoredPattern.Score);
+            UpdateScore(scoredPattern.ReversedCode, scoredPattern.Score);
         }
 
         public void Undo(ScoredPattern scoredPattern)
         {
-            UpdateScore(scoredPattern.Code, (sbyte) -scoredPattern.Score);
+            UpdateScore(scoredPattern.ReversedCode, (sbyte) -scoredPattern.Score);
         }
 
         public void Add(Arranger arranger)
@@ -33,27 +39,25 @@ namespace Lingua.Learning
 
         public int ComputeScoreDeficit(TestCaseResult failedCase)
         {
-            var expected = Encoder.Encode(failedCase.ExpectedTranslations).ToArray();
-            var actual = Encoder.Encode(failedCase.Translations).ToArray();
-            var expectedScore = EvaluateReversed(expected.Reverse().ToArray());
-            var actualScore = EvaluateReversed(actual.Reverse().ToArray());
+            var expectedScore = _evaluator.EvaluateReversed(failedCase.ExpectedReversedCode);
+            var actualScore = _evaluator.EvaluateReversed(failedCase.ActuaReversedCode);
             return actualScore - expectedScore;
         }
 
-        public sbyte GetScore(ushort[] code)
-            => GetScoreNode(Patterns, code.Reverse().ToArray(), 0)?.Score ?? 0;
+        public sbyte GetScore(ushort[] reversedCode)
+            => GetScoreNode(_evaluator.Patterns, reversedCode, 0)?.Score ?? 0;
 
         public void SavePatterns()
         {
-            Repository.StoreScoredPatterns(Patterns.PatternLines);
+            Repository.StoreScoredPatterns(_evaluator.Patterns.PatternLines);
             Repository.StoreRearrangements(_arranger.Arrangers);
         }
 
-        public void UpdateScore(ushort[] code, sbyte addScore)
+        public void UpdateScore(ushort[] reversedCode, sbyte addScore)
         {
             if (addScore == 0)
                 return;
-            UpdateScore(Patterns, code.Reverse().ToArray(), addScore, 0);
+            UpdateScore(_evaluator.Patterns, reversedCode, addScore, 0);
         }
 
         private static void UpdateScore(ReverseCodeScoreNode node, ushort[] reversedCode, sbyte score, int index)
@@ -62,16 +66,16 @@ namespace Lingua.Learning
                 node.Score += score;
             else
             {
-                var next = reversedCode[index];
+                var next = reversedCode[index++];
                 var child = node.Previous.FirstOrDefault(c => c.Code == next);
                 if (child == null)
                 {
                     child = new ReverseCodeScoreNode(next);
-                    child.Extend(reversedCode.Skip(index + 1).ToArray(), score);
+                    child.Extend(reversedCode, score, index);
                     node.Previous.Add(child);
                     return;
                 }
-                UpdateScore(child, reversedCode, score, index + 1);
+                UpdateScore(child, reversedCode, score, index);
                 if (child.Score == 0 && !child.Previous.Any())
                     node.Previous.Remove(child);
             }
@@ -81,9 +85,9 @@ namespace Lingua.Learning
         {
             if (reversedCode.Length == index)
                 return node;
-            var next = reversedCode[index];
+            var next = reversedCode[index++];
             var child = node.Previous.FirstOrDefault(c => c.Code == next);
-            return child == null ? null : GetScoreNode(child, reversedCode, index + 1);
+            return child == null ? null : GetScoreNode(child, reversedCode, index);
         }
     }
 }

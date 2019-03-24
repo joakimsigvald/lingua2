@@ -3,15 +3,15 @@
     using Core;
     using System.Linq;
 
-    public class Node
+    internal class TranslationSearchNode
     {
-        public static Node[] NoChildren = new Node[0];
+        public static TranslationSearchNode[] NoChildren = new TranslationSearchNode[0];
 
-        public Node()
+        public TranslationSearchNode()
         {
         }
 
-        public Node(Node parent, ITranslation translation, byte horizon)
+        public TranslationSearchNode(TranslationSearchNode parent, ITranslation translation, byte horizon)
         {
             Translation = translation;
             WordCount = translation.WordCount;
@@ -21,7 +21,7 @@
         }
 
         public ITranslation? Translation { get; }
-        public Node[] Children { get; set; } = NoChildren;
+        public TranslationSearchNode[] Children { get; set; } = NoChildren;
         public byte WordCount { get; }
         public int Score { get; set; }
         public int BestScore { get; set; } = int.MinValue;

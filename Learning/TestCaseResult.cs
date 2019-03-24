@@ -38,9 +38,11 @@ namespace Lingua.Learning
         public string Actual => _translationResult.Translation;
         public bool Success => Actual == TestCase.Expected;
         public bool SuccessIgnoringCase => string.Equals(Actual, TestCase.Expected, StringComparison.InvariantCultureIgnoreCase);
-        public IReason Reason => _translationResult.Reason;
+        public IReason Reason => _translationResult.Reason!;
         public IEnumerable<ITranslation> ExpectedTranslations => TestCase.Target.Translations;
+        public ushort[] ExpectedReversedCode => TestCase.Target.ReversedCode;
         public IEnumerable<ITranslation> Translations => _translationResult.Translations;
+        public ushort[] ActuaReversedCode => _translationResult.ReversedCode;
 
         public override string ToString()
             => $"{TestCase}/{Actual}:{Success}";

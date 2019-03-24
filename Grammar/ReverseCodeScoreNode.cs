@@ -14,31 +14,29 @@ namespace Lingua.Grammar
 
         public ReverseCodeScoreNode(ushort code = 0) => Code = code;
 
-        public void Extend(ushort[] reversedCode, sbyte score)
+        public void Extend(ushort[] reversedCode, sbyte score, int index = 0)
         {
-            if (!reversedCode.Any())
+            if (index == reversedCode.Length)
             {
                 if (Score != 0)
                     throw new InvalidOperationException("Pattern is already registered:");
                 Score = score;
                 return;
             }
-            var first = reversedCode[0];
-            var rest = reversedCode.Skip(1).ToArray();
+            var first = reversedCode[index];
             var previous = Previous.SingleOrDefault(p => p.Code == first);
             if (previous == null)
                 Previous.Add(previous = new ReverseCodeScoreNode(first));
-            previous.Extend(rest, score);
+            previous.Extend(reversedCode, score, index + 1);
         }
 
-        internal int Evaluate(ushort[] invertedCode)
+        internal int Evaluate(ushort[] invertedCode, int index = 0)
         {
-            if (!invertedCode.Any())
+            if (index == invertedCode.Length)
                 return Score;
-            var first = invertedCode[0];
-            var rest = invertedCode.Skip(1).ToArray();
+            var first = invertedCode[index++];
             var matches = Previous.Where(p => Encoder.Matches(first, p.Code));
-            return Score + matches.Sum(m => m.Evaluate(rest));
+            return Score + matches.Sum(m => m.Evaluate(invertedCode, index));
         }
 
         public string[] PatternLines

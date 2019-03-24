@@ -10,7 +10,7 @@ namespace Lingua.Learning.Test
     {
         readonly NewTrainableEvaluator _evaluator;
 
-        public NewTrainableEvaluatorTests() => _evaluator = new NewTrainableEvaluator(new Rearranger());
+        public NewTrainableEvaluatorTests() => _evaluator = new NewTrainableEvaluator(new Rearranger(), NewEvaluator.Create());
 
         [Theory]
         [InlineData("N")]
@@ -41,6 +41,6 @@ namespace Lingua.Learning.Test
                     : GetLeaf(node.Previous.FirstOrDefault(), depth - 1);
 
         private void UpdateScore(string pattern, sbyte score)
-            => _evaluator.UpdateScore(Encoder.Encode(pattern).ToArray(), score);
+            => _evaluator.UpdateScore(Encoder.Encode(pattern).Reverse().ToArray(), score);
     }
 }

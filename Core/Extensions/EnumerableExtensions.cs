@@ -15,9 +15,9 @@ namespace Lingua.Core.Extensions
         public static TValue SafeGetValue<TKey, TValue>(this IDictionary<TKey, TValue> map, TKey key)
             => key != null && map.TryGetValue(key, out TValue value) ? value : default;
 
-        public static IEnumerable<TItem> ExceptNull<TItem>(this IEnumerable<TItem> items)
+        public static IEnumerable<TItem> ExceptNull<TItem>(this IEnumerable<TItem?> items)
             where TItem : class
-            => items.Where(item => item != null);
+            => items.Where(item => item != null).Select(item => item!);
 
 
         public static void MoveToBeginning<TItem>(this IList<TItem> items, TItem item)

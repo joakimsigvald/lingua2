@@ -14,7 +14,7 @@ namespace Lingua.Core.Test
 
     public class TranslatorTests
     {
-        private static readonly IEvaluator Evaluator = GetEvaluator();
+        private static readonly IEvaluator Evaluator = NewEvaluator.Load();
         private static readonly IArranger Arranger = GetArranger();
         private static readonly Translator Translator = CreateTranslator();
         private static readonly TestBench TestBench = CreateTestBench();
@@ -24,13 +24,6 @@ namespace Lingua.Core.Test
 
         private static Translator CreateTranslator() 
             => new Translator(new Tokenizer(), new Thesaurus(), new NewGrammarEngine(Evaluator), Arranger, new Capitalizer());
-
-        private static IEvaluator GetEvaluator()
-        {
-            var evaluator = new NewEvaluator();
-            evaluator.Load();
-            return evaluator;
-        }
 
         private static IArranger GetArranger()
         {

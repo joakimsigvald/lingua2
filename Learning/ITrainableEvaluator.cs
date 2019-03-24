@@ -8,6 +8,6 @@
         void Undo(ScoredPattern scoredPattern);
         void Add(Arranger arranger);
         void Remove(Arranger arranger);
-        sbyte GetScore(ushort[] code);
+        sbyte GetScore(ushort[] reversedCode);
     }
 }
