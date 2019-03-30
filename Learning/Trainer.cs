@@ -11,14 +11,14 @@ namespace Lingua.Learning
     public class Trainer
     {
         private readonly Rearranger _arranger;
-        private readonly NewEvaluator _evaluator;
+        private readonly Evaluator _evaluator;
         private readonly NewTrainableEvaluator _trainableEvaluator;
         private readonly Translator _translator;
 
         public Trainer()
         {
             _arranger = new Rearranger();
-            _evaluator = NewEvaluator.Create();
+            _evaluator = Evaluator.Create();
             _trainableEvaluator = new NewTrainableEvaluator(_arranger, _evaluator);
             _translator = CreateTranslator();
         }
@@ -38,7 +38,7 @@ namespace Lingua.Learning
         }
 
         private Translator CreateTranslator() 
-            => new Translator(new Tokenizer(), new Thesaurus(), new NewGrammarEngine(_evaluator), _arranger, new Capitalizer());
+            => new Translator(new Tokenizer(), new Thesaurus(), new GrammarEngine(_evaluator), _arranger, new Capitalizer());
 
         private TestSessionResult VerifyPatterns(IList<TestCase> testCases)
         {

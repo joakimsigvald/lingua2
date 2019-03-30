@@ -10,7 +10,7 @@ namespace Lingua.Learning.Test
     {
         readonly NewTrainableEvaluator _evaluator;
 
-        public NewTrainableEvaluatorTests() => _evaluator = new NewTrainableEvaluator(new Rearranger(), NewEvaluator.Create());
+        public NewTrainableEvaluatorTests() => _evaluator = new NewTrainableEvaluator(new Rearranger(), Evaluator.Create());
 
         [Theory]
         [InlineData("N")]

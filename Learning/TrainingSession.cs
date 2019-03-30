@@ -132,7 +132,7 @@ namespace Lingua.Learning
                 TryNextPattern();
                 //TODO: Optimize by using different learning-translator for training arrangers
                 result = _testRunner.RunTestCase(_bestResult.FailedCase.TestCase);
-            } while (!result.Success && result.Deficit >= _bestResult.FailedCase.Deficit);
+            } while (!(result.Success || result > _bestResult.FailedCase));
         }
 
         private void TryNextPattern()
@@ -144,7 +144,7 @@ namespace Lingua.Learning
 
         private bool EnumerateNextPattern()
         {
-            if (_bestResult.FailedCase.Deficit == 0)
+            if (_bestResult.FailedCase.WordDeficit == 0)
             {
                 if (_currentArranger != null)
                     RemoveArranger();
@@ -161,7 +161,7 @@ namespace Lingua.Learning
 
         private void AddNextPattern()
         {
-            if (_bestResult.FailedCase.Deficit == 0
+            if (_bestResult.FailedCase.WordDeficit == 0
                 && _arrangementCandidates.Current != null)
                 AddArranger();
             else

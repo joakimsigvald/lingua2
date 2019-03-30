@@ -5,6 +5,8 @@ namespace Lingua.Learning
 {
     public class PatternGenerator
     {
+        public const byte MaxPatternLength = 6;
+
         private readonly ITranslationExtractor _translationExtractor;
         private readonly IPatternExtractor _patternExtractor;
 
@@ -56,7 +58,7 @@ namespace Lingua.Learning
                 .SelectMany(length => GetScoredMultiPatterns(wanted, unwanted, length));
 
         private static IEnumerable<byte> MultiPatternLengths 
-            => Enumerable.Range(2, 5).Select(n => (byte)n);
+            => Enumerable.Range(2, MaxPatternLength).Select(n => (byte)n);
 
         private IEnumerable<ScoredPattern> GetScoredMultiPatterns(
             ushort[] wanted

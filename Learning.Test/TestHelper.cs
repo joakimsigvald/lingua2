@@ -31,9 +31,9 @@ namespace Lingua.Learning.Test
         private static Translator CreateTranslator()
         {
             var thesaurus = new Thesaurus();
-            var evaluator = NewEvaluator.Load();
+            var evaluator = Evaluator.Load();
             var arranger = new Rearranger();
-            var grammar = new NewGrammarEngine(evaluator);
+            var grammar = new GrammarEngine(evaluator);
             var capitalizer = new Capitalizer();
             return new Translator(Tokenizer, thesaurus, grammar, arranger, capitalizer);
         }

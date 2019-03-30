@@ -77,6 +77,19 @@ namespace Lingua.Core
             || pattern == AnyToken.Code 
             || (pattern ^ Wildcard) == ((pattern | ClassMask) & code);
 
+        public static ushort Recode<TElement>(ushort code)
+            where TElement : Element, new()
+        {
+            var token = DecodeToken(code);
+            if (!(token is Element element))
+                throw new InvalidOperationException("Can only recode elements to other elements");
+            var newElement = new TElement
+            {
+                Modifiers = DecodeModifiers(element, (ushort)(code & ModifiersMask))
+            };
+            return Encode(newElement);
+        }
+
         private static Token Decode(ushort code)
         {
             var token = DecodeToken(code);
@@ -94,6 +107,7 @@ namespace Lingua.Core
                 case Separator.Code: return new Separator(',');
                 case Number.Code: return new Number();
                 case Noun.Code: return new Noun();
+                case NounPhrase.Code: return new NounPhrase();
                 case Article.Code: return new Article();
                 case Preposition.Code: return new Preposition();
                 case Pronoun.Code: return new Pronoun();
@@ -123,6 +137,7 @@ namespace Lingua.Core
                 case Separator _: return Separator.Code;
                 case Quantifier _:
                 case Number _: return Number.Code;
+                case NounPhrase _: return NounPhrase.Code;
                 case Noun _: return Noun.Code;
                 case Article _: return Article.Code;
                 case Preposition _: return Preposition.Code;
@@ -170,6 +185,7 @@ namespace Lingua.Core
                 case Conjunction _: return "C";
                 case Greeting _: return "G";
                 case InfinitiveMarker _: return "I";
+                case NounPhrase _: return "D";
                 case Noun _: return "N";
                 case Name _: return "E";
                 case Preposition _: return "P";
@@ -210,6 +226,7 @@ namespace Lingua.Core
                 case 'G': return new Greeting();
                 case 'I': return new InfinitiveMarker();
                 case 'N': return new Noun();
+                case 'D': return new NounPhrase();
                 case 'P': return new Preposition();
                 case 'Q': return new Number();
                 case 'R': return new Pronoun();

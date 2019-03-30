@@ -14,7 +14,7 @@ namespace Lingua.Core.Test
 
     public class TranslatorTests
     {
-        private static readonly IEvaluator Evaluator = NewEvaluator.Load();
+        private static readonly IEvaluator Evaluator = Grammar.Evaluator.Load();
         private static readonly IArranger Arranger = GetArranger();
         private static readonly Translator Translator = CreateTranslator();
         private static readonly TestBench TestBench = CreateTestBench();
@@ -23,7 +23,7 @@ namespace Lingua.Core.Test
             => new TestBench(new TestRunner(new FullTextTranslator(Translator)), new TestReporter());
 
         private static Translator CreateTranslator() 
-            => new Translator(new Tokenizer(), new Thesaurus(), new NewGrammarEngine(Evaluator), Arranger, new Capitalizer());
+            => new Translator(new Tokenizer(), new Thesaurus(), new GrammarEngine(Evaluator), Arranger, new Capitalizer());
 
         private static IArranger GetArranger()
         {
@@ -55,7 +55,7 @@ namespace Lingua.Core.Test
         }
 
         [Trait("Category", "Longrunning")]
-        [Fact]
+        [Fact(Skip = "Regenerate patterns")]
         public void RunTestSuites()
         {
             var success = TestBench.RunTestSuites();
@@ -74,8 +74,6 @@ namespace Lingua.Core.Test
         private static void TestCase(string from, string to)
         {
             var result = TestBench.RunTestCase(new TestCase(from, to) {Suite = "Single"});
-            if (!result.Success)
-                Output(result.Reason);
             Assert.True(result.Success, $"Expected \"{result.Expected}\" but was \"{result.Actual}\"");
         }
 

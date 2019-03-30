@@ -38,7 +38,7 @@ namespace Lingua.Grammar.Test
         private void VerifyScoreOfMatchedPatterns(string symbols, sbyte expectedScore, params string[] scoredPatterns)
         {
             var patterns = scoredPatterns.Select(sp => sp.Split(':')).ToDictionary(parts => parts[0], parts => sbyte.Parse(parts[1]));
-            var evaluator = NewEvaluator.Create(patterns);
+            var evaluator = Evaluator.Create(patterns);
             var reversedCode = Encoder.Encode(symbols).Reverse().ToArray();
             var actual = evaluator.EvaluateReversed(reversedCode);
             Assert.Equal(expectedScore, actual);

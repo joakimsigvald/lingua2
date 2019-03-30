@@ -123,12 +123,12 @@ namespace Lingua.Grammar.Test
 
         private void Test(IEvaluator evaluator, IList<ITranslation[]> possibilities, params ITranslation[] expected)
         {
-            Test(new NewGrammarEngine(evaluator), possibilities, expected);
+            Test(new GrammarEngine(evaluator), possibilities, expected);
         }
 
         private void Test(IGrammar grammar, IList<ITranslation[]> possibilities, params ITranslation[] expected)
         {
-            var (result, _) = grammar.Reduce(possibilities);
+            var result = grammar.Reduce(possibilities);
             Assert.Equal(expected, result);
         }
     }

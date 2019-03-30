@@ -36,13 +36,13 @@ namespace Lingua.Core
         public bool IsTranslatedWord => To != null && !Continuation.Any();
 
         public ITranslation Capitalize()
-            => new Translation(From.Capitalize(), To.Capitalize(), Continuation)
+            => new Translation(From.Capitalize(), To!.Capitalize(), Continuation)
             {
                 IsCapitalized = true
             };
 
         public ITranslation Decapitalize()
-            => new Translation(From.Decapitalize(), To.Decapitalize(), Continuation);
+            => new Translation(From.Decapitalize(), To!.Decapitalize(), Continuation);
 
         public bool IsCapitalized { get; private set; }
         public string Input => From.Value;

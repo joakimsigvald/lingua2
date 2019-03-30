@@ -18,9 +18,9 @@ namespace Lingua.Learning
             UpdateDeficit();
         }
 
-        public int Deficit => WordDeficit + ScoreDeficit;
-        private int WordDeficit { get; set; }
-        public int ScoreDeficit { private get; set; }
+        //public int Deficit => WordDeficit + ScoreDeficit;
+        public int WordDeficit { get; private set; }
+        public int ScoreDeficit { get; set; }
 
         private int ComputeWordDeficit()
         {
@@ -38,7 +38,6 @@ namespace Lingua.Learning
         public string Actual => _translationResult.Translation;
         public bool Success => Actual == TestCase.Expected;
         public bool SuccessIgnoringCase => string.Equals(Actual, TestCase.Expected, StringComparison.InvariantCultureIgnoreCase);
-        public IReason Reason => _translationResult.Reason!;
         public IEnumerable<ITranslation> ExpectedTranslations => TestCase.Target.Translations;
         public ushort[] ExpectedReversedCode => TestCase.Target.ReversedCode;
         public IEnumerable<ITranslation> Translations => _translationResult.Translations;
@@ -55,6 +54,13 @@ namespace Lingua.Learning
             TestCase.RemoveTarget();
             UpdateDeficit();
         }
+
+        public static bool operator >(TestCaseResult tsr1, TestCaseResult tsr2)
+            => tsr1.WordDeficit < tsr2.WordDeficit 
+            || tsr1.WordDeficit == tsr2.WordDeficit && tsr1.ScoreDeficit < tsr2.ScoreDeficit;
+
+        public static bool operator <(TestCaseResult tsr1, TestCaseResult tsr2)
+            => tsr2 > tsr1;
 
         private void UpdateDeficit()
         {

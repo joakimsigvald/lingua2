@@ -3,13 +3,14 @@
 namespace Lingua.Learning
 {
     using Grammar;
+    using System;
 
     public class NewTrainableEvaluator : ITrainableEvaluator
     {
         private Rearranger _arranger;
-        private readonly NewEvaluator _evaluator;
+        private readonly Evaluator _evaluator;
 
-        public NewTrainableEvaluator(Rearranger arranger, NewEvaluator evaluator)
+        public NewTrainableEvaluator(Rearranger arranger, Evaluator evaluator)
         {
             _arranger = arranger;
             _evaluator = evaluator;
@@ -42,6 +43,7 @@ namespace Lingua.Learning
             var expectedScore = _evaluator.EvaluateReversed(failedCase.ExpectedReversedCode);
             var actualScore = _evaluator.EvaluateReversed(failedCase.ActuaReversedCode);
             return actualScore - expectedScore;
+            return Math.Abs(actualScore - expectedScore);
         }
 
         public sbyte GetScore(ushort[] reversedCode)

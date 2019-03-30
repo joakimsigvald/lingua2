@@ -1,4 +1,6 @@
 here = här
+home = hem
 there = där
 today = idag
 tomorrow = imorgon
+back = tillbaka

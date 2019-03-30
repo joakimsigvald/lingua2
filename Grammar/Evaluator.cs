@@ -4,13 +4,13 @@
     using System.Collections.Generic;
     using System.Linq;
 
-    public class NewEvaluator : IEvaluator
+    public class Evaluator : IEvaluator
     {
         public ReverseCodeScoreNode Patterns = new ReverseCodeScoreNode();
 
         public byte Horizon => 6;
 
-        private NewEvaluator(IDictionary<string, sbyte>? patterns)
+        private Evaluator(IDictionary<string, sbyte>? patterns)
         {
             if (patterns != null)
                 foreach (var kvp in patterns)
@@ -22,7 +22,7 @@
         private static ushort[] GetReversedCode(string symbols)
             => Encoder.Encode(symbols).Reverse().ToArray();
 
-        public static IEvaluator Load() => new NewEvaluator(Repository.LoadScoredPatterns());
-        public static NewEvaluator Create(IDictionary<string, sbyte>? patterns = null) => new NewEvaluator(patterns);
+        public static IEvaluator Load() => new Evaluator(Repository.LoadScoredPatterns());
+        public static Evaluator Create(IDictionary<string, sbyte>? patterns = null) => new Evaluator(patterns);
     }
 }
