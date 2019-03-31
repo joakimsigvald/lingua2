@@ -13,7 +13,7 @@ namespace Lingua.Learning
     internal class TrainingSession
     {
         //private const int MaxAttempts = 256;
-        private const int MaxAttempts = 1256;
+        private const int MaxAttempts = 3256;
 
         private readonly ITrainableEvaluator _evaluator;
         private readonly Rearranger _arranger;

@@ -16,7 +16,7 @@ namespace Lingua.Grammar
             _translations = translations;
         }
 
-        internal int Evaluate()
+        internal ReductionResult Evaluate()
         {
             var score = 0;
             ushort[] previousReversed = new ushort[0];
@@ -25,7 +25,7 @@ namespace Lingua.Grammar
                 previousReversed = _codeCondenser.ReplaceLastNounPhrase(previousReversed.Prepend(t.Code).ToArray());
                 score += _evaluator.ScorePatternsEndingWith(previousReversed);
             }
-            return score;
+            return new ReductionResult(_translations, previousReversed, score);
         }
     }
 }

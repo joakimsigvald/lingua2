@@ -6,11 +6,11 @@ namespace Lingua.Learning.Test
 {
     using Grammar;
 
-    public class NewTrainableEvaluatorTests
+    public class TrainableEvaluatorTests
     {
         readonly TrainableEvaluator _evaluator;
 
-        public NewTrainableEvaluatorTests() => _evaluator = new TrainableEvaluator(new Rearranger(), Evaluator.Create());
+        public TrainableEvaluatorTests() => _evaluator = new TrainableEvaluator(new Rearranger(), Evaluator.Create());
 
         [Theory]
         [InlineData("N")]

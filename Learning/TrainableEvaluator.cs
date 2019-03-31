@@ -43,11 +43,8 @@ namespace Lingua.Learning
 
         public int ComputeScoreDeficit(TestCaseResult failedCase)
         {
-            var expectedScore = _grammar.Evaluate(failedCase.ExpectedTranslations);
+            var expectedScore = _grammar.Evaluate(failedCase.ExpectedTranslations).Score;
             var actualScore = failedCase.Reduction.Score;
-            var actualScore2 = _grammar.Evaluate(failedCase.Reduction.Translations);
-            if (actualScore != actualScore2)
-                throw new InvalidProgramException();
             if (expectedScore > actualScore)
                 throw new InvalidProgramException();
             return actualScore - expectedScore;

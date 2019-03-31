@@ -15,9 +15,9 @@ namespace Lingua.Grammar
             ? new ReductionProcess(_evaluator, possibilities.ToArray()).Reduce()
             : new ReductionResult();
 
-        public int Evaluate(ITranslation[] translations)
+        public ReductionResult Evaluate(ITranslation[] translations)
             => translations.Any()
             ? new EvaluationProcess(_evaluator, translations).Evaluate()
-            : 0;
+            : new ReductionResult();
     }
 }

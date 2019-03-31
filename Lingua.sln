@@ -58,11 +58,12 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{F4BE28F4-59F4-4519-8531-F9919E94529C}"
 	ProjectSection(SolutionItems) = preProject
 		Optimize.txt = Optimize.txt
+		TODO.txt = TODO.txt
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TestRunner", "TestRunner\TestRunner.csproj", "{A46C5B5B-F914-4C9E-8CE5-C060E7EEC464}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestUtils", "Assert\TestUtils.csproj", "{1196E009-1D9C-406F-9F14-643E4F90EB96}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TestUtils", "Assert\TestUtils.csproj", "{1196E009-1D9C-406F-9F14-643E4F90EB96}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

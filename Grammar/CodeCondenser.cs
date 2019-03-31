@@ -8,25 +8,10 @@
 
     public class CodeCondenser
     {
-        private static readonly IList<string> _nounPhrases = new[] { "TdNd", "TdNdt", "TdqANd", "TdqANdt" };
-
-        public ushort[] ReplaceAllNounPhrase(ushort[] reversedCode)
-        {
-            //return reversedCode;
-            List<ushort> condensedCode = new List<ushort>();
-            for (int i = 0; i < reversedCode.Length; i++)
-            {
-                var remainingCode = reversedCode.Skip(i).ToArray();
-                var newCode = ReplaceLastNounPhrase(remainingCode);
-                condensedCode.Add(newCode[0]);
-                i += remainingCode.Length - newCode.Length;
-            }
-            return condensedCode.ToArray();
-        }
+        private static readonly IList<string> _nounPhrases = new[] { "TdNd", "TdNdt", "TdqAndNd", "TdqANdt" };
 
         public ushort[] ReplaceLastNounPhrase(ushort[] reversedCode)
         {
-            //return reversedCode;
             var matchingNounPhrase = FindMatchingNounPhrase(reversedCode);
             return matchingNounPhrase == null
                 ? reversedCode

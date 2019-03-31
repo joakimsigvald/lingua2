@@ -18,6 +18,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Grammar\Grammar.csproj" />
+    <ProjectReference Include="..\Learning\Learning.csproj" />
     <ProjectReference Include="..\Tokenization\Tokenization.csproj" />
     <ProjectReference Include="..\Vocabulary\Vocabulary.csproj" />
   </ItemGroup>

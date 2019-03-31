@@ -1,5 +1,6 @@
 ﻿using Lingua.Core;
 using Lingua.Core.Tokens;
+using Lingua.Learning;
 using Lingua.Tokenization;
 using Lingua.Vocabulary;
 using Moq;
@@ -9,7 +10,7 @@ using Xunit;
 
 namespace Lingua.Grammar.Test
 {
-    public class NewGrammarEngineTest
+    public class GrammarEngineTest
     {
         private const ushort Code1 = 1;
         private const ushort Code2 = 2;
@@ -125,14 +126,37 @@ namespace Lingua.Grammar.Test
         public void EvaluateAndReduceGiveSameScore2()
         {
             var sentence = "Bouncing ball to play with";
-            var patterns = new Dictionary<string, sbyte> {{"I*", 1 }};
+            var patterns = new Dictionary<string, sbyte> { { "I*", 1 } };
             var evaluator = Evaluator.Create(patterns);
             var grammar = new GrammarEngine(evaluator);
             var translator = new Translator(new Tokenizer(), new Thesaurus(), grammar, new Rearranger(), new Capitalizer());
             var possibilities = translator.Decompose(sentence);
             var reduction = grammar.Reduce(possibilities);
-            var actualScore2 = grammar.Evaluate(reduction.Translations);
+            var actualScore2 = grammar.Evaluate(reduction.Translations).Score;
             Assert.Equal(reduction.Score, actualScore2);
+        }
+
+        [Theory]
+        [InlineData(
+            8,
+            "He took the ball with the blue dot and kicked it",
+            "Han tog bollen med den blåa pricken och sparkade den")]
+        [InlineData(
+            8,
+            "He took the table with the blue dot and kicked it", 
+            "Han tog bordet med den blåa pricken och sparkade det")]
+        public void TestEvaluateWithCondensation(
+            byte expectedCondensedCodeCount,
+            string translateFrom,
+            string translateTo)
+        {
+            var testCase = new TestCase(translateFrom, translateTo);
+            var evaluator = Evaluator.Create();
+            var grammar = new GrammarEngine(evaluator);
+            var translator = new Translator(new Tokenizer(), new Thesaurus(), grammar, new Rearranger(), new Capitalizer());
+            testCase.PrepareForLearning(translator);
+            var reduction = grammar.Evaluate(testCase.Target.Translations);
+            Assert.Equal(expectedCondensedCodeCount, reduction.CondensedCode.Length);
         }
 
         private static ITranslation MockTranslation(ushort code, byte wordCount = 1)
