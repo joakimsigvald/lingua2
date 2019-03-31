@@ -12,7 +12,8 @@ namespace Lingua.Learning
 
     internal class TrainingSession
     {
-        private const int MaxAttempts = 256;
+        //private const int MaxAttempts = 256;
+        private const int MaxAttempts = 1256;
 
         private readonly ITrainableEvaluator _evaluator;
         private readonly Rearranger _arranger;
@@ -54,7 +55,7 @@ namespace Lingua.Learning
             var preparedTestCases = testCases
                 .Where(tc => !string.IsNullOrWhiteSpace(tc.From))
                 .ToList();
-            preparedTestCases.ForEach(PrepareForLearning);
+            preparedTestCases.ForEach(tc =>  tc.PrepareForLearning(_translator));
             var prioritizedTestCases = preparedTestCases
                 .Select(tc => (testcase: tc, priority: ComputePriority(tc.Target.Translations)))
                 .OrderBy(pair => pair.priority);
@@ -70,15 +71,6 @@ namespace Lingua.Learning
                    .OfType<Element>()
                    .Select(e => e.Modifiers)
                    .Distinct().Count();
-
-        private void PrepareForLearning(TestCase testCase)
-        {
-            testCase.Possibilities = _translator.Decompose(testCase.From);
-            testCase.Targets = TargetSelector.SelectTargets(testCase.Possibilities, testCase.Expected);
-            if (testCase.Target == null)
-                throw new Exception(
-                    "Should not get into this state - throw exception from TargetSelector if no possible translation");
-        }
 
         public TestSessionResult LearnPatterns()
         {
@@ -211,10 +203,10 @@ namespace Lingua.Learning
         }
 
         private static bool AffectedBy(TestCase testCase, ScoredPattern scoredPattern)
-            => testCase.Reduction != null
-               && testCase.Possibilities.Count >= scoredPattern.Code.Length
-               && ContainsPattern(testCase.Possibilities.Select(c => c.Select(t => t.Code).ToArray()),
-                   scoredPattern.Code);
+            => testCase.Reduction != null;
+               //&& testCase.Possibilities.Count >= scoredPattern.Code.Length
+               //&& ContainsPattern(testCase.Possibilities.Select(c => c.Select(t => t.Code).ToArray()),
+               //    scoredPattern.Code);
 
         private static bool ContainsPattern(IEnumerable<ushort[]> possibilities, ushort[] pattern)
             => SkipToLastCode(possibilities, pattern, 0).Any();
@@ -226,8 +218,8 @@ namespace Lingua.Learning
 
         private static bool AffectedBy(TestCase testCase, Arranger arranger)
             => testCase.Result != null
-               && testCase.Reduction.Length >= arranger.Arrangement.Code.Length
-               && ContainsPattern(testCase.Reduction.Select(t => t.Code), arranger.Arrangement.Code);
+               && testCase.Reduction.Translations.Length >= arranger.Arrangement.Code.Length
+               && ContainsPattern(testCase.Reduction.Translations.Select(t => t.Code), arranger.Arrangement.Code);
 
         private static bool ContainsPattern(IEnumerable<ushort> translations, ushort[] pattern)
             => SkipToLastCode(translations, pattern, 0).Any();

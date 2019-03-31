@@ -22,12 +22,12 @@ namespace Lingua.Learning
             return orderedTranslations
                 .Where(x => x.order.Any())
                 .Take(MaxTargets)
-                .Select(x => CreateTarget(x.translations, x.order, x.unmatched))
+                .Select(x => CreateTarget(x.translations, x.order))
                 .ToArray();
         }
 
-        private static TranslationTarget CreateTarget(ITranslation[] translations, byte[] order, string unmatched) 
-            => new TranslationTarget(CreateArrangement(translations, order), unmatched, translations);
+        private static TranslationTarget CreateTarget(ITranslation[] translations, byte[] order) 
+            => new TranslationTarget(CreateArrangement(translations, order), translations);
 
         private static Arrangement CreateArrangement(IEnumerable<ITranslation> translations, byte[] order)
             => new Arrangement(translations.Select(t => t.Code).ToArray(), order);

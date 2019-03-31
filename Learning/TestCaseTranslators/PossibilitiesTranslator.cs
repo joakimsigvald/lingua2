@@ -15,7 +15,7 @@ namespace Lingua.Learning.TestCaseTranslators
         private TranslationResult DoTranslate(TestCase testCase)
             => _translator.Arrange(testCase.Possibilities, GetReduction(testCase));
 
-        private ITranslation[] GetReduction(TestCase testCase)
+        private ReductionResult GetReduction(TestCase testCase)
             => testCase.Reduction ?? (testCase.Reduction = _translator.Reduce(testCase.Possibilities));
     }
 }

@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Lingua.Core;
@@ -18,7 +19,7 @@ namespace Lingua.Learning
         public string Suite { get; set; }
         public string From { get; }
         public string Expected { get; }
-        public ITranslation[] Reduction { get; set; }
+        public ReductionResult Reduction { get; set; }
         public TranslationResult Result{ get; set; }
 
         public override string ToString()
@@ -27,6 +28,15 @@ namespace Lingua.Learning
         public void RemoveTarget()
         {
             Targets = Targets.Skip(1).ToArray();
+        }
+
+        public void PrepareForLearning(ITranslator translator)
+        {
+            Possibilities = translator.Decompose(From);
+            Targets = TargetSelector.SelectTargets(Possibilities, Expected);
+            if (Target == null)
+                throw new Exception(
+                    "Should not get into this state - throw exception from TargetSelector if no possible translation");
         }
     }
 }

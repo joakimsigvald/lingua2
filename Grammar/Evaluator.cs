@@ -17,7 +17,7 @@
                     Patterns.Extend(GetReversedCode(kvp.Key), kvp.Value);
         }
 
-        public int EvaluateReversed(ushort[] invertedCode) => Patterns.Evaluate(invertedCode);
+        public int ScorePatternsEndingWith(ushort[] reversedCode) => Patterns.Evaluate(reversedCode);
 
         private static ushort[] GetReversedCode(string symbols)
             => Encoder.Encode(symbols).Reverse().ToArray();

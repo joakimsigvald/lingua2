@@ -4,6 +4,7 @@ namespace Lingua.Core
 {
     public interface IGrammar
     {
-        ITranslation[] Reduce(IList<ITranslation[]> possibilities);
+        ReductionResult Reduce(IList<ITranslation[]> possibilities);
+        int Evaluate(ITranslation[] translations);
     }
 }

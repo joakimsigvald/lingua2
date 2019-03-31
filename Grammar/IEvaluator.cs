@@ -5,6 +5,6 @@ namespace Lingua.Grammar
     public interface IEvaluator
     {
         byte Horizon { get; }
-        int EvaluateReversed(ushort[] invertedCode);
+        int ScorePatternsEndingWith(ushort[] invertedCode);
     }
 }

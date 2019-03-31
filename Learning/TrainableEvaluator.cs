@@ -3,17 +3,20 @@
 namespace Lingua.Learning
 {
     using Grammar;
+    using Lingua.Core;
     using System;
 
-    public class NewTrainableEvaluator : ITrainableEvaluator
+    public class TrainableEvaluator : ITrainableEvaluator
     {
         private Rearranger _arranger;
         private readonly Evaluator _evaluator;
+        private IGrammar _grammar;
 
-        public NewTrainableEvaluator(Rearranger arranger, Evaluator evaluator)
+        public TrainableEvaluator(Rearranger arranger, Evaluator evaluator)
         {
             _arranger = arranger;
             _evaluator = evaluator;
+            _grammar = new GrammarEngine(_evaluator);
         }
 
         public ReverseCodeScoreNode Patterns => _evaluator.Patterns;
@@ -40,10 +43,14 @@ namespace Lingua.Learning
 
         public int ComputeScoreDeficit(TestCaseResult failedCase)
         {
-            var expectedScore = _evaluator.EvaluateReversed(failedCase.ExpectedReversedCode);
-            var actualScore = _evaluator.EvaluateReversed(failedCase.ActuaReversedCode);
+            var expectedScore = _grammar.Evaluate(failedCase.ExpectedTranslations);
+            var actualScore = failedCase.Reduction.Score;
+            var actualScore2 = _grammar.Evaluate(failedCase.Reduction.Translations);
+            if (actualScore != actualScore2)
+                throw new InvalidProgramException();
+            if (expectedScore > actualScore)
+                throw new InvalidProgramException();
             return actualScore - expectedScore;
-            return Math.Abs(actualScore - expectedScore);
         }
 
         public sbyte GetScore(ushort[] reversedCode)

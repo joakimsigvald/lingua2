@@ -43,13 +43,12 @@ namespace Lingua.Core
             return undotted;
         }
 
-        public ITranslation[] Reduce(IList<ITranslation[]> possibilities) 
-            => _grammar.Reduce(possibilities);
+        public ReductionResult Reduce(IList<ITranslation[]> possibilities) => _grammar.Reduce(possibilities);
 
-        public TranslationResult Arrange(IList<ITranslation[]> possibilities, ITranslation[] reduction)
+        public TranslationResult Arrange(IList<ITranslation[]> possibilities, ReductionResult reduction)
         {
-            var arrangedTranslations = _arranger.Arrange(reduction).ToList();
-            var translation = Trim(arrangedTranslations, reduction);
+            var arrangedTranslations = _arranger.Arrange(reduction.Translations).ToList();
+            var translation = Trim(arrangedTranslations, reduction.Translations);
             return new TranslationResult(translation, reduction, possibilities);
         }
 
@@ -62,10 +61,10 @@ namespace Lingua.Core
 
         private TranslationResult Compose(IList<ITranslation[]> possibilities)
         {
-            var translations = _grammar.Reduce(possibilities);
-            var arrangedTranslations = _arranger.Arrange(translations).ToList();
-            var translation = Trim(arrangedTranslations, translations);
-            return new TranslationResult(translation, translations, possibilities);
+            var reduction = _grammar.Reduce(possibilities);
+            var arrangedTranslations = _arranger.Arrange(reduction.Translations).ToList();
+            var translation = Trim(arrangedTranslations, reduction.Translations);
+            return new TranslationResult(translation, reduction, possibilities);
         }
 
         private string Trim(IList<ITranslation> arrangedTranslations, IList<ITranslation> translations)

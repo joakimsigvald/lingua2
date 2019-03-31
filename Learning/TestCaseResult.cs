@@ -18,13 +18,12 @@ namespace Lingua.Learning
             UpdateDeficit();
         }
 
-        //public int Deficit => WordDeficit + ScoreDeficit;
         public int WordDeficit { get; private set; }
         public int ScoreDeficit { get; set; }
 
         private int ComputeWordDeficit()
         {
-            var originalWords = GetWords(Translations).ToList();
+            var originalWords = GetWords(Reduction.Translations).ToList();
             var translatedWords = originalWords.ToList();
             var expectedWords = GetWords(ExpectedTranslations).ToArray();
             var missingWords = expectedWords.Where(word => !translatedWords.Remove(word)).ToArray();
@@ -38,10 +37,8 @@ namespace Lingua.Learning
         public string Actual => _translationResult.Translation;
         public bool Success => Actual == TestCase.Expected;
         public bool SuccessIgnoringCase => string.Equals(Actual, TestCase.Expected, StringComparison.InvariantCultureIgnoreCase);
-        public IEnumerable<ITranslation> ExpectedTranslations => TestCase.Target.Translations;
-        public ushort[] ExpectedReversedCode => TestCase.Target.ReversedCode;
-        public IEnumerable<ITranslation> Translations => _translationResult.Translations;
-        public ushort[] ActuaReversedCode => _translationResult.ReversedCode;
+        public ITranslation[] ExpectedTranslations => TestCase.Target.Translations;
+        public ReductionResult Reduction => _translationResult.Reduction;
 
         public override string ToString()
             => $"{TestCase}/{Actual}:{Success}";

@@ -1,9 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using Lingua.Core;
-using Lingua.Core.Extensions;
 
 namespace Lingua.Learning
 {

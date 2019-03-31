@@ -1,5 +1,7 @@
 ﻿using Lingua.Core;
 using Lingua.Core.Tokens;
+using Lingua.Tokenization;
+using Lingua.Vocabulary;
 using Moq;
 using System.Collections.Generic;
 using System.Linq;
@@ -28,7 +30,7 @@ namespace Lingua.Grammar.Test
         [Fact]
         public void When_single_possiblities_then_return_that_translation()
         {
-            Test(MockEvaluator(), new [] { new[] { Translation1 } }, Translation1);
+            Test(MockEvaluator(), new[] { new[] { Translation1 } }, Translation1);
         }
 
         [Fact]
@@ -85,7 +87,7 @@ namespace Lingua.Grammar.Test
         [InlineData(20, 6)]
         [InlineData(20, 8)]
         [InlineData(30, 12)] //1.221 sec
-//        [InlineData(30, 15)] //8.314 sec
+                             //        [InlineData(30, 15)] //8.314 sec
         public void When_very_long_paths_only_evaluate_path_within_horizon(int longCount, byte horizon)
         {
             var bestPattern = Enumerable.Range(0, horizon - 1).Select(_ => Code1).Append(CodeDoubleWord).ToArray();
@@ -99,6 +101,38 @@ namespace Lingua.Grammar.Test
                 .Append(DoubleWord)
                 .ToArray();
             Test(evaluator, possibilities, expected);
+        }
+
+        [Fact]
+        public void EvaluateAndReduceGiveSameScore1()
+        {
+            var sentence = "I paint the ball";
+            var patterns = new Dictionary<string, sbyte> {
+                { "V1*", 1},
+                { "VT*", 1},
+                { "N", -1},
+            };
+            var evaluator = Evaluator.Create(patterns);
+            var grammar = new GrammarEngine(evaluator);
+            var translator = new Translator(new Tokenizer(), new Thesaurus(), grammar, new Rearranger(), new Capitalizer());
+            var possibilities = translator.Decompose(sentence);
+            var reduction = grammar.Reduce(possibilities);
+            var actualScore2 = grammar.Reduce(reduction.Translations.Select(t => new[] { t }).ToArray()).Score;
+            Assert.Equal(reduction.Score, actualScore2);
+        }
+
+        [Fact]
+        public void EvaluateAndReduceGiveSameScore2()
+        {
+            var sentence = "Bouncing ball to play with";
+            var patterns = new Dictionary<string, sbyte> {{"I*", 1 }};
+            var evaluator = Evaluator.Create(patterns);
+            var grammar = new GrammarEngine(evaluator);
+            var translator = new Translator(new Tokenizer(), new Thesaurus(), grammar, new Rearranger(), new Capitalizer());
+            var possibilities = translator.Decompose(sentence);
+            var reduction = grammar.Reduce(possibilities);
+            var actualScore2 = grammar.Evaluate(reduction.Translations);
+            Assert.Equal(reduction.Score, actualScore2);
         }
 
         private static ITranslation MockTranslation(ushort code, byte wordCount = 1)
@@ -115,9 +149,9 @@ namespace Lingua.Grammar.Test
         {
             var mock = new Mock<IEvaluator>();
             mock.Setup(eval => eval.Horizon).Returns(horizon);
-            mock.Setup(eval => eval.EvaluateReversed(It.IsAny<ushort[]>())).Returns(0);
+            mock.Setup(eval => eval.ScorePatternsEndingWith(It.IsAny<ushort[]>())).Returns(0);
             var bestPatternReversed = bestPattern.Reverse().ToArray();
-            mock.Setup(eval => eval.EvaluateReversed(bestPatternReversed)).Returns(1);
+            mock.Setup(eval => eval.ScorePatternsEndingWith(bestPatternReversed)).Returns(1);
             return mock.Object;
         }
 
@@ -129,7 +163,7 @@ namespace Lingua.Grammar.Test
         private void Test(IGrammar grammar, IList<ITranslation[]> possibilities, params ITranslation[] expected)
         {
             var result = grammar.Reduce(possibilities);
-            Assert.Equal(expected, result);
+            Assert.Equal(expected, result.Translations);
         }
     }
 }

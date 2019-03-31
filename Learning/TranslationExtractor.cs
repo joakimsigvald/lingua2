@@ -17,6 +17,6 @@ namespace Lingua.Learning
             => result?.ExpectedTranslations?? Enumerable.Empty<ITranslation>();
 
         private static IEnumerable<ITranslation> GetUnwantedTranslations(TestCaseResult result)
-            => result?.Translations ?? new ITranslation[0];
+            => result?.Reduction.Translations ?? new ITranslation[0];
     }
 }
