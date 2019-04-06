@@ -2,7 +2,6 @@
 {
     using Core;
     using System.Collections.Generic;
-    using System.Linq;
 
     public class Evaluator : IEvaluator
     {
@@ -20,7 +19,7 @@
         public int ScorePatternsEndingWith(ushort[] reversedCode) => Patterns.Evaluate(reversedCode);
 
         private static ushort[] GetReversedCode(string symbols)
-            => Encoder.Encode(symbols).Reverse().ToArray();
+            => Encoder.Encode(symbols).ReversedCode;
 
         public static IEvaluator Load() => new Evaluator(Repository.LoadScoredPatterns());
         public static Evaluator Create(IDictionary<string, sbyte>? patterns = null) => new Evaluator(patterns);

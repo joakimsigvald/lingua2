@@ -1,5 +1,4 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using Lingua.Core;
 
 namespace Lingua.Grammar
@@ -18,14 +17,10 @@ namespace Lingua.Grammar
 
         internal ReductionResult Evaluate()
         {
-            var score = 0;
-            ushort[] previousReversed = new ushort[0];
-            foreach (ITranslation t in _translations)
-            {
-                previousReversed = _codeCondenser.ReplaceLastNounPhrase(previousReversed.Prepend(t.Code).ToArray());
-                score += _evaluator.ScorePatternsEndingWith(previousReversed);
-            }
-            return new ReductionResult(_translations, previousReversed, score);
+            var reversedCodes = _codeCondenser.GetReversedCodes(_translations).ToArray();
+            return new ReductionResult(_translations, 
+                reversedCodes.Last(), 
+                reversedCodes.Sum(_evaluator.ScorePatternsEndingWith));
         }
     }
 }

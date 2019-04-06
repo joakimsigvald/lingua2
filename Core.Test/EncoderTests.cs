@@ -105,5 +105,22 @@ namespace Lingua.Core.Test
             var matches = Encoder.Matches(exampleCode, patternCode);
             Assert.Equal(expected, matches);
         }
+
+        [Theory]
+        [InlineData(10754, 11266, true)]
+        [InlineData(10754, 11776, true)]
+        public void TestMatches(ushort code, ushort pattern, bool expected)
+        {
+            var str = Encoder.Serialize(new[] { code, pattern });
+            Assert.Equal(expected, Encoder.Matches(code, pattern));
+        }
+
+        [Theory]
+        [InlineData("Tnq", "Tq*", true)]
+        [InlineData("Tnq", "Tn*", true)]
+        public void TestMatches2(string code, string pattern, bool expected)
+        {
+            Assert.Equal(expected, Encoder.Matches(Encoder.Encode(code), Encoder.Encode(pattern)));
+        }
     }
 }

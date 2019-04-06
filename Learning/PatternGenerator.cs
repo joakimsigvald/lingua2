@@ -1,4 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using Lingua.Core;
+using Lingua.Grammar;
+using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace Lingua.Learning
@@ -7,70 +10,78 @@ namespace Lingua.Learning
     {
         public const byte MaxPatternLength = 6;
 
-        private readonly ITranslationExtractor _translationExtractor;
-        private readonly IPatternExtractor _patternExtractor;
+        private readonly INewPatternExtractor _patternExtractor;
+        private CodeCondenser _codeCondenser = new CodeCondenser();
 
-        public PatternGenerator(ITranslationExtractor translationExtractor, IPatternExtractor patternExtractor)
+        public PatternGenerator(INewPatternExtractor patternExtractor)
         {
-            _translationExtractor = translationExtractor;
             _patternExtractor = patternExtractor;
         }
 
-        public IList<ScoredPattern> GetScoredPatterns(TestCaseResult? result)
+        public IList<ScoredPattern> GetScoredPatterns(ITestCaseResult? result)
         {
-            var wantedCode = _translationExtractor.GetWantedSequence(result);
-            var unwantedCode = _translationExtractor.GetUnwantedSequence(result);
-            var scoredMonoPatterns = GetScoredMonoPatterns(wantedCode, unwantedCode);
-            var scoredMultiPatterns = GetScoredMultiPatterns(wantedCode, unwantedCode);
-            var patterns = scoredMonoPatterns.Concat(scoredMultiPatterns).ToArray();
-            var uniquePatterns = patterns
-                .GroupBy(p => p, new ScoredPatternComparer())
+            if (result == null)
+                return new ScoredPattern[0];
+            var wantedCodes = GetPossibleCodesInOrder(result.ExpectedTranslations);
+            var unwantedCodes = GetPossibleCodesInOrder(result.ActualTranslations);
+            FilterOutCommonCodes(ref wantedCodes, ref unwantedCodes);
+            var patterns =
+                GetScoredPatterns(wantedCodes.Distinct().ToList(), 1)
+                .Concat(GetScoredPatterns(unwantedCodes.Distinct().ToList(), -1))
+                .ToArray();
+            var uniqueScoredPatterns = GetMajorityScoreOfEachUniquePattern(patterns);
+            return uniqueScoredPatterns;
+        }
+
+        private IList<ScoredPattern> GetMajorityScoreOfEachUniquePattern(IEnumerable<ScoredPattern> patterns)
+            => patterns
+                .GroupBy(p => p.Code)
                 .Where(g => g.Sum(sp => sp.Score) != 0)
                 .Select(g => g.OrderBy(sp => sp.Score).Skip(g.Count() / 2).First())
                 .ToArray();
-            return uniquePatterns;
-        }
 
-        private class ScoredPatternComparer : IEqualityComparer<ScoredPattern>
+        public List<Code> GetPossibleCodesInOrder(IEnumerable<ITranslation> translations)
+            => _codeCondenser
+            .GetReversedCodes(translations)
+            .Select(rc => new Code(rc))
+            .SelectMany(GetAllSubCodes)
+            .OrderBy(sc => sc)
+            .ToList();
+
+        private IEnumerable<Code> GetAllSubCodes(Code code)
+            => Enumerable
+            .Range(1, Math.Min(code.Length, MaxPatternLength))
+            .Select(i => code.Take(i));
+
+        private void FilterOutCommonCodes(ref List<Code> leftInOrder, ref List<Code> rightInOrder)
         {
-            public bool Equals(ScoredPattern x, ScoredPattern y) => x.Code.SequenceEqual(y.Code);
-            public int GetHashCode(ScoredPattern pattern) => pattern.GetHashCode();
+            var li = 0;
+            var ri = 0;
+            while (li < leftInOrder.Count && ri < rightInOrder.Count)
+            {
+                var lc = leftInOrder[li];
+                var rc = rightInOrder[ri];
+                if (lc < rc)
+                    li++;
+                else if (rc < lc)
+                    ri++;
+                else
+                {
+                    leftInOrder.RemoveAt(li);
+                    rightInOrder.RemoveAt(ri);
+                }
+            }
         }
 
-        private IEnumerable<ScoredPattern> GetScoredMonoPatterns(
-            ushort[] wanted
-            , ushort[] unwanted)
-        {
-            var wantedScoredMonoPatterns = _patternExtractor
-                .GetMatchingMonoCodes(wanted)
-                .Select(code => new ScoredPattern(code, 1))
-                .ToArray();
-            var unwantedScoredMonoPatterns = _patternExtractor.GetMatchingMonoCodes(unwanted)
-                .Select(code => new ScoredPattern(code, -1))
-                .ToArray();
-            return wantedScoredMonoPatterns.Concat(unwantedScoredMonoPatterns);
-        }
-
-        private IEnumerable<ScoredPattern> GetScoredMultiPatterns(
-            ushort[] wanted
-            , ushort[] unwanted)
-            => MultiPatternLengths
-                .SelectMany(length => GetScoredMultiPatterns(wanted, unwanted, length));
-
-        private static IEnumerable<byte> MultiPatternLengths 
-            => Enumerable.Range(2, MaxPatternLength).Select(n => (byte)n);
-
-        private IEnumerable<ScoredPattern> GetScoredMultiPatterns(
-            ushort[] wanted
-            , ushort[] unwanted
-            , byte length)
-            => GetScoredMultiPatterns(wanted, length, 1)
-                .Concat(GetScoredMultiPatterns(unwanted, length, -1));
-
-        private IEnumerable<ScoredPattern> GetScoredMultiPatterns(
-            ushort[] code
-            , byte length, sbyte score)
-            => _patternExtractor.GetMatchingCodes(code, length)
+        private IEnumerable<ScoredPattern> GetScoredPatterns(IList<Code> codes, sbyte score)
+            => PatternLengths
+                .SelectMany(
+                length => codes
+                .Where(c => c.Length == length)
+                .SelectMany(_patternExtractor.GetMatchingPatterns))
                 .Select(snippet => new ScoredPattern(snippet, score));
+
+        private static IEnumerable<byte> PatternLengths
+            => Enumerable.Range(1, MaxPatternLength).Select(n => (byte)n);
     }
 }

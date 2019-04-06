@@ -9,11 +9,11 @@ namespace Lingua.Learning
 
     public static class ScoredPatternPriorityComputer
     {
-        public static int ComputePriority(int currentScore, sbyte increment, ushort[] code)
+        public static int ComputePriority(int currentScore, sbyte increment, ushort[] reversedCode)
             => (int)(
             (increment < 0 ? 2 : 1) 
             * ComputeScoreFactor(currentScore, increment) 
-            * ComputeSize(code));
+            * ComputeSize(reversedCode));
 
         private static double ComputeScoreFactor(int currentScore, sbyte increment)
             => currentScore == 0

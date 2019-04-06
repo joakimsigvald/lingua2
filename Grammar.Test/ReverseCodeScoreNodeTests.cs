@@ -13,7 +13,7 @@ namespace Lingua.Grammar.Test
         public void Test(string pattern, sbyte score, string expectedPatternLine)
         {
             var node = new ReverseCodeScoreNode();
-            var reversedCode = Encoder.Encode(pattern).Reverse().ToArray();
+            var reversedCode = Encoder.Encode(pattern).ReversedCode;
             node.Extend(reversedCode, score);
             var patternLine = node.PatternLines.Single();
             Assert.Equal(expectedPatternLine, patternLine);

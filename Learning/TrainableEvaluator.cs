@@ -23,7 +23,7 @@ namespace Lingua.Learning
 
         public void Do(ScoredPattern scoredPattern)
         {
-            UpdateScore(scoredPattern.ReversedCode, scoredPattern.Score);
+            UpdateScore(scoredPattern.Code.ReversedCode, scoredPattern.Score);
         }
 
         public void Undo(ScoredPattern scoredPattern)

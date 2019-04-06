@@ -1,6 +1,7 @@
 ﻿namespace Lingua.Grammar
 {
     using Core;
+    using Lingua.Core.Tokens;
     using Lingua.Core.WordClasses;
     using System;
     using System.Collections.Generic;
@@ -9,6 +10,16 @@
     public class CodeCondenser
     {
         private static readonly IList<string> _nounPhrases = new[] { "TdNd", "TdNdt", "TdqAndNd", "TdqANdt" };
+
+        public IEnumerable<ushort[]> GetReversedCodes(IEnumerable<ITranslation> translations)
+        {
+            ushort[] previousReversed = new ushort[] { Start.Code }; // starting code ^
+            foreach (ITranslation t in translations)
+            {
+                previousReversed = ReplaceLastNounPhrase(previousReversed.Prepend(t.Code).ToArray());
+                yield return previousReversed;
+            }
+        }
 
         public ushort[] ReplaceLastNounPhrase(ushort[] reversedCode)
         {
@@ -34,7 +45,7 @@
 
         private ushort[][] _nounPhraseCodes =
             _nounPhrases
-            .Select(np => Encoder.Encode(np).Reverse().ToArray())
+            .Select(np => Encoder.Encode(np).ReversedCode)
             .ToArray();
     }
 }

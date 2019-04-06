@@ -15,11 +15,8 @@ namespace Lingua.Core
         private const ushort ModifiersMask = 0x07ff;
         public const ushort ProperModifiersMask = 0x03ff;
 
-        public static ushort[] Encode(string serial)
-            => Encode(Deserialize(serial)).ToArray();
-
-        public static ushort[] Encode(IEnumerable<ITranslation> translations)
-            => Encode(translations.Select(t => t.From));
+        public static Code Encode(string serial)
+            => new Code(Encode(Deserialize(serial)).Reverse());
 
         public static ushort[] Encode(IEnumerable<Token> tokens)
             => tokens.Select(Encode).ToArray();
@@ -67,6 +64,9 @@ namespace Lingua.Core
 
         public static IEnumerable<Token> Decode(IEnumerable<ushort> code)
             => code.Select(Decode);
+
+        public static bool Matches(Code code, Code pattern)
+            => Matches(code.ReversedCode, pattern.ReversedCode);
 
         public static bool Matches(ushort[] codes, ushort[] pattern)
             => codes.Length == pattern.Length

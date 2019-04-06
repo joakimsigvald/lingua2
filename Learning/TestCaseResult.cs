@@ -6,7 +6,7 @@ namespace Lingua.Learning
 {
     using Core;
 
-    public class TestCaseResult
+    public class TestCaseResult : ITestCaseResult
     {
         private readonly TranslationResult _translationResult;
 
@@ -38,6 +38,7 @@ namespace Lingua.Learning
         public bool Success => Actual == TestCase.Expected;
         public bool SuccessIgnoringCase => string.Equals(Actual, TestCase.Expected, StringComparison.InvariantCultureIgnoreCase);
         public ITranslation[] ExpectedTranslations => TestCase.Target.Translations;
+        public ITranslation[] ActualTranslations => Reduction.Translations;
         public ReductionResult Reduction => _translationResult.Reduction;
 
         public override string ToString()

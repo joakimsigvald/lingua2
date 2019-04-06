@@ -37,7 +37,7 @@ namespace Lingua.Learning
             _translator = translator;
             _testCases = PrepareForLearning(testCases);
             _testRunner = CreateLearningTestRunner();
-            _patternGenerator = new PatternGenerator(new TranslationExtractor(), new PatternExtractor());
+            _patternGenerator = new PatternGenerator(new NewPatternExtractor());
         }
 
         private TestRunner CreateLearningTestRunner()
@@ -258,7 +258,7 @@ namespace Lingua.Learning
         }
 
         private (ScoredPattern sp, int priority) PrioritizePattern(ScoredPattern sp)
-            => (sp, ScoredPatternPriorityComputer.ComputePriority(_evaluator.GetScore(sp.ReversedCode), sp.Score, sp.Code));
+            => (sp, ScoredPatternPriorityComputer.ComputePriority(_evaluator.GetScore(sp.ReversedCode), sp.Score, sp.ReversedCode));
 
         private void RenewArrangementCandidates(TestCase testCase)
         {

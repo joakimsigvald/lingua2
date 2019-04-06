@@ -1,10 +1,10 @@
+using Lingua.Core;
 using System.Collections.Generic;
 
 namespace Lingua.Learning
 {
-    public interface IPatternExtractor
+    public interface INewPatternExtractor
     {
-        IEnumerable<ushort[]> GetMatchingMonoCodes(ushort[] sequence);
-        IEnumerable<ushort[]> GetMatchingCodes(ushort[] sequence, int length);
+        IEnumerable<Code> GetMatchingPatterns(Code code);
     }
 }

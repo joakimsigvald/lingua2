@@ -85,10 +85,6 @@ namespace Lingua.Grammar.Test
         [InlineData(2, 2)]
         [InlineData(10, 2)]
         [InlineData(10, 5)]
-        [InlineData(20, 6)]
-        [InlineData(20, 8)]
-        [InlineData(30, 12)] //1.221 sec
-                             //        [InlineData(30, 15)] //8.314 sec
         public void When_very_long_paths_only_evaluate_path_within_horizon(int longCount, byte horizon)
         {
             var bestPattern = Enumerable.Range(0, horizon - 1).Select(_ => Code1).Append(CodeDoubleWord).ToArray();
@@ -113,13 +109,7 @@ namespace Lingua.Grammar.Test
                 { "VT*", 1},
                 { "N", -1},
             };
-            var evaluator = Evaluator.Create(patterns);
-            var grammar = new GrammarEngine(evaluator);
-            var translator = new Translator(new Tokenizer(), new Thesaurus(), grammar, new Rearranger(), new Capitalizer());
-            var possibilities = translator.Decompose(sentence);
-            var reduction = grammar.Reduce(possibilities);
-            var actualScore2 = grammar.Reduce(reduction.Translations.Select(t => new[] { t }).ToArray()).Score;
-            Assert.Equal(reduction.Score, actualScore2);
+            TestEvaluateAndReduceGiveSameScore(sentence, patterns);
         }
 
         [Fact]
@@ -127,22 +117,68 @@ namespace Lingua.Grammar.Test
         {
             var sentence = "Bouncing ball to play with";
             var patterns = new Dictionary<string, sbyte> { { "I*", 1 } };
-            var evaluator = Evaluator.Create(patterns);
-            var grammar = new GrammarEngine(evaluator);
-            var translator = new Translator(new Tokenizer(), new Thesaurus(), grammar, new Rearranger(), new Capitalizer());
-            var possibilities = translator.Decompose(sentence);
+            TestEvaluateAndReduceGiveSameScore(sentence, patterns);
+        }
+
+        [Fact]
+        public void EvaluateAndReduceGiveSameScore3()
+        {
+            var sentence = "The fastest cars";
+            var patterns = new Dictionary<string, sbyte>
+            {
+                { "^Tn*", 1},
+                { "Ad*", 1},
+                { "Nd*", 1},
+                { "Tq*", 1 }
+            };
+            TestEvaluateAndReduceGiveSameScore(sentence, patterns);
+        }
+
+        [Fact]
+        public void EvaluateAndReduceGiveSameScore4()
+        {
+            var sentence = "The fastest car";
+            var patterns = new Dictionary<string, sbyte>
+            {
+                { "^Td*", 1},
+                { "Tq*", 1 }
+            };
+            TestEvaluateAndReduceGiveSameScore(sentence, patterns);
+        }
+
+        private void TestEvaluateAndReduceGiveSameScore(string sentence, Dictionary<string, sbyte> patterns)
+        {
+            var grammar = CreateGrammar(patterns);
+            var possibilities = Decompose(grammar, sentence);
+            AssertEvaluateAndReduceGiveSameScore(grammar, possibilities);
+        }
+
+        private void AssertEvaluateAndReduceGiveSameScore(IGrammar grammar, IList<ITranslation[]> possibilities)
+        {
             var reduction = grammar.Reduce(possibilities);
-            var actualScore2 = grammar.Evaluate(reduction.Translations).Score;
-            Assert.Equal(reduction.Score, actualScore2);
+            var evaluation = grammar.Evaluate(reduction.Translations).Score;
+            Assert.Equal(evaluation, reduction.Score);
+        }
+
+        private IList<ITranslation[]> Decompose(IGrammar grammar, string sentence)
+        {
+            var translator = new Translator(new Tokenizer(), new Thesaurus(), grammar, new Rearranger(), new Capitalizer());
+            return translator.Decompose(sentence);
+        }
+
+        private IGrammar CreateGrammar(Dictionary<string, sbyte> patterns)
+        {
+            var evaluator = Evaluator.Create(patterns);
+            return new GrammarEngine(evaluator);
         }
 
         [Theory]
         [InlineData(
-            8,
+            9,
             "He took the ball with the blue dot and kicked it",
             "Han tog bollen med den blåa pricken och sparkade den")]
         [InlineData(
-            8,
+            9,
             "He took the table with the blue dot and kicked it", 
             "Han tog bordet med den blåa pricken och sparkade det")]
         public void TestEvaluateWithCondensation(
@@ -175,7 +211,8 @@ namespace Lingua.Grammar.Test
             mock.Setup(eval => eval.Horizon).Returns(horizon);
             mock.Setup(eval => eval.ScorePatternsEndingWith(It.IsAny<ushort[]>())).Returns(0);
             var bestPatternReversed = bestPattern.Reverse().ToArray();
-            mock.Setup(eval => eval.ScorePatternsEndingWith(bestPatternReversed)).Returns(1);
+            mock.Setup(eval => eval.ScorePatternsEndingWith(
+                It.Is<ushort[]>(c => c.Take(horizon).SequenceEqual(bestPatternReversed)))).Returns(1);
             return mock.Object;
         }
 

@@ -39,7 +39,7 @@ namespace Lingua.Grammar.Test
         {
             var patterns = scoredPatterns.Select(sp => sp.Split(':')).ToDictionary(parts => parts[0], parts => sbyte.Parse(parts[1]));
             var evaluator = Evaluator.Create(patterns);
-            var reversedCode = Encoder.Encode(symbols).Reverse().ToArray();
+            var reversedCode = Encoder.Encode(symbols).ReversedCode;
             var actual = evaluator.ScorePatternsEndingWith(reversedCode);
             Assert.Equal(expectedScore, actual);
         }

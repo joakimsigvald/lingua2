@@ -4,6 +4,7 @@ namespace Lingua.Grammar
 {
     using Core;
     using Lingua.Core.Extensions;
+    using Lingua.Core.Tokens;
     using System.Linq;
 
     internal class ReductionProcess
@@ -35,7 +36,10 @@ namespace Lingua.Grammar
 
         private TranslationSearchNode CreateTree()
         {
-            var root = new TranslationSearchNode();
+            var root = new TranslationSearchNode
+            {
+                ReversedCode = new[] { Start.Code }
+            };
             var bestChild = new TranslationSearchNode();
             foreach (var cand in _possibilities[0])
             {

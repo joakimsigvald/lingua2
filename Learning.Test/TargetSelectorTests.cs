@@ -135,8 +135,8 @@ namespace Lingua.Learning.Test
         public ITranslation[] Variations { get; set; }
         public bool IsTranslatedWord => false;
         public bool IsIncompleteCompound { get; set; }
-        public string To => null;
-        public Word[] Continuation => null;
+        public string? To => null;
+        public Word[] Continuation => new Word[0];
         public string Input { get; private set; }
         public ITranslation Capitalize()
         {

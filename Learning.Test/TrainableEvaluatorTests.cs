@@ -41,6 +41,6 @@ namespace Lingua.Learning.Test
                     : GetLeaf(node.Previous.FirstOrDefault(), depth - 1);
 
         private void UpdateScore(string pattern, sbyte score)
-            => _evaluator.UpdateScore(Encoder.Encode(pattern).Reverse().ToArray(), score);
+            => _evaluator.UpdateScore(Encoder.Encode(pattern).ReversedCode, score);
     }
 }
