@@ -21,11 +21,11 @@ namespace Lingua.Learning.Test
         [InlineData("N", "V", "+N*", "+N", "+^N*", "+^N", "-V*", "-V", "-^V*", "-^V")]
         [InlineData("N", "N")]
         [InlineData("NA", "NV"
-            , "+A*", "+A", "+_A*", "+N*A*", "+_A", "+N*A", "+NA*", "+NA", "+^_A*", "+^N*A*", "+^_A", "+^N*A", "+^NA*", "+^NA"
-            , "-V*", "-V", "-_V*", "-N*V*", "-_V", "-N*V", "-NV*", "-NV", "-^_V*", "-^N*V*", "-^_V", "-^N*V", "-^NV*", "-^NV")]
+            , "+A*", "+A", "+N*A*", "+N*A", "+NA*", "+NA", "+^_A*", "+^N*A*", "+^_A", "+^N*A", "+^NA*", "+^NA"
+            , "-V*", "-V", "-N*V*", "-N*V", "-NV*", "-NV", "-^_V*", "-^N*V*", "-^_V", "-^N*V", "-^NV*", "-^NV")]
         [InlineData("NA", "NN"
-            , "+A*", "+A", "+_A*", "+N*A*", "+_A", "+N*A", "+NA*", "+NA", "+^_A*", "+^N*A*", "+^_A", "+^N*A", "+^NA*", "+^NA"
-            , "-N*", "-N", "-_N*", "-N*N*", "-_N", "-N*N", "-NN*", "-NN", "-^_N*", "-^N*N*", "-^_N", "-^N*N", "-^NN*", "-^NN")]
+            , "+A*", "+A", "+N*A*", "+N*A", "+NA*", "+NA", "+^_A*", "+^N*A*", "+^_A", "+^N*A", "+^NA*", "+^NA"
+            , "-N*", "-N", "-N*N*", "-N*N", "-NN*", "-NN", "-^_N*", "-^N*N*", "-^_N", "-^N*N", "-^NN*", "-^NN")]
         public void Test(string expectedPattern, string actualPattern, params string[] expectedScoredPatterns)
         {
             var patterns = GeneratePatterns(expectedPattern, actualPattern);

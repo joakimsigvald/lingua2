@@ -212,7 +212,7 @@ namespace Lingua.Grammar.Test
             mock.Setup(eval => eval.ScorePatternsEndingWith(It.IsAny<ushort[]>())).Returns(0);
             var bestPatternReversed = bestPattern.Reverse().ToArray();
             mock.Setup(eval => eval.ScorePatternsEndingWith(
-                It.Is<ushort[]>(c => c.Take(horizon).SequenceEqual(bestPatternReversed)))).Returns(1);
+                It.Is<ushort[]>(c => c.Take(bestPattern.Length).SequenceEqual(bestPatternReversed)))).Returns(1);
             return mock.Object;
         }
 

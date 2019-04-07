@@ -16,6 +16,12 @@
                     Patterns.Extend(GetReversedCode(kvp.Key), kvp.Value);
         }
 
+        private Evaluator(IDictionary<Code, sbyte> patterns)
+        {
+            foreach (var kvp in patterns)
+                Patterns.Extend(kvp.Key.ReversedCode, kvp.Value);
+        }
+
         public int ScorePatternsEndingWith(ushort[] reversedCode) => Patterns.Evaluate(reversedCode);
 
         private static ushort[] GetReversedCode(string symbols)
@@ -23,5 +29,6 @@
 
         public static IEvaluator Load() => new Evaluator(Repository.LoadScoredPatterns());
         public static Evaluator Create(IDictionary<string, sbyte>? patterns = null) => new Evaluator(patterns);
+        public static Evaluator Create(IDictionary<Code, sbyte> patterns) => new Evaluator(patterns);
     }
 }

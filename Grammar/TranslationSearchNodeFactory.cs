@@ -1,8 +1,7 @@
-﻿namespace Lingua.Grammar
-{
-    using Core;
-    using System.Linq;
+﻿using Lingua.Core;
 
+namespace Lingua.Grammar
+{
     internal class TranslationSearchNodeFactory
     {
         private readonly CodeCondenser _codeReducer = new CodeCondenser();
@@ -18,6 +17,6 @@
             };
 
         private ushort[] ExtractReversedCode(TranslationSearchNode parent, ITranslation translation)
-            => _codeReducer.ReplaceLastNounPhrase(parent.ReversedCode.Prepend(translation.Code).ToArray());
+            => _codeReducer.Condense(parent.ReversedCode, translation);
     }
 }

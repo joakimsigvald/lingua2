@@ -19,8 +19,8 @@ namespace Lingua.Learning
         public string Suite { get; set; }
         public string From { get; }
         public string Expected { get; }
-        public ReductionResult Reduction { get; set; }
-        public TranslationResult Result{ get; set; }
+        public ReductionResult? Reduction { get; set; }
+        public TranslationResult? Result{ get; set; }
 
         public override string ToString()
             => $"{From}=>{Expected}";

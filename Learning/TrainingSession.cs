@@ -187,7 +187,7 @@ namespace Lingua.Learning
         private void ResetReductions()
         {
             _testCases
-                .Where(tc => AffectedBy(tc, _currentScoredPattern))
+                .Where(tc => tc.Reduction != null)
                 .ForEach(tc =>
                 {
                     tc.Reduction = null;
@@ -198,31 +198,14 @@ namespace Lingua.Learning
         private void ResetResult()
         {
             _testCases
-                .Where(tc => AffectedBy(tc, _currentArranger))
+                .Where(tc => tc.Result != null)
                 .ForEach(tc => tc.Result = null);
         }
-
-        private static bool AffectedBy(TestCase testCase, ScoredPattern scoredPattern)
-            => testCase.Reduction != null;
-               //&& testCase.Possibilities.Count >= scoredPattern.Code.Length
-               //&& ContainsPattern(testCase.Possibilities.Select(c => c.Select(t => t.Code).ToArray()),
-               //    scoredPattern.Code);
-
-        private static bool ContainsPattern(IEnumerable<ushort[]> possibilities, ushort[] pattern)
-            => SkipToLastCode(possibilities, pattern, 0).Any();
 
         private static IEnumerable<ushort[]> SkipToLastCode(IEnumerable<ushort[]> possibilities, ushort[] pattern, int offset)
             => offset == pattern.Length
                 ? possibilities
                 : SkipToLastCode(possibilities.SkipWhile(c => !c.Any(t => Encoder.Matches(t, pattern[offset]))), pattern, offset + 1);
-
-        private static bool AffectedBy(TestCase testCase, Arranger arranger)
-            => testCase.Result != null
-               && testCase.Reduction.Translations.Length >= arranger.Arrangement.Code.Length
-               && ContainsPattern(testCase.Reduction.Translations.Select(t => t.Code), arranger.Arrangement.Code);
-
-        private static bool ContainsPattern(IEnumerable<ushort> translations, ushort[] pattern)
-            => SkipToLastCode(translations, pattern, 0).Any();
 
         private static IEnumerable<ushort> SkipToLastCode(IEnumerable<ushort> translations, ushort[] pattern, int offset)
             => offset == pattern.Length

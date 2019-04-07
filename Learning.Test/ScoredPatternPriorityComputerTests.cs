@@ -1,5 +1,4 @@
-﻿using System.Linq;
-using Lingua.Core.Tokens;
+﻿using Lingua.Core.Tokens;
 using Xunit;
 
 namespace Lingua.Learning.Test
