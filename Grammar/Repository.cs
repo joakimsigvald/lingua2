@@ -11,8 +11,11 @@ namespace Lingua.Grammar
         public static IDictionary<string, sbyte> LoadScoredPatterns()
             => ReadLines("Patterns.txt").ToDictionary(sbyte.Parse);
 
+        public static string[] Load(string filename)
+            => ReadLines(filename).ToArray();
+
         public static void StoreScoredPatterns(string[] patterns)
-            => WriteLines(GetUniqueName("Patterns.txt"), patterns);
+            => StoreText("Patterns", patterns);
 
         public static void StoreRearrangements(IEnumerable<Arranger> arrangers)
             => WriteLines(GetUniqueName("Rearrangements.txt")
@@ -37,8 +40,8 @@ namespace Lingua.Grammar
             this IEnumerable<string> lines, Func<string, T> convert)
             => lines.Select(Split).ToDictionary(convert);
 
-        public static void StoreTestCases(string tag, string[] testCases)
-            => WriteLines(GetUniqueName($"TestCases-{tag}.txt"), testCases);
+        public static void StoreText(string name, string[] lines)
+            => WriteLines(GetUniqueName($"{name}.txt"), lines);
 
         private static Dictionary<string, T> ToDictionary<T>(
             this IEnumerable<string[]> pairs, Func<string, T> convert)
