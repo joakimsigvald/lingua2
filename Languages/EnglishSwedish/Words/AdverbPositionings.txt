@@ -1,6 +1,8 @@
+back = tillbaka
 here = här
 home = hem
+outside = utanför
 there = där
 today = idag
+this morning = i morse
 tomorrow = imorgon
-back = tillbaka

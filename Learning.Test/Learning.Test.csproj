@@ -17,7 +17,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Assert\TestUtils.csproj" />
     <ProjectReference Include="..\Learning\Learning.csproj" />
   </ItemGroup>
 </Project>

@@ -37,6 +37,9 @@ namespace Lingua.Grammar
             this IEnumerable<string> lines, Func<string, T> convert)
             => lines.Select(Split).ToDictionary(convert);
 
+        public static void StoreTestCases(string tag, string[] testCases)
+            => WriteLines(GetUniqueName($"TestCases-{tag}.txt"), testCases);
+
         private static Dictionary<string, T> ToDictionary<T>(
             this IEnumerable<string[]> pairs, Func<string, T> convert)
             => pairs.ToDictionary(pair => pair[0], pair => convert(pair[1]));

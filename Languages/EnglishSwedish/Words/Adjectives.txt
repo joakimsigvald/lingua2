@@ -14,6 +14,7 @@ good = god
 good-looking = snygg
 green:::er:est| = grön:t:a|re:ast|e
 kind:::er:est| = snäll:t:a|re:ast|e
+little = liten
 non- = icke-
 speaking = talande
 yellow:::er:est| = gul:t:a|re:ast|e

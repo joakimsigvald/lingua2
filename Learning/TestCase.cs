@@ -22,8 +22,9 @@ namespace Lingua.Learning
         public ReductionResult? Reduction { get; set; }
         public TranslationResult? Result{ get; set; }
 
-        public override string ToString()
-            => $"{From}=>{Expected}";
+        public override string ToString() => $"{From}=>{Expected}";
+
+        public string ToSave() => $"\"{From}\", \"{Expected}\"";
 
         public void RemoveTarget()
         {
