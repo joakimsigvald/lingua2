@@ -11,8 +11,8 @@ namespace TestCaseCrawler
 {
     public class Crawler
     {
-        private const int LetterCount = 5;
-        private const int WordCountPerLetter = 100;
+        private const int LetterCount = 1;
+        private const int WordCountPerLetter = 1;
         private static readonly char[] letters = { 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z' };
         private static readonly HttpClient _client = new HttpClient();
 
