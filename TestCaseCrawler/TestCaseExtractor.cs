@@ -29,6 +29,7 @@ namespace TestCaseCrawler
         {
             var testCases = await Task.WhenAll(_paths.Select(ExtractTestCases));
             StoreTestCases(testCases.SelectMany(x => x).ToArray());
+            Console.WriteLine($"Extracted {testCases.Length} testcases for paths: {string.Join(", ", _paths)}");
         }
 
         private async Task<TestCase[]> ExtractTestCases(string wordPath)

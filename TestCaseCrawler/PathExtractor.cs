@@ -1,5 +1,6 @@
 ﻿using HtmlAgilityPack;
 using Lingua.Grammar;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
@@ -9,7 +10,7 @@ namespace TestCaseCrawler
 {
     public class PathExtractor
     {
-        private const int WordCount = 1;
+        private const int WordCount = 1000;
 
         private static readonly HttpClient _client = new HttpClient();
         private readonly string _baseUrl;
@@ -25,6 +26,7 @@ namespace TestCaseCrawler
         {
             var wordPaths = await ExtractWordPaths();
             StoreWordPaths(wordPaths);
+            Console.WriteLine($"Extracted {wordPaths.Length} paths for letter {_letter}");
         }
 
         private async Task<string[]> ExtractWordPaths()
