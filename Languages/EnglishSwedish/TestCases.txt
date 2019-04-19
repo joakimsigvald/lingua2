@@ -182,14 +182,20 @@
 "That ball is red.", "Den där bollen är röd."
 "It is a red ball.", "Det är en röd boll."
 "Mary knew that her essay contained an error, but she couldn't find it.", "Mary visste att hennes uppsats innehöll ett fel, men hon kunde inte hitta det."
+"He took the ball with the blue dot and kicked it", "Han tog bollen med den blåa pricken och sparkade den"
+"He took the table with the blue dot and kicked it", "Han tog bordet med den blåa pricken och sparkade det"
 
 //Adverbs
 "When I was young I was a salesman.", "När jag var ung var jag en säljare."
 "Today I have been to the concert hall.", "Idag har jag varit till konserthallen."
 "I'm sitting in the room and looking at dolls.", "Jag sitter i rummet och tittar på dockor."
 
+//Miscellaneous
 "I'm sitting in Joakim's livingroom.", "Jag sitter i Joakims vardagsrum."
 "I have black trousers.", "Jag har svarta byxor."
-"He took the ball with the blue dot and kicked it", "Han tog bollen med den blåa pricken och sparkade den"
-"He took the table with the blue dot and kicked it", "Han tog bordet med den blåa pricken och sparkade det"
 "Berit flew to San Fransisco this morning", "Berit flög till San Fransisco i morse"
+
+//From en.bab.la
+"Flight 115 to Albuquerque, New Mexico.", "Flight 115 till Albuquerque, New Mexico."
+"Decisions on further handling of cases are taken by the Assistant University Director.", "Beslut om fortsatt handläggning fattas av biträdande universitetsdirektören."
+
