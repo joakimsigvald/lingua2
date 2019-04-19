@@ -158,6 +158,12 @@
 "red and green apples", "röda och gröna äpplen"
 "Give me red and green apples", "Ge mig röda och gröna äpplen"
 
+//Articles
+"This cheese is yellow", "Den här osten är gul"
+"This yellow cheese is old", "Den här gula osten är gammal"
+"That cheese is yellow", "Den där osten är gul"
+"That yellow cheese is old", "Den där gula osten är gammal"
+
 //Greetings
 "hello", "hej"
 "hi", "hej"
@@ -173,7 +179,7 @@
 "I have a table. It is big.", "Jag har ett bord. Det är stort."
 "I have two balls. They are red.", "Jag har två bollar. De är röda."
 "It is kind of you.", "Det är snällt av dig."
-"That ball is red.", "Den bollen är röd."
+"That ball is red.", "Den där bollen är röd."
 "It is a red ball.", "Det är en röd boll."
 "Mary knew that her essay contained an error, but she couldn't find it.", "Mary visste att hennes uppsats innehöll ett fel, men hon kunde inte hitta det."
 

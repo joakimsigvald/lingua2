@@ -13,7 +13,7 @@ namespace TestCaseCrawler
             Console.WriteLine("Start crawling en.bab.la");
             var crawler = new Crawler(BaseUrl);
             await (args.Any()
-                ? IngestTestCases(crawler, args[0])
+                ? IngestTestCases(crawler, args)
                 : IngestPaths(crawler));
             Console.WriteLine("Finished crawling en.bab.la (Press a key to exit)");
             Console.ReadKey();
@@ -25,10 +25,13 @@ namespace TestCaseCrawler
             return crawler.IngestPaths();
         }
 
-        private static Task IngestTestCases(Crawler crawler, string letter)
+        private static async Task IngestTestCases(Crawler crawler, string[] letters)
         {
-            Console.WriteLine($"Ingest test cases for letter: {letter}");
-            return crawler.IngestTestCases(letter[0]);
+            foreach (var letter in letters)
+            {
+                Console.WriteLine($"Ingest test cases for letter: {letter}");
+                await crawler.IngestTestCases(letter[0]);
+            }
         }
     }
 }

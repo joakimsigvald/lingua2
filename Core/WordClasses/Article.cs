@@ -11,12 +11,14 @@ namespace Lingua.Core.WordClasses
             switch (variationIndex)
             {
                 case 1:
-                    return Modifier.Qualified;
+                    return Modifier.Neuter;
                 case 2:
-                    return Modifier.Qualified | Modifier.Neuter;
+                    return Modifier.Qualified;
                 case 3:
-                    return Modifier.Plural;
+                    return Modifier.Qualified | Modifier.Neuter;
                 case 4:
+                    return Modifier.Plural;
+                case 5:
                     return Modifier.Qualified | Modifier.Plural;
                 default: return Modifier.None;
             }

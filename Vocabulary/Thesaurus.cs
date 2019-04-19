@@ -20,7 +20,7 @@ namespace Lingua.Vocabulary
                 : new Translation[0];
             return translations.Any()
                 ? translations.ToArray()
-                : GetUnclassified(token);//Translation.Create(token)};
+                : GetUnclassified(token);
         }
 
         private ITranslation[] GetUnclassified(Token token) 

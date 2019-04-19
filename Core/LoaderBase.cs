@@ -38,6 +38,9 @@ namespace Lingua.Core
             var n = 1;
             string path;
             string filename;
+            var firstPath = GetPath(directory, filename = $"{name}.{extension}");
+            if (!File.Exists(firstPath))
+                return filename;
             do path = GetPath(directory, filename = $"{name}{n++}.{extension}");
             while (File.Exists(path));
             return filename;

@@ -1,5 +1,5 @@
-a:: = en::_tt
-an:: = en::_tt
-:that: = :den|_t
-the::::<d = :den|_t::de
-:this = :den här
+a: = en:_tt
+an: = en:_tt
+that::::__ose: = den|_t:|_t|_|+där
+the:::::<d = ::den|_t::de
+this::__ese: = den|_t:|_t|_|+här

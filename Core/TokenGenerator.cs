@@ -23,11 +23,11 @@ namespace Lingua.Core
         private IEnumerable<Token> Expand(Token token)
             => Tokenize(Expand(token as Unclassified)) ?? new[] { token };
 
-        private IEnumerable<Token> Tokenize(string text)
-            => text == null ? null : _tokenizer.Tokenize(text);
+        private IEnumerable<Token>? Tokenize(string? text)
+            => text is null ? null : _tokenizer.Tokenize(text);
 
-        private static string Expand(Unclassified word)
-            => word == null
+        private static string? Expand(Unclassified? word)
+            => word is null
                 ? null
                 : TryExpand(word.Value, out string exactExpanded)
                     ? exactExpanded

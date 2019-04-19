@@ -14,12 +14,12 @@ namespace Lingua.Tokenization
     {
         private static readonly ISymbolizer Symbolizer = new Symbolizer();
 
-        public IEnumerable<Token> Tokenize(string text)
+        public IEnumerable<Token> Tokenize(string? text)
             => string.IsNullOrWhiteSpace(text)
                 ? new Token[0]
                 : CombineGenerics(Trim(Tokenize(Symbolizer.Symbolize(text).ToArray())));
 
-        private static IEnumerable<Token> Tokenize(IReadOnlyList<Symbol> symbols)
+        private static IEnumerable<Token> Tokenize(Symbol[] symbols)
         {
             var prev = symbols[0];
             var current = symbols[1];

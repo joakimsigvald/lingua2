@@ -27,7 +27,10 @@ namespace Lingua.Vocabulary
             _baseForm = baseForm;
         }
 
-        public WordMap(IDictionary<string, string> mappings, IList<IModificationRule> rules = null, int baseForm = 0)
+        public WordMap(
+            IDictionary<string, string> mappings, 
+            IList<IModificationRule>? rules = null, 
+            int baseForm = 0)
             : base(mappings)
         {
             _rules = rules ?? _rules;

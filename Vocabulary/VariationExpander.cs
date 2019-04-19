@@ -21,10 +21,24 @@ namespace Lingua.Vocabulary
 
         private static Specification Expand(string variationsPattern, string modifiers, string connector)
         {
-            var variations = GetVariations(variationsPattern).ToArray();
+            var variations = ExpandVariations(variationsPattern);
             var incompleteCompound = GetIncompleteCompound(variations[0], connector);
             return new Specification(variations, incompleteCompound, modifiers);
         }
+
+        private static string[] ExpandVariations(string variationsPattern)
+        {
+            var words = variationsPattern.Split('+');
+            var wordVariations = words
+                .Select(word => GetVariations(word).ToArray())
+                .ToArray();
+            return MergeVariations(wordVariations);
+        }
+
+        private static string[] MergeVariations(IList<string[]> wordVariations) 
+            => wordVariations.First()
+            .Select((_, i) => string.Join(' ', wordVariations.Select(w => w[i % w.Length])))
+            .ToArray();
 
         private static IEnumerable<string> GetVariations(string variationsPattern)
             => new Process(variationsPattern).GetVariations();

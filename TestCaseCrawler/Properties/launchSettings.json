@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "TestCaseCrawler": {
+      "commandName": "Project",
+      "commandLineArgs": "s t u v w x y z"
+    }
+  }
+}

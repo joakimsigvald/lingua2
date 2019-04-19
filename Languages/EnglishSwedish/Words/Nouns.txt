@@ -9,6 +9,7 @@ bouncing ball::s| = studsboll:en:ar|na
 car::s| = bil:en:ar|na
 cat::s| = katt:en:er|na
 chair::s| = stol:en:ar|na
+cheese::s| = ost:en:ar|na
 colour::s| = färg:en:er|na
 concert::s| = konsert:en:er|na/
 doll::s| = docka:n:_or|na

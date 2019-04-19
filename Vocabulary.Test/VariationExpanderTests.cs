@@ -22,6 +22,7 @@ namespace Lingua.Vocabulary.Test
         [InlineData("ball 2:s", "ball", "balls", "balls")]
         [InlineData("a :b 2|c", "a", "ab", "abc", "abc")]
         [InlineData("ball 3!s", "ball", "s", "s", "s")]
+        [InlineData("den:_+här", "den här", "de här")]
         public void ExpandVariants(string pattern, params string[] expected)
         {
             var actual = VariationExpander.Expand(pattern);
