@@ -5,6 +5,6 @@ namespace Lingua.Core
     public interface ITranslator
     {
         TranslationResult Translate(string text);
-        IList<ITranslation[]> Decompose(string original);
+        IList<IGrammaton[]> Decompose(string original);
     }
 }

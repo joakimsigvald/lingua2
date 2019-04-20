@@ -8,9 +8,9 @@ namespace Lingua.Learning
 
     public class TrainableEvaluator : ITrainableEvaluator
     {
-        private Rearranger _arranger;
+        private readonly Rearranger _arranger;
         private readonly Evaluator _evaluator;
-        private IGrammar _grammar;
+        private readonly IGrammar _grammar;
 
         public TrainableEvaluator(Rearranger arranger, Evaluator evaluator)
         {
@@ -43,8 +43,8 @@ namespace Lingua.Learning
 
         public int ComputeScoreDeficit(TestCaseResult failedCase)
         {
-            var expectedScore = _grammar.Evaluate(failedCase.ExpectedTranslations).Score;
-            var actualScore = failedCase.Reduction.Score;
+            var expectedScore = _grammar.Evaluate(failedCase.ExpectedGrammatons).Score;
+            var actualScore = failedCase.Score;
             if (expectedScore > actualScore)
                 throw new InvalidProgramException();
             return actualScore - expectedScore;

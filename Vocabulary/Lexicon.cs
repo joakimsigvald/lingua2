@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using Lingua.Core.WordClasses;
 
 namespace Lingua.Vocabulary
 {

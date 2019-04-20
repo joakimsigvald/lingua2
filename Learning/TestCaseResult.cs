@@ -23,7 +23,7 @@ namespace Lingua.Learning
 
         private int ComputeWordDeficit()
         {
-            var originalWords = GetWords(Reduction.Translations).ToList();
+            var originalWords = GetWords(ActualTranslations).ToList();
             var translatedWords = originalWords.ToList();
             var expectedWords = GetWords(ExpectedTranslations).ToArray();
             var missingWords = expectedWords.Where(word => !translatedWords.Remove(word)).ToArray();
@@ -38,8 +38,10 @@ namespace Lingua.Learning
         public bool Success => Actual == TestCase.Expected;
         public bool SuccessIgnoringCase => string.Equals(Actual, TestCase.Expected, StringComparison.InvariantCultureIgnoreCase);
         public ITranslation[] ExpectedTranslations => TestCase.Target.Translations;
-        public ITranslation[] ActualTranslations => Reduction.Translations;
-        public ReductionResult Reduction => _translationResult.Reduction;
+        public IGrammaton[] ExpectedGrammatons => TestCase.Target.Grammatons;
+        public ITranslation[] ActualTranslations => _translationResult.Translations;
+        public IGrammaton[] ActualGrammatons => _translationResult.Grammatons;
+        public int Score => _translationResult.Score;
 
         public override string ToString()
             => $"{TestCase}/{Actual}:{Success}";

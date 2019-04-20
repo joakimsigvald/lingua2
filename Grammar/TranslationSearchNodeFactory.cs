@@ -6,17 +6,17 @@ namespace Lingua.Grammar
     {
         private readonly CodeCondenser _codeReducer = new CodeCondenser();
 
-        public TranslationSearchNode Create(TranslationSearchNode parent, ITranslation translation)
+        public TranslationSearchNode Create(TranslationSearchNode parent, IGrammaton grammaton)
             => new TranslationSearchNode
             {
-                Translation = translation,
-                WordCount = translation.WordCount,
+                Grammaton = grammaton,
+                WordCount = grammaton.WordCount,
                 Index = (byte)(parent.Index + parent.WordCount),
-                ReversedCode = ExtractReversedCode(parent, translation),
+                ReversedCode = ExtractReversedCode(parent, grammaton),
                 Score = parent.Score
             };
 
-        private ushort[] ExtractReversedCode(TranslationSearchNode parent, ITranslation translation)
-            => _codeReducer.Condense(parent.ReversedCode, translation);
+        private ushort[] ExtractReversedCode(TranslationSearchNode parent, IGrammaton grammaton)
+            => _codeReducer.Condense(parent.ReversedCode, grammaton);
     }
 }

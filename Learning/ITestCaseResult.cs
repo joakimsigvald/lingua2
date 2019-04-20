@@ -6,5 +6,7 @@
     {
         ITranslation[] ExpectedTranslations { get; }
         ITranslation[] ActualTranslations { get; }
+        IGrammaton[] ExpectedGrammatons { get; }
+        IGrammaton[] ActualGrammatons { get; }
     }
 }

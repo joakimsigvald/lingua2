@@ -5,20 +5,20 @@ namespace Lingua.Grammar
 {
     internal class EvaluationProcess
     {
-        private IEvaluator _evaluator;
-        private ITranslation[] _translations;
-        private CodeCondenser _codeCondenser = new CodeCondenser();
+        private readonly IEvaluator _evaluator;
+        private readonly IGrammaton[] _grammatons;
+        private readonly CodeCondenser _codeCondenser = new CodeCondenser();
 
-        public EvaluationProcess(IEvaluator evaluator, ITranslation[] translations)
+        public EvaluationProcess(IEvaluator evaluator, IGrammaton[] grammatons)
         {
             _evaluator = evaluator;
-            _translations = translations;
+            _grammatons = grammatons;
         }
 
         internal ReductionResult Evaluate()
         {
-            var reversedCodes = _codeCondenser.GetReversedCodes(_translations).ToArray();
-            return new ReductionResult(_translations, 
+            var reversedCodes = _codeCondenser.GetReversedCodes(_grammatons).ToArray();
+            return new ReductionResult(_grammatons, 
                 reversedCodes.Last(), 
                 reversedCodes.Sum(_evaluator.ScorePatternsEndingWith));
         }

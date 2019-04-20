@@ -7,15 +7,20 @@ namespace Lingua.Core
         public TranslationResult(
             string translation,
             ReductionResult? reduction = null,
-            IList<ITranslation[]>? possibilities = null)
+            ITranslation[]? translations = null,
+            IList<IGrammaton[]>? possibilities = null)
         {
             Translation = translation;
-            Reduction = reduction ?? new ReductionResult();
-            Possibilities = possibilities ?? new List<ITranslation[]>();
+            Score = reduction?.Score ?? 0;
+            Grammatons = reduction?.Grammatons ?? new IGrammaton[0];
+            Translations = translations ?? new ITranslation[0];
+            Possibilities = possibilities ?? new List<IGrammaton[]>();
         }
 
         public string Translation { get; }
-        public ReductionResult Reduction { get; }
-        public IList<ITranslation[]> Possibilities { get; }
+        public int Score { get; }
+        public IList<IGrammaton[]> Possibilities { get; }
+        public ITranslation[] Translations { get; }
+        public IGrammaton[] Grammatons { get; }
     }
 }

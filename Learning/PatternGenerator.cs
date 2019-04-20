@@ -11,7 +11,7 @@ namespace Lingua.Learning
         public const byte MaxPatternLength = 6;
 
         private readonly INewPatternExtractor _patternExtractor;
-        private CodeCondenser _codeCondenser = new CodeCondenser();
+        private readonly CodeCondenser _codeCondenser = new CodeCondenser();
 
         public PatternGenerator(INewPatternExtractor patternExtractor)
         {
@@ -22,8 +22,8 @@ namespace Lingua.Learning
         {
             if (result == null)
                 return new ScoredPattern[0];
-            var wantedCodes = GetPossibleCodesInOrder(result.ExpectedTranslations);
-            var unwantedCodes = GetPossibleCodesInOrder(result.ActualTranslations);
+            var wantedCodes = GetPossibleCodesInOrder(result.ExpectedGrammatons);
+            var unwantedCodes = GetPossibleCodesInOrder(result.ActualGrammatons);
             FilterOutCommonCodes(ref wantedCodes, ref unwantedCodes);
             var patterns =
                 GetScoredPatterns(wantedCodes.Distinct().ToList(), 1)
@@ -40,9 +40,9 @@ namespace Lingua.Learning
                 .Select(g => g.OrderBy(sp => sp.Score).Skip(g.Count() / 2).First())
                 .ToArray();
 
-        public List<Code> GetPossibleCodesInOrder(IEnumerable<ITranslation> translations)
+        public List<Code> GetPossibleCodesInOrder(IEnumerable<IGrammaton> grammatons)
             => _codeCondenser
-            .GetReversedCodes(translations)
+            .GetReversedCodes(grammatons)
             .Select(rc => new Code(rc))
             .SelectMany(GetAllSubCodes)
             .OrderBy(sc => sc)

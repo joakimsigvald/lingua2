@@ -13,13 +13,13 @@
 
         private readonly Code[] _nounPhraseCodes = _nounPhrases.Select(Encoder.Encode).ToArray();
 
-        public IEnumerable<ushort[]> GetReversedCodes(IEnumerable<ITranslation> translations)
+        public IEnumerable<ushort[]> GetReversedCodes(IEnumerable<IGrammaton> grammatons)
         {
             ushort[] previousReversed = new ushort[] { Start.Code };
-            return translations.Select(t => previousReversed = Condense(previousReversed, t));
+            return grammatons.Select(t => previousReversed = Condense(previousReversed, t));
         }
 
-        public ushort[] Condense(ushort[] previousReversed, ITranslation next)
+        public ushort[] Condense(ushort[] previousReversed, IGrammaton next)
             => ReplaceLastNounPhrase(previousReversed).Prepend(next.Code).ToArray();
 
         private ushort[] ReplaceLastNounPhrase(ushort[] reversedCode)

@@ -12,9 +12,9 @@ namespace Lingua.Learning
     {
         private const int MaxTargets = 2;
 
-        public static TranslationTarget[] SelectTargets(IList<ITranslation[]> possibilities, string translated)
+        public static TranslationTarget[] SelectTargets(IList<IGrammaton[]>? possibilities, string translated)
         {
-            if (possibilities == null)
+            if (possibilities is null)
                 return new TranslationTarget[0];
             var orderedTranslations = SelectBestTranslationsWithOrder(possibilities, translated);
             if (!orderedTranslations.First().order.Any())
@@ -32,7 +32,8 @@ namespace Lingua.Learning
         private static Arrangement CreateArrangement(IEnumerable<ITranslation> translations, byte[] order)
             => new Arrangement(translations.Select(t => t.Code).ToArray(), order);
 
-        private static (ITranslation[] translations, byte[] order, string unmatched, string hidden)[] SelectBestTranslationsWithOrder(IEnumerable<ITranslation[]> possibilities, string translated)
+        private static (ITranslation[] translations, byte[] order, string unmatched, string hidden)[] 
+            SelectBestTranslationsWithOrder(IEnumerable<IGrammaton[]> possibilities, string translated)
         {
             var filteredPossibilities = FilterPossibilities(possibilities, translated).ToList();
             var possibleSequences = new Expander(filteredPossibilities).Expand(out var _);
@@ -50,8 +51,8 @@ namespace Lingua.Learning
             : 0;
 
         private static IEnumerable<ITranslation[]> FilterPossibilities(
-            IEnumerable<ITranslation[]> possibilities, string translated)
-            => possibilities.Select(p => SelectAlternatives(p, translated));
+            IEnumerable<IGrammaton[]> possibilities, string translated)
+            => possibilities.Select(p => SelectAlternatives(p.SelectMany(g => g.Translations).ToArray(), translated));
 
         private static ITranslation[] SelectAlternatives(ITranslation[] alternatives, string translated)
         {

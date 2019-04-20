@@ -52,6 +52,11 @@ namespace Lingua.Vocabulary
         {
             var from = VariationExpander.Expand(mapping.Key);
             var to = VariationExpander.Expand(mapping.Value);
+            return to.Synonyms.SelectMany(s => CreateTranslations(from, s));
+        }
+
+        private IEnumerable<ITranslation> CreateTranslations(Specification from, Specification to)
+        {
             var baseTranslations = from.Variations
                 .Select((key, i) => CreateTranslation(key, to.Variations[i], from.Modifiers, i))
                 .ToList();

@@ -4,6 +4,7 @@ using Lingua.Learning;
 using Lingua.Tokenization;
 using Lingua.Vocabulary;
 using Moq;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Xunit;
@@ -17,15 +18,15 @@ namespace Lingua.Grammar.Test
         private const ushort Code3 = 3;
         private const ushort CodeDoubleWord = 9;
 
-        private static readonly ITranslation Translation1 = MockTranslation(Code1);
-        private static readonly ITranslation Translation2 = MockTranslation(Code2);
-        private static readonly ITranslation Translation3 = MockTranslation(Code3);
-        private static readonly ITranslation DoubleWord = MockTranslation(CodeDoubleWord, 2);
+        private static readonly IGrammaton Translation1 = MockTranslation(Code1);
+        private static readonly IGrammaton Translation2 = MockTranslation(Code2);
+        private static readonly IGrammaton Translation3 = MockTranslation(Code3);
+        private static readonly IGrammaton DoubleWord = MockTranslation(CodeDoubleWord, 2);
 
         [Fact]
         public void When_empty_possiblities_then_return_empty_translations()
         {
-            Test(MockEvaluator(), new List<ITranslation[]>());
+            Test(MockEvaluator(), new List<IGrammaton[]>());
         }
 
         [Fact]
@@ -146,6 +147,17 @@ namespace Lingua.Grammar.Test
             TestEvaluateAndReduceGiveSameScore(sentence, patterns);
         }
 
+        [Fact]
+        public void EvaluateAndReduceGiveSameScore5()
+        {
+            var sentence = "the concert hall.";
+            var patterns = new Dictionary<string, sbyte>
+            {
+                { "D*.", 1}
+            };
+            TestEvaluateAndReduceGiveSameScore(sentence, patterns);
+        }
+
         private void TestEvaluateAndReduceGiveSameScore(string sentence, Dictionary<string, sbyte> patterns)
         {
             var grammar = CreateGrammar(patterns);
@@ -153,14 +165,14 @@ namespace Lingua.Grammar.Test
             AssertEvaluateAndReduceGiveSameScore(grammar, possibilities);
         }
 
-        private void AssertEvaluateAndReduceGiveSameScore(IGrammar grammar, IList<ITranslation[]> possibilities)
+        private void AssertEvaluateAndReduceGiveSameScore(IGrammar grammar, IList<IGrammaton[]> possibilities)
         {
             var reduction = grammar.Reduce(possibilities);
-            var evaluation = grammar.Evaluate(reduction.Translations).Score;
+            var evaluation = grammar.Evaluate(reduction.Grammatons).Score;
             Assert.Equal(evaluation, reduction.Score);
         }
 
-        private IList<ITranslation[]> Decompose(IGrammar grammar, string sentence)
+        private IList<IGrammaton[]> Decompose(IGrammar grammar, string sentence)
         {
             var translator = new Translator(new Tokenizer(), new Thesaurus(), grammar, new Rearranger(), new Capitalizer());
             return translator.Decompose(sentence);
@@ -191,16 +203,20 @@ namespace Lingua.Grammar.Test
             var grammar = new GrammarEngine(evaluator);
             var translator = new Translator(new Tokenizer(), new Thesaurus(), grammar, new Rearranger(), new Capitalizer());
             testCase.PrepareForLearning(translator);
-            var reduction = grammar.Evaluate(testCase.Target.Translations);
+            var grammatons = ExtractGrammatons(testCase).ToArray();
+            var reduction = grammar.Evaluate(grammatons);
             Assert.Equal(expectedCondensedCodeCount, reduction.CondensedCode.Length);
         }
 
-        private static ITranslation MockTranslation(ushort code, byte wordCount = 1)
+        private IEnumerable<IGrammaton> ExtractGrammatons(TestCase testCase)
+            => testCase.Target.Translations.Select(t => new Grammaton(t));
+
+        private static IGrammaton MockTranslation(ushort code, byte wordCount = 1)
         {
-            var mock = new Mock<ITranslation>();
+            var mock = new Mock<IGrammaton>();
             mock.Setup(t => t.Code).Returns(code);
             mock.Setup(t => t.WordCount).Returns(wordCount);
-            mock.Setup(t => t.From).Returns(new AnyToken());
+            //mock.Setup(t => t.From).Returns(new AnyToken());
             mock.Setup(t => t.ToString()).Returns($"{code}");
             return mock.Object;
         }
@@ -216,15 +232,15 @@ namespace Lingua.Grammar.Test
             return mock.Object;
         }
 
-        private void Test(IEvaluator evaluator, IList<ITranslation[]> possibilities, params ITranslation[] expected)
+        private void Test(IEvaluator evaluator, IList<IGrammaton[]> possibilities, params IGrammaton[] expected)
         {
             Test(new GrammarEngine(evaluator), possibilities, expected);
         }
 
-        private void Test(IGrammar grammar, IList<ITranslation[]> possibilities, params ITranslation[] expected)
+        private void Test(IGrammar grammar, IList<IGrammaton[]> possibilities, params IGrammaton[] expected)
         {
             var result = grammar.Reduce(possibilities);
-            Assert.Equal(expected, result.Translations);
+            Assert.Equal(expected, result.Grammatons);
         }
     }
 }

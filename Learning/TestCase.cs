@@ -13,7 +13,7 @@ namespace Lingua.Learning
             Expected = expected;
         }
 
-        public IList<ITranslation[]> Possibilities { get; set; }
+        public IList<IGrammaton[]> Possibilities { get; set; }
         public TranslationTarget Target => Targets?.FirstOrDefault();
         public TranslationTarget[] Targets { private get; set; }
         public string Suite { get; set; }

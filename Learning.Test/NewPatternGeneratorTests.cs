@@ -62,17 +62,17 @@ namespace Lingua.Learning.Test
         private ITestCaseResult MockTestCaseResult(string expectedPattern, string actualPattern)
         {
             var mock = new Mock<ITestCaseResult>();
-            mock.Setup(res => res.ExpectedTranslations).Returns(ConvertToTranslations(expectedPattern));
-            mock.Setup(res => res.ActualTranslations).Returns(ConvertToTranslations(actualPattern));
+            mock.Setup(res => res.ExpectedGrammatons).Returns(ConvertToGrammatons(expectedPattern));
+            mock.Setup(res => res.ActualGrammatons).Returns(ConvertToGrammatons(actualPattern));
             return mock.Object;
         }
 
-        private ITranslation[] ConvertToTranslations(string pattern) 
-            => Encoder.Deserialize(pattern).Select(ConvertToTranslation).ToArray();
+        private IGrammaton[] ConvertToGrammatons(string pattern)
+            => Encoder.Deserialize(pattern).Select(ConvertToGrammaton).ToArray();
 
-        private ITranslation ConvertToTranslation(Token token)
+        private IGrammaton ConvertToGrammaton(Token token)
         {
-            var mock = new Mock<ITranslation>();
+            var mock = new Mock<IGrammaton>();
             mock.Setup(t => t.Code).Returns(Encoder.Encode(token));
             return mock.Object;
         }

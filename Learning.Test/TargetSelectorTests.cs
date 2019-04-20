@@ -4,6 +4,7 @@ using System.Linq;
 using Lingua.Core;
 using Lingua.Core.Tokens;
 using Lingua.Core.WordClasses;
+using Moq;
 using Xunit;
 
 namespace Lingua.Learning.Test
@@ -73,13 +74,13 @@ namespace Lingua.Learning.Test
             var target = CreateTarget(possibilitiesStr, to);
             var expectedTranslations = ParsePossibilities(expectedTranslationsStr)
                 .Select(alts => alts.Single()).ToArray();
-            var actual = GetOutputs(target?.Translations);
+            var actual = GetOutputs(target?.Grammatons);
             var expected = GetOutputs(expectedTranslations);
             Assert.Equal(expected, actual);
         }
 
-        private static string[] GetOutputs(IEnumerable<ITranslation> translations)
-            => translations.Select(t => t.Output).ToArray();
+        private static string[] GetOutputs(IEnumerable<IGrammaton> translations)
+            => translations.Select(t => t.Translations[0].Output).ToArray();
 
         private TranslationTarget CreateTarget(string possibilitiesStr, string to)
         {
@@ -87,17 +88,16 @@ namespace Lingua.Learning.Test
             return TargetSelector.SelectTargets(possibilities, to).FirstOrDefault();
         }
 
-        private IList<ITranslation[]>? ParsePossibilities(string possibilitiesStr)
+        private IList<IGrammaton[]>? ParsePossibilities(string possibilitiesStr)
             => string.IsNullOrEmpty(possibilitiesStr)
                 ? null
                 : possibilitiesStr.Split(',').Select(ParseAlternatives).ToList();
 
-        private ITranslation[] ParseAlternatives(string alternativesStr)
+        private IGrammaton[] ParseAlternatives(string alternativesStr)
         {
             var parts = alternativesStr.Split('>');
-            var from = parts[0];
             var to = parts[1].Split('/');
-            return to.Select((alt, i) => FakeTranslation.Create(from, alt, i)).ToArray();
+            return to.Select((alt, i) => new Grammaton(MockTranslation(alt, i))).ToArray();
         }
 
         private static ushort[]? ParseCode(string codeStr)
@@ -106,51 +106,21 @@ namespace Lingua.Learning.Test
                 : codeStr.Select(c => (ushort)(c - 48)).ToArray();
 
         private static byte[] ParseOrder(string ordersStr)
-            => ordersStr?.Select(c => (byte) (c - 48)).ToArray();
-    }
+            => ordersStr?.Select(c => (byte)(c - 48)).ToArray();
 
-    public class FakeTranslation : ITranslation
-    {
-        public static ITranslation Create(string from, string to, int index)
+        private ITranslation MockTranslation(string to, int index)
         {
             var toParts = to.Split(':');
             var toWord = toParts[0];
             var code = toParts.Length == 1
                 ? (ushort)index
                 : ushort.Parse(toParts[1]);
-            return new FakeTranslation
-            {
-                Input = from,
-                Output = toWord,
-                Code = code,
-                WordCount = (byte)toWord.Split(' ').Length
-        };
-        }
-
-        public string Output { get; private set; }
-        public Token From => new Unclassified();
-        public ushort Code { get; set; }
-        public byte WordCount { get; private set; }
-        public bool IsCapitalized => false;
-        public ITranslation[] Variations { get; set; }
-        public bool IsTranslatedWord => false;
-        public bool IsIncompleteCompound { get; set; }
-        public string? To => null;
-        public Word[] Continuation => new Word[0];
-        public string Input { get; private set; }
-        public ITranslation Capitalize()
-        {
-            throw new NotImplementedException();
-        }
-
-        public bool Matches(IReadOnlyList<Token> tokens, int nextIndex)
-        {
-            throw new NotImplementedException();
-        }
-
-        public ITranslation Decapitalize()
-        {
-            throw new NotImplementedException();
+            var wordCount = (byte)toWord.Split(' ').Length;
+            var mock = new Mock<ITranslation>();
+            mock.Setup(t => t.Output).Returns(toWord);
+            mock.Setup(t => t.Code).Returns(code);
+            mock.Setup(t => t.WordCount).Returns(wordCount);
+            return mock.Object;
         }
     }
 }

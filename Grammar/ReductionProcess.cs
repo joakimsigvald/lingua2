@@ -10,10 +10,10 @@ namespace Lingua.Grammar
     internal class ReductionProcess
     {
         private readonly IEvaluator _evaluator;
-        private readonly ITranslation[][] _possibilities;
+        private readonly IGrammaton[][] _possibilities;
         private readonly TranslationSearchNodeFactory _nodeFactory;
 
-        public ReductionProcess(IEvaluator evaluator, ITranslation[][] possibilities)
+        public ReductionProcess(IEvaluator evaluator, IGrammaton[][] possibilities)
         {
             _evaluator = evaluator;
             _possibilities = possibilities;
@@ -22,16 +22,16 @@ namespace Lingua.Grammar
 
         public ReductionResult Reduce()
         {
-            var translations = new List<ITranslation>();
+            var grammatons = new List<IGrammaton>();
             TranslationSearchNode best;
             TranslationSearchNode? next = CreateTree();
             do
             {
-                translations.Add((best = next!).Translation!);
+                grammatons.Add((best = next!).Grammaton!);
                 next = SelectBestBranch(best);
             }
             while (next != null);
-            return new ReductionResult(translations.ToArray(), best.ReversedCode, best.Score);
+            return new ReductionResult(grammatons.ToArray(), best.ReversedCode, best.Score);
         }
 
         private TranslationSearchNode CreateTree()
@@ -50,7 +50,7 @@ namespace Lingua.Grammar
             return bestChild;
         }
 
-        private TranslationSearchNode CreateChild(TranslationSearchNode parent, ITranslation candidate, byte horizon)
+        private TranslationSearchNode CreateChild(TranslationSearchNode parent, IGrammaton candidate, byte horizon)
         {
             var node = _nodeFactory.Create(parent, candidate);
             node.Score += _evaluator.ScorePatternsEndingWith(node.ReversedCode);

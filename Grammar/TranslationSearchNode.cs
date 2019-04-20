@@ -6,7 +6,7 @@
     {
         public static TranslationSearchNode[] NoChildren = new TranslationSearchNode[0];
 
-        public ITranslation? Translation { get; internal set; }
+        public IGrammaton? Grammaton { get; internal set; }
         public TranslationSearchNode[] Children { get; set; } = NoChildren;
         public byte WordCount { get; internal set; }
         public int Score { get; set; }
