@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 
 namespace Lingua.Vocabulary
 {
@@ -15,5 +16,7 @@ namespace Lingua.Vocabulary
         public string IncompleteCompound { get; }
         public string Modifiers { get; }
         public string Base => Variations.First();
+
+        public Specification[] Synonyms { get; set; }
     }
 }

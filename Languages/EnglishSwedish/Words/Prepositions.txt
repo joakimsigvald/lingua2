@@ -2,6 +2,6 @@ at = på
 by = vid
 in = i
 of = av
-on = på
+on = på,om
 to = till
 with = med

@@ -1,3 +1,4 @@
 fast:er:est = snabbt:_are:_ast
+further = fortsatt
 quickly:_ier:_iest = kvickt:_are:_ast
 not = inte

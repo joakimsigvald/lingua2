@@ -1,5 +1,6 @@
 ﻿achievement-oriented = prestationsorienterad
 alright = okej
+assistant = biträdande
 big::::er:est| = stor:t:a||_2örre:_2örst|a
 black::::er:est| = svart::a||re:ast|e
 blue::::r:st| = blå:tt:a||re:ast|e

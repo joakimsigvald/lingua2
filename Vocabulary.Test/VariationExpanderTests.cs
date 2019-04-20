@@ -1,4 +1,5 @@
-﻿using Xunit;
+﻿using System.Linq;
+using Xunit;
 
 namespace Lingua.Vocabulary.Test
 {
@@ -39,6 +40,15 @@ namespace Lingua.Vocabulary.Test
         {
             var actual = VariationExpander.Expand(pattern);
             Assert.Equal(expected, actual.IncompleteCompound);
+        }
+
+        [Theory]
+        [InlineData("på,om", "på", "om")]
+        public void ExpandSynonyms(string pattern, params string[] expected)
+        {
+            var actual = VariationExpander.Expand(pattern);
+            Assert.Equal(expected.First(), actual.Variations[0]);
+            Assert.Equal(expected, actual.Synonyms.Select(s => s.Variations[0]));
         }
 
         [Theory]

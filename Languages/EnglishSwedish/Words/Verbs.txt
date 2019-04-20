@@ -7,6 +7,7 @@ find 4::s 5!found 4:ing = hitta: 4:r 4:de:t :r:de:t:
 fly 4::_ies 5:_ew 4:ing = flyga: 4:_er 4:_3ög:_4ugit :_er:_3ög:_rugit:
 give 4::s 4!gave:n 4:_ing = ge: 4:r 4!gav:tt :r!gav:tt:
 go 4::es 4!went:ne 4:ing = gå: 4:r 4!gick:tt :r!gick:tt:
+handle 4::s 5:d 4:ing = handlägg:a 4:_er 4:_4ade|_2gt :_er:_4ade|_2gt:a  
 help 4::s 5:ed 4:ing = hjälp:a 4:er 4:te:t :er:te:t:a
 hit 4::s 5: 4:ting = träffa: 4:r 4:de:t :r:de:t:
 kick 4::s 5:ed 4:ing = sparka: 4:r 4:de:t :r:de:t:
@@ -21,7 +22,7 @@ shake 4::s 4:d:n 4:_ing = skaka: 4:r 4:de:t :r:de:t:
 sleep 4::s 5:_2pt 4:ing = sov:a 4:er 4::it :er::it:a
 sit 4::s 5!sat 4:ting = sitt:a 4:er 4!satt!suttit :er!satt!suttit:a
 stand 4::s 5!stood 4:ing = stå: 4:r 4:_od:tt :r:_od:tt:
-take 4::s 5!took 4:_ing = ta: 4:r 4:_og:git :r:_og:git:
+take 4::s 5!took 4:_ing = ta: 4:r 4:_og:git :r:_og:git:,fatta: 4:r 4:de:t :r:de:t:
 write 4::s 4!wrote:_ten 4:ing = skriva: 4:_er 4:_3ev:_it :_er:_3ev:_it: 
 
 //Settings

@@ -9,6 +9,15 @@ namespace Lingua.Vocabulary
     {
         public static Specification Expand(string pattern)
         {
+            var parts = pattern.Split(',');
+            var synonyms = parts.Select(p => ExpandTranslation(p)).ToArray();
+            for (int i = 0; i < synonyms.Length; i++)
+                synonyms[i].Synonyms = synonyms;
+            return synonyms.First();
+        }
+
+        public static Specification ExpandTranslation(string pattern)
+        {
             var parts = pattern.Split('<');
             return Expand(parts[0], parts.Skip(1).FirstOrDefault());
         }
@@ -92,7 +101,7 @@ namespace Lingua.Vocabulary
                         switch (_prevC)
                         {
                             case '_':
-                                _previous = _previous.Substring(0, _previous.Length - (c - 49));
+                                _previous = _previous.Substring(..^(c - 49));
                                 break;
                             case ' ':
                                 break;
@@ -107,7 +116,7 @@ namespace Lingua.Vocabulary
                         InitNextVariation(c);
                     }
                     else if (c == '_')
-                        _previous = _previous.Substring(0, _previous.Length - 1);
+                        _previous = _previous.Substring(..^1);
                     else
                         _current += c;
                     _prevC = c;
@@ -146,7 +155,7 @@ namespace Lingua.Vocabulary
             private string CreateVariation()
             {
                 var retVal = _previous.Trim() + _current.Trim();
-                _stem = _stem ?? retVal;
+                _stem ??= retVal;
                 _current = "";
                 return retVal;
             }
