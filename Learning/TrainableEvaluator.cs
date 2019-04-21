@@ -46,7 +46,7 @@ namespace Lingua.Learning
             var expectedScore = _grammar.Evaluate(failedCase.ExpectedGrammatons).Score;
             var actualScore = failedCase.Score;
             if (expectedScore > actualScore)
-                throw new InvalidProgramException();
+                throw new InvalidProgramException("Score calculation error!");
             return actualScore - expectedScore;
         }
 

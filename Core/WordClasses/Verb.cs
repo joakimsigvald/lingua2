@@ -33,11 +33,21 @@ namespace Lingua.Core.WordClasses
                 case 11:
                     return Modifier.Continuous;
                 case 12:
-                    return Modifier.Past | Modifier.Continuous;
+                    return Modifier.Continuous | Modifier.Past;
                 case 13:
-                    return Modifier.Perfect | Modifier.Continuous;
+                    return Modifier.Continuous | Modifier.Perfect;
                 case 14:
-                    return Modifier.Future | Modifier.Continuous;
+                    return Modifier.Continuous | Modifier.Future;
+                case 15:
+                    return Modifier.Passive;
+                case 16:
+                    return Modifier.Passive | Modifier.Past;
+                case 17:
+                    return Modifier.Passive | Modifier.Perfect;
+                case 18:
+                    return Modifier.Passive | Modifier.Continuous;
+                case 19:
+                    return Modifier.Passive | Modifier.Continuous | Modifier.Plural;
                 default: return Modifier.None;
             }
         }

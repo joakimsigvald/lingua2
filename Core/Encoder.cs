@@ -248,12 +248,14 @@ namespace Lingua.Core
         {
             if (modifiers.HasFlag(Modifier.Plural))
                 yield return 'n';
-            if (modifiers.HasFlag(Modifier.Definite))
+            if (modifiers.HasFlag(Modifier.Definite) && !(element is Verb))
                 yield return 'd';
             if (modifiers.HasFlag(Modifier.Genitive) && !(element is Verb))
                 yield return 'g';
             if (modifiers.HasFlag(Modifier.Neuter) && !(element is Verb))
                 yield return 't';
+            if (modifiers.HasFlag(Modifier.Passive) && element is Verb)
+                yield return 'b';
             if (modifiers.HasFlag(Modifier.Imperitive) && element is Verb)
                 yield return 'i';
             if (modifiers.HasFlag(Modifier.Continuous) && element is Verb)
@@ -294,6 +296,7 @@ namespace Lingua.Core
                 case '2': return Modifier.SecondPerson;
                 case '3': return Modifier.ThirdPerson;
                 case 'a': return Modifier.Adverb;
+                case 'b': return Modifier.Passive;
                 case 'c': return Modifier.Comparative;
                 case 'd': return Modifier.Definite;
                 case 'f': return Modifier.Future;

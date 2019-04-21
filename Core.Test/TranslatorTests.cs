@@ -55,7 +55,7 @@ namespace Lingua.Core.Test
         }
 
         [Trait("Category", "Longrunning")]
-        [Fact]
+        [Fact(Skip = "Regenerate patterns")]
         public void RunTestSuites()
         {
             var success = TestBench.RunTestSuites();
