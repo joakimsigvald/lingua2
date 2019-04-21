@@ -52,10 +52,10 @@ namespace Lingua.Vocabulary
         private static IEnumerable<string> GetVariations(string variationsPattern)
             => new Process(variationsPattern).GetVariations();
 
-        private static string GetIncompleteCompound(string stem, string connector)
+        private static string? GetIncompleteCompound(string stem, string connector)
             => Modify(stem, connector);
 
-        private static string Modify(string stem, string modifier)
+        private static string? Modify(string stem, string modifier)
         {
             if (modifier == null)
                 return null;

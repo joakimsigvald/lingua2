@@ -50,9 +50,10 @@ namespace Lingua.Core
             var completedFrom = ((Word)incompleteCompound.From).Clone();
             var fromCompletion = (Word)completion.From;
             completedFrom.Modifiers = fromCompletion.Modifiers;
-            return new Translation(completedFrom, incompleteCompound.To + completion.To, completion.Continuation.Prepend((Word)completion.From).ToArray())
+            return new Translation(completedFrom, incompleteCompound.To + completion.To.ToLower(), completion.Continuation.Prepend((Word)completion.From).ToArray())
             {
-                IsIncompleteCompound = completion.IsIncompleteCompound
+                IsIncompleteCompound = completion.IsIncompleteCompound,
+                IsCapitalized = incompleteCompound.IsCapitalized
             };
         }
     }

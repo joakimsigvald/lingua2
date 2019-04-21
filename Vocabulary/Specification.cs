@@ -4,7 +4,7 @@ namespace Lingua.Vocabulary
 {
     public class Specification
     {
-        public Specification(string[] variations, string incompleteCompound, string modifiers)
+        public Specification(string[] variations, string? incompleteCompound, string modifiers)
         {
             Variations = variations;
             IncompleteCompound = incompleteCompound;
@@ -12,7 +12,7 @@ namespace Lingua.Vocabulary
         }
 
         public string[] Variations { get; }
-        public string IncompleteCompound { get; }
+        public string? IncompleteCompound { get; }
         public string Modifiers { get; }
         public string Base => Variations.First();
 

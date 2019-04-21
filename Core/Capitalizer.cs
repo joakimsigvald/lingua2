@@ -1,100 +1,88 @@
-﻿using System.Collections.Generic;
+﻿using Lingua.Core.Tokens;
+using Lingua.Core.WordClasses;
+using System.Collections.Generic;
 using System.Linq;
-using Lingua.Core.Extensions;
-using Lingua.Core.Tokens;
 
 namespace Lingua.Core
 {
     public class Capitalizer : ICapitalizer
     {
-        public IEnumerable<ITranslation> Capitalize(IList<ITranslation> arrangedTranslations,
-            IList<ITranslation> allTranslations)
+        public IEnumerable<ITranslation> Capitalize(
+            ITranslation[] arrangedTranslations,
+            ITranslation[] allTranslations)
         {
-            var recapitalized = new Recapitalizer(allTranslations).Recapitalize(arrangedTranslations);
-            return SentenceCapitalizer.Capitalize(recapitalized);
+            var sentences = GetSentences(arrangedTranslations, allTranslations);
+            return sentences.SelectMany(s => new CapitalizationProcess(s).Capitalize());
         }
 
-        private class Recapitalizer
+        private IEnumerable<Sentence> GetSentences(ITranslation[] arrangedTranslations, ITranslation[] allTranslations)
         {
-            private readonly List<ITranslation> _uncheckedTranslationsOriginalOrder;
-
-            public Recapitalizer(IEnumerable<ITranslation> allTranslations)
-                => _uncheckedTranslationsOriginalOrder = allTranslations.ToList();
-
-            public IEnumerable<ITranslation> Recapitalize(IEnumerable<ITranslation> arrangedTranslations)
-                => arrangedTranslations
-                    .Where(t => !string.IsNullOrEmpty(t.Output))
-                    .Select(Recapitalize);
-
-            private ITranslation Recapitalize(ITranslation translation)
+            if (!arrangedTranslations.Any())
+                yield break;
+            var remaining = allTranslations.ToList();
+            var next = new List<ITranslation>();
+            var nextIsCapitalized = IsCapitalized(remaining[0]);
+            foreach (var t in arrangedTranslations.Where(t => !string.IsNullOrEmpty(t.Output)))
             {
-                var originalIndex = _uncheckedTranslationsOriginalOrder.IndexOf(translation);
-                if (originalIndex >= 0)
-                    _uncheckedTranslationsOriginalOrder.RemoveAt(originalIndex);
-                return Recapitalize(originalIndex, translation);
-            }
-
-            private ITranslation Recapitalize(int originalIndex, ITranslation translation)
-                => !translation.IsCapitalized
-                    ? PromoteCapitalization(translation, originalIndex)
-                    : originalIndex < 0
-                        ? translation.Decapitalize()
-                        : translation;
-
-            private ITranslation PromoteCapitalization(ITranslation tran,
-                int index)
-            {
-                for (var i = 0; i < index; i++)
+                next.Add(t);
+                var startOfNextSentence = remaining.IndexOf(t);
+                remaining.RemoveAt(startOfNextSentence);
+                if (IsEndOfSentence(t))
                 {
-                    var other = _uncheckedTranslationsOriginalOrder[i];
-                    _uncheckedTranslationsOriginalOrder.RemoveAt(i);
-                    if (other.IsCapitalized)
-                        return tran.Capitalize();
+                    yield return new Sentence(nextIsCapitalized ?? true, next.ToArray());
+                    next = new List<ITranslation>();
+                    if (remaining.Count == startOfNextSentence)
+                        yield break;
+                    nextIsCapitalized = IsCapitalized(remaining[startOfNextSentence]);
                 }
-                return tran;
             }
+            if (next.Any())
+                yield return new Sentence(nextIsCapitalized ?? false, next.ToArray());
         }
 
-        private static class SentenceCapitalizer
+        private bool? IsCapitalized(ITranslation t)
+            => t.IsCapitalized ? true
+            : char.IsUpper(t.Input.FirstOrDefault()) ? (bool?)null : false;
+
+        private bool IsEndOfSentence(ITranslation t) => t.From is Terminator || t.From is Ellipsis;
+    }
+
+    public class Sentence
+    {
+        public Sentence(bool isCapitalized, ITranslation[] translations)
         {
-            public static IEnumerable<ITranslation> Capitalize(IEnumerable<ITranslation> translations)
-                => SeparateSentences(translations)
-                .Where(s => s.Any())
-                .SelectMany(HandleSequence);
-
-            private static IEnumerable<IList<ITranslation>> SeparateSentences(IEnumerable<ITranslation> translations)
-            {
-                var nextSequence = new List<ITranslation>();
-                foreach (var translation in translations)
-                {
-                    nextSequence.Add(translation);
-                    if (!IsEndOfSentence(translation.From)) continue;
-                    yield return nextSequence;
-                    nextSequence = new List<ITranslation>();
-                }
-                yield return nextSequence;
-            }
-
-            private static IEnumerable<ITranslation> HandleSequence(IList<ITranslation> sequence) 
-                => IsProperSentence(sequence) 
-                ? CapitalizeStartOfSentence(sequence) 
-                : sequence;
-
-            private static IEnumerable<ITranslation> CapitalizeStartOfSentence(IList<ITranslation> sequence)
-            {
-                var leadingSymbols = sequence.TakeWhile(t => !(t.From is Element)).ToArray();
-                var sentence = sequence.Skip(leadingSymbols.Length).ToArray();
-                var firstWord = sentence.First();
-                return firstWord.IsCapitalized
-                    ? sequence
-                    : leadingSymbols.Concat(sentence.Skip(1).Prepend(firstWord.Capitalize()));
-            }
-
-            private static bool IsProperSentence(IList<ITranslation> translations)
-                => translations.First().From.Value.IsCapitalized() && IsEndOfSentence(translations.Last().From);
-
-            private static bool IsEndOfSentence(Token token)
-                => token is Terminator || token is Ellipsis;
+            IsCapitalized = isCapitalized;
+            Translations = translations;
         }
+
+        public bool IsCapitalized { get; } 
+        public ITranslation[] Translations { get; }
+    }
+
+    public class CapitalizationProcess
+    {
+        private readonly Sentence _sentence;
+
+        public CapitalizationProcess(Sentence sentence) => _sentence = sentence;
+
+        public IEnumerable<ITranslation> Capitalize()
+        {
+            var decapitalized = _sentence.Translations.Select(
+                t => IsName(t)
+                ? GetCapitalized(t)
+                : GetDecapitalized(t));
+            return _sentence.IsCapitalized
+                ? decapitalized.Skip(1).Prepend(decapitalized.First().Capitalize())
+                : decapitalized;
+        }
+
+        private ITranslation GetDecapitalized(ITranslation t)
+            => t.IsCapitalized ? t.Decapitalize() : t;
+
+        private ITranslation GetCapitalized(ITranslation t)
+            => t.IsCapitalized ? t : t.Capitalize();
+
+        private bool IsName(ITranslation t)
+            => t.From is Unclassified && t.IsCapitalized;
     }
 }

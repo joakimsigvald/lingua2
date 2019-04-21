@@ -47,6 +47,8 @@ namespace Lingua.Learning.Test
         [InlineData("The cat caught a rat", "Katten fångade en råtta")]
         [InlineData("He runs. I run.", "Han springer. Jag springer.")]
         [InlineData("The cat found an apple and ate it", "Katten hittade ett äpple och åt det")]
+        [InlineData("the assistant university director", "biträdande universitetsdirektören")]
+        [InlineData("the Assistant University Director", "biträdande universitetsdirektören")]
         public void Test(string from, string expected)
         {
             var trainer = new Trainer();

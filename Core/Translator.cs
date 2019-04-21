@@ -51,7 +51,7 @@ namespace Lingua.Core
         public TranslationResult Arrange(IList<IGrammaton[]> possibilities, ReductionResult reduction)
         {
             var selectedTranslations = SelectSynonyms(reduction);
-            var arrangedTranslations = _arranger.Arrange(selectedTranslations).ToList();
+            var arrangedTranslations = _arranger.Arrange(selectedTranslations).ToArray();
             var translation = Trim(arrangedTranslations, selectedTranslations);
             return new TranslationResult(translation, reduction, selectedTranslations, possibilities);
         }
@@ -69,7 +69,7 @@ namespace Lingua.Core
         private ITranslation[] SelectSynonyms(ReductionResult reduction)
             => reduction.Grammatons.Select(g => g.Translations[0]).ToArray();
 
-        private string Trim(IList<ITranslation> arrangedTranslations, IList<ITranslation> translations)
+        private string Trim(ITranslation[] arrangedTranslations, ITranslation[] translations)
         {
             var capitalized = _capitalizer.Capitalize(arrangedTranslations, translations);
             var respacedResult = Respace(capitalized).ToArray();

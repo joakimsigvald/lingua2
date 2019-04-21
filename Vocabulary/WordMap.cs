@@ -79,7 +79,7 @@ namespace Lingua.Vocabulary
 
         private static ITranslation CreateIncompleteCompoundTranslation(Specification from, Specification to)
         {
-            var incompleteCompound = CreateTranslation(from.Base, to.IncompleteCompound, from.Modifiers);
+            var incompleteCompound = CreateTranslation(from.Base, to.IncompleteCompound!, from.Modifiers);
             incompleteCompound.IsIncompleteCompound = true;
             return incompleteCompound;
         }

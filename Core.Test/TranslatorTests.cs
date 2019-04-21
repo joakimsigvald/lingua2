@@ -39,6 +39,7 @@ namespace Lingua.Core.Test
         [Theory]
         [InlineData("|Joakim's| /=> |Joakims|")]
         [InlineData("|I am here| /=> |jag är här|")]
+        [InlineData("|I am here.| /=> |Jag är här.|")]
         [InlineData("|Bouncing ball to play with| /=> |Studsboll att leka med|")]
         [InlineData("|It is my pen| /=> |Det är min penna|")]
         [InlineData("|I am painting the wall| /=> |jag målar väggen|")]

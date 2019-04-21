@@ -38,13 +38,16 @@ namespace Lingua.Core
         public ITranslation Capitalize()
             => new Translation(From.Capitalize(), To!.Capitalize(), Continuation)
             {
-                IsCapitalized = true
+                IsCapitalized = true,
+                IsIncompleteCompound = IsIncompleteCompound
             };
 
         public ITranslation Decapitalize()
-            => new Translation(From.Decapitalize(), To!.Decapitalize(), Continuation);
+            => new Translation(From.Decapitalize(), To!.Decapitalize(), Continuation) {
+                IsIncompleteCompound = IsIncompleteCompound
+            };
 
-        public bool IsCapitalized { get; private set; }
+        public bool IsCapitalized { get; set; }
         public string Input => From.Value;
         public string Output => To ?? Input;
         public bool IsIncompleteCompound { get; set; }
