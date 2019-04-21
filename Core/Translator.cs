@@ -11,6 +11,7 @@ namespace Lingua.Core
         private readonly IThesaurus _thesaurus;
         private readonly IGrammar _grammar;
         private readonly IArranger _arranger;
+        private readonly ISynonymResolver _synonymResolver;
         private readonly ICapitalizer _capitalizer;
         private readonly TokenGenerator _tokenGenerator;
 
@@ -19,11 +20,13 @@ namespace Lingua.Core
             IThesaurus thesaurus, 
             IGrammar grammar,
             IArranger arranger,
+            ISynonymResolver synonymResolver,
             ICapitalizer capitalizer)
         {
             _thesaurus = thesaurus;
             _grammar = grammar;
             _arranger = arranger;
+            _synonymResolver = synonymResolver;
             _tokenGenerator = new TokenGenerator(tokenizer);
             _capitalizer = capitalizer;
         }
@@ -67,7 +70,12 @@ namespace Lingua.Core
             => Arrange(possibilities, _grammar.Reduce(possibilities));
 
         private ITranslation[] SelectSynonyms(ReductionResult reduction)
-            => reduction.Grammatons.Select(g => g.Translations[0]).ToArray();
+        {
+            var retVal = new List<ITranslation>();
+            foreach (var grammaton in reduction.Grammatons)
+                retVal.Add(_synonymResolver.Resolve(grammaton, retVal));
+            return retVal.ToArray();
+        }
 
         private string Trim(ITranslation[] arrangedTranslations, ITranslation[] translations)
         {

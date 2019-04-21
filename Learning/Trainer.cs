@@ -38,7 +38,7 @@ namespace Lingua.Learning
         }
 
         private Translator CreateTranslator() 
-            => new Translator(new Tokenizer(), new Thesaurus(), new GrammarEngine(_evaluator), _arranger, new Capitalizer());
+            => new Translator(new Tokenizer(), new Thesaurus(), new GrammarEngine(_evaluator), _arranger, new SynonymResolver(), new Capitalizer());
 
         private TestSessionResult VerifyPatterns(IList<TestCase> testCases)
         {

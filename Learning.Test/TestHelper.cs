@@ -35,7 +35,7 @@ namespace Lingua.Learning.Test
             var arranger = new Rearranger();
             var grammar = new GrammarEngine(evaluator);
             var capitalizer = new Capitalizer();
-            return new Translator(Tokenizer, thesaurus, grammar, arranger, capitalizer);
+            return new Translator(Tokenizer, thesaurus, grammar, arranger, new SynonymResolver(), capitalizer);
         }
 
         private static TestRunner CreateTestRunner()

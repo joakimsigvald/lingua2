@@ -23,7 +23,7 @@ namespace Lingua.Core.Test
             => new TestBench(new TestRunner(new FullTextTranslator(Translator)), new TestReporter());
 
         private static Translator CreateTranslator() 
-            => new Translator(new Tokenizer(), new Thesaurus(), new GrammarEngine(Evaluator), Arranger, new Capitalizer());
+            => new Translator(new Tokenizer(), new Thesaurus(), new GrammarEngine(Evaluator), Arranger, new SynonymResolver(), new Capitalizer());
 
         private static IArranger GetArranger()
         {
@@ -76,17 +76,6 @@ namespace Lingua.Core.Test
         {
             var result = TestBench.RunTestCase(new TestCase(from, to) {Suite = "Single"});
             Assert.True(result.Success, $"Expected \"{result.Expected}\" but was \"{result.Actual}\"");
-        }
-
-        private static void Output(IReason reason)
-            => reason.Evaluations.ForEach(Output);
-
-        private static void Output(IEvaluation evaluation)
-        {
-            var symbols = evaluation.Patterns
-                .Select(Encoder.Decode)
-                .Select(Encoder.Serialize);
-            Console.WriteLine($"{string.Join(", ", symbols)}:{evaluation.Score}");
         }
     }
 

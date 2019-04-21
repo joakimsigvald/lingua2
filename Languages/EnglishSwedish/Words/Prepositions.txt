@@ -1,5 +1,5 @@
 at = på
-by = vid
+by = vid,av
 in = i
 of = av
 on = på,om

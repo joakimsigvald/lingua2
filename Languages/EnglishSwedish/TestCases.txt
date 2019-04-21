@@ -199,5 +199,5 @@
 "Flight 115 to Albuquerque, New Mexico.", "Flight 115 till Albuquerque, New Mexico."
 "the assistant university director", "biträdande universitetsdirektören"
 "the Assistant University Director", "biträdande universitetsdirektören"
-//"Decisions on further handling of cases are taken by the Assistant University Director.", "Beslut om fortsatt handläggning fattas av biträdande universitetsdirektören."
+"Decisions on further handling of cases are taken by the Assistant University Director.", "Beslut om fortsatt handläggning fattas av biträdande universitetsdirektören."
 
