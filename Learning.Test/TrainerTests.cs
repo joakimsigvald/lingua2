@@ -53,6 +53,7 @@ namespace Lingua.Learning.Test
         [InlineData("Albrecht's Gold", "Albrekts Guld")]
         [InlineData("Camilla currently works as an assistant on the product department at Albrecht's Gold.", "Camilla arbetar idag som assistent på produktavdelningen på Albrekts Guld.")]
         [InlineData("Despite this his assistant, or secretary, voted here with Mr Becali's MEP card.", "Trots detta röstade hans assistent, eller sekreterare, här med herr Becalis ledamotskort.")]
+        [InlineData("When he was my assistant, he was a very good policeman... with a bright future.", "När han var min assistent var han en bra polis... med en ljus framtid.")]
         public void Test(string from, string expected)
         {
             var trainer = new Trainer();

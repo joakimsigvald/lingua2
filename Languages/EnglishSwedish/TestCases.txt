@@ -202,4 +202,5 @@
 "Decisions on further handling of cases are taken by the Assistant University Director.", "Beslut om fortsatt handläggning fattas av biträdande universitetsdirektören."
 "Camilla currently works as an assistant on the product department at Albrecht's Gold.", "Camilla arbetar idag som assistent på produktavdelningen på Albrekts Guld."
 "Despite this his assistant, or secretary, voted here with Mr Becali's MEP card.", "Trots detta röstade hans assistent, eller sekreterare, här med herr Becalis ledamotskort."
+"When he was my assistant, he was a very good policeman... with a bright future.", "När han var min assistent var han en bra polis... med en ljus framtid."
 
