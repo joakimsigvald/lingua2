@@ -200,4 +200,5 @@
 "the assistant university director", "biträdande universitetsdirektören"
 "the Assistant University Director", "biträdande universitetsdirektören"
 "Decisions on further handling of cases are taken by the Assistant University Director.", "Beslut om fortsatt handläggning fattas av biträdande universitetsdirektören."
+"Camilla currently works as an assistant on the product department at Albrecht's Gold.", "Camilla arbetar idag som assistent på produktavdelningen på Albrekts Guld."
 

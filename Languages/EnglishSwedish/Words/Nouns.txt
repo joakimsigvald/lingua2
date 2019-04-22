@@ -20,6 +20,7 @@ dot::s| = prick:en:_ar|na
 foot::_3eet| = fot:en:__ötter|na
 error::s| = fel:et:er:en
 essay::s| = uppsats:en:er|na
+gold = guld
 hall::s| = hall:en:ar|na
 hand::s| = hand:en:_3änder|na
 handling of cases = handläggning

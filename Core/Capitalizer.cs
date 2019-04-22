@@ -67,14 +67,17 @@ namespace Lingua.Core
 
         public IEnumerable<ITranslation> Capitalize()
         {
-            var decapitalized = _sentence.Translations.Select(
-                t => IsName(t)
-                ? GetCapitalized(t)
-                : GetDecapitalized(t));
+            var decapitalized = Recapitalize(_sentence.Translations);
             return _sentence.IsCapitalized
                 ? decapitalized.Skip(1).Prepend(decapitalized.First().Capitalize())
                 : decapitalized;
         }
+
+        public IEnumerable<ITranslation> Recapitalize(ITranslation[] translations)
+            => translations.Select(
+                (t, i) => IsName(t, translations[..i])
+                ? GetCapitalized(t)
+                : GetDecapitalized(t));
 
         private ITranslation GetDecapitalized(ITranslation t)
             => t.IsCapitalized ? t.Decapitalize() : t;
@@ -82,7 +85,13 @@ namespace Lingua.Core
         private ITranslation GetCapitalized(ITranslation t)
             => t.IsCapitalized ? t : t.Capitalize();
 
-        private bool IsName(ITranslation t)
-            => t.From is Unclassified && t.IsCapitalized;
+        private bool IsName(ITranslation t, ITranslation[] previous)
+            => IsNamedEntity(t) || IsNamedNoun(t, previous);
+
+        private bool IsNamedEntity(ITranslation t)
+            => t.From is Name || t.From is Unclassified && t.IsCapitalized;
+
+        private bool IsNamedNoun(ITranslation t, ITranslation[] previous)
+            => previous.Any() && IsNamedEntity(previous[^1]) && t.From is Noun && t.IsCapitalized;
     }
 }
