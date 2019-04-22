@@ -58,7 +58,7 @@ namespace Lingua.Vocabulary
         private IEnumerable<ITranslation> CreateTranslations(Specification from, Specification to)
         {
             var baseTranslations = from.Variations
-                .Select((key, i) => CreateTranslation(key, to.Variations[i], from.Modifiers, i))
+                .Select((key, i) => CreateTranslation(key, to.GetVariation(i), from.Modifiers, i))
                 .ToList();
             var allTranslations = baseTranslations.Concat(ApplyRules(baseTranslations)).ToList();
             allTranslations[0].Variations = allTranslations.ToArray();

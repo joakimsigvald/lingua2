@@ -14,7 +14,7 @@ namespace Lingua.Grammar
 
         public int Length => Arrangement.Length;
 
-        public (ITranslation[] arrangement, int length) Arrange(ITranslation[] segment)
+        public (ITranslation[]? arrangement, int length) Arrange(ITranslation[] segment)
         {
             var tokens = segment.Select(t => t.From).ToArray();
             var codedSegment = Encoder.Encode(tokens).ToArray();

@@ -32,23 +32,23 @@ namespace Lingua.Grammar
             Arrangers.Remove(arranger);
         }
 
-        private IEnumerable<IEnumerable<ITranslation>> DoArrange(ICollection<ITranslation> translations)
+        private IEnumerable<IEnumerable<ITranslation>> DoArrange(ITranslation[] translations)
         {
-            for (var i = 0; i < translations.Count;)
+            for (var i = 0; i < translations.Length;)
             {
-                var remaining = translations.Skip(i).ToArray();
+                var remaining = translations[i..];
                 (var arrangedSegment, var length) = ArrangeSegment(remaining);
                 i += Math.Max(1, length);
                 yield return arrangedSegment ?? remaining.Take(1);
             }
         }
 
-        private (ITranslation[] arrangement, int length) ArrangeSegment(IList<ITranslation> remainingTranslations)
+        private (ITranslation[] arrangement, int length) ArrangeSegment(ITranslation[] remainingTranslations)
             => Arrangers
                 .Select(arranger => Arrange(arranger, remainingTranslations))
                 .FirstOrDefault(result => result.arrangement != null);
 
-        private static (ITranslation[] arrangement, int length) Arrange(Arranger arr, IEnumerable<ITranslation> remainingTranslations)
+        private static (ITranslation[]? arrangement, int length) Arrange(Arranger arr, IEnumerable<ITranslation> remainingTranslations)
         {
             var segment = remainingTranslations
                 .Take(arr.Length)

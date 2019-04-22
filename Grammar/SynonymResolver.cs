@@ -21,6 +21,7 @@ namespace Lingua.Grammar
                 case "om": return previousWords.Any(w => w == "beslut");
                 case "fattas": return previousWords.Any(w => w == "handläggning");
                 case "av": return previousWords.Any(w => w == "fattas");
+                case "detta": return previousWords.Any(w => w == "trots");
                 default: return false;
             }
         }

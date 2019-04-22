@@ -43,7 +43,7 @@ namespace Lingua.Learning
             if (!suborder.IsSegmentOf(order))
                 return null;
             var subCode = code.Skip(startIindex).Take(length).ToArray();
-            return subCode.All(Encoder.IsElement)
+            return subCode.All(Encoder.IsElementOrSeparator)
                 ? new Arrangement(
                     subCode,
                     suborder.Select(o => (byte)(o - startIindex)).ToArray())

@@ -17,5 +17,8 @@ namespace Lingua.Vocabulary
         public string Base => Variations.First();
 
         public Specification[] Synonyms { get; set; }
+
+        public string GetVariation(int index)
+            => Variations[index % Variations.Length];
     }
 }

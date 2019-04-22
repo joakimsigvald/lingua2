@@ -338,7 +338,7 @@ namespace Lingua.Core
         public static ushort GetClassCode(ushort code)
             => (ushort)(code >> ModifierCount);
 
-        public static bool IsElement(ushort code)
-            => code >= Number.Code;
+        public static bool IsElementOrSeparator(ushort code)
+            => code >= Separator.Code;
     }
 }

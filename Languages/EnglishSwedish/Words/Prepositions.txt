@@ -1,6 +1,7 @@
 as = som
 at = på
 by = vid,av
+despite = trots
 in = i
 of = av
 on = på,om

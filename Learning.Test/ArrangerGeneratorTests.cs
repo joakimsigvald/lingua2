@@ -9,6 +9,7 @@ namespace Lingua.Learning.Test
     {
         [Theory]
         [InlineData("V:1")]
+        [InlineData("VN:12")]
         [InlineData("VN:21", "VN:21")]
         [InlineData("VNA:132", "NA:21", "VNA:132")]
         [InlineData("VNAX:1324", "NA:21", "VNA:132", "NAX:213", "VNAX:1324")]

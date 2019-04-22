@@ -26,6 +26,7 @@ namespace Lingua.Learning.Test
         }
 
         [Theory]
+        /*
         [InlineData("I will run", "jag ska springa")]
         [InlineData("I have run", "jag har sprungit")]
         [InlineData("Are you painting?", "Målar du?")]
@@ -52,6 +53,8 @@ namespace Lingua.Learning.Test
         [InlineData("Decisions on further handling of cases are taken by the Assistant University Director.", "Beslut om fortsatt handläggning fattas av biträdande universitetsdirektören.")]
         [InlineData("Albrecht's Gold", "Albrekts Guld")]
         [InlineData("Camilla currently works as an assistant on the product department at Albrecht's Gold.", "Camilla arbetar idag som assistent på produktavdelningen på Albrekts Guld.")]
+        */
+        [InlineData("Despite this his assistant, or secretary, voted here with Mr Becali's MEP card.", "Trots detta röstade hans assistent, eller sekreterare, här med herr Becalis ledamotskort.")]
         public void Test(string from, string expected)
         {
             var trainer = new Trainer();
