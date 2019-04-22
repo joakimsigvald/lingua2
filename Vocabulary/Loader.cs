@@ -20,6 +20,7 @@ namespace Lingua.Vocabulary
                 rules,
                 Load<Abbreviation>(rules),
                 Load<Quantifier>(rules),
+                Load<Name>(rules),
                 Load<Noun>(rules),
                 Load<Article>(rules),
                 Load<Preposition>(rules),

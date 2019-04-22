@@ -1,4 +1,5 @@
 back = tillbaka
+currently = idag
 here = här
 home = hem
 outside = utanför

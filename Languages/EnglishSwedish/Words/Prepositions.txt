@@ -1,3 +1,4 @@
+as = som
 at = på
 by = vid,av
 in = i

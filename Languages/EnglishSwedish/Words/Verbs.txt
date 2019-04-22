@@ -24,6 +24,7 @@ sit 4::s 5!sat 4:ting = sitt:a 4:er 4!satt!suttit :er!satt!suttit:a
 stand 4::s 5!stood 4:ing = stå: 4:r 4:_od:tt :r:_od:tt:
 take 4::s 5!took 4:_ing 5:n = ta: 4:r 4:_og:git :r:_og:git: :s:_ogs:gits:get:gna,fatta: 4:r 4:de:t :r:de:t: :s:des:ts:t:de
 write 4::s 4!wrote:_ten 4:ing = skriva: 4:_er 4:_3ev:_it :_er:_3ev:_it: 
+work 4::s 5:ed 4:ing = arbeta: 4:r 4:de:t :r:de:t: 
 
 //Settings
 BaseForm = 1

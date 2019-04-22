@@ -50,7 +50,7 @@ namespace Lingua.Learning.Test
         [InlineData("the assistant university director", "biträdande universitetsdirektören")]
         [InlineData("the Assistant University Director", "biträdande universitetsdirektören")]
         [InlineData("Decisions on further handling of cases are taken by the Assistant University Director.", "Beslut om fortsatt handläggning fattas av biträdande universitetsdirektören.")]
-        [InlineData("Albrecht's Gold", "Albrechts Guld")]
+        [InlineData("Albrecht's Gold", "Albrekts Guld")]
         public void Test(string from, string expected)
         {
             var trainer = new Trainer();
