@@ -4,6 +4,6 @@ namespace Lingua.Core
 {
     public interface ISynonymResolver
     {
-        ITranslation Resolve(IGrammaton subject, IEnumerable<ITranslation> previous);
+        ITranslation Resolve(ITranslation[] candidates, IEnumerable<ITranslation> preceeding, IEnumerable<ITranslation> next);
     }
 }

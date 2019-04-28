@@ -19,6 +19,8 @@ namespace Lingua.Grammar
 
         private Arrangement(string pattern, ushort[] code, byte[] order)
         {
+            if (order.Length > order.Distinct().Count())
+                throw new InvalidProgramException("Invalid order, cannot repeate word");
             Pattern = pattern;
             Code = code;
             Order = order;

@@ -4,6 +4,6 @@ namespace Lingua.Core
 {
     public interface IArranger
     {
-        ITranslation[] Arrange(IEnumerable<ITranslation> translations);
+        IGrammaton[] Arrange(IEnumerable<IGrammaton> grammatons);
     }
 }

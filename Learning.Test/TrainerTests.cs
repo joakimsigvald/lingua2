@@ -1,4 +1,5 @@
-﻿using Xunit;
+﻿using System.Linq;
+using Xunit;
 
 namespace Lingua.Learning.Test
 {
@@ -16,7 +17,7 @@ namespace Lingua.Learning.Test
         }
 
         [Trait("Category", "Longrunning")]
-        [Fact(Skip="Saves generated patterns to file on success")]
+        [Fact(Skip = "Saves generated patterns to file on success")]
         public void GenerateAndStorePatterns()
         {
             var trainer = new Trainer();
@@ -54,11 +55,33 @@ namespace Lingua.Learning.Test
         [InlineData("Camilla currently works as an assistant on the product department at Albrecht's Gold.", "Camilla arbetar idag som assistent på produktavdelningen på Albrekts Guld.")]
         [InlineData("Despite this his assistant, or secretary, voted here with Mr Becali's MEP card.", "Trots detta röstade hans assistent, eller sekreterare, här med herr Becalis ledamotskort.")]
         [InlineData("When he was my assistant, he was a very good policeman... with a bright future.", "När han var min assistent var han en bra polis... med en ljus framtid.")]
+        [InlineData("As regards the delegation, the delegate has been appointed, as has the assistant delegate.", "Vad gäller delegationen är representanten utsedd, liksom den biträdande representanten.")]
         public void Test(string from, string expected)
         {
             var trainer = new Trainer();
             var testCase = new TestCase(from, expected);
             var res = trainer.RunTrainingSession(testCase);
+            Assert.True(res.FailedCase?.Success ?? true, $"Failed on {res.SuccessCount + 1}th case");
+        }
+
+        [Theory]
+        [InlineData(
+            "a red ball=>en röd boll",
+            "This yellow cheese is old=>Den här gula osten är gammal")]
+        [InlineData(
+            "a red ball=>en röd boll",
+            "The red ball=>Den röda bollen",
+            "I have run=>jag har sprungit",
+            "Decisions on further handling of cases are taken by the Assistant University Director.=>Beslut om fortsatt handläggning fattas av biträdande universitetsdirektören.",
+            "As regards the delegation, the delegate has been appointed, as has the assistant delegate.=>Vad gäller delegationen är representanten utsedd, liksom den biträdande representanten.")]
+        public void TestMany(params string[] examples)
+        {
+            var testCases = examples
+                .Select(ex => ex.Split("=>"))
+                .Select(p => new TestCase(p[0], p[1]))
+                .ToArray();
+            var trainer = new Trainer();
+            var res = trainer.RunTrainingSession(testCases);
             Assert.True(res.FailedCase?.Success ?? true, $"Failed on {res.SuccessCount + 1}th case");
         }
 

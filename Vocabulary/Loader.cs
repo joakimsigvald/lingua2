@@ -26,6 +26,7 @@ namespace Lingua.Vocabulary
                 Load<Preposition>(rules),
                 Load<Pronoun>(rules),
                 Load<Adjective>(rules),
+                Load<Participle>(rules),
                 Load<Auxiliary>(rules),
                 Load<Verb>(rules),
                 Load<AdverbQualifying>(rules),
@@ -54,9 +55,9 @@ namespace Lingua.Vocabulary
                 .SkipWhile(line => line != "//Settings")
                 .ToArray();
             var applicableRules = rules.Where(rule => rule.AppliesTo(typeof(TWord)));
-            var settings = ParseSettings(settingsLines);
+            var (baseForm, _) = ParseSettings(settingsLines);
             var words = ParseWords(wordLines);
-            return new WordMap<TWord>(words, applicableRules.ToList(), settings.baseForm);
+            return new WordMap<TWord>(words, applicableRules.ToList(), baseForm);
         }
 
         private static (int baseForm, int placeholder) ParseSettings(IEnumerable<string> settingsLines)

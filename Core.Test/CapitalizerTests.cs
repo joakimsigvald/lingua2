@@ -36,10 +36,15 @@ namespace Lingua.Core.Test
             0, 1, 2, 3, 4, 5, 6, 7, 8, 9)]
         public void Test(string[] expected, string[] allTranslations, params int[] order)
         {
-            var all = allTranslations.Select(CreateTranslation).ToArray();
-            var arranged = order.Any() ? order.Select(i => all[i]).ToArray() : all;
+            var translations = allTranslations
+                .Select(CreateTranslation)
+                .ToArray();
+            var original = translations
+                .Select(t => new Grammaton(t))
+                .ToArray();
+            var arranged = order.Any() ? order.Select(i => translations[i]).ToArray() : translations;
             var capitalizer = new Capitalizer();
-            var actual = capitalizer.Capitalize(arranged, all).Select(t => t.Output).ToArray();
+            var actual = capitalizer.Capitalize(arranged, original).Select(t => t.Output).ToArray();
             Assert.Equal(expected, actual);
         }
 

@@ -14,10 +14,9 @@ namespace Lingua.Grammar
 
         public int Length => Arrangement.Length;
 
-        public (ITranslation[]? arrangement, int length) Arrange(ITranslation[] segment)
+        public (IGrammaton[]? arrangement, int length) Arrange(IGrammaton[] segment)
         {
-            var tokens = segment.Select(t => t.From).ToArray();
-            var codedSegment = Encoder.Encode(tokens).ToArray();
+            var codedSegment = segment.Select(t => t.Code).ToArray();
             return !Encoder.Matches(codedSegment, Arrangement.Code) 
                 ? (null, 1) 
                 : (Rearrange(segment).ToArray(), Arrangement.Length);
@@ -26,7 +25,7 @@ namespace Lingua.Grammar
         public override string ToString()
             => Arrangement.ToString();
 
-        private IEnumerable<ITranslation> Rearrange(IList<ITranslation> segment)
+        private IEnumerable<IGrammaton> Rearrange(IList<IGrammaton> segment)
             => Arrangement.Order.Select(i => segment[i]);
     }
 }

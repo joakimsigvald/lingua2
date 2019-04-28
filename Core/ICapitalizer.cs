@@ -4,6 +4,6 @@ namespace Lingua.Core
 {
     public interface ICapitalizer
     {
-        IEnumerable<ITranslation> Capitalize(ITranslation[] arrangedTranslations, ITranslation[] allTranslations);
+        IEnumerable<ITranslation> Capitalize(ITranslation[] arrangedTranslations, IGrammaton[] original);
     }
 }

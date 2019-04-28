@@ -53,10 +53,11 @@ namespace Lingua.Core
 
         public TranslationResult Arrange(IList<IGrammaton[]> possibilities, ReductionResult reduction)
         {
-            var selectedTranslations = SelectSynonyms(reduction);
-            var arrangedTranslations = _arranger.Arrange(selectedTranslations).ToArray();
-            var translation = Trim(arrangedTranslations, selectedTranslations);
-            return new TranslationResult(translation, reduction, selectedTranslations, possibilities);
+            var arrangement = _arranger.Arrange(reduction.Grammatons).ToArray();
+            var translations = SelectSynonyms(arrangement);
+            var capitalized = _capitalizer.Capitalize(translations, reduction.Grammatons);
+            var translation = Trim(capitalized);
+            return new TranslationResult(translation, possibilities, reduction, arrangement, translations);
         }
 
         private static void SetCodes(IEnumerable<ITranslation[]> possibilities)
@@ -69,20 +70,18 @@ namespace Lingua.Core
         private TranslationResult Compose(IList<IGrammaton[]> possibilities)
             => Arrange(possibilities, _grammar.Reduce(possibilities));
 
-        private ITranslation[] SelectSynonyms(ReductionResult reduction)
+        private ITranslation[] SelectSynonyms(IGrammaton[] grammatons)
         {
             var retVal = new List<ITranslation>();
-            foreach (var grammaton in reduction.Grammatons)
-                retVal.Add(_synonymResolver.Resolve(grammaton, retVal));
+            var candidates = grammatons
+                .Select(g => g.Translations).Append(new ITranslation[0])
+                .ToArray();
+            foreach (var pair in candidates.Skip(1).Select((next, i) => (next, i)))
+                retVal.Add(_synonymResolver.Resolve(candidates[pair.i], retVal, pair.next));
             return retVal.ToArray();
         }
 
-        private string Trim(ITranslation[] arrangedTranslations, ITranslation[] translations)
-        {
-            var capitalized = _capitalizer.Capitalize(arrangedTranslations, translations);
-            var respacedResult = Respace(capitalized).ToArray();
-            return Merge(respacedResult);
-        }
+        private string Trim(IEnumerable<ITranslation> capitalized) => Merge(Respace(capitalized));
 
         private IEnumerable<ITranslation[]> Translate(IEnumerable<Token> tokens)
             => tokens.Select(_thesaurus.Translate);

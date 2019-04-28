@@ -1,4 +1,5 @@
-as = som
+as = som,vad
+as has = liksom
 at = på
 by = vid,av
 despite = trots

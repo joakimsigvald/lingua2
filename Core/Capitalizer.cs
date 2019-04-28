@@ -1,5 +1,6 @@
 ﻿using Lingua.Core.Tokens;
 using Lingua.Core.WordClasses;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -9,23 +10,23 @@ namespace Lingua.Core
     {
         public IEnumerable<ITranslation> Capitalize(
             ITranslation[] arrangedTranslations,
-            ITranslation[] allTranslations)
+            IGrammaton[] original)
         {
-            var sentences = GetSentences(arrangedTranslations, allTranslations);
+            var sentences = GetSentences(arrangedTranslations, original);
             return sentences.SelectMany(s => new CapitalizationProcess(s).Capitalize());
         }
 
-        private IEnumerable<Sentence> GetSentences(ITranslation[] arrangedTranslations, ITranslation[] allTranslations)
+        private IEnumerable<Sentence> GetSentences(ITranslation[] arrangedTranslations, IGrammaton[] original)
         {
             if (!arrangedTranslations.Any())
                 yield break;
-            var remaining = allTranslations.ToList();
+            var remaining = original.ToList();
             var next = new List<ITranslation>();
             var nextIsCapitalized = IsCapitalized(remaining[0]);
             foreach (var t in arrangedTranslations.Where(t => !string.IsNullOrEmpty(t.Output)))
             {
                 next.Add(t);
-                var startOfNextSentence = remaining.IndexOf(t);
+                var startOfNextSentence = GetIndex(remaining, t);
                 remaining.RemoveAt(startOfNextSentence);
                 if (IsEndOfSentence(t))
                 {
@@ -40,7 +41,15 @@ namespace Lingua.Core
                 yield return new Sentence(nextIsCapitalized ?? false, next.ToArray());
         }
 
-        private bool? IsCapitalized(ITranslation t)
+        private int GetIndex(List<IGrammaton> grammatons, ITranslation translation)
+        {
+            for (var i = 0; i < grammatons.Count; i++)
+                if (grammatons[i].Translations.Contains(translation))
+                    return i;
+            return -1;
+        }
+
+        private bool? IsCapitalized(IGrammaton t)
             => t.IsCapitalized ? true
             : char.IsUpper(t.Input.FirstOrDefault()) ? (bool?)null : false;
 

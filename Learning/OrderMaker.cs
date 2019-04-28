@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text.RegularExpressions;
 using Lingua.Core;
 using Lingua.Core.Extensions;
 
@@ -23,8 +22,7 @@ namespace Lingua.Learning
         public (ITranslation[] translations, byte[] order, string unmatched, string hidden) 
             SelectAndOrderTranslations(ITranslation[] translations)
         {
-            var words = translations.Select(t => t.Output).ToArray();
-            var order = MakeOrder(words).ToArray();
+            var order = MakeOrder(translations).ToArray();
             return (translations, order, Unmatched, string.Join(",", _hidden));
         }
 
@@ -46,28 +44,54 @@ namespace Lingua.Learning
         private static IEnumerable<string> SplitWords(string text)
             => text.Split(new[] {' '}, StringSplitOptions.RemoveEmptyEntries);
 
-        private IEnumerable<byte> MakeOrder(string[] words)
+        private byte[] MakeOrder(ITranslation[] translations)
         {
+            var words = translations.Select(t => t.Output).ToArray();
+            var remainingWords = words.Cast<string?>().ToList();
             var orderedIndexedWords = words
                 .OrderByDescending(word => word.Length)
-                .Select(word => (word: word, index: Match(word)))
+                .Select(word => (word, index: Match(word)))
                 .OrderBy(tuple => tuple.index)
                 .SkipWhile(tuple => tuple.index < 0)
                 .ToArray();
             if (!IsAllTranslated)
                 return new byte[0];
             var prevIndex = -1;
-            return orderedIndexedWords.Select(
-                tuple => (byte) (prevIndex = GetNextIndex(words, tuple.word, prevIndex + 1)));
+            var order = orderedIndexedWords.Select(
+                tuple => (byte) (prevIndex = MatchNextWord(remainingWords, tuple.word, prevIndex + 1)))
+                .ToArray();
+            return order;
         }
 
         private bool IsAllTranslated
             => _translated.CountSymbols() == _matched.CountSymbols();
 
-        private static int GetNextIndex(string[] words, string word, int startIndex)
+        private static int MatchNextWord(List<string?> remainingWords, string word, int startIndex)
         {
-            var index = Array.IndexOf(words, word, startIndex);
-            return index < 0 ? Array.IndexOf(words, word) : index;
+            var index = GetNextIndex(remainingWords, word, startIndex);
+            if (index >= 0)
+                remainingWords[index] = null;
+            return index;
+        }
+
+        private static int GetNextIndex(List<string?> remainingWords, string word, int startIndex)
+        {
+            if (startIndex == remainingWords.Count)
+                return remainingWords.LastIndexOf(word);
+            if (remainingWords[startIndex] == word)
+                return startIndex;
+            var horizon = Math.Min(startIndex, remainingWords.Count - startIndex);
+            if (horizon > 1)
+                for (int offset = 1; offset < horizon; offset++)
+                {
+                    if (remainingWords[startIndex - offset - 1] == word)
+                        return startIndex - offset - 1;
+                    if (remainingWords[startIndex + offset] == word)
+                        return startIndex + offset;
+                }
+            return horizon >= startIndex
+                ? remainingWords.IndexOf(word, startIndex + horizon)
+                : remainingWords.LastIndexOf(word, startIndex - horizon - 1);
         }
 
         private int Match(string word)

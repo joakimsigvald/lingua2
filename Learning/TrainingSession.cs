@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -22,13 +21,11 @@ namespace Lingua.Learning
         private readonly TestRunner _testRunner;
         private readonly PatternGenerator _patternGenerator;
 
-        private IList<ScoredPattern> _scoredPatternsList;
-        private IEnumerator<ScoredPattern> _scoredPatterns;
-        private IList<Arranger> _arrangementCandidatesList;
-        private IEnumerator<Arranger> _arrangementCandidates;
-        private TestSessionResult _bestResult;
-        private ScoredPattern _currentScoredPattern;
-        private Arranger _currentArranger;
+        private IEnumerator<ScoredPattern>? _scoredPatterns;
+        private IEnumerator<Arranger>? _arrangementCandidates;
+        private TestSessionResult? _bestResult;
+        private ScoredPattern? _currentScoredPattern;
+        private Arranger? _currentArranger;
 
         public TrainingSession(ITrainableEvaluator evaluator, Rearranger arranger, Translator translator, IEnumerable<TestCase> testCases)
         {
@@ -77,26 +74,36 @@ namespace Lingua.Learning
             TestSessionResult result;
             while (!(result = _testRunner.RunTestSession(_testCases)).Success)
             {
-                if (result.SuccessCount < (_bestResult?.SuccessCount ?? 0))
-                {
-                    _testCases.MoveToBeginning(result.FailedCase.TestCase);
-                    TryNextPattern();
-                    continue;
-                }
-                if (_bestResult == null)
-                    GenerateNewPatterns(_bestResult = result);
-                else if (result > _bestResult)
-                    PrepareToLearnNextPattern(result);
-                TryLearnTestCase();
+                if (PreviousSuccessfulCaseFailed(result))
+                    TryNextPattern(result.FailedCase.TestCase);
+                else TryLearnTestCase(result);
             }
             return result;
+        }
+
+        public bool PreviousSuccessfulCaseFailed(TestSessionResult result)
+            => result.SuccessCount < (_bestResult?.SuccessCount ?? 0);
+
+        private void TryNextPattern(TestCase failingTestCase)
+        {
+            _testCases.MoveToBeginning(failingTestCase);
+            TryNextPattern();
+        }
+
+        private void TryLearnTestCase(TestSessionResult result)
+        {
+            if (_bestResult == null)
+                GenerateNewPatterns(_bestResult = result);
+            else if (result > _bestResult)
+                PrepareToLearnNextPattern(result);
+            TryLearnTestCase();
         }
 
         private void PrepareToLearnNextPattern(TestSessionResult result)
         {
             _currentScoredPattern = null;
             _currentArranger = null;
-            if (result.SuccessCount > _bestResult.SuccessCount)
+            if (result.SuccessCount > _bestResult!.SuccessCount)
                 PrepareToLearnNextTestCase(result);
             else ResetPatterns();
             _bestResult = result;
@@ -104,13 +111,13 @@ namespace Lingua.Learning
 
         private void ResetPatterns()
         {
-            _scoredPatterns.Reset();
-            _arrangementCandidates.Reset();
+            _scoredPatterns!.Reset();
+            _arrangementCandidates!.Reset();
         }
 
         private void PrepareToLearnNextTestCase(TestSessionResult result)
         {
-            _testCases.MoveToBeginning(_bestResult.FailedCase.TestCase);
+            _testCases.MoveToBeginning(_bestResult!.FailedCase.TestCase);
             _scoredPatterns?.Dispose();
             _arrangementCandidates?.Dispose();
             GenerateNewPatterns(result);
@@ -123,7 +130,7 @@ namespace Lingua.Learning
             {
                 TryNextPattern();
                 //TODO: Optimize by using different learning-translator for training arrangers
-                result = _testRunner.RunTestCase(_bestResult.FailedCase.TestCase);
+                result = _testRunner.RunTestCase(_bestResult!.FailedCase.TestCase);
             } while (!(result.Success || result > _bestResult.FailedCase));
         }
 
@@ -136,25 +143,25 @@ namespace Lingua.Learning
 
         private bool EnumerateNextPattern()
         {
-            if (_bestResult.FailedCase.WordDeficit == 0)
+            if (_bestResult!.FailedCase.WordDeficit == 0)
             {
                 if (_currentArranger != null)
                     RemoveArranger();
                 _currentArranger = null;
-                if (_arrangementCandidates.MoveNext())
+                if (_arrangementCandidates!.MoveNext())
                     return true;
                 _arrangementCandidates.Reset();
             }
             if (_currentScoredPattern != null)
                 RemoveScoredPattern();
             _currentScoredPattern = null;
-            return _scoredPatterns.MoveNext();
+            return _scoredPatterns!.MoveNext();
         }
 
         private void AddNextPattern()
         {
-            if (_bestResult.FailedCase.WordDeficit == 0
-                && _arrangementCandidates.Current != null)
+            if (_bestResult!.FailedCase.WordDeficit == 0
+                && _arrangementCandidates!.Current != null)
                 AddArranger();
             else
                 AddScoredPattern();
@@ -162,26 +169,26 @@ namespace Lingua.Learning
 
         private void AddScoredPattern()
         {
-            _evaluator.Do(_currentScoredPattern = _scoredPatterns.Current);
+            _evaluator.Do(_currentScoredPattern = _scoredPatterns!.Current);
             ResetReductions();
         }
 
         private void RemoveScoredPattern()
         {
             ResetReductions();
-            _evaluator.Undo(_currentScoredPattern);
+            _evaluator.Undo(_currentScoredPattern!);
         }
 
         private void AddArranger()
         {
-            _evaluator.Add(_currentArranger = _arrangementCandidates.Current);
+            _evaluator.Add(_currentArranger = _arrangementCandidates!.Current);
             ResetResult();
         }
 
         private void RemoveArranger()
         {
             ResetResult();
-            _evaluator.Remove(_currentArranger);
+            _evaluator.Remove(_currentArranger!);
         }
 
         private void ResetReductions()
@@ -216,7 +223,7 @@ namespace Lingua.Learning
         {
             _scoredPatterns?.Dispose();
             _arrangementCandidates?.Dispose();
-            _bestResult.FailedCase.RemoveTarget();
+            _bestResult!.FailedCase.RemoveTarget();
             if (_bestResult.FailedCase.TestCase.Target == null)
                 throw new LearningFailed(_bestResult);
             GenerateNewPatterns(_bestResult);
@@ -230,14 +237,14 @@ namespace Lingua.Learning
 
         private void RenewScoredPatterns(TestCaseResult result)
         {
-            _scoredPatternsList = _patternGenerator
+            var list = _patternGenerator
                 .GetScoredPatterns(result)
                 .Select(PrioritizePattern)
                 .OrderBy(tuple => tuple.priority)
                 .Take(MaxAttempts)
                 .Select(tuple => tuple.sp)
                 .ToList();
-            _scoredPatterns = _scoredPatternsList.GetEnumerator();
+            _scoredPatterns = list.GetEnumerator();
         }
 
         private (ScoredPattern sp, int priority) PrioritizePattern(ScoredPattern sp)
@@ -245,10 +252,11 @@ namespace Lingua.Learning
 
         private void RenewArrangementCandidates(TestCase testCase)
         {
-            _arrangementCandidatesList = ArrangerGenerator.GetArrangerCandidates(testCase.Target.Arrangement)
+            var list = ArrangerGenerator
+                .GetArrangerCandidates(testCase.Target.Arrangement)
                 .Except(_arranger.Arrangers)
                 .ToList();
-            _arrangementCandidates = _arrangementCandidatesList.GetEnumerator();
+            _arrangementCandidates = list.GetEnumerator();
         }
     }
 }

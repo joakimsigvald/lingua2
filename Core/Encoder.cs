@@ -54,11 +54,6 @@ namespace Lingua.Core
             yield return CreateToken(primary, modifiers);
         }
 
-        public static object Encode(object reversedCode)
-        {
-            throw new NotImplementedException();
-        }
-
         public static Modifier ParseModifiers(string modifiers)
             => (modifiers ?? "").Select(ToModifier).Aggregate(Modifier.None, (o, n) => o | n);
 
@@ -112,6 +107,7 @@ namespace Lingua.Core
                 case Preposition.Code: return new Preposition();
                 case Pronoun.Code: return new Pronoun();
                 case Adjective.Code: return new Adjective();
+                case Participle.Code: return new Participle();
                 case Auxiliary.Code: return new Auxiliary();
                 case Verb.Code: return new Verb();
                 case InfinitiveMarker.Code: return new InfinitiveMarker();
@@ -143,6 +139,7 @@ namespace Lingua.Core
                 case Preposition _: return Preposition.Code;
                 case Pronoun _: return Pronoun.Code;
                 case Adjective _: return Adjective.Code;
+                case Participle _: return Participle.Code;
                 case Auxiliary _: return Auxiliary.Code;
                 case Verb _: return Verb.Code;
                 case InfinitiveMarker _: return InfinitiveMarker.Code;
@@ -180,8 +177,9 @@ namespace Lingua.Core
                 case Separator _: return ",";
                 case AdverbQuestion _: return "?";
                 case AdverbPositioning _: return "!";
+                case AdverbQualifying _: return ">";
                 case Adjective _: return "A";
-                case AdverbQualifying _: return "B";
+                case Participle _: return "B";
                 case Conjunction _: return "C";
                 case Greeting _: return "G";
                 case InfinitiveMarker _: return "I";
@@ -219,8 +217,9 @@ namespace Lingua.Core
                 case ',': return new Separator(primary);
                 case '?': return new AdverbQuestion();
                 case '!': return new AdverbPositioning();
+                case '>': return new AdverbQualifying();
                 case 'A': return new Adjective();
-                case 'B': return new AdverbQualifying();
+                case 'B': return new Participle();
                 case 'C': return new Conjunction();
                 case 'E': return new Name();
                 case 'G': return new Greeting();

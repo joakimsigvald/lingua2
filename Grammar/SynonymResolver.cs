@@ -6,24 +6,27 @@ namespace Lingua.Grammar
 {
     public class SynonymResolver : ISynonymResolver
     {
-        public ITranslation Resolve(IGrammaton grammaton, IEnumerable<ITranslation> previous)
-        {
-            if (grammaton.Translations.Length == 1)
-                return grammaton.Translations[0];
-            return grammaton.Translations.FirstOrDefault(t => HasIndicators(t, previous)) ?? grammaton.Translations.First();
-        }
+        public ITranslation Resolve(ITranslation[] candidates, IEnumerable<ITranslation> preceeding, IEnumerable<ITranslation> next) 
+            => (candidates.Length == 1
+                ? null
+                : candidates.FirstOrDefault(t => HasIndicators(t, preceeding, next)))
+            ?? candidates[0];
 
-        private bool HasIndicators(ITranslation candidate, IEnumerable<ITranslation> previous)
+        private bool HasIndicators(ITranslation candidate, IEnumerable<ITranslation> preceeding, IEnumerable<ITranslation> next)
         {
-            var previousWords = previous.Select(t => t.Output.ToLower()).ToArray();
-            switch (candidate.Output.ToLower())
+            var previousWord = preceeding.LastOrDefault()?.Output.ToLower();
+            var nextWords = next.Select(w => w.Output.ToLower()).ToArray();
+            //var previousWords = previous.Select(t => t.Output.ToLower()).ToArray();
+            //var followingWords = following.Select(t => t.Output.ToLower()).ToArray();
+            return candidate.Output.ToLower() switch
             {
-                case "om": return previousWords.Any(w => w == "beslut");
-                case "fattas": return previousWords.Any(w => w == "handläggning");
-                case "av": return previousWords.Any(w => w == "fattas");
-                case "detta": return previousWords.Any(w => w == "trots");
-                default: return false;
-            }
+                "om" => previousWord == "beslut",
+                "fattas" => previousWord == "handläggning",
+                "av" => previousWord == "fattas",
+                "detta" => previousWord == "trots",
+                "vad" => nextWords.Any(w => w == "gäller"),
+                _ => false
+            };
         }
     }
 }

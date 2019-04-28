@@ -1,0 +1,5 @@
+﻿achievement-oriented = prestationsorienterad
+appointed = utsedd
+assistant = biträdande
+good-looking = snygg
+speaking = talande

@@ -18,8 +18,8 @@ namespace Lingua.Grammar
             Arrangers = LoadedArrangers.Value;
         }
 
-        public ITranslation[] Arrange(IEnumerable<ITranslation> translations)
-            => DoArrange(translations.ToArray()).SelectMany(s => s).ToArray();
+        public IGrammaton[] Arrange(IEnumerable<IGrammaton> grammatons)
+            => DoArrange(grammatons.ToArray()).SelectMany(s => s).ToArray();
 
         public void Add(Arranger arranger)
         {
@@ -32,25 +32,25 @@ namespace Lingua.Grammar
             Arrangers.Remove(arranger);
         }
 
-        private IEnumerable<IEnumerable<ITranslation>> DoArrange(ITranslation[] translations)
+        private IEnumerable<IEnumerable<IGrammaton>> DoArrange(IGrammaton[] grammatons)
         {
-            for (var i = 0; i < translations.Length;)
+            for (var i = 0; i < grammatons.Length;)
             {
-                var remaining = translations[i..];
+                var remaining = grammatons[i..];
                 (var arrangedSegment, var length) = ArrangeSegment(remaining);
                 i += Math.Max(1, length);
                 yield return arrangedSegment ?? remaining.Take(1);
             }
         }
 
-        private (ITranslation[] arrangement, int length) ArrangeSegment(ITranslation[] remainingTranslations)
+        private (IGrammaton[]? arrangement, int length) ArrangeSegment(IGrammaton[] remaining)
             => Arrangers
-                .Select(arranger => Arrange(arranger, remainingTranslations))
+                .Select(arranger => Arrange(arranger, remaining))
                 .FirstOrDefault(result => result.arrangement != null);
 
-        private static (ITranslation[]? arrangement, int length) Arrange(Arranger arr, IEnumerable<ITranslation> remainingTranslations)
+        private static (IGrammaton[]? arrangement, int length) Arrange(Arranger arr, IEnumerable<IGrammaton> remaining)
         {
-            var segment = remainingTranslations
+            var segment = remaining
                 .Take(arr.Length)
                 .ToArray();
             return arr.Arrange(segment);

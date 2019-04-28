@@ -2,4 +2,4 @@ a: = en:_tt
 an: = en:_tt
 that::::__ose: = den|_t:|_t|_|+där
 the:::::<d = ::den|_t::de
-this::__ese: = den|_t:|_t|_|+här,detta
+this::__ese:<d = den|_t:|_t|_|+här,detta

@@ -23,12 +23,23 @@ namespace Lingua.Learning
 
         private int ComputeWordDeficit()
         {
-            var originalWords = GetWords(ActualTranslations).ToList();
-            var translatedWords = originalWords.ToList();
-            var expectedWords = GetWords(ExpectedTranslations).ToArray();
-            var missingWords = expectedWords.Where(word => !translatedWords.Remove(word)).ToArray();
-            var superfluousWords = translatedWords.Except(expectedWords).Distinct().ToArray();
-            return missingWords.Length + superfluousWords.Length;
+            //var originalWords = GetWords(ActualTranslations).ToList();
+            //var translatedWords = originalWords.ToList();
+            var arrangedWords = _translationResult.Arrangement
+                .Select(g => GetWords(g.Translations))
+                .ToList();
+            var expectedWords = GetWords(ExpectedTranslations);
+            var missingWords = expectedWords.Where(word => !RemoveMatch(arrangedWords, word)).ToArray();
+            //var superfluousWords = translatedWords.Except(expectedWords).Distinct().ToArray();
+            return missingWords.Length + arrangedWords.Count;
+        }
+
+        private bool RemoveMatch(List<string[]> arrangedWords, string word)
+        {
+            var index = arrangedWords.FindIndex(g => g.Contains(word));
+            if (index < 0) return false;
+            arrangedWords.RemoveAt(index);
+            return true;
         }
 
         public TestCase TestCase { get; }
@@ -46,8 +57,11 @@ namespace Lingua.Learning
         public override string ToString()
             => $"{TestCase}/{Actual}:{Success}";
 
-        private static IEnumerable<string> GetWords(IEnumerable<ITranslation> translations)
-            => translations.Select(t => t.Output.ToLower());
+        private static string[] GetWords(IEnumerable<ITranslation> translations)
+            => translations.Select(GetWord).ToArray();
+
+        private static string GetWord(ITranslation translation)
+            => translation.Output.ToLower();
 
         public void RemoveTarget()
         {
