@@ -9,6 +9,7 @@
   <ItemGroup>
     <ProjectReference Include="..\Grammar\Grammar.csproj" />
     <ProjectReference Include="..\Tokenization\Tokenization.csproj" />
+    <ProjectReference Include="..\Translation\Translation.csproj" />
     <ProjectReference Include="..\Vocabulary\Vocabulary.csproj" />
   </ItemGroup>
 </Project>

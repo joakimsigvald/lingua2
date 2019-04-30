@@ -1,10 +1,11 @@
-﻿using Lingua.Core.Tokens;
+﻿using Lingua.Core;
+using Lingua.Core.Tokens;
 using Lingua.Core.WordClasses;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Lingua.Core
+namespace Lingua.Translation
 {
     public class Capitalizer : ICapitalizer
     {
@@ -64,7 +65,7 @@ namespace Lingua.Core
             Translations = translations;
         }
 
-        public bool IsCapitalized { get; } 
+        public bool IsCapitalized { get; }
         public ITranslation[] Translations { get; }
     }
 

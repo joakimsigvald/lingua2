@@ -9,6 +9,7 @@ namespace Lingua.Main
     using Learning;
     using Tokenization;
     using Vocabulary;
+    using Lingua.Translation;
 
     class Program
     {
@@ -78,7 +79,7 @@ namespace Lingua.Main
             var evaluator = Evaluator.Load();
             var arranger = new Rearranger();
             arranger.Load();
-            return new Translator(new Tokenizer(), new Thesaurus(), new GrammarEngine(evaluator), arranger, new SynonymResolver(), new Capitalizer());
+            return new Translator(new TokenGenerator(new Tokenizer()), new Thesaurus(), new GrammarEngine(evaluator), arranger, new SynonymResolver(), new Capitalizer());
         }
     }
 

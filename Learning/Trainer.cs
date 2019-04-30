@@ -7,6 +7,7 @@ namespace Lingua.Learning
     using Grammar;
     using Tokenization;
     using Vocabulary;
+    using Lingua.Translation;
 
     public class Trainer
     {
@@ -37,8 +38,10 @@ namespace Lingua.Learning
             _trainableEvaluator.SavePatterns();
         }
 
-        private Translator CreateTranslator() 
-            => new Translator(new Tokenizer(), new Thesaurus(), new GrammarEngine(_evaluator), _arranger, new SynonymResolver(), new Capitalizer());
+        private Translator CreateTranslator() => CreateTranslator(new GrammarEngine(_evaluator), _arranger);
+
+        public static Translator CreateTranslator(IGrammar grammar, IArranger arranger)
+            => new Translator(new TokenGenerator(new Tokenizer()), new Thesaurus(), grammar, arranger, new SynonymResolver(), new Capitalizer());
 
         private TestSessionResult VerifyPatterns(IList<TestCase> testCases)
         {

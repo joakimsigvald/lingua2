@@ -13,5 +13,6 @@
   <ItemGroup>
     <ProjectReference Include="..\Core\Core.csproj" />
     <ProjectReference Include="..\Learning\Learning.csproj" />
+    <ProjectReference Include="..\Translation\Translation.csproj" />
   </ItemGroup>
 </Project>

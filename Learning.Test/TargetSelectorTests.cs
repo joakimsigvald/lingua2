@@ -4,6 +4,7 @@ using System.Linq;
 using Lingua.Core;
 using Lingua.Core.Tokens;
 using Lingua.Core.WordClasses;
+using Lingua.Translation;
 using Moq;
 using Xunit;
 

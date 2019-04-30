@@ -5,6 +5,7 @@ using System.Linq;
 namespace Lingua.Learning
 {
     using Core;
+    using Lingua.Translation;
 
     public class TestCaseResult : ITestCaseResult
     {

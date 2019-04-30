@@ -2,6 +2,7 @@
 using Lingua.Core.Tokens;
 using Lingua.Learning;
 using Lingua.Tokenization;
+using Lingua.Translation;
 using Lingua.Vocabulary;
 using Moq;
 using System;
@@ -174,7 +175,7 @@ namespace Lingua.Grammar.Test
 
         private IList<IGrammaton[]> Decompose(IGrammar grammar, string sentence)
         {
-            var translator = new Translator(new Tokenizer(), new Thesaurus(), grammar, new Rearranger(), new SynonymResolver(), new Capitalizer());
+            var translator = Trainer.CreateTranslator(grammar, new Rearranger());
             return translator.Decompose(sentence);
         }
 
@@ -201,7 +202,7 @@ namespace Lingua.Grammar.Test
             var testCase = new TestCase(translateFrom, translateTo);
             var evaluator = Evaluator.Create();
             var grammar = new GrammarEngine(evaluator);
-            var translator = new Translator(new Tokenizer(), new Thesaurus(), grammar, new Rearranger(), new SynonymResolver(), new Capitalizer());
+            var translator = new Translator(new TokenGenerator(new Tokenizer()), new Thesaurus(), grammar, new Rearranger(), new SynonymResolver(), new Capitalizer());
             testCase.PrepareForLearning(translator);
             var grammatons = ExtractGrammatons(testCase).ToArray();
             var reduction = grammar.Evaluate(grammatons);

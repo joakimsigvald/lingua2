@@ -7,6 +7,7 @@ namespace Lingua.Learning.Test
     using Core;
     using Grammar;
     using Vocabulary;
+    using Lingua.Translation;
 
     public static class TestHelper
     {
@@ -35,7 +36,7 @@ namespace Lingua.Learning.Test
             var arranger = new Rearranger();
             var grammar = new GrammarEngine(evaluator);
             var capitalizer = new Capitalizer();
-            return new Translator(Tokenizer, thesaurus, grammar, arranger, new SynonymResolver(), capitalizer);
+            return new Translator(new TokenGenerator(Tokenizer), thesaurus, grammar, arranger, new SynonymResolver(), capitalizer);
         }
 
         private static TestRunner CreateTestRunner()

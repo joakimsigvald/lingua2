@@ -2,6 +2,7 @@ namespace Lingua.Learning
 {
     using Core;
     using Grammar;
+    using Lingua.Translation;
     using System.Collections.Generic;
     using System.Linq;
 

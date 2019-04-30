@@ -1,9 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using Lingua.Core;
 
 namespace Lingua.Learning
 {
+    using Lingua.Translation;
     using TestCaseTranslators;
 
     public class TestRunner

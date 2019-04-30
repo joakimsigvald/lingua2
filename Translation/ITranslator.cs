@@ -1,6 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using Lingua.Core;
+using System.Collections.Generic;
 
-namespace Lingua.Core
+namespace Lingua.Translation
 {
     public interface ITranslator
     {

@@ -1,11 +1,12 @@
 ﻿using System.Linq;
+using Lingua.Core;
 using Lingua.Core.Extensions;
 using Lingua.Core.Tokens;
 using Lingua.Core.WordClasses;
 using Moq;
 using Xunit;
 
-namespace Lingua.Core.Test
+namespace Lingua.Translation.Test
 {
     public class CapitalizerTests
     {
@@ -25,7 +26,7 @@ namespace Lingua.Core.Test
         [InlineData(new[] { "Målar", "du", "?", "Målar", "han", "?" }, new[] { "Are>Är", "you>du", "painting>målar", ".:?", "Is>Är", "he>han", "painting>målar", ".:?" }, 2, 1, 3, 6, 5, 7)]
         [InlineData(new[] { "Katten" }, new[] { "The>", "cat>katten" }, 1)]
         [InlineData(new[] { "Albrechts", "Guld" }, new[] { "U:Albrecht's>Albrechts", "N:Gold>Guld" })]
-        [InlineData(new[] { "Jag", "har", "varit", "till", "konserthallen", "." }, 
+        [InlineData(new[] { "Jag", "har", "varit", "till", "konserthallen", "." },
             new[] { "I>jag", "have>har", "been>varit", "to>till", "the>", "concert hall>konserthallen", ".:." },
             0, 1, 2, 3, 5, 6)]
         [InlineData(new[] { "Idag", "har", "jag", "varit", "till", "konserthallen" },
@@ -59,7 +60,7 @@ namespace Lingua.Core.Test
         private static ITranslation CreateTranslation(string mapping, char? type)
         {
             var parts = mapping.Split('>');
-            return CreateTranslation(parts.First(), parts.Last(), 
+            return CreateTranslation(parts.First(), parts.Last(),
                 type ?? (parts.Length == 1 ? 'U' : 'N'));
         }
 
@@ -80,11 +81,12 @@ namespace Lingua.Core.Test
         }
 
         private static Token CreateToken(string input, char type)
-            => type switch {
-                '.' => (Token)new Terminator(input[0]),
-                'N' => new Noun { Value = input },
-                _ => new Unclassified { Value = input }
-            };
+            => type switch
+        {
+            '.' => (Token)new Terminator(input[0]),
+            'N' => new Noun { Value = input },
+            _ => new Unclassified { Value = input }
+        };
 
         private static bool IsCapitalized(string input, string output)
             => input.IsCapitalized() && (output.IsCapitalized() || string.IsNullOrEmpty(output));

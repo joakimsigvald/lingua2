@@ -1,11 +1,10 @@
-﻿using System.Collections.Generic;
+﻿using Lingua.Core;
+using Lingua.Core.Tokens;
+using System.Collections.Generic;
 using System.Linq;
 
-namespace Lingua.Core
+namespace Lingua.Translation
 {
-    using Extensions;
-    using Tokens;
-
     public static class CompoundHandler
     {
         public static IEnumerable<ITranslation[]> CompleteCompounds(IEnumerable<ITranslation[]> translationCandidates, Token[] tokens)
@@ -50,7 +49,7 @@ namespace Lingua.Core
             var completedFrom = ((Word)incompleteCompound.From).Clone();
             var fromCompletion = (Word)completion.From;
             completedFrom.Modifiers = fromCompletion.Modifiers;
-            return new Translation(completedFrom, incompleteCompound.To + completion.To.ToLower(), completion.Continuation.Prepend((Word)completion.From).ToArray())
+            return new Core.Translation(completedFrom, incompleteCompound.To + completion.To.ToLower(), completion.Continuation.Prepend((Word)completion.From).ToArray())
             {
                 IsIncompleteCompound = completion.IsIncompleteCompound,
                 IsCapitalized = incompleteCompound.IsCapitalized

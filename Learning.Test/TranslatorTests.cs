@@ -1,16 +1,16 @@
 ﻿using System;
-using System.Linq;
 using System.Text.RegularExpressions;
 using Xunit;
 
-namespace Lingua.Core.Test
+namespace Lingua.Learning.Test
 {
     using Learning.TestCaseTranslators;
-    using Extensions;
     using Grammar;
     using Learning;
     using Tokenization;
     using Vocabulary;
+    using Lingua.Core;
+    using Lingua.Translation;
 
     public class TranslatorTests
     {
@@ -19,11 +19,11 @@ namespace Lingua.Core.Test
         private static readonly Translator Translator = CreateTranslator();
         private static readonly TestBench TestBench = CreateTestBench();
 
-        private static TestBench CreateTestBench() 
+        private static TestBench CreateTestBench()
             => new TestBench(new TestRunner(new FullTextTranslator(Translator)), new TestReporter());
 
-        private static Translator CreateTranslator() 
-            => new Translator(new Tokenizer(), new Thesaurus(), new GrammarEngine(Evaluator), Arranger, new SynonymResolver(), new Capitalizer());
+        private static Translator CreateTranslator()
+            => new Translator(new TokenGenerator(new Tokenizer()), new Thesaurus(), new GrammarEngine(Evaluator), Arranger, new SynonymResolver(), new Capitalizer());
 
         private static IArranger GetArranger()
         {
@@ -56,7 +56,7 @@ namespace Lingua.Core.Test
         }
 
         [Trait("Category", "Longrunning")]
-        [Fact(Skip = "Regenerate patterns")]
+        [Fact]
         public void RunTestSuites()
         {
             var success = TestBench.RunTestSuites();
@@ -74,7 +74,7 @@ namespace Lingua.Core.Test
 
         private static void TestCase(string from, string to)
         {
-            var result = TestBench.RunTestCase(new TestCase(from, to) {Suite = "Single"});
+            var result = TestBench.RunTestCase(new TestCase(from, to) { Suite = "Single" });
             Assert.True(result.Success, $"Expected \"{result.Expected}\" but was \"{result.Actual}\"");
         }
     }

@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Lingua.Core;
+using Lingua.Translation;
 
 namespace Lingua.Learning
 {

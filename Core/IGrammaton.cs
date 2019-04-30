@@ -1,6 +1,4 @@
-﻿using Lingua.Core.Tokens;
-
-namespace Lingua.Core
+﻿namespace Lingua.Core
 {
     public interface IGrammaton
     {

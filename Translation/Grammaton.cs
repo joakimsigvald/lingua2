@@ -1,7 +1,7 @@
-﻿using Lingua.Core.Tokens;
+﻿using Lingua.Core;
 using System.Linq;
 
-namespace Lingua.Core
+namespace Lingua.Translation
 {
     public class Grammaton : IGrammaton
     {

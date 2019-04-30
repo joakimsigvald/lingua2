@@ -4,6 +4,7 @@ using Lingua.Core.WordClasses;
 
 namespace Lingua.Core
 {
+    using Lingua.Translation;
     using Tokens;
 
     public class Translator : ITranslator
@@ -13,10 +14,10 @@ namespace Lingua.Core
         private readonly IArranger _arranger;
         private readonly ISynonymResolver _synonymResolver;
         private readonly ICapitalizer _capitalizer;
-        private readonly TokenGenerator _tokenGenerator;
+        private readonly ITokenGenerator _tokenGenerator;
 
         public Translator(
-            ITokenizer tokenizer, 
+            ITokenGenerator tokenGenerator, 
             IThesaurus thesaurus, 
             IGrammar grammar,
             IArranger arranger,
@@ -27,7 +28,7 @@ namespace Lingua.Core
             _grammar = grammar;
             _arranger = arranger;
             _synonymResolver = synonymResolver;
-            _tokenGenerator = new TokenGenerator(tokenizer);
+            _tokenGenerator = tokenGenerator;
             _capitalizer = capitalizer;
         }
 
