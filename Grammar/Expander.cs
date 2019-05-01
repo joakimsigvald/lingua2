@@ -18,32 +18,27 @@ namespace Lingua.Grammar
             _expansions = new IList<ITranslation[]>[Math.Min(horizon, _possibilities.Count)];
         }
 
-        public IEnumerable<ITranslation[]> Expand(out bool futureKnown)
-        {
-            futureKnown = true;
-            return Expand(0, _horizon, ref futureKnown)
-                .Select(seq => seq.ToArray());
-        }
+        public IEnumerable<ITranslation[]> Expand() 
+            => Expand(0, _horizon).Select(seq => seq.ToArray());
 
-        private IEnumerable<ITranslation[]> Expand(int offset, int todo, ref bool futureKnown)
+        private IEnumerable<ITranslation[]> Expand(int offset, int todo)
         {
             if (offset == _possibilities.Count)
                 return new[] {new ITranslation[0]};
             if (todo > 0)
                 return offset >= _expansions.Length
-                    ? DoExpand(offset, todo, ref futureKnown).ToList()
+                    ? DoExpand(offset, todo).ToList()
                     : (_expansions[offset]
-                       ?? (_expansions[offset] = DoExpand(offset, todo, ref futureKnown).ToList()));
-            futureKnown = false;
+                       ?? (_expansions[offset] = DoExpand(offset, todo).ToList()));
             return new[] {new ITranslation[0]};
         }
 
-        private IEnumerable<ITranslation[]> DoExpand(int offset, int todo, ref bool cutoff)
+        private IEnumerable<ITranslation[]> DoExpand(int offset, int todo)
         {
             var futures = new List<ITranslation[]>();
             foreach (var first in _possibilities[offset])
             {
-                var continuations = Expand(offset + first.WordCount, todo - 1, ref cutoff);
+                var continuations = Expand(offset + first.WordCount, todo - 1);
                 futures.AddRange(continuations.Select(continuation => continuation.Prepend(first).ToArray()));
             }
             return futures;

@@ -16,12 +16,13 @@ namespace Lingua.Learning
         {
             if (possibilities is null)
                 return new TranslationTarget[0];
-            var orderedTranslations = SelectBestTranslationsWithOrder(possibilities, translated);
+            var orderedTranslations = SelectBestTranslationsWithOrder(possibilities, translated)
+                .Where((x, i) => i == 0 || x.order.Any())
+                .Take(MaxTargets)
+                .ToArray();
             if (!orderedTranslations.First().order.Any())
                 throw new Exception($"Could not find possible translation for: {translated}, missing: {orderedTranslations.First().unmatched}");
             return orderedTranslations
-                .Where(x => x.order.Any())
-                .Take(MaxTargets)
                 .Select(x => CreateTarget(x.translations, x.order))
                 .ToArray();
         }
@@ -32,17 +33,17 @@ namespace Lingua.Learning
         private static Arrangement CreateArrangement(IEnumerable<ITranslation> translations, byte[] order)
             => new Arrangement(translations.Select(t => t.Code).ToArray(), order);
 
-        private static (ITranslation[] translations, byte[] order, string unmatched, string hidden)[] 
-            SelectBestTranslationsWithOrder(IEnumerable<IGrammaton[]> possibilities, string translated)
+        private static IEnumerable<(ITranslation[] translations, byte[] order, string unmatched)>
+            SelectBestTranslationsWithOrder(IList<IGrammaton[]> possibilities, string translated)
         {
             var filteredPossibilities = FilterPossibilities(possibilities, translated).ToList();
-            var possibleSequences = new Expander(filteredPossibilities).Expand(out var _);
+            var possibleSequences = new Expander(filteredPossibilities).Expand();
             return possibleSequences
                 .Select(ps => new OrderMaker(translated).SelectAndOrderTranslations(ps))
                 .OrderBy(o => o.unmatched.Length)
                 .ThenBy(o => OutOfOrderCount(o.order))
                 .ThenBy(o => o.hidden.Length)
-                .ToArray();
+                .Select(tuple => (tuple.translations, tuple.order, tuple.unmatched));
         }
 
         private static int OutOfOrderCount(byte[] order)

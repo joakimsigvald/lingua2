@@ -30,10 +30,10 @@ namespace Lingua.Learning
         {
             get
             {
-                var unmatchedIndices = _matched.Select((c, i) => (c: c, i: i))
+                var unmatchedIndices = _matched.Select((c, i) => (c, i))
                     .Where(tuple => tuple.c == Tab)
                     .Select(tuple => tuple.i);
-                var unmatched = new string(_translated.Select((c, i) => (c: c, i: i))
+                var unmatched = new string(_translated.Select((c, i) => (c, i))
                     .Join(unmatchedIndices, tuple => tuple.i, i => i, (tuple, i) => tuple.c)
                     .ToArray());
                 var words = SplitWords(unmatched);
