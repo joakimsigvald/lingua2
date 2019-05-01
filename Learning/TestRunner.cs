@@ -31,8 +31,6 @@ namespace Lingua.Learning
 
         public TestSessionResult RunTestSession(IList<TestCase> testCases)
         {
-            //Keep, can be useful with more test cases
-            //var results = TestRunnerProcess.Run(_translator, _evaluator, testCases);
             var results = RunTestCases(testCases).ToArray();
             return new TestSessionResult(results);
         }
@@ -40,7 +38,7 @@ namespace Lingua.Learning
         private IEnumerable<TestCaseResult> RunTestCases(
             IEnumerable<TestCase> testCases)
         {
-            TestCaseResult lastResult = null;
+            TestCaseResult? lastResult = null;
             var results = testCases
                 .Select(RunTestCase)
                 .TakeWhile(result => (lastResult = result).Success)

@@ -6,7 +6,7 @@ using System.Linq;
 
 namespace Lingua.Learning
 {
-    public class NewPatternExtractor : INewPatternExtractor
+    public class PatternExtractor : INewPatternExtractor
     {
         private static readonly List<IList<bool[]>> Masks = new List<IList<bool[]>>();
 

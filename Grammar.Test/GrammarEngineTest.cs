@@ -175,7 +175,7 @@ namespace Lingua.Grammar.Test
 
         private IList<IGrammaton[]> Decompose(IGrammar grammar, string sentence)
         {
-            var translator = Trainer.CreateTranslator(grammar, new Rearranger());
+            var translator = new Translator(new TokenGenerator(new Tokenizer()), new Thesaurus(), grammar, new Rearranger(), new SynonymResolver(), new Capitalizer());
             return translator.Decompose(sentence);
         }
 

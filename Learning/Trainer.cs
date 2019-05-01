@@ -27,10 +27,8 @@ namespace Lingua.Learning
         public TestSessionResult RunTrainingSession(params TestCase[] testCases)
         {
             var trainingSession = new TrainingSession(_trainableEvaluator, _arranger, _translator, testCases);
-            var result = trainingSession.LearnPatterns();
-            return !result.Success
-                ? result
-                : VerifyPatterns(testCases);
+            trainingSession.LearnPatterns();
+            return VerifyPatterns(testCases);
         }
 
         public void SavePatterns()
@@ -38,10 +36,8 @@ namespace Lingua.Learning
             _trainableEvaluator.SavePatterns();
         }
 
-        private Translator CreateTranslator() => CreateTranslator(new GrammarEngine(_evaluator), _arranger);
-
-        public static Translator CreateTranslator(IGrammar grammar, IArranger arranger)
-            => new Translator(new TokenGenerator(new Tokenizer()), new Thesaurus(), grammar, arranger, new SynonymResolver(), new Capitalizer());
+        private Translator CreateTranslator() 
+            => new Translator(new TokenGenerator(new Tokenizer()), new Thesaurus(), new GrammarEngine(_evaluator), _arranger, new SynonymResolver(), new Capitalizer());
 
         private TestSessionResult VerifyPatterns(IList<TestCase> testCases)
         {

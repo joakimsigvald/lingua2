@@ -20,11 +20,19 @@ namespace Lingua.Learning
 
         public bool Success => Results.Any() && FailedCase == null;
 
-        public static bool operator >(TestSessionResult tsr1, TestSessionResult tsr2)
-            => tsr1.SuccessCount > tsr2.SuccessCount
+        public static bool operator >(TestSessionResult? tsr1, TestSessionResult? tsr2)
+            => tsr1 is null ? false
+            : tsr2 is null ? true
+            : tsr1.SuccessCount > tsr2.SuccessCount
             || tsr1.SuccessCount == tsr2.SuccessCount && tsr1.FailedCase > tsr2.FailedCase;
 
-        public static bool operator <(TestSessionResult tsr1, TestSessionResult tsr2)
+        public static bool operator <(TestSessionResult? tsr1, TestSessionResult? tsr2)
             => tsr2 > tsr1;
+
+        public static bool operator <=(TestSessionResult? tsr1, TestSessionResult? tsr2)
+            => !(tsr1 > tsr2);
+
+        public static bool operator >=(TestSessionResult? tsr1, TestSessionResult? tsr2)
+            => tsr2 <= tsr1;
     }
 }

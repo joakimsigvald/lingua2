@@ -48,7 +48,7 @@ namespace Lingua.Learning.Test
 
         private PatternGenerator CreateTarget()
         {
-            var extractor = new NewPatternExtractor();
+            var extractor = new PatternExtractor();
             return new PatternGenerator(extractor);
         }
 

@@ -16,20 +16,20 @@ namespace Lingua.Tokenization
         public TokenGenerator(ITokenizer tokenizer) => _tokenizer = tokenizer;
 
         public Token[] GetTokens(string? original)
-            => Expand(Tokenize(original)).ToArray();
+            => Expand(_tokenizer.Tokenize(original)).ToArray();
 
         private IEnumerable<Token> Expand(IEnumerable<Token> tokens)
             => tokens.SelectMany(Expand);
 
         private IEnumerable<Token> Expand(Token token)
-            => Tokenize(Expand(token as Unclassified)) ?? new[] { token };
+        {
+            var expandedUnclassified = TryExpand(token as Unclassified);
+            return expandedUnclassified is null 
+                ? new[] { token } 
+                : _tokenizer.Tokenize(expandedUnclassified);
+        }
 
-        private IEnumerable<Token> Tokenize(string? text)
-            => text is null 
-            ? new Token[0] 
-            : _tokenizer.Tokenize(text);
-
-        private static string? Expand(Unclassified? word)
+        private static string? TryExpand(Unclassified? word)
             => word is null
                 ? null
                 : TryExpand(word.Value, out string exactExpanded)
