@@ -24,14 +24,11 @@ namespace Lingua.Learning
 
         private int ComputeWordDeficit()
         {
-            //var originalWords = GetWords(ActualTranslations).ToList();
-            //var translatedWords = originalWords.ToList();
             var arrangedWords = _translationResult.Arrangement
                 .Select(g => GetWords(g.Translations))
                 .ToList();
             var expectedWords = GetWords(ExpectedTranslations);
             var missingWords = expectedWords.Where(word => !RemoveMatch(arrangedWords, word)).ToArray();
-            //var superfluousWords = translatedWords.Except(expectedWords).Distinct().ToArray();
             return missingWords.Length + arrangedWords.Count;
         }
 
@@ -76,6 +73,12 @@ namespace Lingua.Learning
 
         public static bool operator <(TestCaseResult tsr1, TestCaseResult tsr2)
             => tsr2 > tsr1;
+
+        public static bool operator <=(TestCaseResult tsr1, TestCaseResult tsr2)
+            => !(tsr1 > tsr2);
+
+        public static bool operator >=(TestCaseResult tsr1, TestCaseResult tsr2)
+            => tsr2 <= tsr1;
 
         private void UpdateDeficit()
         {

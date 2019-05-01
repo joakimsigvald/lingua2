@@ -20,7 +20,7 @@ namespace Lingua.Learning.Test
         public void Test(string patternOrder, params string[] expectedOutput)
         {
             var targetArranger = Arrangement.Deserialize(patternOrder);
-            var output = ArrangerGenerator.GetArrangerCandidates(new []{ targetArranger });
+            var output = ArrangerGenerator.GetArrangerCandidates(targetArranger);
             var outputArrangers = output.Select(arr => arr.Arrangement.Serialize());
             Assert.Equal(expectedOutput, outputArrangers);
         }

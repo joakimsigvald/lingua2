@@ -1,6 +1,8 @@
-﻿namespace Lingua.Core
+﻿using System;
+
+namespace Lingua.Core
 {
-    public interface IGrammaton
+    public interface IGrammaton : IEquatable<IGrammaton>
     {
         ITranslation[] Translations { get; }
         ushort Code { get; }

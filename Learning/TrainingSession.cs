@@ -88,7 +88,7 @@ namespace Lingua.Learning
             {
                 _patternProvider.TryNextPattern(_bestResult!);
                 result = _testRunner.RunTestCase(_bestResult!.FailedCase.TestCase);
-            } while (!(result.Success || result > _bestResult.FailedCase));
+            } while (!result.Success && result <= _bestResult.FailedCase);
         }
     }
 }

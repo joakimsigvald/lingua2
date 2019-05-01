@@ -19,5 +19,16 @@ namespace Lingua.Translation
         public byte WordCount { get; }
         public string Input { get; set; }
         public bool IsCapitalized { get; set; }
+
+        public bool Equals(IGrammaton other)
+            => other != null 
+            && other.Code == Code 
+            && other.WordCount == WordCount 
+            && other.IsCapitalized == IsCapitalized;
+
+        public override bool Equals(object obj)
+            => obj is IGrammaton g && Equals(g);
+
+        public override int GetHashCode() => Code;
     }
 }

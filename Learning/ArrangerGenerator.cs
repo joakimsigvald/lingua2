@@ -9,15 +9,8 @@ namespace Lingua.Learning
 
     public static class ArrangerGenerator
     {
-        public static IEnumerable<Arranger> GetArrangerCandidates(IEnumerable<Arrangement> targetArrangements)
-            => targetArrangements
-                .SelectMany(GetArrangements)
-                .Distinct()
-                .OrderBy(arr => arr.Length)
-                .Select(arr => new Arranger(arr));
-
         public static IEnumerable<Arranger> GetArrangerCandidates(Arrangement targetArrangement)
-            => targetArrangement.IsInPerfectOrder 
+            => targetArrangement.IsInPerfectOrder
             ? new Arranger[0]
             : GetArrangements(targetArrangement)
                 .Distinct()
@@ -30,24 +23,28 @@ namespace Lingua.Learning
                 .Where(arr => !arr.IsInPerfectOrder);
 
         private static IEnumerable<Arrangement?> GetArrangements(ushort[] code, byte[] order)
-        {
-            for (var length = 1; length <= code.Length; length++)
-            for (var index = 0; index <= code.Length - length; index++)
-                yield return GetArrangement(code, order, length, index);
-        }
+            => Enumerable.Range(1, code.Length)
+            .SelectMany(len => Enumerable.Range(0, code.Length - len + 1)
+            .Select(i => GetArrangement(code, order, len, i)));
 
-        private static Arrangement? GetArrangement(ushort[] code, byte[] order, int length, int startIindex)
+        private static Arrangement? GetArrangement(ushort[] code, byte[] order, int length, int start)
         {
-            var endIndex = startIindex + length;
-            var suborder = order.Where(n => n >= startIindex && n < endIndex).ToArray();
-            if (!suborder.IsSegmentOf(order))
-                return null;
-            var subCode = code.Skip(startIindex).Take(length).ToArray();
-            return subCode.All(Encoder.IsElementOrSeparator)
-                ? new Arrangement(
-                    subCode,
-                    suborder.Select(o => (byte)(o - startIindex)).ToArray())
+            var (subcode, suborder) = ExtractSub(code, order, start, start + length);
+            return IsProperArrangement(order, subcode, suborder)
+                ? CreateArrangement(subcode, suborder, start)
                 : null;
         }
+
+        private static (ushort[] code, byte[] order) ExtractSub(ushort[] code, byte[] order, int start, int end) 
+            => (code[start..end], order.Where(n => n >= start && n < end).ToArray());
+
+        private static bool IsProperArrangement(byte[] order, ushort[] subcode, byte[] suborder) 
+            => suborder.IsSegmentOf(order) && subcode.All(Encoder.IsElementOrSeparator);
+
+        private static Arrangement CreateArrangement(ushort[] subcode, byte[] suborder, int start)
+            => new Arrangement(subcode, CreateOrder(suborder, start));
+
+        private static byte[] CreateOrder(byte[] suborder, int start)
+            => suborder.Select(i => (byte)(i - start)).ToArray();
     }
 }
