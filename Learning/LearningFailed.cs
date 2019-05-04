@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 
 namespace Lingua.Learning
 {
@@ -7,11 +8,16 @@ namespace Lingua.Learning
         public TestSessionResult BestResult { get; }
 
         public LearningFailed(TestSessionResult bestResult)
-            : base($"Failed testcase: '{bestResult.FailedCase.From}'\n"
-                  + $"Expected: '{bestResult.FailedCase.Expected}'\n"
-                  + $"Actual: '{bestResult.FailedCase.Actual}'\n")
+            : base(string.Join("\n", CreateMessageLines(bestResult).ToArray()))
         {
             BestResult = bestResult;
         }
+
+        private static string[] CreateMessageLines(TestSessionResult bestResult)
+            => new[] {
+                $"Failed testcase: '{bestResult.FailedCase.From}'",
+                $"Expected: '{bestResult.FailedCase.Expected}'",
+                $"Actual: '{bestResult.FailedCase.Actual}'"
+            };
     }
 }

@@ -13,11 +13,11 @@ namespace Lingua.Grammar
         public ReductionResult Reduce(IList<IGrammaton[]> possibilities)
             => possibilities.Any()
             ? new ReductionProcess(_evaluator, possibilities.ToArray()).Reduce()
-            : new ReductionResult();
+            : ReductionResult.Empty;
 
         public ReductionResult Evaluate(IGrammaton[] grammatons)
             => grammatons.Any()
             ? new EvaluationProcess(_evaluator, grammatons).Evaluate()
-            : new ReductionResult();
+            : ReductionResult.Empty;
     }
 }

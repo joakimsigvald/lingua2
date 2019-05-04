@@ -5,19 +5,26 @@ namespace Lingua.Translation
 {
     public class TranslationResult
     {
+        public static readonly TranslationResult Empty = new TranslationResult(
+            string.Empty,
+            new List<IGrammaton[]>(),
+            ReductionResult.Empty,
+            new IGrammaton[0],
+            new ITranslation[0]);
+
         public TranslationResult(
             string translation,
-            IList<IGrammaton[]>? possibilities = null,
-            ReductionResult? reduction = null,
-            IGrammaton[]? arrangement = null,
-            ITranslation[]? translations = null)
+            IList<IGrammaton[]> possibilities,
+            ReductionResult reduction,
+            IGrammaton[] arrangement,
+            ITranslation[] translations)
         {
             Translation = translation;
-            Score = reduction?.Score ?? 0;
-            Possibilities = possibilities ?? new List<IGrammaton[]>();
-            Grammatons = reduction?.Grammatons ?? new IGrammaton[0];
-            Arrangement = arrangement ?? new IGrammaton[0];
-            Translations = translations ?? new ITranslation[0];
+            Score = reduction.Score;
+            Possibilities = possibilities;
+            Grammatons = reduction.Grammatons;
+            Arrangement = arrangement;
+            Translations = translations;
         }
 
         public string Translation { get; }

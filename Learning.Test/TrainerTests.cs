@@ -68,14 +68,12 @@ namespace Lingua.Learning.Test
         [InlineData(
             "a red ball=>en röd boll",
             "This yellow cheese is old=>Den här gula osten är gammal")]
-        /*
         [InlineData(
             "a red ball=>en röd boll",
             "The red ball=>Den röda bollen",
             "I have run=>jag har sprungit",
             "Decisions on further handling of cases are taken by the Assistant University Director.=>Beslut om fortsatt handläggning fattas av biträdande universitetsdirektören.",
             "As regards the delegation, the delegate has been appointed, as has the assistant delegate.=>Vad gäller delegationen är representanten utsedd, liksom den biträdande representanten.")]
-            */
         public void TestMany(params string[] examples)
         {
             var testCases = examples

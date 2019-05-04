@@ -7,15 +7,15 @@ namespace Lingua.Learning
     using Core;
     using Lingua.Translation;
 
-    public class TestCaseResult : ITestCaseResult
+    public class TestCaseResult : IReductionDeviation
     {
-        private readonly TranslationResult _translationResult;
+        public TranslationResult TranslationResult { get; }
 
         public TestCaseResult(TestCase testCase
             , TranslationResult translationResult)
         {
             TestCase = testCase;
-            _translationResult = translationResult;
+            TranslationResult = translationResult;
             UpdateDeficit();
         }
 
@@ -24,7 +24,7 @@ namespace Lingua.Learning
 
         private int ComputeWordDeficit()
         {
-            var arrangedWords = _translationResult.Arrangement
+            var arrangedWords = TranslationResult.Arrangement
                 .Select(g => GetWords(g.Translations))
                 .ToList();
             var expectedWords = GetWords(ExpectedTranslations);
@@ -43,14 +43,14 @@ namespace Lingua.Learning
         public TestCase TestCase { get; }
         public string From => TestCase.From;
         public string Expected => TestCase.Expected;
-        public string Actual => _translationResult.Translation;
+        public string Actual => TranslationResult.Translation;
         public bool Success => Actual == TestCase.Expected;
         public bool SuccessIgnoringCase => string.Equals(Actual, TestCase.Expected, StringComparison.InvariantCultureIgnoreCase);
         public ITranslation[] ExpectedTranslations => TestCase.Target.Translations;
         public IGrammaton[] ExpectedGrammatons => TestCase.Target.Grammatons;
-        public ITranslation[] ActualTranslations => _translationResult.Translations;
-        public IGrammaton[] ActualGrammatons => _translationResult.Grammatons;
-        public int Score => _translationResult.Score;
+        //public ITranslation[] ActualTranslations => TranslationResult.Translations;
+        public IGrammaton[] ActualGrammatons => TranslationResult.Grammatons;
+        //public int Score => TranslationResult.Score;
 
         public override string ToString()
             => $"{TestCase}/{Actual}:{Success}";

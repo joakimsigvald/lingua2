@@ -44,9 +44,9 @@ namespace Lingua.Learning
         public int ComputeScoreDeficit(TestCaseResult failedCase)
         {
             var expectedScore = _grammar.Evaluate(failedCase.ExpectedGrammatons).Score;
-            var actualScore = failedCase.Score;
+            var actualScore = failedCase.TranslationResult.Score;
             if (expectedScore > actualScore)
-                throw new InvalidProgramException("Score calculation error!");
+                throw new LearningTestcaseFailed(failedCase, "Expected translation was discarded in evaluation scoring-tree. Consider extend horizon");
             return actualScore - expectedScore;
         }
 

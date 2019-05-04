@@ -42,8 +42,8 @@ namespace Lingua.Learning.Test
         private IList<ScoredPattern> GeneratePatterns(string expectedPattern, string actualPattern)
         {
             var generator = CreateTarget();
-            var testCaseResult = MockTestCaseResult(expectedPattern, actualPattern);
-            return generator.GetScoredPatterns(testCaseResult);
+            var reductionResult = MockReductionResult(expectedPattern, actualPattern);
+            return generator.GetScoredPatterns(reductionResult);
         }
 
         private PatternGenerator CreateTarget()
@@ -59,9 +59,9 @@ namespace Lingua.Learning.Test
             return (partern, score);
         }
 
-        private ITestCaseResult MockTestCaseResult(string expectedPattern, string actualPattern)
+        private IReductionDeviation MockReductionResult(string expectedPattern, string actualPattern)
         {
-            var mock = new Mock<ITestCaseResult>();
+            var mock = new Mock<IReductionDeviation>();
             mock.Setup(res => res.ExpectedGrammatons).Returns(ConvertToGrammatons(expectedPattern));
             mock.Setup(res => res.ActualGrammatons).Returns(ConvertToGrammatons(actualPattern));
             return mock.Object;

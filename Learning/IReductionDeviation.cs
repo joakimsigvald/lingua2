@@ -2,10 +2,8 @@
 {
     using Core;
 
-    public interface ITestCaseResult
+    public interface IReductionDeviation
     {
-        ITranslation[] ExpectedTranslations { get; }
-        ITranslation[] ActualTranslations { get; }
         IGrammaton[] ExpectedGrammatons { get; }
         IGrammaton[] ActualGrammatons { get; }
     }

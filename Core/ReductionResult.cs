@@ -2,11 +2,8 @@
 {
     public class ReductionResult
     {
-        public ReductionResult()
-        {
-            Grammatons = new IGrammaton[0];
-            CondensedCode = new ushort[0];
-        }
+        public static readonly ReductionResult Empty 
+            = new ReductionResult(new IGrammaton[0], new ushort[0], 0);
 
         public ReductionResult(IGrammaton[] grammatons, ushort[] condensedCode, int score)
         {

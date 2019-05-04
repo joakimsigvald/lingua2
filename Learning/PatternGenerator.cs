@@ -18,10 +18,8 @@ namespace Lingua.Learning
             _patternExtractor = patternExtractor;
         }
 
-        public IList<ScoredPattern> GetScoredPatterns(ITestCaseResult? result)
+        public IList<ScoredPattern> GetScoredPatterns(IReductionDeviation result)
         {
-            if (result == null)
-                return new ScoredPattern[0];
             var wantedCodes = GetPossibleCodesInOrder(result.ExpectedGrammatons);
             var unwantedCodes = GetPossibleCodesInOrder(result.ActualGrammatons);
             FilterOutCommonCodes(ref wantedCodes, ref unwantedCodes);

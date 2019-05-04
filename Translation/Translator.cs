@@ -34,7 +34,7 @@ namespace Lingua.Core
 
         public TranslationResult Translate(string original)
             => string.IsNullOrWhiteSpace(original)
-                ? new TranslationResult("")
+                ? TranslationResult.Empty
                 : Compose(Decompose(original));
 
         public IList<IGrammaton[]> Decompose(string original)
