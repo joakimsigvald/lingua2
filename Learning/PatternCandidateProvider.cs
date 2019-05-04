@@ -17,7 +17,6 @@ namespace Lingua.Learning
         private ScoredPattern[] _scoredPatterns;
         private int _scoredPatternsIndex;
         private Arrangement[] _arrangementCandidates;
-        private Arrangement[] _applicableArrangementCandidates;
         private int _arrangementCandidatesIndex;
         private ScoredPattern? _currentScoredPattern;
         private Arrangement? _currentArranger;
@@ -30,7 +29,6 @@ namespace Lingua.Learning
             _arranger = arranger;
             _scoredPatterns = new ScoredPattern[0];
             _arrangementCandidates = new Arrangement[0];
-            _applicableArrangementCandidates = new Arrangement[0];
         }
 
         public void ApplyNextPattern(TestSessionResult bestResult, TestCase failingTestCase)
@@ -83,11 +81,6 @@ namespace Lingua.Learning
                 _scoredPatternsIndex--;
         }
 
-        private Arrangement[] GetApplicableArrangementCandidates(ushort[] newCodes)
-            => _arrangementCandidates
-            .Where(c => c.Code.IsSegmentOf(newCodes))
-            .ToArray();
-
         private void PrepareToLearnNextTestCase(TestSessionResult oldBestResult, TestSessionResult newBestResult)
         {
             _testCases.MoveToBeginning(oldBestResult.FailedCase.TestCase);
@@ -98,11 +91,9 @@ namespace Lingua.Learning
         {
             if (bestResult.FailedCase.WordDeficit == 0)
             {
-                if (_currentArranger == null)
-                    UpdateApplicableArrangementCandidates(bestResult);
-                else
+                if (_currentArranger != null)
                     RemoveArranger();
-                if (++_arrangementCandidatesIndex < _applicableArrangementCandidates.Length)
+                if (++_arrangementCandidatesIndex < _arrangementCandidates.Length)
                     return true;
                 _arrangementCandidatesIndex = -1;
             }
@@ -126,12 +117,6 @@ namespace Lingua.Learning
                 .GetArrangerCandidates(testCase.Target.Arrangement)
                 .Except(_arranger.Arrangers)
                 .ToArray();
-        }
-
-        private void UpdateApplicableArrangementCandidates(TestSessionResult result)
-        {
-            var codes = result.FailedCase.ActualGrammatons.Select(g => g.Code).ToArray();
-            _applicableArrangementCandidates = GetApplicableArrangementCandidates(codes);
         }
 
         private void RenewScoredPatterns(TestCaseResult result)
@@ -160,7 +145,7 @@ namespace Lingua.Learning
 
         private void AddArranger()
         {
-            _evaluator.Add(_currentArranger = _applicableArrangementCandidates[_arrangementCandidatesIndex]);
+            _evaluator.Add(_currentArranger = _arrangementCandidates[_arrangementCandidatesIndex]);
             ResetResult();
         }
 
