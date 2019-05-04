@@ -11,12 +11,6 @@ namespace Lingua.Learning.Test
 {
     public class PatternGeneratorTests
     {
-        [Fact]
-        public void GivenNoResult_GenerateNoScoredPatterns()
-        {
-            Empty(CreateTarget().GetScoredPatterns(null));
-        }
-
         [Theory]
         [InlineData("N", "V", "+N*", "+N", "+^N*", "+^N", "-V*", "-V", "-^V*", "-^V")]
         [InlineData("N", "N")]

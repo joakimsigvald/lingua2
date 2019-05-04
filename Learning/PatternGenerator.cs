@@ -8,8 +8,6 @@ namespace Lingua.Learning
 {
     public class PatternGenerator
     {
-        public const byte MaxPatternLength = 6;
-
         private readonly INewPatternExtractor _patternExtractor;
         private readonly CodeCondenser _codeCondenser = new CodeCondenser();
 
@@ -48,7 +46,7 @@ namespace Lingua.Learning
 
         private IEnumerable<Code> GetAllSubCodes(Code code)
             => Enumerable
-            .Range(1, Math.Min(code.Length, MaxPatternLength))
+            .Range(1, Math.Min(code.Length, Constants.MaxPatternLength))
             .Select(i => code.Take(i));
 
         private void FilterOutCommonCodes(ref List<Code> leftInOrder, ref List<Code> rightInOrder)
@@ -80,6 +78,6 @@ namespace Lingua.Learning
                 .Select(snippet => new ScoredPattern(snippet, score));
 
         private static IEnumerable<byte> PatternLengths
-            => Enumerable.Range(1, MaxPatternLength).Select(n => (byte)n);
+            => Enumerable.Range(1, Constants.MaxPatternLength).Select(n => (byte)n);
     }
 }

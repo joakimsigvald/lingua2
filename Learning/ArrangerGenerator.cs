@@ -6,6 +6,7 @@ namespace Lingua.Learning
     using Core;
     using Core.Extensions;
     using Grammar;
+    using System;
 
     public static class ArrangerGenerator
     {
@@ -23,7 +24,7 @@ namespace Lingua.Learning
                 .Where(arr => !arr.IsInPerfectOrder);
 
         private static IEnumerable<Arrangement?> GetArrangements(ushort[] code, byte[] order)
-            => Enumerable.Range(1, code.Length)
+            => Enumerable.Range(1, Math.Min(Constants.MaxArrangementLength, code.Length))
             .SelectMany(len => Enumerable.Range(0, code.Length - len + 1)
             .Select(i => GetArrangement(code, order, len, i)));
 

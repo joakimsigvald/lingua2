@@ -7,7 +7,7 @@
     {
         public ReverseCodeScoreNode Patterns = new ReverseCodeScoreNode();
 
-        public byte Horizon => 7;
+        public byte Horizon => Constants.Horizon;
 
         private Evaluator(IDictionary<string, sbyte>? patterns)
         {

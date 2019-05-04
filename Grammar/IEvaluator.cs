@@ -1,5 +1,3 @@
-using Lingua.Core;
-
 namespace Lingua.Grammar
 {
     public interface IEvaluator
