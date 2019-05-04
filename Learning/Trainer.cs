@@ -12,14 +12,14 @@ namespace Lingua.Learning
     public class Trainer
     {
         private readonly Rearranger _arranger;
-        private readonly Evaluator _evaluator;
+        private readonly IEvaluator _evaluator;
         private readonly TrainableEvaluator _trainableEvaluator;
         private readonly Translator _translator;
 
-        public Trainer()
+        public Trainer(IEvaluator? evaluator = null)
         {
             _arranger = new Rearranger();
-            _evaluator = Evaluator.Create();
+            _evaluator = evaluator ?? Evaluator.Create();
             _trainableEvaluator = new TrainableEvaluator(_arranger, _evaluator);
             _translator = CreateTranslator();
         }

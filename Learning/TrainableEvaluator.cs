@@ -9,10 +9,10 @@ namespace Lingua.Learning
     public class TrainableEvaluator : ITrainableEvaluator
     {
         private readonly Rearranger _arranger;
-        private readonly Evaluator _evaluator;
+        private readonly IEvaluator _evaluator;
         private readonly IGrammar _grammar;
 
-        public TrainableEvaluator(Rearranger arranger, Evaluator evaluator)
+        public TrainableEvaluator(Rearranger arranger, IEvaluator evaluator)
         {
             _arranger = arranger;
             _evaluator = evaluator;

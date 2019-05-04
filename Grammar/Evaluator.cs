@@ -5,9 +5,9 @@
 
     public class Evaluator : IEvaluator
     {
-        public ReverseCodeScoreNode Patterns = new ReverseCodeScoreNode();
+        public ReverseCodeScoreNode Patterns { get; } = new ReverseCodeScoreNode();
 
-        public byte Horizon => Constants.Horizon;
+        public byte Horizon { get; } = Constants.Horizon;
 
         private Evaluator(IDictionary<string, sbyte>? patterns)
         {

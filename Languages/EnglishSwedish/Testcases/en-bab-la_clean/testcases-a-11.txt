@@ -14,6 +14,7 @@
 "Data protection (appointment of the European supervisor and the assistant supervisor): see Minutes", "Dataskydd (utnämning av datatillsynsman och biträdande datatillsynsman): se protokollet"
 "Anna Ingemark Milos, Assistant Professor of Art History, focuses at our built environment.", "Universitetslektor Anna Ingemark Milos inriktning inom konstvetenskapen är vår gestaltade miljö."
 "We are about 107 employees, including 23 PhD, six professors and seven assistant professors.", "Vi är cirka 107 anställda, varav 23 doktorander, sex professorer och sju biträdande professorer."
+
 "This assistant will help you decide whether or not you wish to accept this Certificate Authority.", "Här får du hjälp med att bestämma om du vill godkänna certifikatet."
 "assistant will help you decide whether or not you wish to accept this Certificate and to what extent.", "får du hjälp med att bestämma om du vill godkänna certifikatet och i vilken utsträckning."
 "The shop assistant told her that her guarantee had run out, and that she was not eligible for a refund.", "Hon fick där höra att garantin hade gått ut och att hon inte hade rätt till ersättning."

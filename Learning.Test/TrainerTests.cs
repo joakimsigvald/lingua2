@@ -1,15 +1,20 @@
-﻿using System.Linq;
+﻿using Lingua.Grammar;
+using System.Linq;
 using Xunit;
 
 namespace Lingua.Learning.Test
 {
     public class TrainerTests
     {
-        [Fact]
         [Trait("Category", "Longrunning")]
-        public void TestAll()
+        [Theory]
+        [InlineData(true)]
+        public void TestAll(bool loadCurrentEvaluator)
         {
-            var trainer = new Trainer();
+            var evaluator = loadCurrentEvaluator
+                ? Evaluator.Load()
+                : Evaluator.Create();
+            var trainer = new Trainer(evaluator);
             var res = GeneratePatterns(trainer);
             var reporter = new ConsoleReporter();
             reporter.Report(res);

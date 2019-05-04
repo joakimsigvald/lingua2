@@ -6,5 +6,6 @@ despite = trots
 in = i
 of = av
 on = på,om
+that = som
 to = till
 with = med
