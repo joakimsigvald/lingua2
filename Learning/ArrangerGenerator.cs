@@ -9,13 +9,13 @@ namespace Lingua.Learning
 
     public static class ArrangerGenerator
     {
-        public static IEnumerable<Arranger> GetArrangerCandidates(Arrangement targetArrangement)
+        public static IEnumerable<Arrangement> GetArrangerCandidates(Arrangement targetArrangement)
             => targetArrangement.IsInPerfectOrder
-            ? new Arranger[0]
+            ? new Arrangement[0]
             : GetArrangements(targetArrangement)
                 .Distinct()
                 .OrderBy(arr => arr.Length)
-                .Select(arr => new Arranger(arr));
+                .ToArray();
 
         private static IEnumerable<Arrangement> GetArrangements(Arrangement targetArrangement)
             => GetArrangements(targetArrangement.Code, targetArrangement.Order)

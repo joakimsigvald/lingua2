@@ -4,6 +4,7 @@ using System.Linq;
 namespace Lingua.Grammar
 {
     using Core;
+    using System.Collections.Generic;
 
     public class Arrangement : IEquatable<Arrangement>
     {
@@ -11,6 +12,18 @@ namespace Lingua.Grammar
             : this(Encoder.Serialize(code), code, order)
         {
         }
+
+        public (IGrammaton[]? arrangement, int length) Arrange(IGrammaton[] segment)
+        {
+            var codedSegment = segment.Select(t => t.Code).ToArray();
+            return !Encoder.Matches(codedSegment, Code)
+                ? (null, 1)
+                : (Rearrange(segment).ToArray(), Length);
+        }
+
+        private IEnumerable<IGrammaton> Rearrange(IList<IGrammaton> segment)
+            => Order.Select(i => segment[i]);
+
 
         private Arrangement(string pattern, byte[] order)
             : this(pattern, Encoder.Encode(Encoder.Deserialize(pattern)).ToArray(), order)
@@ -42,10 +55,10 @@ namespace Lingua.Grammar
         }
 
         public bool Equals(Arrangement other)
-            => other?.Pattern == Pattern;
+            => other.Pattern == Pattern;
 
         public override bool Equals(object obj)
-            => Equals(obj as Arrangement);
+            => obj is Arrangement arr && Equals(arr);
 
         public override int GetHashCode()
             => Pattern.GetHashCode();

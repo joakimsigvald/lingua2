@@ -8,10 +8,10 @@ namespace Lingua.Grammar
 
     public class Rearranger : IArranger
     {
-        public IList<Arranger> Arrangers = new List<Arranger>();
+        public IList<Arrangement> Arrangers = new List<Arrangement>();
 
-        private static readonly Lazy<IList<Arranger>> LoadedArrangers =
-            new Lazy<IList<Arranger>>(() => BuildArrangers(Repository.LoadArrangements()));
+        private static readonly Lazy<IList<Arrangement>> LoadedArrangers =
+            new Lazy<IList<Arrangement>>(() => Repository.LoadArrangements().ToList());
 
         public void Load()
         {
@@ -21,13 +21,13 @@ namespace Lingua.Grammar
         public IGrammaton[] Arrange(IEnumerable<IGrammaton> grammatons)
             => DoArrange(grammatons.ToArray()).SelectMany(s => s).ToArray();
 
-        public void Add(Arranger arranger)
+        public void Add(Arrangement arranger)
         {
             if (arranger != null && !Arrangers.Contains(arranger))
                 Arrangers.Add(arranger);
         }
 
-        public void Remove(Arranger arranger)
+        public void Remove(Arrangement arranger)
         {
             Arrangers.Remove(arranger);
         }
@@ -48,15 +48,12 @@ namespace Lingua.Grammar
                 .Select(arranger => Arrange(arranger, remaining))
                 .FirstOrDefault(result => result.arrangement != null);
 
-        private static (IGrammaton[]? arrangement, int length) Arrange(Arranger arr, IEnumerable<IGrammaton> remaining)
+        private static (IGrammaton[]? arrangement, int length) Arrange(Arrangement arr, IEnumerable<IGrammaton> remaining)
         {
             var segment = remaining
                 .Take(arr.Length)
                 .ToArray();
             return arr.Arrange(segment);
         }
-
-        private static IList<Arranger> BuildArrangers(IEnumerable<Arrangement> arrangements)
-            => arrangements.Select(arr => new Arranger(arr)).ToList();
     }
 }

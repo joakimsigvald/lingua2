@@ -6,8 +6,8 @@
         int ComputeScoreDeficit(TestCaseResult failedCase);
         void Do(ScoredPattern scoredPattern);
         void Undo(ScoredPattern scoredPattern);
-        void Add(Arranger arranger);
-        void Remove(Arranger arranger);
+        void Add(Arrangement arranger);
+        void Remove(Arrangement arranger);
         sbyte GetScore(ushort[] reversedCode);
     }
 }

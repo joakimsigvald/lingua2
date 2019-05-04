@@ -17,9 +17,9 @@ namespace Lingua.Grammar
         public static void StoreScoredPatterns(string[] patterns)
             => StoreText("Patterns", patterns);
 
-        public static void StoreRearrangements(IEnumerable<Arranger> arrangers)
+        public static void StoreRearrangements(IEnumerable<Arrangement> arrangers)
             => WriteLines(GetUniqueName("Rearrangements.txt")
-                , GetRearrangementLines(arrangers.Select(arr => arr.Arrangement)));
+                , GetRearrangementLines(arrangers));
 
         private static string[] GetRearrangementLines(IEnumerable<Arrangement> arrangements)
             => arrangements

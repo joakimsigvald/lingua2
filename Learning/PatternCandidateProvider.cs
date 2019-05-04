@@ -16,11 +16,11 @@ namespace Lingua.Learning
         private readonly ITrainableEvaluator _evaluator;
         private ScoredPattern[] _scoredPatterns;
         private int _scoredPatternsIndex;
-        private Arranger[] _arrangementCandidates;
-        private Arranger[] _applicableArrangementCandidates;
+        private Arrangement[] _arrangementCandidates;
+        private Arrangement[] _applicableArrangementCandidates;
         private int _arrangementCandidatesIndex;
         private ScoredPattern? _currentScoredPattern;
-        private Arranger? _currentArranger;
+        private Arrangement? _currentArranger;
 
         public PatternCandidateProvider(ITrainableEvaluator evaluator, List<TestCase> testCases, Rearranger arranger)
         {
@@ -29,8 +29,8 @@ namespace Lingua.Learning
             _testCases = testCases;
             _arranger = arranger;
             _scoredPatterns = new ScoredPattern[0];
-            _arrangementCandidates = new Arranger[0];
-            _applicableArrangementCandidates = new Arranger[0];
+            _arrangementCandidates = new Arrangement[0];
+            _applicableArrangementCandidates = new Arrangement[0];
         }
 
         public void ApplyNextPattern(TestSessionResult bestResult, TestCase failingTestCase)
@@ -83,9 +83,9 @@ namespace Lingua.Learning
                 _scoredPatternsIndex--;
         }
 
-        private Arranger[] GetApplicableArrangementCandidates(ushort[] newCodes)
+        private Arrangement[] GetApplicableArrangementCandidates(ushort[] newCodes)
             => _arrangementCandidates
-            .Where(c => c.Arrangement.Code.IsSegmentOf(newCodes))
+            .Where(c => c.Code.IsSegmentOf(newCodes))
             .ToArray();
 
         private void PrepareToLearnNextTestCase(TestSessionResult oldBestResult, TestSessionResult newBestResult)

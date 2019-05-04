@@ -31,12 +31,12 @@ namespace Lingua.Learning
             UpdateScore(scoredPattern.ReversedCode, (sbyte) -scoredPattern.Score);
         }
 
-        public void Add(Arranger arranger)
+        public void Add(Arrangement arranger)
         {
             _arranger.Add(arranger);
         }
 
-        public void Remove(Arranger arranger)
+        public void Remove(Arrangement arranger)
         {
             _arranger.Remove(arranger);
         }
