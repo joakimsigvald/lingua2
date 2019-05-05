@@ -1,16 +1,17 @@
 ﻿Xf*:5
 Vf*:3
 At*P*:2
+P*T*:2
 Vb:2
 Vl:2
 !*:1
 ,_Tq*:1
 .R3:1
->*V:1
 Ad*:1
 Ad*Nn*:1
 At*.:1
 C*:1
+C*Ndt*:1
 C*R*:1
 D*P*:1
 D*Xi*:1
@@ -20,10 +21,8 @@ Dt*___At*:1
 Dt*___Rt*:1
 Dt*_Rt*:1
 I*V:1
-N*_Tt*:1
 N,:1
 P*R3:1
-P*T*:1
 Q*P*:1
 Q_Nd*:1
 Qn*Nn*:1
@@ -48,6 +47,7 @@ Tt*Nt*:1
 V*At*:1
 V*P*:1
 V1*:1
+Vbr*,:1
 Vi*_R*:1
 Vi*_T*:1
 Vi*P*:1
@@ -55,6 +55,7 @@ Vi*R*:1
 Vl.:1
 VlP*:1
 VlT*:1
+VN*:1
 VP*:1
 Vr*:1
 VT*:1

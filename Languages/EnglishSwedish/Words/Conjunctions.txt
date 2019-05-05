@@ -1,4 +1,5 @@
 and = och
+but = men
+once = så snart
 or = eller
 that = att
-but = men

@@ -53,10 +53,10 @@ namespace Lingua.Learning
         public sbyte GetScore(ushort[] reversedCode)
             => GetScoreNode(_evaluator.Patterns, reversedCode, 0)?.Score ?? 0;
 
-        public void SavePatterns()
+        public void SavePatterns(bool overwrite = false)
         {
-            Repository.StoreScoredPatterns(_evaluator.Patterns.PatternLines);
-            Repository.StoreRearrangements(_arranger.Arrangers);
+            Repository.StoreScoredPatterns(_evaluator.Patterns.PatternLines, overwrite);
+            Repository.StoreRearrangements(_arranger.Arrangers, overwrite);
         }
 
         public void UpdateScore(ushort[] reversedCode, sbyte addScore)

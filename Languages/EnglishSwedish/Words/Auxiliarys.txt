@@ -1,6 +1,7 @@
-be: !am!are|!is !was!were|!was:en 4:ing = var:a 4!är 4::it !är:|it:a
+be: !am!are|!is !was!were|!was:en 4:ing = var:a 4!är 4::it !är:|it:a,: 4:har 4:hade 
 have 4::_2s 5:_2d 4:ing = ha: 4:r 4:de:ft :r:de:ft:
 has been = är
+:is = :har
 :may be able to = :kan exempelvis 
 want 4::s 4!would:ed 4:_ing = vill:_ja 4: 4:e!velat ::e!velat:_ja
 : 4:can 4!could! 4! = : 4:kan 4!kunde! 4!

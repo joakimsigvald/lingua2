@@ -31,9 +31,9 @@ namespace Lingua.Learning
             return VerifyPatterns(testCases);
         }
 
-        public void SavePatterns()
+        public void SavePatterns(bool overwrite = false)
         {
-            _trainableEvaluator.SavePatterns();
+            _trainableEvaluator.SavePatterns(overwrite);
         }
 
         private Translator CreateTranslator() 

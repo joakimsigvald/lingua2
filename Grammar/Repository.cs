@@ -14,12 +14,11 @@ namespace Lingua.Grammar
         public static string[] Load(string filename)
             => ReadLines(filename).ToArray();
 
-        public static void StoreScoredPatterns(string[] patterns)
-            => StoreText("Patterns", patterns);
+        public static void StoreScoredPatterns(string[] patterns, bool overwrite = false)
+            => StoreText("Patterns", patterns, overwrite);
 
-        public static void StoreRearrangements(IEnumerable<Arrangement> arrangers)
-            => WriteLines(GetUniqueName("Rearrangements.txt")
-                , GetRearrangementLines(arrangers));
+        public static void StoreRearrangements(IEnumerable<Arrangement> arrangers, bool overwrite = false)
+            => StoreText("Rearrangements", GetRearrangementLines(arrangers), overwrite);
 
         private static string[] GetRearrangementLines(IEnumerable<Arrangement> arrangements)
             => arrangements
@@ -40,8 +39,13 @@ namespace Lingua.Grammar
             this IEnumerable<string> lines, Func<string, T> convert)
             => lines.Select(Split).ToDictionary(convert);
 
-        public static void StoreText(string name, string[] lines)
-            => WriteLines(GetUniqueName($"{name}.txt"), lines);
+        public static void StoreText(string name, string[] lines, bool overwrite = false)
+            => WriteLines(GetFilename(name, overwrite), lines);
+
+        private static string GetFilename(string name, bool overwrite = false)
+            => overwrite 
+            ? $"{name}.txt" 
+            : GetUniqueName(GetFilename(name));
 
         private static Dictionary<string, T> ToDictionary<T>(
             this IEnumerable<string[]> pairs, Func<string, T> convert)

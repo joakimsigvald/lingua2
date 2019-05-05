@@ -28,6 +28,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "EnglishSwedish", "EnglishSw
 		Languages\EnglishSwedish\Expanders.txt = Languages\EnglishSwedish\Expanders.txt
 		Languages\EnglishSwedish\Patterns.txt = Languages\EnglishSwedish\Patterns.txt
 		Languages\EnglishSwedish\Rearrangements.txt = Languages\EnglishSwedish\Rearrangements.txt
+		Languages\EnglishSwedish\SynonymIndicators.txt = Languages\EnglishSwedish\SynonymIndicators.txt
 		Languages\EnglishSwedish\TestCases.txt = Languages\EnglishSwedish\TestCases.txt
 	EndProjectSection
 EndProject
@@ -65,9 +66,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TestCaseCrawler", "TestCaseCrawler\TestCaseCrawler.csproj", "{CB122911-AFA7-4E0A-9DEB-1B2119239E29}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Translation", "Translation\Translation.csproj", "{BAD0341D-84FD-454E-AFFB-DDCAEE8E7FE8}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Translation", "Translation\Translation.csproj", "{BAD0341D-84FD-454E-AFFB-DDCAEE8E7FE8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Translation.Test", "Translation.Test\Translation.Test.csproj", "{4DF67283-41F2-43B2-BCE7-A8AF4732A82F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Translation.Test", "Translation.Test\Translation.Test.csproj", "{4DF67283-41F2-43B2-BCE7-A8AF4732A82F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

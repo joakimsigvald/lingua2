@@ -1,3 +1,4 @@
+approve 4::s 5:d 4:_ing 5:d = godkänn:a 4:er 4:de:t :er:de:t:a :s:_des:_ts:_t:_da
 build 4::s 5:_t 4:ing = bygg:a 4:er 4:de:t :er:de:t:a
 catch 4::es 5!caught 4:ing = fånga: 4:r 4:de:t :r:de:t:
 come 4::s 4!came: 4:_ing = kom:ma 4:mer 4::mit :mer::mit:ma
@@ -16,6 +17,7 @@ know 4::s 4:_2ew:n 4:ing = veta: 4:_ 4!visste:t :!visste:t:
 lack 4::s 5:ed 4:ing = sakna: 4:r 4:de:t :r:de:t:
 look 4::s 5:ed 4:ing = titta: 4:r 4:de:t :r:de:t:
 make 4::s 5:_2de 4:_ing = gör:a 4: 4!gjorde|_2t :!gjorde|_2t:a
+monitor 4::s 5:ed 4:ing = övervaka: 4:r 4:de:t :r:de:t:
 paint 4::s 5:ed 4:ing = måla: 4:r 4:de:t :r:de:t:
 play 4::s 5:ed 4:ing = lek:a 4:er 4:te:t :er:te:t:a
 regard 4::s 5:ed 4:ing = gäll:a 4:er 4:de:t :er:de:t:a

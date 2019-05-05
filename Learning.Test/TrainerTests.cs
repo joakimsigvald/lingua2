@@ -8,8 +8,8 @@ namespace Lingua.Learning.Test
     {
         [Trait("Category", "Longrunning")]
         [Theory]
-        [InlineData(true)]
-        public void TestAll(bool loadCurrentEvaluator)
+        [InlineData(true, true, true)]
+        public void TestAll(bool loadCurrentEvaluator, bool saveOnSuccess, bool overwrite)
         {
             var evaluator = loadCurrentEvaluator
                 ? Evaluator.Load()
@@ -19,16 +19,8 @@ namespace Lingua.Learning.Test
             var reporter = new ConsoleReporter();
             reporter.Report(res);
             Assert.True(res.Success, $"Failed on {res.SuccessCount + 1}th case");
-        }
-
-        [Trait("Category", "Longrunning")]
-        [Fact(Skip = "Saves generated patterns to file on success")]
-        public void GenerateAndStorePatterns()
-        {
-            var trainer = new Trainer();
-            var success = GeneratePatterns(trainer).Success;
-            Assert.True(success, "Failed to generate and store patterns, failing testcase");
-            trainer.SavePatterns();
+            if (saveOnSuccess)
+                trainer.SavePatterns(overwrite);
         }
 
         [Theory]

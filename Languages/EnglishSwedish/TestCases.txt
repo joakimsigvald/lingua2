@@ -207,7 +207,7 @@
 //"There has been a reduction in the disparity at assistant, head of unit and director levels.", "Den ojämna könsfördelningen på assistent-, enhetschefs- och direktörsnivå har minskat."
 "The assistant supervisor may be able to contribute expertise that the main supervisor lacks.", "Handledaren kan exempelvis tillföra kompetens som huvudhandledaren saknar."
 //"Maria Ek Styvén, assistant professor in industrial marketing", "Fil.dr Maria Ek Styvén, forskare och universitetslektor i industriell marknadsföring"
-//"Once aid is approved, the Technical Assistant monitors its implementation on the ground.", "Så snart biståndet har godkänts övervakar den tekniske experten dess genomförande på platsen."
+"Once aid is approved, the Technical Assistant monitors its implementation on the ground.", "Så snart biståndet har godkänts övervakar den tekniske experten dess genomförande på platsen."
 //"The Technical Assistant also coordinates with other donors and humanitarian stakeholders.", "Den tekniske experten svarar även för samordning med andra givare och humanitära intressenter."
 //"The first half as a political group assistant, the second as Member of Parliament.", "Den första halvan av tiden som assistent i en politisk grupp, den senare halvan som parlamentsledamot."
 //"Data protection (appointment of the European supervisor and the assistant supervisor): see Minutes", "Dataskydd (utnämning av datatillsynsman och biträdande datatillsynsman): se protokollet"
