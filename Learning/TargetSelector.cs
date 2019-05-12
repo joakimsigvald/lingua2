@@ -7,16 +7,17 @@ namespace Lingua.Learning
     using Core;
     using Core.Extensions;
     using Grammar;
+    using Lingua.Translation;
 
     public static class TargetSelector
     {
         private const int MaxTargets = 2;
 
-        public static TranslationTarget[] SelectTargets(IList<IGrammaton[]>? possibilities, string translated)
+        public static TranslationTarget[] SelectTargets(IDecomposition? decomposition, string translated)
         {
-            if (possibilities is null)
+            if (decomposition is null)
                 return new TranslationTarget[0];
-            var orderedTranslations = SelectBestTranslationsWithOrder(possibilities, translated)
+            var orderedTranslations = SelectBestTranslationsWithOrder(decomposition!, translated)
                 .Where((x, i) => i == 0 || x.order.Any())
                 .Take(MaxTargets)
                 .ToArray();
@@ -34,10 +35,10 @@ namespace Lingua.Learning
             => new Arrangement(translations.Select(t => t.Code).ToArray(), order);
 
         private static IEnumerable<(ITranslation[] translations, byte[] order, string unmatched)>
-            SelectBestTranslationsWithOrder(IList<IGrammaton[]> possibilities, string translated)
+            SelectBestTranslationsWithOrder(IDecomposition decomposition, string translated)
         {
-            var filteredPossibilities = FilterPossibilities(possibilities, translated).ToList();
-            var possibleSequences = new Expander(filteredPossibilities).Expand();
+            var filteredDecomposition = Filter(decomposition, translated);
+            var possibleSequences = new Expander(filteredDecomposition).Expand();
             return possibleSequences
                 .Select(ps => new OrderMaker(translated).SelectAndOrderTranslations(ps))
                 .OrderBy(o => o.unmatched.Length)
@@ -51,19 +52,17 @@ namespace Lingua.Learning
             ? order.Skip(1).Select((n, i) => n != order[i] + 1).Prepend(order[0] != 0).Count(v => v)
             : 0;
 
-        private static IEnumerable<ITranslation[]> FilterPossibilities(
-            IEnumerable<IGrammaton[]> possibilities, string translated)
-            => possibilities.Select(p => SelectAlternatives(p.SelectMany(g => g.Translations).ToArray(), translated));
+        private static IDecomposition Filter(IDecomposition decomposition, string translated)
+            => new Decomposition(decomposition.Select(ws => Filter(ws, translated)));
 
-        private static ITranslation[] SelectAlternatives(ITranslation[] alternatives, string translated)
+        private static IWordSpace Filter(IWordSpace wordSpace, string translated)
         {
-            var matchningAlternatives = alternatives.Where(t => translated.ContainsIgnoreCase(t.Output))
-                .OrderByDescending(t => t.Output.Length);
-            var nonMatchingAlternative = alternatives
-                .Where(t => !translated.ContainsIgnoreCase(t.Output)).Take(1);
-            return matchningAlternatives
-                .Concat(nonMatchingAlternative)
+            var matchningAlternatives = wordSpace
+                .Where(cand => cand.All(t => translated.ContainsIgnoreCase(t.Output)))
+                .OrderByDescending(cand => cand.Sum(t => t.Output.Length))
                 .ToArray();
+            var nonMatchingAlternative = wordSpace.Except(matchningAlternatives).Take(1);
+            return new WordSpace(matchningAlternatives.Concat(nonMatchingAlternative));
         }
     }
 }

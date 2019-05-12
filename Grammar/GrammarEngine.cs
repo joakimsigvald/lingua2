@@ -10,10 +10,10 @@ namespace Lingua.Grammar
         private readonly IEvaluator _evaluator;
         public GrammarEngine(IEvaluator evaluator) => _evaluator = evaluator;
 
-        public ReductionResult Reduce(IList<IGrammaton[]> possibilities)
-            => possibilities.Any()
-            ? new ReductionProcess(_evaluator, possibilities.ToArray()).Reduce()
-            : ReductionResult.Empty;
+        public ReductionResult Reduce(IDecomposition decomposition)
+            => decomposition.IsEmpty
+            ? ReductionResult.Empty
+            : new ReductionProcess(_evaluator, decomposition).Reduce();
 
         public ReductionResult Evaluate(IGrammaton[] grammatons)
             => grammatons.Any()

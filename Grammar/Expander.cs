@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using Lingua.Core;
@@ -8,38 +7,32 @@ namespace Lingua.Grammar
     public class Expander
     {
         private readonly IList<ITranslation[]>[] _expansions;
-        private readonly IList<ITranslation[]> _possibilities;
-        private readonly int _horizon;
+        private readonly IDecomposition _filteredDecomposition;
 
-        public Expander(IList<ITranslation[]> possibilities, int horizon = int.MaxValue)
+        public Expander(IDecomposition filteredDecomposition)
         {
-            _possibilities = possibilities;
-            _horizon = horizon;
-            _expansions = new IList<ITranslation[]>[Math.Min(horizon, _possibilities.Count)];
+            _filteredDecomposition = filteredDecomposition;
+            _expansions = new IList<ITranslation[]>[_filteredDecomposition.Length];
         }
 
-        public IEnumerable<ITranslation[]> Expand() 
-            => Expand(0, _horizon).Select(seq => seq.ToArray());
+        public IEnumerable<ITranslation[]> Expand()
+            => Expand(0).Select(seq => seq.ToArray());
 
-        private IEnumerable<ITranslation[]> Expand(int offset, int todo)
-        {
-            if (offset == _possibilities.Count)
-                return new[] {new ITranslation[0]};
-            if (todo > 0)
-                return offset >= _expansions.Length
-                    ? DoExpand(offset, todo).ToList()
-                    : (_expansions[offset]
-                       ?? (_expansions[offset] = DoExpand(offset, todo).ToList()));
-            return new[] {new ITranslation[0]};
-        }
+        private IEnumerable<ITranslation[]> Expand(int offset)
+            => offset == _filteredDecomposition.Length
+             ? new[] { new ITranslation[0] }
+            : offset >= _expansions.Length
+                ? DoExpand(offset).ToList()
+                : (_expansions[offset]
+                   ?? (_expansions[offset] = DoExpand(offset).ToList()));
 
-        private IEnumerable<ITranslation[]> DoExpand(int offset, int todo)
+        private IEnumerable<ITranslation[]> DoExpand(int offset)
         {
             var futures = new List<ITranslation[]>();
-            foreach (var first in _possibilities[offset])
+            foreach (var first in _filteredDecomposition[offset])
             {
-                var continuations = Expand(offset + first.WordCount, todo - 1);
-                futures.AddRange(continuations.Select(continuation => continuation.Prepend(first).ToArray()));
+                var continuations = Expand(offset + first.Last().WordCount);
+                futures.AddRange(continuations.Select(continuation => first.Concat(continuation).ToArray()));
             }
             return futures;
         }

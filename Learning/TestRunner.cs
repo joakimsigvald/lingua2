@@ -64,7 +64,7 @@ namespace Lingua.Learning
         private static void AssureTargetsSet(TestCase testCase, TranslationResult translationResult)
         {
             if (testCase.Target == null)
-                testCase.Targets = TargetSelector.SelectTargets(translationResult.Possibilities, testCase.Expected);
+                testCase.Targets = TargetSelector.SelectTargets(translationResult.Decomposition, testCase.Expected);
         }
     }
 }

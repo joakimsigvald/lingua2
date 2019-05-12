@@ -37,28 +37,25 @@ namespace Lingua.Core
                 ? TranslationResult.Empty
                 : Compose(Decompose(original));
 
-        public IList<IGrammaton[]> Decompose(string original)
+        public IDecomposition Decompose(string original)
         {
             var tokens = _tokenGenerator.GetTokens(original);
             var translationCandidates = Translate(tokens).ToArray();
             var possibilities = CompoundHandler.CompleteCompounds(translationCandidates, tokens).ToList();
             var undotted = RemoveRedundantDots(possibilities).ToArray();
             SetCodes(undotted);
-            return undotted.Select(CreateGrammatons).ToArray();
+            return new Decomposition(undotted);
         }
 
-        private IGrammaton[] CreateGrammatons(ITranslation[] translations)
-            => translations.GroupBy(t => (t.Code, t.WordCount)).Select(g => new Grammaton(g.ToArray())).ToArray();
+        public ReductionResult Reduce(IDecomposition decomposition) => _grammar.Reduce(decomposition);
 
-        public ReductionResult Reduce(IList<IGrammaton[]> possibilities) => _grammar.Reduce(possibilities);
-
-        public TranslationResult Arrange(IList<IGrammaton[]> possibilities, ReductionResult reduction)
+        public TranslationResult Arrange(IDecomposition decomposition, ReductionResult reduction)
         {
             var arrangement = _arranger.Arrange(reduction.Grammatons).ToArray();
             var translations = SelectSynonyms(arrangement);
             var capitalized = _capitalizer.Capitalize(translations, reduction.Grammatons);
             var translation = Trim(capitalized);
-            return new TranslationResult(translation, possibilities, reduction, arrangement, translations);
+            return new TranslationResult(translation, decomposition, reduction, arrangement, translations);
         }
 
         private static void SetCodes(IEnumerable<ITranslation[]> possibilities)
@@ -68,8 +65,8 @@ namespace Lingua.Core
                 translation.Code = Encoder.Encode(translation.From);
         }
 
-        private TranslationResult Compose(IList<IGrammaton[]> possibilities)
-            => Arrange(possibilities, _grammar.Reduce(possibilities));
+        private TranslationResult Compose(IDecomposition decomposition)
+            => Arrange(decomposition, _grammar.Reduce(decomposition));
 
         private ITranslation[] SelectSynonyms(IGrammaton[] grammatons)
         {

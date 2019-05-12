@@ -50,7 +50,6 @@ namespace Lingua.Vocabulary.Test
             => Translates(from, to);
 
         [Theory]
-        [InlineData("bouncing ball", "studsboll")]
         [InlineData("easy as pie", "lätt som en pannkaka")]
         [InlineData("easy peasy", "lätt som en plätt")]
         [InlineData("will have been", "kommer att ha")]
@@ -59,7 +58,6 @@ namespace Lingua.Vocabulary.Test
 
         [Theory]
         [InlineData("Non-French-speaking", "Icke-fransktalande")]
-        [InlineData("Bouncing ball", "Studsboll")]
         public void Capitalize(string from, string to)
             => Translates(from, to);
 

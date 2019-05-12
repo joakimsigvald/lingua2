@@ -1,5 +1,4 @@
 ﻿using Lingua.Core;
-using System.Collections.Generic;
 
 namespace Lingua.Translation
 {
@@ -7,21 +6,21 @@ namespace Lingua.Translation
     {
         public static readonly TranslationResult Empty = new TranslationResult(
             string.Empty,
-            new List<IGrammaton[]>(),
+            new Decomposition(new[] { new ITranslation[0]} ),
             ReductionResult.Empty,
             new IGrammaton[0],
             new ITranslation[0]);
 
         public TranslationResult(
             string translation,
-            IList<IGrammaton[]> possibilities,
+            IDecomposition decomposition,
             ReductionResult reduction,
             IGrammaton[] arrangement,
             ITranslation[] translations)
         {
             Translation = translation;
             Score = reduction.Score;
-            Possibilities = possibilities;
+            Decomposition = decomposition;
             Grammatons = reduction.Grammatons;
             Arrangement = arrangement;
             Translations = translations;
@@ -29,7 +28,7 @@ namespace Lingua.Translation
 
         public string Translation { get; }
         public int Score { get; }
-        public IList<IGrammaton[]> Possibilities { get; }
+        public IDecomposition Decomposition { get; }
         public IGrammaton[] Grammatons { get; }
         public IGrammaton[] Arrangement { get; }
         public ITranslation[] Translations { get; }

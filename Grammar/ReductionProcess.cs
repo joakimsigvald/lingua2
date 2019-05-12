@@ -10,14 +10,14 @@ namespace Lingua.Grammar
     internal class ReductionProcess
     {
         private readonly IEvaluator _evaluator;
-        private readonly IGrammaton[][] _possibilities;
+        private readonly IDecomposition _decomposition;
         private readonly TranslationSearchNodeFactory _nodeFactory;
 
-        public ReductionProcess(IEvaluator evaluator, IGrammaton[][] possibilities)
+        public ReductionProcess(IEvaluator evaluator, IDecomposition decomposition)
         {
             _evaluator = evaluator;
-            _possibilities = possibilities;
-            _nodeFactory = new TranslationSearchNodeFactory();
+            _decomposition = decomposition;
+            _nodeFactory = new TranslationSearchNodeFactory(evaluator);
         }
 
         public ReductionResult Reduce()
@@ -41,7 +41,7 @@ namespace Lingua.Grammar
                 ReversedCode = new[] { Start.Code }
             };
             var bestChild = new TranslationSearchNode();
-            foreach (var cand in _possibilities[0])
+            foreach (var cand in _decomposition[0].GrammatonCandidates)
             {
                 var nextChild = CreateChild(root, cand, _evaluator.Horizon);
                 if (nextChild.BestScore > bestChild.BestScore)
@@ -50,24 +50,11 @@ namespace Lingua.Grammar
             return bestChild;
         }
 
-        private TranslationSearchNode CreateChild(TranslationSearchNode parent, IGrammaton candidate, byte horizon)
+        private TranslationSearchNode CreateChild(TranslationSearchNode parent, IGrammatonCandidate candidate, byte horizon)
         {
             var node = _nodeFactory.Create(parent, candidate);
-            node.Score += _evaluator.ScorePatternsEndingWith(node.ReversedCode);
-            node.BestScore = node.Score;
-            Populate(node, (byte)(horizon - 1));
+            ExpandChild(node, (byte)(horizon - 1));
             return node;
-        }
-
-        private void Populate(TranslationSearchNode node, byte horizon)
-        {
-            var nextIndex = node.Index + node.WordCount;
-            if (_possibilities.Length <= nextIndex || horizon == 0)
-                return;
-            node.Children = _possibilities[nextIndex]
-                .Select(cand => CreateChild(node, cand, horizon))
-                .ToArray();
-            node.BestScore = node.Children.Max(child => child.BestScore);
         }
 
         private TranslationSearchNode? SelectBestBranch(TranslationSearchNode root)
@@ -87,15 +74,27 @@ namespace Lingua.Grammar
         private void ExpandChild(TranslationSearchNode node, byte horizon)
         {
             if (node.Children.Any())
-                Expand(node, (byte)(horizon - 1));
+                ExpandChildren(node, (byte)(horizon - 1));
             else
-                Populate(node, horizon);
+                CreateChildren(node, horizon);
+            node.BestScore = node.Children.Any() 
+                ? node.Children.Max(child => child.BestScore)
+                : node.Score;
         }
 
-        private void Expand(TranslationSearchNode node, byte horizon)
+        private void ExpandChildren(TranslationSearchNode node, byte horizon)
         {
             node.Children.ForEach(child => ExpandChild(child, horizon));
-            node.BestScore = node.Children.Max(child => child.BestScore);
+        }
+
+        private void CreateChildren(TranslationSearchNode node, byte horizon)
+        {
+            var nextIndex = node.Index + node.WordCount;
+            if (_decomposition.Length <= nextIndex || horizon == 0)
+                return;
+            node.Children = _decomposition[nextIndex].GrammatonCandidates
+                .Select(cand => CreateChild(node, cand, horizon))
+                .ToArray();
         }
     }
 }

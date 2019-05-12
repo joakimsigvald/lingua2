@@ -1,10 +1,8 @@
-﻿using System.Collections.Generic;
-
-namespace Lingua.Core
+﻿namespace Lingua.Core
 {
     public interface IGrammar
     {
-        ReductionResult Reduce(IList<IGrammaton[]> possibilities);
+        ReductionResult Reduce(IDecomposition decomposition);
         ReductionResult Evaluate(IGrammaton[] grammatons);
     }
 }

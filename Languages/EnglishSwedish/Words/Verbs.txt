@@ -2,6 +2,7 @@ approve 4::s 5:d 4:_ing 5:d = godkänn:a 4:er 4:de:t :er:de:t:a :s:_des:_ts:_t:_
 build 4::s 5:_t 4:ing = bygg:a 4:er 4:de:t :er:de:t:a
 catch 4::es 5!caught 4:ing = fånga: 4:r 4:de:t :r:de:t:
 come 4::s 4!came: 4:_ing = kom:ma 4:mer 4::mit :mer::mit:ma
+coordinate 4::s 5:d = svara: 4:r 4:de:t +för<P+samordning<N
 contain 4::s 4:ed: 4:ing = innehåll:a 4:er 4:_3öll:it :er:_3öll:it:a
 contribute 4::s 4:d: 4:_ing = tillför:a 4: 4:de:it ::de:t:a
 eat 4::s 4!ate:en 4:ing = ät:a 4:er 4!åt:it :er!åt:it:a

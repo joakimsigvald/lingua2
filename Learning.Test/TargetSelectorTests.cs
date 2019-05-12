@@ -75,30 +75,31 @@ namespace Lingua.Learning.Test
             var target = CreateTarget(possibilitiesStr, to);
             var expectedTranslations = ParsePossibilities(expectedTranslationsStr)
                 .Select(alts => alts.Single()).ToArray();
-            var actual = GetOutputs(target?.Grammatons);
+            var actual = GetOutputs(target?.Translations);
             var expected = GetOutputs(expectedTranslations);
             Assert.Equal(expected, actual);
         }
 
-        private static string[] GetOutputs(IEnumerable<IGrammaton> translations)
-            => translations.Select(t => t.Translations[0].Output).ToArray();
+        private static string[] GetOutputs(IEnumerable<ITranslation> translations)
+            => translations.Select(t => t.Output).ToArray();
 
         private TranslationTarget CreateTarget(string possibilitiesStr, string to)
         {
             var possibilities = ParsePossibilities(possibilitiesStr);
-            return TargetSelector.SelectTargets(possibilities, to).FirstOrDefault();
+            var decomposition = possibilities is null ? null : new Decomposition(possibilities);
+            return TargetSelector.SelectTargets(decomposition, to).FirstOrDefault();
         }
 
-        private IList<IGrammaton[]>? ParsePossibilities(string possibilitiesStr)
+        private IList<ITranslation[]>? ParsePossibilities(string possibilitiesStr)
             => string.IsNullOrEmpty(possibilitiesStr)
                 ? null
                 : possibilitiesStr.Split(',').Select(ParseAlternatives).ToList();
 
-        private IGrammaton[] ParseAlternatives(string alternativesStr)
+        private ITranslation[] ParseAlternatives(string alternativesStr)
         {
             var parts = alternativesStr.Split('>');
             var to = parts[1].Split('/');
-            return to.Select((alt, i) => new Grammaton(MockTranslation(alt, i))).ToArray();
+            return to.Select((alt, i) => MockTranslation(alt, i)).ToArray();
         }
 
         private static ushort[]? ParseCode(string codeStr)

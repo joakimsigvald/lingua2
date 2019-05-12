@@ -14,7 +14,7 @@ namespace Lingua.Learning
             Expected = expected;
         }
 
-        public IList<IGrammaton[]> Possibilities { get; set; }
+        public IDecomposition Decomposition { get; set; }
         public TranslationTarget Target => Targets?.FirstOrDefault();
         public TranslationTarget[] Targets { private get; set; }
         public string Suite { get; set; }
@@ -34,8 +34,8 @@ namespace Lingua.Learning
 
         public void PrepareForLearning(ITranslator translator)
         {
-            Possibilities = translator.Decompose(From);
-            Targets = TargetSelector.SelectTargets(Possibilities, Expected);
+            Decomposition = translator.Decompose(From);
+            Targets = TargetSelector.SelectTargets(Decomposition, Expected);
             if (Target == null)
                 throw new Exception(
                     "Should not get into this state - throw exception from TargetSelector if no possible translation");
